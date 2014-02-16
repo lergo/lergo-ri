@@ -1,3 +1,4 @@
-exports.index = function(req,res){
-    res.send("index");
+'use strict';
+exports.index = function (req, res) {
+    res.send('index');
 };
