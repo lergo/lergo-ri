@@ -14,8 +14,22 @@ var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
 //var errorManager = appContext.errorManager;
 
-
 var app = module.exports = express.createServer();
+
+/** swagger configuration: start **/
+
+swagger.setHeaders = function setHeaders(res) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, X-API-KEY');
+    res.header('Content-Type', 'application/json; charset=utf-8');
+};
+swagger.configureSwaggerPaths('', '/api/api-docs', '');
+swagger.setAppHandler(app);
+
+/** swagger configuration :end **/
+
+
 
 // Configuration
 var useStatic = express.static(__dirname + '/swagger-ui/dist');
@@ -32,7 +46,6 @@ app.configure(function () {
     app.use(app.router);
     app.use('/public', express.static(__dirname + '/public'));
     app.use('/swagger', function () {
-        logger.info('in static');
         return useStatic.apply(this, arguments);
     });
 });
@@ -41,8 +54,8 @@ app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 
 // Routes
+var controllers = require('./backend/controllers');
 
-app.get('/', routes.index);
 app.get('/swagger', function (req, res, next) {
     if (req.url.indexOf('swagger/') < 0) {
         res.redirect('/swagger/');
@@ -50,16 +63,6 @@ app.get('/swagger', function (req, res, next) {
         next();
     }
 });
-
-swagger.setHeaders = function setHeaders(res) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, X-API-KEY');
-    res.header('Content-Type', 'application/json; charset=utf-8');
-};
-swagger.configureSwaggerPaths('', '/api/api-docs', '');
-swagger.setAppHandler(app);
-
 
 // Serve up swagger ui at /docs via static route
 var docsHandler = express.static('/swagger', __dirname + '/../../swagger-ui/');
@@ -75,26 +78,25 @@ app.get(/^\/docs(\/.*)?$/, function (req, res, next) {
 });
 
 
-var signupUser = {
-    'spec': {
-        'description': 'Sign up a new user',
-        'path': '/user/signup',
-        'notes': 'Returns 200 if everything went well, otherwise returns error response',
-        'summary': 'Sign up a new user',
-        'method': 'POST',
-        'parameters': [swagger.bodyParam('user', 'ID of pet that needs to be fetched', 'UserSignupForm')],
-        'errorResponses': [, swagger.errors.notFound('pet')],
-        'nickname': 'getPetById'
-    },
-    'action': function (/*req, res*/) {
 
+
+
+swagger.addModels( require('./backend/ApiModels').models );
+var actions = require('./backend/ApiActions').actions;
+
+
+
+for ( var i in actions ){
+    if ( actions.hasOwnProperty(i) ){
+        var action = actions[i];
+        var method = action.spec.method;
+        if ( method === 'POST' ){
+            swagger.addPost( action );
+        }else{
+            swagger.addGet( action );
+        }
     }
-};
-
-
-swagger.addPost(signupUser);
-//swagger.addGet(findById);
-//swagger.addGet();
+}
 
 swagger.configure('http://localhost:3000', '0.1');
 //app.use('/api-docs', swagger.resourceListing);
