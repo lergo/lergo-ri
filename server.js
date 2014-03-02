@@ -12,6 +12,7 @@ var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
 var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
+appContext.dbManager.setUrl('mongodb://127.0.0.1:27017/lergo-test'); /** todo: make this configurable **/
 //var errorManager = appContext.errorManager;
 
 var app = module.exports = express.createServer();
@@ -152,6 +153,7 @@ logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
 // do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
 process.on('uncaughtException', function (err) {
+    logger.info("catchall error happened");
     // handle the error safely
     logger.info(err);
 });

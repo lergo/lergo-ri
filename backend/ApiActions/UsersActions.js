@@ -3,7 +3,7 @@ exports.signup = {
     'spec': {
     'description': 'Sign up a new user',
         'name':'signup',
-        'path': '/backend/user/signup',
+        'path': '/backend/users/signup',
 //        'notes': 'Returns 200 if everything went well, otherwise returns error response',
         'summary': 'Sign up a new user',
         'method': 'POST',
@@ -12,4 +12,4 @@ exports.signup = {
         'nickname': 'signupUser'
 },
     'action': controllers.users.signup
-}
+};
