@@ -1,14 +1,12 @@
 'use strict';
 var appContext = require('../ApplicationContext');
+var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var logger = appContext.logManager.getLogger('DbManager');
 
 logger.info('initializing DbManager');
-var _dbUrl = null;
+var _dbUrl = appContext.conf.dbUrl;
 
-exports.setUrl = function (dbUrl) {
-    _dbUrl = dbUrl;
-};
 
 /**
  *
@@ -39,6 +37,10 @@ exports.connect = function (collection, callback) {
             db.close();
         }
     });
+};
+
+exports.id = function( id ){
+    return mongodb.ObjectID( id );
 };
 
 

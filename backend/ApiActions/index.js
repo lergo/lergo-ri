@@ -1,8 +1,21 @@
 exports.usersActions = require('./UsersActions');
 
-exports.actions = [
-    exports.usersActions.signup
-];
+
+function addAllActions ( actions ){
+
+
+    for ( var i in actions ){
+        if ( actions.hasOwnProperty(i) ){
+            exports.actions.push(actions[i]);
+        }
+    }
+
+}
+
+
+exports.actions = [];
+addAllActions( exports.usersActions );
+
 
 
 

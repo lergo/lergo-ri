@@ -12,10 +12,9 @@ var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
 var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
-appContext.dbManager.setUrl('mongodb://127.0.0.1:27017/lergo-test'); /** todo: make this configurable **/
 //var errorManager = appContext.errorManager;
 
-var app = module.exports = express.createServer();
+var app = module.exports = express();
 
 /** swagger configuration: start **/
 
@@ -30,6 +29,7 @@ swagger.setAppHandler(app);
 
 /** swagger configuration :end **/
 
+var controllers = require('./backend/controllers');
 
 
 // Configuration
@@ -41,9 +41,9 @@ app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
-    app.use(express.session({ secret: 'your secret here' }));
-    app.use(passport.initialize());
-
+    debugger;
+    app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
+    app.use('/backend/user', controllers.users.loggedInMiddleware);
     app.use(app.router);
     app.use('/public', express.static(__dirname + '/public'));
     app.use('/swagger', function () {
@@ -55,7 +55,6 @@ app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 
 // Routes
-var controllers = require('./backend/controllers');
 
 app.get('/swagger', function (req, res, next) {
     if (req.url.indexOf('swagger/') < 0) {
@@ -90,6 +89,7 @@ var actions = require('./backend/ApiActions').actions;
 for ( var i in actions ){
     if ( actions.hasOwnProperty(i) ){
         var action = actions[i];
+        console.log('adding [%s]', action.spec.name);
         var method = action.spec.method;
         if ( method === 'POST' ){
             swagger.addPost( action );
@@ -143,9 +143,9 @@ app.get('/auth/openid/return', function (req, res, next) {
 
 
 logger.info('trying to listen on ' + port);
-app.listen(port, function () {
+var server = app.listen(port, function () {
     logger.info(arguments);
-    logger.info('Express server listening on port %d in %s mode', app.address().port, app.settings.env);
+    logger.info('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 //    logger.info('possible routes are : ' +JSON.stringify(app.routes.routes,{},4));
 });
 

@@ -9,7 +9,13 @@
         "passport-openid":"*",
         "mongodb":"*",
         "logjs":"*",
-        "async":"*"
+        "async":"*",
+        "sha1":"*",
+        "express" : "2.5.8",
+        "crypto":"*",
+        "node-uuid" : "*",
+        "lodash" : "*"
+
     },
     "devDependencies": {
         "grunt": "~0.4.1",
