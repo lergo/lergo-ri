@@ -32,9 +32,10 @@ exports.login = {
             { 'code': 500, 'reason' : 'unable to login'},
             { 'code': 401, 'reason' : 'wrong username/password'}
         ],
-        'nickname' : 'login',
-        'action': controllers.users.login
-    }
+        'nickname' : 'login'
+
+    },
+    'action': controllers.users.login
 };
 
 exports.logout = {
@@ -46,9 +47,10 @@ exports.logout = {
         'method' : 'POST',
         'parameters' : [],
         'errorResponses' : [],
-        'nickname' : 'logout',
-        'action' : controllers.users.logout
-    }
+        'nickname' : 'logout'
+
+    },
+    'action' : controllers.users.logout
 };
 
 exports.isLoggedIn = {
@@ -62,7 +64,8 @@ exports.isLoggedIn = {
         'errorResponses' : [
             { 'code' : 401, 'reason' : 'not logged in'}
         ],
-        'nickname' : 'isLoggedIn',
-        'action' : controllers.users.isLoggedIn
-    }
+        'nickname' : 'isLoggedIn'
+
+    },
+    'action' : controllers.users.isLoggedIn
 };
