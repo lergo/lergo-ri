@@ -25,6 +25,7 @@ exports.login = function(req, res){
     managers.users.loginUser( loginCredentials, function( err, loggedInUser ){
         if ( !!err ){
             err.send(res);
+            return;
         }
 
         if ( !loggedInUser ){
