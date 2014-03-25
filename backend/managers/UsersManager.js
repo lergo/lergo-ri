@@ -25,6 +25,7 @@ exports.saveUser = function (user, callback) {
         dbManager.connect('users', function (db, collection, done) {
 
             user.password = sha1(user.password);
+            delete user['passwordConfirm'];
 
             collection.insert(user, function (err) {
                 if (!!err) {
