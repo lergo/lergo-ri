@@ -24,7 +24,7 @@ exports.saveUser = function (user, callback) {
         logger.info('user with email [%s] does not exists. creating', user.username);
         dbManager.connect('users', function (db, collection, done) {
 
-            var userToInsert = { username: user.username, password: sha1(user.password) };
+            user.password = sha1(user.password);
 
             collection.insert(user, function (err) {
                 if (!!err) {
