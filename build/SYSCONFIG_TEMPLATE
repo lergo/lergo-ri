@@ -1,0 +1,7 @@
+# a system level configuration for lergo - which nginx domain should it occupy etc..
+
+DOMAIN=my.domain.com
+
+
+# you can also host this file online, and write the following
+# eval "`wget --no-cache --no-check-certificate -O - url_to_file | dos2unix`"

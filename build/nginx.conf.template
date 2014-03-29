@@ -1,5 +1,5 @@
 
-check_exists DOMAIN
+check_exists DOMAIN &> /dev/null
 
 mkdir -p /var/log/$DOMAIN/access
 mkdir -p /var/log/$DOMAIN/error

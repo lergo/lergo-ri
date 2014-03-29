@@ -1,4 +1,12 @@
 install_main(){
+
+    if [ ! -f /etc/sysconfig/lergo ]; then
+        echo "must have /etc/sysconfig/lergo defined before installation"
+        exit 1
+    fi
+
+    source /etc/sysconfig/lergo
+
     yum -y install dos2unix wget
 
     eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
@@ -19,6 +27,16 @@ install_main(){
     echo "cloning git repositories"
 
     git clone --recursive https://github.com/lergo/lergo-ri.git
+
+    cd lergo-ri
+
+    echo `pwd`
+    git fetch
+    git branch -a
+    git checkout LERGO4_LERGO5
+    cd ..
+
+
     git clone https://github.com/lergo/lergo-ui.git
 
     echo "stopping iptables service"
@@ -43,7 +61,10 @@ upgrade_main(){
     git pull
 
     cd /var/www/lergo/lergo-ri/build
+    source nginx.conf.template > nginx.conf
     service nginx restart
+
+
 }
 
 set -e
