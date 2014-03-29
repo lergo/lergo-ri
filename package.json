@@ -11,7 +11,7 @@
         "log4js":"*",
         "async":"*",
         "sha1":"*",
-        "express" : "2.5.8",
+        "express" : "*",
         "crypto":"*",
         "node-uuid" : "*",
         "lodash" : "*"
