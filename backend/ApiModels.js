@@ -75,5 +75,18 @@ exports.models = {
             }
 
         }
+    },
+    'Lesson' : {
+        'id' : 'Lesson',
+        'description' : 'Lesson to be submitted',
+        'required': [
+            'name'
+        ],
+        'properties' : {
+            'name' : {
+                'type' : 'string',
+                'description' : 'Lesson name'
+            }
+        }
     }
 };

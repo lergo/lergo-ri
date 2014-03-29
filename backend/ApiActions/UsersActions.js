@@ -171,3 +171,114 @@ exports.updateQuestion = {
 	},
 	'action' : controllers.questions.updateQuestion
 };
+
+exports.createLesson = {
+	'spec' : {
+		'description' : 'Create lesson',
+		'name' : 'create',
+		'path' : '/backend/user/lessons',
+		'summary' : 'Create new lesson',
+		'method' : 'POST',
+		'parameters' : [ {
+			'paramType' : 'body',
+			'name' : 'lesson',
+			required : true,
+			'description' : 'Lesson details',
+			'type' : 'Lesson'
+		} ],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to create'
+		} ],
+		'nickname' : 'createLesson'
+	},
+	'action' : controllers.lessons.createLesson
+};
+exports.getLessons = {
+	'spec' : {
+		'description' : 'Get lessons',
+		'name' : 'getLessons',
+		'path' : '/backend/user/lessons',
+		'summary' : 'Get all lessons',
+		'method' : 'GET',
+		'parameters' : [],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to get lesson'
+		} ],
+		'nickname' : 'getLessons'
+	},
+	'action' : controllers.lessons.getLessons
+};
+exports.getLessonById = {
+	'spec' : {
+		'description' : 'Get lesson by id',
+		'name' : 'getLessons',
+		'path' : '/backend/user/lessons/{id}',
+		'summary' : 'Get lesson by id',
+		'method' : 'GET',
+		'parameters' : [ {
+			'paramType' : 'path',
+			'name' : 'id',
+			required : true,
+			'description' : 'ID of lesson that needs to be fetched',
+			'type' : 'string'
+		} ],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to get lesson'
+		} ],
+		'nickname' : 'getLessonById'
+	},
+	'action' : controllers.lessons.getLessonById
+};
+exports.updateLesson = {
+	'spec' : {
+		'description' : 'Create lesson',
+		'name' : 'create',
+		'path' : '/backend/user/lessons/{id}',
+		'summary' : 'Update lesson',
+		'method' : 'POST',
+		'parameters' : [ {
+			'paramType' : 'body',
+			'name' : 'lesson',
+			required : true,
+			'description' : 'Lesson details',
+			'type' : 'Lesson'
+		}, {
+			'paramType' : 'path',
+			'name' : 'id',
+			required : true,
+			'description' : 'ID of lesson that needs to be updated',
+			'type' : 'string'
+		} ],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to update'
+		} ],
+		'nickname' : 'updateLesson'
+	},
+	'action' : controllers.lessons.updateLesson
+};
+exports.deleteLesson = {
+		'spec' : {
+			'description' : 'Delete lesson corresponding to the id',
+			'name' : 'deleteLesson',
+			'path' : '/backend/user/lessons/{id}/delete',
+			'summary' : 'Delete lesson corresponding to the id',
+			'method' : 'POST',
+			'parameters' : [ {
+				'paramType' : 'path',
+				'name' : 'id',
+				required : true,
+				'description' : 'ID of lesson that needs to be deleted',
+				'type' : 'string'
+			} ],
+			'errorResponses' : [ {
+				'code' : 500,
+				'reason' : 'unable to delete lesson'
+			} ],
+			'nickname' : 'deleteLesson'
+		},
+		'action' : controllers.lessons.deleteLesson
+	};
