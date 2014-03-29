@@ -15,6 +15,12 @@ install_main(){
 
     install_node
 
+    npm install -g bower
+    npm install -g grunt-cli
+
+    install_ruby
+    install_compass
+
     install_nginx
 
     install_git
@@ -59,6 +65,10 @@ upgrade_main(){
 
     cd /var/www/lergo/lergo-ui
     git pull
+    rm -Rf app/bower_components
+    bower install
+    grunt build
+
 
     cd /var/www/lergo/lergo-ri/build
     source nginx.conf.template > nginx.conf
