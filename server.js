@@ -41,7 +41,6 @@ app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
-    debugger;
     app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
     app.use('/backend/user', controllers.users.loggedInMiddleware);
     app.use(app.router);
