@@ -15,8 +15,17 @@ install_main(){
 
     install_node
 
-    npm install -g bower
-    npm install -g grunt-cli
+    if [ -h /usr/bin/bower ]; then
+        echo "bower already installed. skipping ... "
+    else
+        npm install -g bower
+    fi
+
+    if [ -h /usr/bin/grunt ]; then
+        echo "grunt-cli is already installed. skipping.. "
+    else
+        npm install -g grunt-cli
+    fi
 
     install_ruby
     install_compass
@@ -66,7 +75,7 @@ upgrade_main(){
     cd /var/www/lergo/lergo-ui
     git pull
     rm -Rf app/bower_components
-    bower install
+    bower --allow-root install --config.interactive=false
     grunt build
 
 
