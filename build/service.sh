@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          cwpm
@@ -24,7 +18,7 @@ SERVICE_NAME=lergo
 PIDFILE=/var/run/$SERVICE_NAME.pid
 LOGFILE=/var/log/$SERVICE_NAME.log
 
-SCRIPT=$INSTALL_LOCATION/start.sh
+SCRIPT="node $INSTALL_LOCATION/start.sh"
 RUNAS=root
 
 
