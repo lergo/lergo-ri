@@ -1,17 +1,9 @@
 
 
-INSTALL_LOCATION=/var/www/lergo/lergo-ri
-SYSCONFIG=/etc/sysconfig/lergo
-SERVICE_NAME=lergo
-
-PIDFILE=/var/run/$SERVICE_NAME.pid
-LOGFILE=/var/log/$SERVICE_NAME.log
-
-SCRIPT=$INSTALL_LOCATION/start.sh
-RUNAS=root
 
 
-cat <<END
+
+
 
 #!/bin/sh
 ### BEGIN INIT INFO
@@ -24,7 +16,15 @@ cat <<END
 ### END INIT INFO
 
 source $SYSCONFIG
+INSTALL_LOCATION=/var/www/lergo/lergo-ri
+SYSCONFIG=/etc/sysconfig/lergo
+SERVICE_NAME=lergo
 
+PIDFILE=/var/run/$SERVICE_NAME.pid
+LOGFILE=/var/log/$SERVICE_NAME.log
+
+SCRIPT=$INSTALL_LOCATION/start.sh
+RUNAS=root
 
 
 start() {
@@ -51,7 +51,7 @@ stop() {
 
 status(){
 
-    if [ ! -f $(cat "/proc/$PIDFILE"); then
+    if [ ! -f $(cat "/proc/$PIDFILE") ]; then
         echo "service is stopped"
         return 0
     else
@@ -86,4 +86,3 @@ case "$1" in
     echo "Usage: $0 {start|stop|restart}"
 esac
 
-END
