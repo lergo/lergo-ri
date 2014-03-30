@@ -36,6 +36,7 @@ start() {
   fi
   echo 'Starting service...' >&2
   local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
+  echo "CMD is [$CMD]"
   su -c "$CMD" $RUNAS > "$PIDFILE"
   echo 'Service started' >&2
 }
