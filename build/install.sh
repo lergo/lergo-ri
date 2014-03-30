@@ -103,10 +103,16 @@ upgrade_main(){
 #    source service.template.sh > service.sh
 #    chmod +x service.sh
 
-    echo "updating configuration"
-    cd /var/www/lergo/lergo-ri
-    mkdir -p conf/dev/
-    run_wget -O conf/dev/meConf.js $ME_CONF_URL
+    if [ -z $ME_CONF_URL ];then
+        echo "missing me conf url"
+        exit 1
+    else
+        echo "updating configuration"
+        cd /var/www/lergo/lergo-ri
+        mkdir -p conf/dev/
+        run_wget -O conf/dev/meConf.js $ME_CONF_URL
+
+    fi
 
 }
 
