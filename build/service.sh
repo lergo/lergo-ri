@@ -16,7 +16,7 @@
 ### END INIT INFO
 
 SYSCONFIG=/etc/sysconfig/lergo
-source $SYSCONFIG
+source $SYSCONFIG &> /dev/null
 INSTALL_LOCATION=/var/www/lergo/lergo-ri
 
 SERVICE_NAME=lergo
