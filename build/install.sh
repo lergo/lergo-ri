@@ -14,6 +14,7 @@ install_main(){
 
 
     install_mongo
+    service mongod start
 
     install_node
 

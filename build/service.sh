@@ -14,7 +14,7 @@ source $SYSCONFIG &> /dev/null
 INSTALL_LOCATION=/var/www/lergo/lergo-ri
 
 SERVICE_NAME=lergo
-
+PIDNAME=$SERVICE_NAME
 PIDFILE=/var/run/$SERVICE_NAME.pid
 LOGFILE=/var/log/$SERVICE_NAME.log
 
