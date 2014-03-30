@@ -88,9 +88,14 @@ upgrade_main(){
     grunt build
 
 
+
     cd /var/www/lergo/lergo-ri/build
+
     source nginx.conf.template > nginx.conf
     service nginx restart
+
+    source service.template.sh > service.sh
+    chmod +x service.sh
 
 
 }
