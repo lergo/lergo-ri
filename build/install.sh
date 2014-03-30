@@ -64,6 +64,12 @@ install_main(){
         ln -s /var/www/lergo/lergo-ri/build/nginx.conf /etc/nginx/conf.d/lergo.conf
         service nginx restart
     fi
+
+    if [ -h /etc/init.d/lergo ]; then
+        echo "lergo service is already installed"
+    else
+        ln -s /var/www/lergo/lergo-ri/build/service.sh /etc/init.d/lergo
+    fi
 }
 
 
