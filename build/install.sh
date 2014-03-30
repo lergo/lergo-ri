@@ -75,28 +75,28 @@ install_main(){
 
 upgrade_main(){
 
-    cd /var/www/lergo/lergo-ri
-    git pull
-    rm -Rf node_modules
-    npm install
+#    cd /var/www/lergo/lergo-ri
+#    git pull
+#    rm -Rf node_modules
+#    npm install
 
-    cd /var/www/lergo/lergo-ui
-    git pull
-    rm -Rf app/bower_components
-    bower --allow-root install --config.interactive=false
+#    cd /var/www/lergo/lergo-ui
+#    git pull
+#    rm -Rf app/bower_components
+#    bower --allow-root install --config.interactive=false
 
-    rm -Rf node_modules
-    npm install
-    grunt build
+#    rm -Rf node_modules
+#    npm install
+#    grunt build
 
 
-    cd /var/www/lergo/lergo-ri/build
+#    cd /var/www/lergo/lergo-ri/build
 
-    source nginx.conf.template > nginx.conf
-    service nginx restart
+#    source nginx.conf.template > nginx.conf
+#    service nginx restart
 
-    source service.template.sh > service.sh
-    chmod +x service.sh
+#    source service.template.sh > service.sh
+#    chmod +x service.sh
 
     echo "updating configuration"
     cd /var/www/lergo/lergo-ri
