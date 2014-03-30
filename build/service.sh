@@ -52,11 +52,12 @@ stop() {
 
 status(){
 
-    if [ ! -f $(cat "/proc/$PIDFILE") ]; then
-        echo "service is stopped"
+    PROCFILE=/proc/`cat $PIDFILE`
+    if [ -e $PROCFILE ]; then
+        echo "service is running"
         return 0
     else
-        echo "service is running"
+        echo "service is stopped"
         return 0
     fi
 }
