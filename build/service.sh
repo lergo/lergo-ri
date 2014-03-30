@@ -18,7 +18,7 @@ SERVICE_NAME=lergo
 PIDFILE=/var/run/$SERVICE_NAME.pid
 LOGFILE=/var/log/$SERVICE_NAME.log
 
-SCRIPT="node $INSTALL_LOCATION/start.sh"
+SCRIPT="$INSTALL_LOCATION/start.sh"
 RUNAS=root
 
 
