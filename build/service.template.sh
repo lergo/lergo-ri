@@ -4,6 +4,13 @@ INSTALL_LOCATION=/var/www/lergo/lergo-ri
 SYSCONFIG=/etc/sysconfig/lergo
 SERVICE_NAME=lergo
 
+PIDFILE=/var/run/$SERVICE_NAME.pid
+LOGFILE=/var/log/$SERVICE_NAME.log
+
+SCRIPT=$INSTALL_LOCATION/start.sh
+RUNAS=root
+
+
 cat <<END
 
 #!/bin/sh
@@ -18,11 +25,7 @@ cat <<END
 
 source $SYSCONFIG
 
-SCRIPT=$INSTALL_LOCATION/start.sh
-RUNAS=root
 
-PIDFILE=/var/run/$SERVICE_NAME.pid
-LOGFILE=/var/log/$SERVICE_NAME.log
 
 start() {
     echo "pidname is [$PIDNAME]"
