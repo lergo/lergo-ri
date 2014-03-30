@@ -81,7 +81,7 @@ case "$1" in
   status)
     status
     ;;
-  retart)
+  restart)
     stop
     start
     ;;
