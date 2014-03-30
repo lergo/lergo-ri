@@ -15,9 +15,10 @@
 # Description:       A pool manager for cloudify widget
 ### END INIT INFO
 
+SYSCONFIG=/etc/sysconfig/lergo
 source $SYSCONFIG
 INSTALL_LOCATION=/var/www/lergo/lergo-ri
-SYSCONFIG=/etc/sysconfig/lergo
+
 SERVICE_NAME=lergo
 
 PIDFILE=/var/run/$SERVICE_NAME.pid
