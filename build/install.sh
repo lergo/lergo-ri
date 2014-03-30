@@ -77,6 +77,8 @@ upgrade_main(){
 
     cd /var/www/lergo/lergo-ri
     git pull
+    rm -Rf node_modules
+    npm install
 
     cd /var/www/lergo/lergo-ui
     git pull
