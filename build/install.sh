@@ -76,6 +76,9 @@ upgrade_main(){
     git pull
     rm -Rf app/bower_components
     bower --allow-root install --config.interactive=false
+
+    rm -Rf node_modules
+    npm install
     grunt build
 
 
