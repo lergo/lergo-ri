@@ -1,6 +1,7 @@
 # a system level configuration for lergo - which nginx domain should it occupy etc..
 
 DOMAIN=my.domain.com
+ME_CONF_URL=location_of_an_online_me_conf
 
 
 # you can also host this file online, and write the following

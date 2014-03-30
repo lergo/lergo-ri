@@ -90,7 +90,6 @@ upgrade_main(){
     grunt build
 
 
-
     cd /var/www/lergo/lergo-ri/build
 
     source nginx.conf.template > nginx.conf
@@ -99,6 +98,10 @@ upgrade_main(){
     source service.template.sh > service.sh
     chmod +x service.sh
 
+    echo "updating configuration"
+    cd /var/www/lergo/lergo-ri
+    mkdir -p conf/dev/
+    run_wget -O conf/dev/meConf.js $ME_CONF_URL
 
 }
 
