@@ -1,19 +1,17 @@
-get_gsat(){
+init(){
     eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
+    SYSCONFIG_FILE=lergo read_sysconfig
 }
 
 install_main(){
 
-    if [ ! -f /etc/sysconfig/lergo ]; then
-        echo "must have /etc/sysconfig/lergo defined before installation"
-        exit 1
-    fi
+    init
 
-    source /etc/sysconfig/lergo
+
 
     yum -y install dos2unix wget
 
-    get_gsat
+
 
     install_mongo
 
@@ -78,7 +76,7 @@ install_main(){
 
 
 upgrade_main(){
-     get_gsat
+     init
 
 #    cd /var/www/lergo/lergo-ri
 #    git pull
