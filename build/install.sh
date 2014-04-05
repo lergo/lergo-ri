@@ -39,6 +39,7 @@ install_main(){
     install_git
 
     DIST=/var/www/lergo
+
     rm -Rf $DIST
     mkdir -p $DIST
     cd $DIST
