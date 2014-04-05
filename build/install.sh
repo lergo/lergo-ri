@@ -95,7 +95,6 @@ upgrade_main(){
     npm install
     grunt build
 
-
     cd /var/www/lergo/lergo-ri/build
 
     source nginx.conf.template > nginx.conf
