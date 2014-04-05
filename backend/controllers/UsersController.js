@@ -3,7 +3,7 @@ var managers = require('../managers');
 var logger = managers.log.getLogger('UsersController');
 
 function getUserPublicDetails( user ){
-    return { 'email' : user.email };
+    return { 'email' : user.email, 'username' : user.username };
 }
 
 exports.signup = function(req, res){
