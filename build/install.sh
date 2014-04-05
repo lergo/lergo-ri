@@ -103,6 +103,7 @@ upgrade_main(){
     source service.template.sh > service.sh
     chmod +x service.sh
 
+
     if [ -z $ME_CONF_URL ];then
         echo "missing me conf url"
         exit 1
