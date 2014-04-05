@@ -41,6 +41,19 @@
         "mocha":"*",
         "grunt-mocha-test":"*"
     },
+    "bundledDependencies":[
+        "lodash",
+        "express",
+        "crypto",
+        "node-uuid",
+        "swagger-node-express",
+        "passport",
+        "passport-openid",
+        "mongodb",
+        "log4js",
+        "async",
+        "sha1"
+    ],
     "engines": {
         "node": ">=0.8.0"
     }
