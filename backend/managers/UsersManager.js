@@ -7,6 +7,11 @@ var errorManager = appContext.errorManager;
 
 exports.saveUser = function (user, callback) {
     logger.info('saving user');
+	if (!isValidEmail(user.username)) {
+		logger.info('User name [%s] is invalid . User name should not be lesser then 3 characters it should only contain alphanumeric characters and underscore ',
+						user.username);
+		callback(new errorManager.InvalidUsername());
+	}
     exports.getUserByEmail(user.username, function (err, obj) {
         console.log(arguments);
         if (!!err) {
@@ -103,3 +108,31 @@ exports.getUserByEmail = function (email, callback) {
         });
     });
 };
+/**
+ * This function will return true if userName >= 3 character and should only include
+ * alphanumeric and under score else return false;
+ * 
+ * @param userName
+ * @returns
+ */
+function isValidUserName(userName) {
+	if (userName === null || typeof (userName) === 'unDefined'|| userName.length < 3) {
+		return false;
+	}
+	var usernameRegex = /^[a-zA-Z0-9\_]+$/;
+	return userName.match(usernameRegex);
+}
+
+/**
+ *  Return true if email is valid else return false 
+ *  This method only checks pattern of email
+ * @param email
+ * @returns
+ */
+function isValidEmail(email) {
+	if (email === null || typeof (email) === 'unDefined' || email.length === 0) {
+		return false;
+	}
+	var emailRegex = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4}|museum)$/;
+	return email.match(emailRegex);
+}

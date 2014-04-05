@@ -13,3 +13,5 @@ exports.errorManager = require('./managers/ErrorManager');
 exports.dbManager = require('./managers/DbManager');
 exports.settings = require ('./managers/SettingsManager');
 exports.usersManager = require('./managers/UsersManager');
+exports.questionsManager = require('./managers/QuestionsManager');
+exports.lessonsManager = require('./managers/LessonsManager');
