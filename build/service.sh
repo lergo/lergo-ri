@@ -58,7 +58,8 @@ status(){
 }
 
 upgrade(){
-    $INSTALL_LOCATION/build/upgrade.sh
+    cd $INSTALL_LOCATION/build
+    ./upgrade.sh
 }
 
 
