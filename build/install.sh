@@ -53,7 +53,7 @@ install_main(){
     echo `pwd`
     git fetch
     git branch -a
-    git checkout LERGO4_LERGO5
+    git checkout main
     cd ..
 
 
