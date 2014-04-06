@@ -84,10 +84,13 @@ upgrade_main(){
     mkdir -p /var/www/lergo/lergo-ui
 
     BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ri/dist/lergo-ri-0.0.0.tgz
-    npm install $BACKEND_URL -g --prefix /var/www/lergo/lergo-ri
+    npm install $BACKEND_URL -g --prefix /var/www/lergo
+    ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
+
 
     FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ui/dist/lergo-ui-0.0.0.tgz
-    npm install $FRONTEND_URL -g --prefix /var/www/lergo/lergo-ui
+    npm install $FRONTEND_URL -g --prefix /var/www/lergo/
+    ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
 
     cd /var/www/lergo/lergo-ri/build
 

@@ -26,7 +26,7 @@ server {
 
  location / {
     autoindex off;
-    root /var/www/lergo/lergo-ui/dist;
+    root /var/www/lergo/lergo-ui;
   }
 
 }
