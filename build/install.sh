@@ -130,8 +130,8 @@ upgrade_main(){
      source ./nginx.conf.template > nginx.conf
      service nginx restart
 
-    "echo "updating service file"
-     source ./service.template.sh > service.sh
+    #"echo "updating service file"
+    # source ./service.template.sh > service.sh
      chmod +x service.sh
 
      chmod +x /var/www/lergo/lergo-ri/build/*.sh
