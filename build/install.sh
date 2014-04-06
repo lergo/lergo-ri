@@ -75,7 +75,7 @@ upgrade_main(){
 
     echo "current build is [$CURRENT_BUILD_ID] and latest is [$LATEST_BUILD_ID]"
 
-     if [ "$CURRENT_BUILD_ID" != "$LATEST_BUILD_ID" ]; then
+     if [ "LATEST_BUILD_ID" != "" ] && [ "$CURRENT_BUILD_ID" != "$LATEST_BUILD_ID" ]; then
         echo "moving to tmp - hopefully this will resolve the issue"
         cd /tmp
         echo "seems like there's a new build. I will install it"
