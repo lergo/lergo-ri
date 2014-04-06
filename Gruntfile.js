@@ -33,6 +33,20 @@ module.exports = function (grunt) {
                 src: ['test/**/*.js']
             }
         },
+        copy: {
+            dist: {
+                files: [
+
+                    {
+                        expand: true,
+                        dest: '<%= yeoman.dist %>',
+                        src: [
+                            'package.json', 'backend/**/*', 'public/**/*', 'swagger-ui/**/*', 'server.js', 'start.sh', 'LICENSE'
+                        ]
+                    }
+                ]
+            }
+        },
         jshint: {
 
             options: {
@@ -71,7 +85,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('build', [
-        'jshint'//,
+        'copy'//,
 //        'test'
     ]);
 
@@ -80,8 +94,8 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        'jshint'//,
+        'jshint',
 //        'test',
-//        'build'
+        'build'
     ]);
 };
