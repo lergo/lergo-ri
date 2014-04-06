@@ -76,19 +76,20 @@ upgrade_main(){
     echo "current build is [$CURRENT_BUILD_ID] and latest is [$LATEST_BUILD_ID]"
 
      if [ "$CURRENT_BUILD_ID" != "$LATEST_BUILD_ID" ]; then
-
+        echo "moving to tmp - hopefully this will resolve the issue"
+        cd /tmp
         echo "seems like there's a new build. I will install it"
 
         mkdir -p /var/www/lergo/lergo-ri
         mkdir -p /var/www/lergo/lergo-ui
 
         BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ri/dist/lergo-ri-0.0.0.tgz
-        npm install $BACKEND_URL -g --prefix /var/www/lergo
+        npm install $BACKEND_URL --verbose -g --prefix /var/www/lergo
         ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
 
 
         FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ui/dist/lergo-ui-0.0.0.tgz
-        npm install $FRONTEND_URL -g --prefix /var/www/lergo/
+        npm install $FRONTEND_URL -verbose -g --prefix /var/www/lergo/
         ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
 
         cat $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
