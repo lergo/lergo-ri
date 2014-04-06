@@ -83,14 +83,40 @@ upgrade_main(){
         mkdir -p /var/www/lergo/lergo-ri
         mkdir -p /var/www/lergo/lergo-ui
 
-        BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ri-0.0.0.tgz
-        npm install $BACKEND_URL --verbose -g --prefix /var/www/lergo
-        ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
+        echo "install ui"
+        LERGO_RI_LOCATION=/var/www/lergo/lib/lergo-ri
+        if [ ! -e $LERGO_RI_LOCATION ]; then
+            mkdir -p $LERGO_RI_LOCATION
+        fi
 
+        BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ri-0.0.0.tgz
+        wget $BACKEND_URL -O $LERGO_RI_LOCATION/lergo-ri.tgz
+
+        cd $LERGO_RI_LOCATION
+        rm -Rf package
+        tar -xzvf lergo-ri.tgz
+        ln -Tfs /var/www/lergo/lib/lergo-ri/package /var/www/lergo/lergo-ri
+
+       # npm install $BACKEND_URL --verbose -g --prefix /var/www/lergo
+       # ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
+
+
+        echo "installing ui"
+        LERGO_UI_LOCATION=/var/www/lergo/lib/lergo-ui
+        if [ ! -e $LERGO_UI_LOCATION ]; then
+            mkdir -p $LERGO_UI_LOCATION
+        fi
 
         FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ui-0.0.0.tgz
-        npm install $FRONTEND_URL --verbose -g --prefix /var/www/lergo/
-        ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
+        wget $FRONTEND_URL -O $LERGO_UI_LOCATION/lergo-ui.tgz
+
+        cd $LERGO_UI_LOCATION
+        rm -Rf package
+        tar -xzvf lergo-ui.tgz
+        ln -Tfs /var/www/lergo/lib/lergo-ui/package /var/www/lergo/lergo-ui
+
+        #npm install $FRONTEND_URL --verbose -g --prefix /var/www/lergo/
+        #ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
 
         echo $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
         echo "latest build successfully installed. currently installed build is $LATEST_BUILD_ID"
