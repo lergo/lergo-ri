@@ -92,7 +92,7 @@ upgrade_main(){
         npm install $FRONTEND_URL -verbose -g --prefix /var/www/lergo/
         ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
 
-        cat $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
+        echo $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
         echo "latest build successfully installed. currently installed build is $LATEST_BUILD_ID"
      fi
 
