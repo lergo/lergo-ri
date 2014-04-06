@@ -88,7 +88,7 @@ var actions = require('./backend/ApiActions').actions;
 for ( var i in actions ){
     if ( actions.hasOwnProperty(i) ){
         var action = actions[i];
-        logger.log('adding [%s]', action.spec.name);
+        logger.info('adding [%s]', action.spec.name);
         var method = action.spec.method;
         if ( method === 'POST' ){
             swagger.addPost( action );
