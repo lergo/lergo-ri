@@ -36,7 +36,7 @@ install_main(){
 
     install_nginx
 
-    install_git
+
 
     DIST=/var/www/lergo
 
@@ -44,20 +44,6 @@ install_main(){
     mkdir -p $DIST
     cd $DIST
 
-    echo "cloning git repositories"
-
-    git clone --recursive https://github.com/lergo/lergo-ri.git
-
-    cd lergo-ri
-
-    echo `pwd`
-    git fetch
-    git branch -a
-    git checkout main
-    cd ..
-
-
-    git clone https://github.com/lergo/lergo-ui.git
 
     echo "stopping iptables service"
     service iptables stop
@@ -79,21 +65,29 @@ install_main(){
 
 
 upgrade_main(){
+
+     LATEST_BUILD_ID=`wget --no-cache --no-check-certificate -O - https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/build.id`
+     CURRENT_BUILD_ID=""
+     if [ -e /var/www/lergo/build.id ]; then
+        CURRENT_BUILD_ID=`cat /var/www/lergo/build.id`
+     fi
+
+    echo "current build is [$CURRENT_BUILD_ID] and latest is [$LATEST_BUILD_ID]"
+
+     if [ "$CURRENT_BUILD_ID" = "$LATEST_BUILD_ID" ]; then
+        echo "nothing to upgrade"
+        exit 0
+     fi
      init
 
-    cd /var/www/lergo/lergo-ri
-    git pull
-    rm -Rf node_modules
-    npm install
+    mkdir -p /var/www/lergo/lergo-ri
+    mkdir -p /var/www/lergo/lergo-ui
 
-    cd /var/www/lergo/lergo-ui
-    git pull
-    rm -Rf app/bower_components
-    bower --allow-root install --config.interactive=false
+    BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ri/dist/lergo-ri-0.0.0.tgz
+    npm install $BACKEND_URL -g --prefix /var/www/lergo/lergo-ri
 
-    rm -Rf node_modules
-    npm install
-    grunt build
+    FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ui/dist/lergo-ui-0.0.0.tgz
+    npm install $FRONTEND_URL -g --prefix /var/www/lergo/lergo-ui
 
     cd /var/www/lergo/lergo-ri/build
 
