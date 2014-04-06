@@ -19,6 +19,7 @@ PIDFILE=/var/run/$SERVICE_NAME.pid
 LOGFILE=/var/log/$SERVICE_NAME.log
 
 SCRIPT="$INSTALL_LOCATION/start.sh"
+chmod +x $SCRIPT
 RUNAS=root
 
 
