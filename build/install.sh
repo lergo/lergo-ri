@@ -67,50 +67,55 @@ install_main(){
 upgrade_main(){
 
      LATEST_BUILD_ID=`wget --no-cache --no-check-certificate -O - https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/build.id`
+     CURRENT_BUILD_FILE=/var/www/lergo/build.id
      CURRENT_BUILD_ID=""
-     if [ -e /var/www/lergo/build.id ]; then
-        CURRENT_BUILD_ID=`cat /var/www/lergo/build.id`
+     if [ -e $CURRENT_BUILD_FILE ]; then
+        CURRENT_BUILD_ID=`cat $CURRENT_BUILD_FILE`
      fi
 
     echo "current build is [$CURRENT_BUILD_ID] and latest is [$LATEST_BUILD_ID]"
 
-     if [ "$CURRENT_BUILD_ID" = "$LATEST_BUILD_ID" ]; then
-        echo "nothing to upgrade"
-        exit 0
+     if [ "$CURRENT_BUILD_ID" != "$LATEST_BUILD_ID" ]; then
+
+        echo "seems like there's a new build. I will install it"
+
+        mkdir -p /var/www/lergo/lergo-ri
+        mkdir -p /var/www/lergo/lergo-ui
+
+        BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ri/dist/lergo-ri-0.0.0.tgz
+        npm install $BACKEND_URL -g --prefix /var/www/lergo
+        ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
+
+
+        FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ui/dist/lergo-ui-0.0.0.tgz
+        npm install $FRONTEND_URL -g --prefix /var/www/lergo/
+        ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
+
+        cat $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
+        echo "latest build successfully installed. currently installed build is $LATEST_BUILD_ID"
      fi
+
      init
 
-    mkdir -p /var/www/lergo/lergo-ri
-    mkdir -p /var/www/lergo/lergo-ui
+     cd /var/www/lergo/lergo-ri/build
 
-    BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ri/dist/lergo-ri-0.0.0.tgz
-    npm install $BACKEND_URL -g --prefix /var/www/lergo
-    ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
+     source nginx.conf.template > nginx.conf
+     service nginx restart
 
-
-    FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/lergo-ui/dist/lergo-ui-0.0.0.tgz
-    npm install $FRONTEND_URL -g --prefix /var/www/lergo/
-    ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
-
-    cd /var/www/lergo/lergo-ri/build
-
-    source nginx.conf.template > nginx.conf
-    service nginx restart
-
-    source service.template.sh > service.sh
-    chmod +x service.sh
+     source service.template.sh > service.sh
+     chmod +x service.sh
 
 
-    if [ -z $ME_CONF_URL ];then
+     if [ -z $ME_CONF_URL ];then
         echo "missing me conf url"
         exit 1
-    else
+     else
         echo "updating configuration"
         cd /var/www/lergo/lergo-ri
         mkdir -p conf/dev/
         run_wget -O conf/dev/meConf.js $ME_CONF_URL
 
-    fi
+     fi
 
 }
 
