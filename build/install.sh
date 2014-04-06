@@ -15,7 +15,7 @@ install_main(){
 
 
     install_mongo
-    service mongod start
+    /etc/init.d/mongod start
 
     install_node
 
@@ -128,7 +128,7 @@ upgrade_main(){
 
     echo "updating nginx conf"
      source ./nginx.conf.template > nginx.conf
-     service nginx restart
+     /etc/init.d/nginx nginx restart
 
     #"echo "updating service file"
     # source ./service.template.sh > service.sh
