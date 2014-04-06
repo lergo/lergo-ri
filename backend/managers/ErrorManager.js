@@ -27,7 +27,8 @@ var errorsDefinition = {
     'InternalServerError' : createNewError(2, 'unknown error', 500),
     'NotLoggedIn' : createNewError(3, 'not logged in', 401),
     'NotAdmin' : createNewError(4, 'requires admin permissions', 401),
-    'WrongLogin' : createNewError(5, 'wrong login', 401)
+    'WrongLogin' : createNewError(5, 'wrong login', 401),
+    'InvalidEmail': createNewError(6, 'invalid email', 500)
 };
 
 

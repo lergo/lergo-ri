@@ -1,8 +1,8 @@
 var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
 var logger = require('log4js').getLogger('SettingsManager');
-var path = require('path'),
-    appDir = path.dirname(require.main.filename);
+//var path = require('path');
+    /*appDir = path.dirname(require.main.filename); */
 
 var settings = null;
 
@@ -45,7 +45,7 @@ dbManager.connect('settings', function( db, collection, done){
 
 exports.saveSettings = function( settings, callback ){
     dbManager.connect('settings', function(db, collection,done){
-        collection.update({'_id' : settings._id }, settings, function(err, result){
+        collection.update({'_id' : settings._id }, settings, function(err/*, result*/){
             if ( !!err ){
                 logger.error('error while saving ');
                 callback( new errorManager.InternalServerError(err,'unable to save settings'), null );
@@ -56,7 +56,7 @@ exports.saveSettings = function( settings, callback ){
             logger.info('settings saved successfully');
             done();
             return;
-        })
+        });
     });
 };
 

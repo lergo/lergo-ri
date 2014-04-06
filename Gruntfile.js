@@ -34,17 +34,17 @@ module.exports = function (grunt) {
             }
         },
         jshint: {
-            backend: {
-                options: {
-                    jshintrc: '.jshintrc'
-                },
-                all: [
-                    'Gruntfile.js',
-                    'server.js',
-                    '*.js',
-                    'backend/{,*/}*.js'
-                ]
+
+            options: {
+                jshintrc: '.jshintrc'
             },
+            all: [
+                'Gruntfile.js',
+                'server.js',
+                '*.js',
+                'backend/{,*/}*.js'
+            ],
+
             test: {
                 options: {
                     jshintrc: 'test.jshintrc'
@@ -71,16 +71,8 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('build', [
-        'useminPrepare',
-        'concurrent:dist',
-        'concat',
-        'copy',
-        'cdnify',
-        'ngmin',
-        'cssmin',
-        'uglify',
-        'rev',
-        'usemin'
+        'jshint'//,
+//        'test'
     ]);
 
     grunt.registerTask('test', [
@@ -88,8 +80,8 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        'jshint',
-        'test',
+        'jshint'//,
+//        'test',
 //        'build'
     ]);
 };

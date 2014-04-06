@@ -3,31 +3,31 @@ var path = require('path'),
     appDir = path.dirname(require.main.filename);
 
 var publicConfiguration = {
-    "title" : "Hello World"
+    'title': 'Hello World'
 };
 
 var privateConfiguration = {
     'cookieSessionSecret': undefined,
-    'dbUrl' : undefined
+    'dbUrl': undefined
 };
 
 var meConf = null;
-try{
-    meConfPath = path.join(appDir, 'conf/dev/meConf');
-    logger.info('trying to find me conf at [%s]', path.resolve(meConfPath) );
-    meConf = require( meConfPath );
-}catch( e ) { console.log('meConf does not exist. ignoring.. ');}
-
-
+try {
+    var meConfPath = path.join(appDir, 'conf/dev/meConf');
+    logger.info('trying to find me conf at [%s]', path.resolve(meConfPath));
+    meConf = require(meConfPath);
+} catch (e) {
+    logger.info('meConf does not exist. ignoring.. ');
+}
 
 
 var publicConfigurationInitialized = false;
 var privateConfigurationInitialized = false;
 
-function getPublicConfiguration(){
+function getPublicConfiguration() {
     if (!publicConfigurationInitialized) {
         publicConfigurationInitialized = true;
-        if (meConf != null) {
+        if (meConf !== null) {
             for (var i in publicConfiguration) {
                 if (meConf.hasOwnProperty(i)) {
                     publicConfiguration[i] = meConf[i];
@@ -39,19 +39,19 @@ function getPublicConfiguration(){
 }
 
 
-function getPrivateConfiguration(){
-    if ( !privateConfigurationInitialized ) {
+function getPrivateConfiguration() {
+    if (!privateConfigurationInitialized) {
         privateConfigurationInitialized = true;
 
         var pubConf = getPublicConfiguration();
 
-        if ( pubConf != null ){
-            for ( var j in pubConf ){
+        if (pubConf !== null) {
+            for (var j in pubConf) {
                 privateConfiguration[j] = pubConf[j];
             }
         }
-        if ( meConf != null ){
-            for ( var i in meConf ){
+        if (meConf !== null) {
+            for (var i in meConf) {
                 privateConfiguration[i] = meConf[i];
             }
         }
@@ -61,19 +61,19 @@ function getPrivateConfiguration(){
 }
 
 
-exports.sendPublicConfiguration = function( req, res ){
-    var name = req.param("name") || "conf";
+exports.sendPublicConfiguration = function (req, res) {
+    var name = req.param('name') || 'conf';
 
-    res.send( "window." + name + " = " + JSON.stringify(getPublicConfiguration()) + ";");
+    res.send('window.' + name + ' = ' + JSON.stringify(getPublicConfiguration()) + ';');
 };
 
 
 var prConf = getPrivateConfiguration();
-if ( prConf != null ){
-    for ( var i in prConf ){
-        if ( prConf[i] === undefined ){
+if (prConf !== null) {
+    for (var i in prConf) {
+        if (prConf[i] === undefined) {
 
-            throw new Error("undefined configuration [" + i + "]");
+            throw new Error('undefined configuration [' + i + ']');
         }
         exports[i] = prConf[i];
     }

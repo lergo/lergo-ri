@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-
+var sha1 = require('sha1');
 var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL
 
 /** todo: make this configurable **/
@@ -15,7 +15,7 @@ exports.encrypt = function (text) {
 exports.decrypt = function( text ){
     var decipher = crypto.createDecipher(algorithm, key);
     var decrypted = decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
-
+    return decrypted;
 };
 
 exports.digest = function( text ){

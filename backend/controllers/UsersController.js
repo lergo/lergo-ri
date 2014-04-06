@@ -2,6 +2,8 @@
 var managers = require('../managers');
 var logger = managers.log.getLogger('UsersController');
 
+logger.info('initializing');
+
 function getUserPublicDetails( user ){
     return { 'email' : user.email, 'username' : user.username };
 }
@@ -63,9 +65,9 @@ exports.loggedInMiddleware = function( req, res, next ){
             return;
         }
         req.user = obj;
-        console.log('placed user on request');
+        logger.info('placed user on request');
         next();
-    })
+    });
 };
 
 
