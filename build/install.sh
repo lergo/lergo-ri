@@ -89,7 +89,7 @@ upgrade_main(){
 
 
         FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ui-0.0.0.tgz
-        npm install $FRONTEND_URL -verbose -g --prefix /var/www/lergo/
+        npm install $FRONTEND_URL --verbose -g --prefix /var/www/lergo/
         ln -Tfs /var/www/lergo/lib/node_modules/lergo-ui/ /var/www/lergo/lergo-ui
 
         echo $LATEST_BUILD_ID > $CURRENT_BUILD_FILE
