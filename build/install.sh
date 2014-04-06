@@ -126,10 +126,12 @@ upgrade_main(){
 
      cd /var/www/lergo/lergo-ri/build
 
-     source nginx.conf.template > nginx.conf
+    echo "updating nginx conf"
+     source ./nginx.conf.template > nginx.conf
      service nginx restart
 
-     source service.template.sh > service.sh
+    "echo "updating service file"
+     source ./service.template.sh > service.sh
      chmod +x service.sh
 
      chmod +x /var/www/lergo/lergo-ri/build/*.sh
