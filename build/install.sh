@@ -128,7 +128,7 @@ upgrade_main(){
 
     echo "updating nginx conf"
      source ./nginx.conf.template > nginx.conf
-     /etc/init.d/nginx nginx restart
+     /etc/init.d/nginx restart
 
     #"echo "updating service file"
     # source ./service.template.sh > service.sh
