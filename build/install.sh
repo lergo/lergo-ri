@@ -106,6 +106,8 @@ upgrade_main(){
      source service.template.sh > service.sh
      chmod +x service.sh
 
+     chmod +x /var/www/lergo/lergo-ri/build/*.sh
+
 
      if [ -z $ME_CONF_URL ];then
         echo "missing me conf url"
