@@ -6,7 +6,7 @@
 var port = 3000;
 
 var express = require('express');
-var routes = require('./backend/Routes');
+//var routes = require('./backend/Routes');
 var swagger = require('swagger-node-express');
 var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
@@ -41,7 +41,6 @@ app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
-    debugger;
     app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
     app.use('/backend/user', controllers.users.loggedInMiddleware);
     app.use(app.router);
@@ -89,7 +88,7 @@ var actions = require('./backend/ApiActions').actions;
 for ( var i in actions ){
     if ( actions.hasOwnProperty(i) ){
         var action = actions[i];
-        console.log('adding [%s]', action.spec.name);
+        logger.info('adding [%s]', action.spec.name);
         var method = action.spec.method;
         if ( method === 'POST' ){
             swagger.addPost( action );
@@ -153,7 +152,7 @@ logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
 // do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
 process.on('uncaughtException', function (err) {
-    logger.info("catchall error happened");
+    logger.info('catchall error happened');
     // handle the error safely
     logger.info(err);
 });

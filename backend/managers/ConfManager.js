@@ -1,8 +1,9 @@
-var logger = require('log4js').getLogger('SettingsManager');
-var path = require('path'), appDir = path.dirname(require.main.filename);
+var logger = require('log4js').getLogger('ConfManager');
+var path = require('path'), 
+	appDir = path.dirname(require.main.filename);
 
 var publicConfiguration = {
-	"title" : "Hello World"
+	'title' : 'Hello World'
 };
 
 var privateConfiguration = {
@@ -15,11 +16,11 @@ var privateConfiguration = {
 
 var meConf = null;
 try {
-	meConfPath = path.join(appDir, 'conf/dev/meConf');
+	var meConfPath = path.join(appDir, 'conf/dev/meConf');
 	logger.info('trying to find me conf at [%s]', path.resolve(meConfPath));
 	meConf = require(meConfPath);
 } catch (e) {
-	console.log('meConf does not exist. ignoring.. ');
+    logger.info('meConf does not exist. ignoring.. ');
 }
 
 var publicConfigurationInitialized = false;
@@ -28,7 +29,7 @@ var privateConfigurationInitialized = false;
 function getPublicConfiguration() {
 	if (!publicConfigurationInitialized) {
 		publicConfigurationInitialized = true;
-		if (meConf != null) {
+		if (meConf !== null) {
 			for ( var i in publicConfiguration) {
 				if (meConf.hasOwnProperty(i)) {
 					publicConfiguration[i] = meConf[i];
@@ -45,12 +46,12 @@ function getPrivateConfiguration() {
 
 		var pubConf = getPublicConfiguration();
 
-		if (pubConf != null) {
+		if (pubConf !== null) {
 			for ( var j in pubConf) {
 				privateConfiguration[j] = pubConf[j];
 			}
 		}
-		if (meConf != null) {
+		if (meConf !== null) {
 			for ( var i in meConf) {
 				privateConfiguration[i] = meConf[i];
 			}
@@ -61,17 +62,17 @@ function getPrivateConfiguration() {
 }
 
 exports.sendPublicConfiguration = function(req, res) {
-	var name = req.param("name") || "conf";
+	var name = req.param('name') || 'conf';
 
-	res.send("window." + name + " = " + JSON.stringify(getPublicConfiguration()) + ";");
+	res.send('window.' + name + ' = ' + JSON.stringify(getPublicConfiguration()) + ';');
 };
 
 var prConf = getPrivateConfiguration();
-if (prConf != null) {
+if (prConf !== null) {
 	for ( var i in prConf) {
 		if (prConf[i] === undefined) {
 
-			throw new Error("undefined configuration [" + i + "]");
+			throw new Error('undefined configuration [' + i + ']');
 		}
 		exports[i] = prConf[i];
 	}

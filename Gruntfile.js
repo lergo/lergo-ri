@@ -33,18 +33,47 @@ module.exports = function (grunt) {
                 src: ['test/**/*.js']
             }
         },
-        jshint: {
-            backend: {
-                options: {
-                    jshintrc: '.jshintrc'
-                },
-                all: [
-                    'Gruntfile.js',
-                    'server.js',
-                    '*.js',
-                    'backend/{,*/}*.js'
+        clean: {
+            dist: {
+                files: [
+                    {
+                        dot: true,
+                        src: [
+                            '.tmp',
+                            '<%= yeoman.dist %>/*',
+                            '!<%= yeoman.dist %>/.git*'
+                        ]
+                    }
                 ]
             },
+            server: '.tmp'
+        },
+        copy: {
+            dist: {
+                files: [
+
+                    {
+                        expand: true,
+                        dest: '<%= yeoman.dist %>',
+                        src: [
+                            'package.json', 'backend/**/*', 'build/**/*','public/**/*', 'swagger-ui/**/*', 'server.js', 'start.sh', 'LICENSE'
+                        ]
+                    }
+                ]
+            }
+        },
+        jshint: {
+
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            all: [
+                'Gruntfile.js',
+                'server.js',
+                '*.js',
+                'backend/{,*/}*.js'
+            ],
+
             test: {
                 options: {
                     jshintrc: 'test.jshintrc'
@@ -71,16 +100,10 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('build', [
-        'useminPrepare',
-        'concurrent:dist',
-        'concat',
-        'copy',
-        'cdnify',
-        'ngmin',
-        'cssmin',
-        'uglify',
-        'rev',
-        'usemin'
+        'jshint',
+        'clean:dist',
+        'copy'//,
+//        'test'
     ]);
 
     grunt.registerTask('test', [
@@ -89,7 +112,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'jshint',
-        'test',
-//        'build'
+//        'test',
+        'build'
     ]);
 };
