@@ -1,0 +1,1 @@
+exports.email=require('./LergoEmailService');

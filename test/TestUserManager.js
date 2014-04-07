@@ -6,7 +6,7 @@ var logger = appContext.logManager.getLogger('TestUserManager');
 var usersManager = appContext.usersManager;
 var dbManager = appContext.dbManager;
 var async = require('async');
-dbManager.setUrl('mongodb://127.0.0.1:27017/lergo-test');
+//dbManager.setUrl('mongodb://127.0.0.1:27017/lergo-test');
 
 
 

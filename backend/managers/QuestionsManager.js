@@ -6,16 +6,16 @@ var errorManager = appContext.errorManager;
 
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
-	dbManager.connect('questions',function(db, collection, done) {
-		collection.insert(question,function(err) {
+
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.insert(question, function(err) {
 			if (!!err) {
-				logger.error('error creating question [%s] : [%s]',question.questionText,err);
+				logger.error('error creating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
 				done();
 				return;
-			}
-			else {
-				logger.info('Question [%s] created successfully. invoking callback',question.questionText);
+			} else {
+				logger.info('Question [%s] created successfully. invoking callback', question.questionText);
 				callback(null, question);
 				done();
 				return;
@@ -26,16 +26,20 @@ exports.createQuestion = function(question, callback) {
 
 exports.updateQuestion = function(question, id, callback) {
 	logger.info('Updating question');
-	dbManager.connect('questions',function(db, collection, done) {
-		collection.save({'_id':id,'questionText':question.questionText,'options':question.options,'correctAnswer':question.correctAnswer},function(err) {
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.save({
+			'_id' : dbManager.id(id),
+			'questionText' : question.questionText,
+			'options' : question.options,
+			'correctAnswer' : question.correctAnswer
+		}, function(err) {
 			if (!!err) {
-				logger.error('error in updating question [%s] : [%s]',question.questionText,err);
+				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
 				done();
 				return;
-			}
-			else {
-				logger.info('Question [%s] updated successfully. invoking callback',question.questionText);
+			} else {
+				logger.info('Question [%s] updated successfully. invoking callback', question.questionText);
 				callback(null, question);
 				done();
 				return;
@@ -46,8 +50,10 @@ exports.updateQuestion = function(question, id, callback) {
 
 exports.deleteQuestion = function(id, callback) {
 	logger.info('Creating question');
-	dbManager.connect('questions',function(db, collection, done) {
-		collection.remove({'_id':id},function(err) {
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.remove({
+			'_id' : dbManager.id(id)
+		}, function(err) {
 			if (!!err) {
 				logger.error('unable to query for user [%s]', err.message);
 			}
@@ -60,7 +66,9 @@ exports.deleteQuestion = function(id, callback) {
 exports.getQuestionById = function(id, callback) {
 	logger.info('Creating question');
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.findOne({'_id' : id}, function(err, result) {
+		collection.findOne({
+			'_id' : dbManager.id(id)
+		}, function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for question [%s]', err.message);
 			}
@@ -75,7 +83,7 @@ exports.getQuestions = function(callback) {
 	dbManager.connect('questions', function(db, collection, done) {
 		collection.find().toArray(function(err, result) {
 			if (!!err) {
-				logger.error('unable to query for questions [%s]',err.message);
+				logger.error('unable to query for questions [%s]', err.message);
 			}
 			done();
 			callback(err, result);
