@@ -2,6 +2,7 @@ var logger = require('log4js').getLogger('ConfManager');
 var path = require('path'),
 	appDir = path.dirname(require.main.filename);
 
+
 var publicConfiguration = {
 	'title' : 'Hello World'
 };
