@@ -6,12 +6,26 @@ var publicConfiguration = {
 	'title' : 'Hello World'
 };
 
+/**
+ *
+ * examples
+ * ========
+ *
+ * email : {
+ *  'service' : 'Gmail' ,
+ *  'auth' : {
+ *      'user' : 'my.email@address.com,
+ *      'pass' : 'myPassword'
+ *  }
+ * }
+ * @type {{cookieSessionSecret: undefined, dbUrl: undefined, email: undefined}}
+ */
+
 var privateConfiguration = {
 	'cookieSessionSecret' : undefined,
 	'dbUrl' : undefined,
-	'emailConfService' : undefined,
-	'emailConfUser' : undefined,
-	'emailConfPass' : undefined
+    'email' : undefined
+
 };
 
 var meConf = null;
