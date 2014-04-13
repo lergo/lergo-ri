@@ -35,20 +35,20 @@ var controllers = require('./backend/controllers');
 // Configuration
 var useStatic = express.static(__dirname + '/swagger-ui/dist');
 logger.info(typeof(useStatic));
-app.configure(function () {
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser());
-    app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
-    app.use('/backend/user', controllers.users.loggedInMiddleware);
-    app.use(app.router);
-    app.use('/public', express.static(__dirname + '/public'));
-    app.use('/swagger', function () {
-        return useStatic.apply(this, arguments);
-    });
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.cookieParser());
+app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
+app.use('/backend/user', controllers.users.loggedInMiddleware);
+app.use(app.router);
+app.use('/public', express.static(__dirname + '/public'));
+app.use('/swagger', function () {
+    return useStatic.apply(this, arguments);
 });
+
 
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
