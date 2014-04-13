@@ -15,7 +15,13 @@
     "crypto": "*",
     "node-uuid": "*",
     "lodash": "*",
-    "nodemailer": "*"
+    "nodemailer": "*",
+    "body-parser": "*",
+    "cookie-parser": "*",
+    "method-override": "*",
+    "cookie-session": "*",
+    "error-handler": "*",
+    "errorhandler": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -41,20 +47,20 @@
     "mocha": "*",
     "grunt-mocha-test": "*"
   },
-    "bundledDependencies":[
-        "lodash",
-        "express",
-        "crypto",
-        "node-uuid",
-        "swagger-node-express",
-        "passport",
-        "passport-openid",
-        "mongodb",
-        "log4js",
-        "async",
-        "sha1",
-        "nodemailer"
-    ],
+  "bundledDependencies": [
+    "lodash",
+    "express",
+    "crypto",
+    "node-uuid",
+    "swagger-node-express",
+    "passport",
+    "passport-openid",
+    "mongodb",
+    "log4js",
+    "async",
+    "sha1",
+    "nodemailer"
+  ],
   "engines": {
     "node": ">=0.8.0"
   }
