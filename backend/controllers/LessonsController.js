@@ -2,6 +2,7 @@
 var managers = require('../managers');
 exports.createLesson = function(req, res){
     var lesson = req.body;
+    lesson.userId = req.user._id;
     managers.lessons.createLesson( lesson, function( err, obj  ){
         if ( !!err ){
             err.send(res);
@@ -12,8 +13,8 @@ exports.createLesson = function(req, res){
         }
     });
 };
-exports.getLessons = function(req, res){
-    managers.lessons.getLessons( function( err, obj  ){
+exports.getUserLessons = function(req, res){
+    managers.lessons.getUserLessons( req.user._id, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;

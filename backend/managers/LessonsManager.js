@@ -73,10 +73,10 @@ exports.getLessonById = function(id, callback) {
 	});
 };
 
-exports.getLessons = function(callback) {
+exports.getUserLessons = function( userId, callback) {
 	logger.info('Getting lessons');
 	dbManager.connect('lessons', function(db, collection, done) {
-		collection.find().toArray(function(err, result) {
+		collection.find({'userId' : userId }).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for lessons [%s]', err.message);
 			}

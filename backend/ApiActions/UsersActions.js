@@ -211,7 +211,7 @@ exports.createLesson = {
 	},
 	'action' : controllers.lessons.createLesson
 };
-exports.getLessons = {
+exports.getUserLessons = {
 	'spec' : {
 		'description' : 'Get lessons',
 		'name' : 'getLessons',
@@ -225,7 +225,7 @@ exports.getLessons = {
 		} ],
 		'nickname' : 'getLessons'
 	},
-	'action' : controllers.lessons.getLessons
+	'action' : controllers.lessons.getUserLessons
 };
 exports.getLessonById = {
 	'spec' : {
