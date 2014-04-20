@@ -83,6 +83,23 @@ exports.isLoggedIn = {
 	},
 	'action' : controllers.users.isLoggedIn
 };
+
+exports.getQuestionUsages = {
+    'spec' : {
+        'description' : 'Get Question Usages',
+        'name' : 'question usages',
+        'path' : '/backend/user/questions/:id/usages',
+        'summary' : 'Returns Lessons That Use The Question',
+        'method' : 'GET',
+        'parameters' : [ {
+
+        } ],
+        'nickname' : 'QuestionUsages'
+
+    },
+    'action' : controllers.questions.findUsages
+};
+
 exports.createQuestion = {
 	'spec' : {
 		'description' : 'Create question',
@@ -145,8 +162,8 @@ exports.getQuestionById = {
 };
 exports.updateQuestion = {
 	'spec' : {
-		'description' : 'Create question',
-		'name' : 'create',
+		'description' : 'Updates question',
+		'name' : 'update question',
 		'path' : '/backend/user/questions/{id}',
 		'summary' : 'Update question',
 		'method' : 'POST',

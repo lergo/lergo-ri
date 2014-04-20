@@ -26,13 +26,11 @@ exports.createQuestion = function(question, callback) {
 
 exports.updateQuestion = function(question, id, callback) {
 	logger.info('Updating question');
+
+    question['_id'] = dbManager.id(id);
+
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.save({
-			'_id' : dbManager.id(id),
-			'questionText' : question.questionText,
-			'options' : question.options,
-			'correctAnswer' : question.correctAnswer
-		}, function(err) {
+		collection.save( question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
