@@ -38,9 +38,9 @@ exports.getLessonById = function(req, res){
 };
 exports.updateLesson = function(req, res){
     var lesson = req.body;
-    var id = req.params.id;
     lesson.userId = req.user._id;
-    managers.lessons.updateLesson( lesson,id, function( err, obj  ){
+    lesson._id = managers.db.id( lesson._id );
+    managers.lessons.updateLesson( lesson, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;

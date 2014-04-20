@@ -25,9 +25,10 @@ exports.createLesson = function(lesson, callback) {
 
 exports.updateLesson = function(lesson, callback) {
 	logger.info('Updating lesson');
-    lesson._id = dbManager.id(id);
+
 	dbManager.connect('lessons', function(db, collection, done) {
-		collection.save( { '_id' : lesson._id, 'userId' : lesson.userId } , lesson, function(err) {
+
+		collection.update( { '_id' : lesson._id, 'userId' : lesson.userId } , lesson, function(err) {
 			if (!!err) {
 				logger.error('error in updating lesson [%s] : [%s]', lesson.name, err);
 				callback(new errorManager.InternalServerError());
