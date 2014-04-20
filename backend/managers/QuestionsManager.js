@@ -27,7 +27,7 @@ exports.createQuestion = function(question, callback) {
 exports.updateQuestion = function(question, id, callback) {
 	logger.info('Updating question');
 
-    question['_id'] = dbManager.id(id);
+    question._id = dbManager.id(id);
 
 	dbManager.connect('questions', function(db, collection, done) {
 		collection.save( question, function(err) {
