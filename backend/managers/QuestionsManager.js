@@ -90,3 +90,18 @@ exports.getQuestions = function(callback) {
 		});
 	});
 };
+
+exports.findUsages = function(id, callback) {
+	logger.info('Finding usages of the question');
+	dbManager.connect('lessons', function(db, collection, done) {
+		collection.find({
+			'steps.items' : dbManager.id(id)
+		}).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to find usage of questions [%s]', err.message);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
