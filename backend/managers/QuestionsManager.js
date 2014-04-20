@@ -27,12 +27,9 @@ exports.createQuestion = function(question, callback) {
 exports.updateQuestion = function(question, id, callback) {
 	logger.info('Updating question');
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.save({
-			'_id' : dbManager.id(id),
-			'questionText' : question.questionText,
-			'options' : question.options,
-			'correctAnswer' : question.correctAnswer
-		}, function(err) {
+		collection.update({
+			'_id' : dbManager.id(id)
+		}, question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
@@ -84,6 +81,21 @@ exports.getQuestions = function(callback) {
 		collection.find().toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for questions [%s]', err.message);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
+
+exports.findUsages = function(id, callback) {
+	logger.info('Finding usages of the question');
+	dbManager.connect('lessons', function(db, collection, done) {
+		collection.find({
+			'steps.items' : dbManager.id(id)
+		}).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to find usage of questions [%s]', err.message);
 			}
 			done();
 			callback(err, result);
