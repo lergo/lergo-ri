@@ -67,3 +67,19 @@ exports.updateQuestion = function(req, res){
         }
     });
 };
+
+exports.findUsages = function(req, res) {
+	var id = req.params.id;
+	managers.questions.findUsages(id, function(err, obj) {
+		if (!!err) {
+			err.send(res);
+			return;
+		} else {
+			res.send({
+				'Lessons' : obj,
+				'message' : 'Usages found sucessfully'
+			});
+			return;
+		}
+	});
+};
