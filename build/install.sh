@@ -80,8 +80,8 @@ upgrade_main(){
         cd /tmp
         echo "seems like there's a new build. I will install it"
 
-        mkdir -p /var/www/lergo/lergo-ri
-        mkdir -p /var/www/lergo/lergo-ui
+        # mkdir -p /var/www/lergo/lergo-ri
+        # mkdir -p /var/www/lergo/lergo-ui
 
         echo "install ui"
         LERGO_RI_LOCATION=/var/www/lergo/lib/lergo-ri
