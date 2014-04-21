@@ -51,7 +51,7 @@ VERSION_TEMPLATE=dist/views/version/_version.html
 echo "<h1>UI</h1>" > $COMMITS_TEMPLATE
 git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> $COMMITS_TEMPLATE
 echo "<h1>BACKEND</h1>" >> $COMMITS_TEMPLATE
-cd..
+cd ..
 cd lergo-ri
 git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> ../lergo-ui/$COMMITS_TEMPLATE
 cd ..

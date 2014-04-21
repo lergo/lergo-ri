@@ -86,7 +86,7 @@ exports.getUserQuestions = function( userId, callback ){
             done();
             callback(err, result);
         } );
-    })
+    });
 };
 
 exports.getQuestions = function(callback) {

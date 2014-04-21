@@ -78,7 +78,7 @@ exports.getUserQuestions = function( req, res ){
         }
 
     });
-}
+};
 
 exports.findUsages = function(req, res) {
 	var id = req.params.id;
