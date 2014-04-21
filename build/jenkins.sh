@@ -78,7 +78,7 @@ npm pack
 # for future test needs, we have a mongo db for testing for free from cloudbees.
 # please note that it is ok to show user/password as this DB is special just for testing.
 # it has limited options and we clear it on every commit.
-mongo oceanic.mongohq.com:10078/AvJhGdIv7OYD8AV9va8w -u root -proot  --eval "db.dropDatabase()"
+# mongo oceanic.mongohq.com:10078/AvJhGdIv7OYD8AV9va8w -u root -proot  --eval "db.dropDatabase()"
 
 
 cd ..
