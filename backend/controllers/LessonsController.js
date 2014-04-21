@@ -1,7 +1,7 @@
 'use strict';
 var managers = require('../managers');
 exports.createLesson = function(req, res){
-    var lesson = req.body;
+    var lesson = {};
     lesson.userId = req.user._id;
     managers.lessons.createLesson( lesson, function( err, obj  ){
         if ( !!err ){

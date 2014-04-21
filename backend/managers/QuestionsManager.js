@@ -76,12 +76,25 @@ exports.getQuestionById = function(id, callback) {
 	});
 };
 
+exports.getUserQuestions = function( userId, callback ){
+    logger.info('getting user questions');
+    dbManager.connect('questions', function(db, collection, done){
+        collection.find({'userId' : userId }).toArray( function( err , result ) {
+            if ( !!err ){
+                logger.error('unable to query for questions', err);
+            }
+            done();
+            callback(err, result);
+        } );
+    })
+};
+
 exports.getQuestions = function(callback) {
 	logger.info('Getting question');
 	dbManager.connect('questions', function(db, collection, done) {
 		collection.find().toArray(function(err, result) {
 			if (!!err) {
-				logger.error('unable to query for questions [%s]', err.message);
+				logger.error('unable to query for questions', err);
 			}
 			done();
 			callback(err, result);

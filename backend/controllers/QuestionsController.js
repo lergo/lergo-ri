@@ -68,6 +68,18 @@ exports.updateQuestion = function(req, res){
     });
 };
 
+exports.getUserQuestions = function( req, res ){
+    managers.questions.getUserQuestions( req.user._id, function( err, obj){
+        if ( !!err ){
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+        }
+
+    });
+}
+
 exports.findUsages = function(req, res) {
 	var id = req.params.id;
 	managers.questions.findUsages(id, function(err, obj) {
@@ -75,10 +87,7 @@ exports.findUsages = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			res.send({
-				'Lessons' : obj,
-				'message' : 'Usages found sucessfully'
-			});
+			res.send( obj );
 			return;
 		}
 	});

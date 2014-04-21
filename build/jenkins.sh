@@ -15,26 +15,27 @@
 #                                                       #
 # ##################################################### #
 
-# prerequisites to install on jenkins before each build
 
+# prerequisites to install on jenkins before each build
+ 
 export DISPLAY=:1
 Xvfb :1 &
-
+ 
 #
 # Fetch node, grunt, bower, npm deps, ruby for compass...
 #
-
+ 
 #cd $1
-
+ 
 curl -s -o ./use-node https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/node/use-node
 NODE_VERSION=0.8.14 . ./use-node
-
+ 
 npm install -g grunt-cli bower
-
+ 
 curl -s -o ./use-ruby https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/ruby/use-ruby
 RUBY_VERSION=2.0.0-p247 \
 source ./use-ruby
-
+ 
 gem install --conservative compass
 
 rm -f build.id
@@ -45,7 +46,16 @@ npm install
 bower install
 grunt build --no-color
 
-cd dist
+COMMITS_TEMPLATE=dist/views/version/_commits.html
+echo "<h1>UI</h1>" > $COMMITS_TEMPLATE
+git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> $COMMITS_TEMPLATE
+echo "<h1>BACKEND</h1>" >> $COMMITS_TEMPLATE
+cd..
+cd lergo-ri
+git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> ../lergo-ui/$COMMITS_TEMPLATE
+
+
+cd dist 
 npm install --production
 npm pack
 
@@ -54,7 +64,7 @@ cd ../../
 echo "building lergo-ri"
 
 cd lergo-ri
-npm install
+npm install 
 grunt build --no-color
 cd dist
 npm install --production
