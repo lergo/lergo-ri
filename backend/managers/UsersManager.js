@@ -40,12 +40,12 @@ exports.saveUser = function (user, callback) {
 	if (!isValidEmail(user.email)) {
 		logger.info('User email [%s] is invalid .',
 						user.email);
-		callback(new errorManager.InvalidUsername());
+		callback(new errorManager.InvalidEmail());
 	}
 
     if ( !isValidUserName(user.username) ){
         logger.info('User name [%s] is invalid. User name should not be lesser then 3 characters it should only contain alphanumeric characters and underscore ');
-        callback(new errorManager.InvalidEmail());
+        callback(new errorManager.InvalidUsername());
     }
 
     exports.getUserByEmail(user.username, function (err, obj) {
