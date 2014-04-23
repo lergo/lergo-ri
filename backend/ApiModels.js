@@ -54,27 +54,7 @@ exports.models = {
     },
     'Question' : {
         'id' : 'Question',
-        'description' : 'Question to be submitted',
-        'required': [
-            'questionText',
-            'options',
-            'correctAnswer'
-        ],
-        'properties' : {
-            'questionText' : {
-                'type' : 'string',
-                'description' : 'Question description'
-            },
-            'options' : {
-                'type' : 'string',
-                'description' : 'Answer options for the question '
-            },
-            'correctAnswer' : {
-                'type' : 'string',
-                'description' : 'Correct answer from the options '
-            }
-
-        }
+        'description' : 'Question to be submitted'
     },
     'Lesson' : {
         'id' : 'Lesson',

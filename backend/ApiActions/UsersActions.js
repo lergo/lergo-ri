@@ -83,6 +83,23 @@ exports.isLoggedIn = {
 	},
 	'action' : controllers.users.isLoggedIn
 };
+
+exports.getQuestionUsages = {
+    'spec' : {
+        'description' : 'Get Question Usages',
+        'name' : 'question usages',
+        'path' : '/backend/user/questions/:id/usages',
+        'summary' : 'Returns Lessons That Use The Question',
+        'method' : 'GET',
+        'parameters' : [ {
+
+        } ],
+        'nickname' : 'QuestionUsages'
+
+    },
+    'action' : controllers.questions.findUsages
+};
+
 exports.createQuestion = {
 	'spec' : {
 		'description' : 'Create question',
@@ -145,8 +162,8 @@ exports.getQuestionById = {
 };
 exports.updateQuestion = {
 	'spec' : {
-		'description' : 'Create question',
-		'name' : 'create',
+		'description' : 'Updates question',
+		'name' : 'update question',
 		'path' : '/backend/user/questions/{id}',
 		'summary' : 'Update question',
 		'method' : 'POST',
@@ -171,6 +188,28 @@ exports.updateQuestion = {
 	},
 	'action' : controllers.questions.updateQuestion
 };
+exports.findQuestionUsages = {
+	'spec' : {
+		'description' : 'find question usages',
+		'name' : 'findQuestionUsages',
+		'path' : '/backend/user/questions/{id}/usages',
+		'summary' : 'find question usages',
+		'method' : 'GET',
+		'parameters' : [ {
+			'paramType' : 'path',
+			'name' : 'id',
+			required : true,
+			'description' : 'ID of question that usages to be find',
+			'type' : 'string'
+		} ],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to find Usages'
+		} ],
+		'nickname' : 'findQuestionUsages'
+	},
+	'action' : controllers.questions.findUsages
+};
 
 exports.createLesson = {
 	'spec' : {
@@ -194,7 +233,7 @@ exports.createLesson = {
 	},
 	'action' : controllers.lessons.createLesson
 };
-exports.getLessons = {
+exports.getUserLessons = {
 	'spec' : {
 		'description' : 'Get lessons',
 		'name' : 'getLessons',
@@ -208,7 +247,7 @@ exports.getLessons = {
 		} ],
 		'nickname' : 'getLessons'
 	},
-	'action' : controllers.lessons.getLessons
+	'action' : controllers.lessons.getUserLessons
 };
 exports.getLessonById = {
 	'spec' : {

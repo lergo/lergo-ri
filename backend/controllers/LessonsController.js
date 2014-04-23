@@ -1,24 +1,25 @@
 'use strict';
 var managers = require('../managers');
 exports.createLesson = function(req, res){
-    var lesson = req.body;
+    var lesson = {};
+    lesson.userId = req.user._id;
     managers.lessons.createLesson( lesson, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
         } else {
-            res.send( { 'Lesson' : obj , 'message' : 'Added successfully'});
+            res.send(  obj );
             return;
         }
     });
 };
-exports.getLessons = function(req, res){
-    managers.lessons.getLessons( function( err, obj  ){
+exports.getUserLessons = function(req, res){
+    managers.lessons.getUserLessons( req.user._id, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
         } else {
-            res.send( { 'Lessons' : obj , 'message' : 'lessons fetched successfully'});
+            res.send( obj );
             return;
         }
     });
@@ -30,32 +31,33 @@ exports.getLessonById = function(req, res){
             err.send(res);
             return;
         } else {
-            res.send( { 'Lesson' : obj , 'message' : 'Lesson fetched successfully'});
+            res.send(  obj );
             return;
         }
     });
 };
 exports.updateLesson = function(req, res){
     var lesson = req.body;
-    var id = req.params.id;
-    managers.lessons.updateLesson( lesson,id, function( err, obj  ){
+    lesson.userId = req.user._id;
+    lesson._id = managers.db.id( lesson._id );
+    managers.lessons.updateLesson( lesson, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
         } else {
-            res.send( { 'Lesson' : obj , 'message' : 'Updated successfully'});
+            res.send(  obj);
             return;
         }
     });
 };
 exports.deleteLesson = function(req, res){
 	var id = req.params.id;
-    managers.lessons.deleteLesson( id,function( err, obj  ){
+    managers.lessons.deleteLesson( id, req.user._id, function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
         } else {
-            res.send( { 'Lesson' : obj , 'message' : 'Lesson deleted successfully'});
+            res.send(  obj );
             return;
         }
     });

@@ -23,13 +23,12 @@ exports.createLesson = function(lesson, callback) {
 	});
 };
 
-exports.updateLesson = function(lesson, id, callback) {
+exports.updateLesson = function(lesson, callback) {
 	logger.info('Updating lesson');
+
 	dbManager.connect('lessons', function(db, collection, done) {
-		collection.save({
-			'_id' : dbManager.id(id),
-			'name' : lesson.name
-		}, function(err) {
+
+		collection.update( { '_id' : lesson._id, 'userId' : lesson.userId } , lesson, function(err) {
 			if (!!err) {
 				logger.error('error in updating lesson [%s] : [%s]', lesson.name, err);
 				callback(new errorManager.InternalServerError());
@@ -45,11 +44,12 @@ exports.updateLesson = function(lesson, id, callback) {
 	});
 };
 
-exports.deleteLesson = function(id, callback) {
+exports.deleteLesson = function(id, userId,  callback) {
 	logger.info('Deleting lesson');
 	dbManager.connect('lessons', function(db, collection, done) {
 		collection.remove({
-			'_id' : dbManager.id(id)
+			'_id' : dbManager.id(id) ,
+            'userId' : userId
 		}, function(err) {
 			if (!!err) {
 				logger.error('unable to query for user [%s]', err.message);
@@ -75,10 +75,11 @@ exports.getLessonById = function(id, callback) {
 	});
 };
 
-exports.getLessons = function(callback) {
+exports.getUserLessons = function( userId, callback) {
 	logger.info('Getting lessons');
 	dbManager.connect('lessons', function(db, collection, done) {
-		collection.find().toArray(function(err, result) {
+
+		collection.find({'userId' : userId }).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for lessons [%s]', err.message);
 			}
