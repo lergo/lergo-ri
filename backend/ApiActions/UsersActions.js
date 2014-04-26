@@ -84,21 +84,7 @@ exports.isLoggedIn = {
 	'action' : controllers.users.isLoggedIn
 };
 
-exports.getQuestionUsages = {
-    'spec' : {
-        'description' : 'Get Question Usages',
-        'name' : 'question usages',
-        'path' : '/backend/user/questions/:id/usages',
-        'summary' : 'Returns Lessons That Use The Question',
-        'method' : 'GET',
-        'parameters' : [ {
 
-        } ],
-        'nickname' : 'QuestionUsages'
-
-    },
-    'action' : controllers.questions.findUsages
-};
 
 exports.createQuestion = {
 	'spec' : {
@@ -138,6 +124,35 @@ exports.getQuestions = {
 	},
 	'action' : controllers.questions.getQuestions
 };
+
+exports.findQuestionsByIds = {
+    'spec' : {
+        'description': 'Finds multiple questions by list of ids',
+        'name': 'findQuestionsById',
+        'path': '/backend/questions/find',
+        'summary': 'Finds multiple questions by list of ids',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'query',
+                'name': 'ids',
+                'required': false,
+                'description': 'list of ids to find',
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+
+            }
+        ],
+        'nickname': 'findQuestionsById'
+
+
+    },
+    'action' : controllers.questions.findUserQuestionsByIds
+};
+
+
 exports.getQuestionById = {
 	'spec' : {
 		'description' : 'Get question by id',
@@ -299,6 +314,9 @@ exports.updateLesson = {
 	},
 	'action' : controllers.lessons.updateLesson
 };
+
+
+
 exports.deleteLesson = {
 		'spec' : {
 			'description' : 'Delete lesson corresponding to the id',

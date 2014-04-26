@@ -24,13 +24,11 @@ exports.createQuestion = function(question, callback) {
 	});
 };
 
-exports.updateQuestion = function(question, id, callback) {
+exports.updateQuestion = function(question, callback) {
 	logger.info('Updating question');
 
-    question._id = dbManager.id(id);
-
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.save( question, function(err) {
+		collection.update( { '_id' : question._id, 'userId' : question.userId }, question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
@@ -87,6 +85,21 @@ exports.getUserQuestions = function( userId, callback ){
             callback(err, result);
         } );
     });
+};
+
+
+exports.search = function ( filter , projection , callback  ){
+    logger.info('finding questions with filter ' , filter , projection );
+
+    dbManager.connect('questions', function(db,collection,done){
+        collection.find(filter, projection).toArray( function(err, result){
+            if ( !!err ){
+                logger.error('unable to search for questions', err);
+            }
+            done();
+            callback(err, result);
+        });
+    }) ;
 };
 
 exports.getQuestions = function(callback) {

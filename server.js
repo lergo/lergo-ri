@@ -48,7 +48,7 @@ app.use(methodOverride());
 app.use(cookieParser());
 app.use(cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
 app.use('/backend/user', controllers.users.loggedInMiddleware);
-
+app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 // Routes
 
@@ -147,13 +147,13 @@ var server = app.listen(port, function () {
 
 
 
-app.use('/public', express.static(__dirname + '/public'));
+//app.use('/public', express.static(__dirname + '/public'));
 app.use('/swagger', function () {
     return useStatic.apply(this, arguments);
 });
 
 
-app.use(errorHandler({ dumpExceptions: true, showStack: true }));
+
 
 logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
