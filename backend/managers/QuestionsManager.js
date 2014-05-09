@@ -102,10 +102,10 @@ exports.search = function ( filter , projection , callback  ){
     }) ;
 };
 
-exports.getQuestions = function(callback) {
+exports.getQuestions = function( filter , callback) {
 	logger.info('Getting question');
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.find().toArray(function(err, result) {
+		collection.find( filter ).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for questions', err);
 			}

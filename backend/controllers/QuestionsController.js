@@ -30,7 +30,7 @@ exports.findUsages = function (req, res) {
 
 
 exports.getQuestions = function (req, res) {
-    managers.questions.getQuestions(function (err, obj) {
+    managers.questions.getQuestions( { 'userId' : req.user._id }, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
