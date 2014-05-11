@@ -48,6 +48,7 @@ app.use(methodOverride());
 app.use(cookieParser());
 app.use(cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
 app.use('/backend/user', controllers.users.loggedInMiddleware);
+
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 // Routes

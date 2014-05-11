@@ -60,12 +60,11 @@ exports.deleteLesson = function(id, userId,  callback) {
 	});
 };
 
-exports.getLessonById = function(id, callback) {
+
+exports.getLesson = function( filter , callback) {
 	logger.info('Fetching lesson by ID');
 	dbManager.connect('lessons', function(db, collection, done) {
-		collection.findOne({
-			'_id' : dbManager.id(id)
-		}, function(err, result) {
+		collection.findOne(filter, function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for lesson [%s]', err.message);
 			}

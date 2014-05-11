@@ -37,7 +37,7 @@ describe('LessonsManager', function() {
 				function testCreateLesson() {
 					lessonsManager.createLesson(lesson, function(done, obj) {
 						logger.info('Lesson [%s] created successfully', obj);
-						lessonsManager.getLessonById(obj._id, function(done, lesson) {
+						lessonsManager.getLesson( { '_id' : obj._id }, function(done, lesson) {
 							assert(lesson);
 						});
 						done();
@@ -70,7 +70,7 @@ describe('LessonsManager', function() {
 
 					});
 
-					lessonsManager.getLessonById(id, function(done, obj) {
+					lessonsManager.getLesson( { '_id' : id } , function(done, obj) {
 						assert(obj);
 						assert.equal(obj.correctAnswer, modifiedLesson.correctAnswer);
 					});
@@ -103,7 +103,7 @@ describe('LessonsManager', function() {
 
 					});
 
-					lessonsManager.getLessonById(function(id, done, returnObject) {
+					lessonsManager.getLesson( { 'fake' : 'guy' }, function(id, done, returnObject) {
 						assert(!returnObject);
 					});
 					done();

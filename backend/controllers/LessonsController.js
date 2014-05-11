@@ -24,9 +24,9 @@ exports.getUserLessons = function(req, res){
         }
     });
 };
-exports.getLessonById = function(req, res){
+exports.getUserLessonById = function(req, res){
 	var id = req.params.id;
-    managers.lessons.getLessonById( id,function( err, obj  ){
+    managers.lessons.getLesson( { '_id' : id, 'userId' : req.user._id },function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
