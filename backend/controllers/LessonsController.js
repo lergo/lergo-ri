@@ -1,7 +1,6 @@
 'use strict';
 var managers = require('../managers');
 
-var logger = require('log4js').getLogger('LessonsController');
 
 exports.createLesson = function(req, res){
     var lesson = {};
