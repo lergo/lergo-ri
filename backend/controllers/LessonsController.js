@@ -1,5 +1,8 @@
 'use strict';
 var managers = require('../managers');
+
+var logger = require('log4js').getLogger('LessonsController');
+
 exports.createLesson = function(req, res){
     var lesson = {};
     lesson.userId = req.user._id;
@@ -26,7 +29,8 @@ exports.getUserLessons = function(req, res){
 };
 exports.getUserLessonById = function(req, res){
 	var id = req.params.id;
-    managers.lessons.getLesson( { '_id' : id, 'userId' : req.user._id },function( err, obj  ){
+
+    managers.lessons.getLesson( { '_id' : managers.db.id(id), 'userId' : req.user._id },function( err, obj  ){
         if ( !!err ){
             err.send(res);
             return;
