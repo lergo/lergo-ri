@@ -94,8 +94,9 @@ exports.getUserQuestions = function (req, res) {
 exports.findUserQuestionsByIds = function (req, res) {
 
     var objectIds = [];
+    logger.info(req.query.ids);
     try {
-        objectIds = JSON.parse(req.query.ids);
+        objectIds = req.query.ids;
     } catch (err) {
         logger.error('unable to parse query ids', req.query.ids);
     }
