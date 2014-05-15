@@ -68,5 +68,9 @@ exports.models = {
                 'description' : 'Lesson name'
             }
         }
+    },
+    'UserValidationData' : {
+        'id' : 'EmailValidationData',
+        'description' : 'used to validate user'
     }
 };

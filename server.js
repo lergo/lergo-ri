@@ -17,6 +17,7 @@ var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
 var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
+var lergoMiddleware = require('./backend/LergoMiddleware');
 //var errorManager = appContext.errorManager;
 
 var app = module.exports = express();
@@ -47,6 +48,7 @@ app.use(bodyParser());
 app.use(methodOverride());
 app.use(cookieParser());
 app.use(cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
+app.use(lergoMiddleware.origin);
 app.use('/backend/user', controllers.users.loggedInMiddleware);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));

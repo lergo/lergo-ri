@@ -13,7 +13,7 @@ var errorManager = appContext.errorManager;
  * @returns
  */
 function isValidUserName(userName) {
-    if (userName === null || typeof (userName) === 'undefined'|| userName.length < 3) {
+    if (userName === null || typeof (userName) === 'undefined' || userName.length < 3) {
         return false;
     }
     var usernameRegex = /^[a-zA-Z0-9\_]+$/;
@@ -37,18 +37,18 @@ function isValidEmail(email) {
 
 exports.saveUser = function (user, callback) {
     logger.info('saving user');
-	if (!isValidEmail(user.email)) {
-		logger.info('User email [%s] is invalid .',
-						user.email);
-		callback(new errorManager.InvalidUsername());
-	}
+    if (!isValidEmail(user.email)) {
+        logger.info('User email [%s] is invalid .',
+            user.email);
+        callback(new errorManager.InvalidUsername());
+    }
 
-    if ( !isValidUserName(user.username) ){
+    if (!isValidUserName(user.username)) {
         logger.info('User name [%s] is invalid. User name should not be lesser then 3 characters it should only contain alphanumeric characters and underscore ');
         callback(new errorManager.InvalidEmail());
     }
 
-    exports.getUserByEmail(user.username, function (err, obj) {
+    exports.isUserExists(user, function (err, result) {
         logger.info(arguments);
         if (!!err) {
             logger.error('error getting user by email');
@@ -56,8 +56,8 @@ exports.saveUser = function (user, callback) {
             return;
         }
 
-        if (!!obj) {
-            logger.info('user with email [%s] already exists', user.username);
+        if (!!result) {
+            logger.info('user with email [%s] or username [%s] already exists', user.email, user.username);
             callback(new errorManager.InvalidUsername());
             return;
         }
@@ -102,12 +102,12 @@ exports.loginUser = function (loginCredentials, callback) {
     logger.info('logging user [%s] in', loginCredentials.username);
     dbManager.connect('users', function (db, collection, done) {
         collection.findOne({'username': loginCredentials.username, 'password': sha1(loginCredentials.password)}, function (err, obj) {
-            if ( !obj ){
-                callback( new errorManager.InvalidUsername(), null );
+            if (!obj) {
+                callback(new errorManager.InvalidUsername(), null);
                 done();
                 return;
             } else {
-                obj.getId = function(){
+                obj.getId = function () {
                     return obj._id;
                 };
                 callback(err, obj);
@@ -120,12 +120,12 @@ exports.loginUser = function (loginCredentials, callback) {
 
 };
 
-exports.findUserById = function( userId, callback ){
+exports.findUserById = function (userId, callback) {
     logger.info('getting user with id [%s]', userId);
-    dbManager.connect('users', function(db, collection, done){
+    dbManager.connect('users', function (db, collection, done) {
 
-        collection.findOne({'_id': dbManager.id(userId)}, function(err, result){
-            if ( !!err ){
+        collection.findOne({'_id': dbManager.id(userId)}, function (err, result) {
+            if (!!err) {
                 logger.error('unable to query for user [%s]', err.message);
             }
             done();
@@ -135,12 +135,29 @@ exports.findUserById = function( userId, callback ){
     });
 };
 
-exports.getUserByEmail = function (email, callback) {
+
+exports.findUser = function (filter, callback) {
     logger.info('getting user with email [%s]', email);
     dbManager.connect('users', function (db, collection, done) {
-        collection.findOne({'username': email}, function (err, obj) {
+        collection.findOne(filter, function (err, obj) {
             callback(err, obj);
             done();
         });
     });
+};
+
+
+
+exports.isUserExists = function ( username, email, callback ){
+   exports.findUser( { $or : [ {'username' : username } , { 'email' : email }]}, function ( err, result ){
+       if ( !!err ){
+           callback(err);
+       } else {
+           callback( null, !result );
+       }
+   });
+};
+
+exports.getUserByEmail = function (email, username, callback) {
+    exports.findUser( {'email' : email}, callback);
 };

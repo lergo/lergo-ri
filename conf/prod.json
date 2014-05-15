@@ -1,0 +1,18 @@
+{
+    "cookieSessionSecret" : null,
+    "dbUrl" : null,
+    "emailSettings" : {
+        "type" : "SMTP",
+        "opts" : {
+            "service" : "Gmail",
+            "auth" : {
+                "user" : "__user",
+                "pass" : "__pass"
+            }
+        },
+        "mails" : {
+
+        }
+    }
+
+}

@@ -60,6 +60,102 @@ exports.login = {
     'action': controllers.users.login
 };
 
+exports.validateUser = {
+    'spec': {
+        'description': 'Validate User Login',
+        'name': 'login',
+        'path': '/backend/users/{userId}/validate',
+        'summary': 'User validation',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                require: true,
+                'description': 'user validation data',
+                'type': 'UserValidationData'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to validate'
+            },
+            {
+                'code': 401,
+                'reason': 'invalid user details'
+            }
+        ],
+        'nickname': 'validateUser'
+
+    },
+    'action': controllers.users.validateUser
+};
+
+
+exports.requestPasswordReset = {
+    'spec': {
+        'description': 'User login',
+        'name': 'login',
+        'path': '/backend/users/login',
+        'summary': 'user logs in and creates a new session. The backend is responsible to maintain the session.',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'loginCredentials',
+                require: true,
+                'description': 'login credentials',
+                'type': 'LoginCredentials'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to login'
+            },
+            {
+                'code': 401,
+                'reason': 'wrong username/password'
+            }
+        ],
+        'nickname': 'login'
+
+    },
+    'action': controllers.users.login
+};
+
+exports.resetPassword = {
+    'spec': {
+        'description': 'User login',
+        'name': 'login',
+        'path': '/backend/users/login',
+        'summary': 'user logs in and creates a new session. The backend is responsible to maintain the session.',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'loginCredentials',
+                require: true,
+                'description': 'login credentials',
+                'type': 'LoginCredentials'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to login'
+            },
+            {
+                'code': 401,
+                'reason': 'wrong username/password'
+            }
+        ],
+        'nickname': 'login'
+
+    },
+    'action': controllers.users.login
+};
+
 exports.logout = {
     'spec': {
         'description': 'Logout. Ends session.',

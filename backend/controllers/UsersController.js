@@ -32,12 +32,58 @@ exports.login = function(req, res){
 
         if ( !loggedInUser ){
             new managers.error.WrongLogin().send(res);
+            return;
+        }
+
+        if ( !loggedInUser.validated ){
+            new managers.error.UserNotValidated().send(res);
+            return;
         }
 
 
         req.session.userId = loggedInUser.getId();
         res.send( getUserPublicDetails(loggedInUser) );
     } );
+};
+
+/**
+ *
+ * See model UserValidationData
+ *
+ * @param req
+ * @param res
+ */
+exports.validateUser = function ( req, res ){
+    var validationData = req.body;
+
+    logger.info('validating user [%s]', validationData );
+    managers.users.validateUser( { '_id' : validationData.userId }, function( err, validatedUser ){
+        if ( !!err ){
+            managers.error.UserValidationError().send(res);
+            return;
+        }
+
+        req.session.userId = validatedUser.getId();
+        res.send( getUserPublicDetails(validatedUser));
+
+    });
+};
+
+exports.requestPasswordReset = function( req, res ){
+    var userDetails = req.body;
+    managers.users.createPasswordResetLink( userDetails , function(){
+        // TODO : send email
+    })
+};
+
+exports.resetPassword = function( req, res ){
+    var resetPasswordRequest = req.body;
+
+    managers.users.resetPassword( resetPasswordRequest , function ( err, result ){
+        if ( !!err ) {
+
+        }
+    })
 };
 
 exports.isLoggedIn = function( req, res ){

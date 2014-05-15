@@ -28,7 +28,9 @@ var errorsDefinition = {
     'NotLoggedIn' : createNewError(3, 'not logged in', 401),
     'NotAdmin' : createNewError(4, 'requires admin permissions', 401),
     'WrongLogin' : createNewError(5, 'wrong login', 401),
-    'InvalidEmail': createNewError(6, 'invalid email', 500)
+    'InvalidEmail': createNewError(6, 'invalid email', 500),
+    'UserNotValidated' : createNewError(7, 'user not validated', 401),
+    'UserValidationError' : createNewError( 8, 'unable to validate user', 401)
 };
 
 
