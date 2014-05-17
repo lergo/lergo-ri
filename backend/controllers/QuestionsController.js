@@ -130,3 +130,27 @@ exports.findUsages = function (req, res) {
         }
     });
 };
+
+/**
+ * gets a map of ids ,answers and returns the corresponding results.
+ * 
+ * 
+ * @param req
+ * @param res
+ */
+exports.submitAnswers = function(req, res) {
+	var map = req.query.answers;
+	Object.keys(map).forEach(function(id) {
+		var val = map[id];
+		managers.questions.submitAnswer(id, val, function(err, result) {
+			if (!!err) {
+				new managers.error.InternalServerError(err, 'unable to submit ').send(res);
+				return;
+			} else {
+				map[id] = result;
+			}
+		});
+		res.send(map);
+	});
+};
+
