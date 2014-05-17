@@ -28,7 +28,10 @@ exports.updateQuestion = function(question, callback) {
 	logger.info('Updating question');
 
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.update( { '_id' : question._id, 'userId' : question.userId }, question, function(err) {
+		collection.update({
+			'_id' : question._id,
+			'userId' : question.userId
+		}, question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
@@ -74,38 +77,39 @@ exports.getQuestionById = function(id, callback) {
 	});
 };
 
-exports.getUserQuestions = function( userId, callback ){
-    logger.info('getting user questions');
-    dbManager.connect('questions', function(db, collection, done){
-        collection.find({'userId' : userId }).toArray( function( err , result ) {
-            if ( !!err ){
-                logger.error('unable to query for questions', err);
-            }
-            done();
-            callback(err, result);
-        } );
-    });
+exports.getUserQuestions = function(userId, callback) {
+	logger.info('getting user questions');
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.find({
+			'userId' : userId
+		}).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to query for questions', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
 };
 
+exports.search = function(filter, projection, callback) {
+	logger.info('finding questions with filter ', filter, projection);
 
-exports.search = function ( filter , projection , callback  ){
-    logger.info('finding questions with filter ' , filter , projection );
-
-    dbManager.connect('questions', function(db,collection,done){
-        collection.find(filter, projection).toArray( function(err, result){
-            if ( !!err ){
-                logger.error('unable to search for questions', err);
-            }
-            done();
-            callback(err, result);
-        });
-    }) ;
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.find(filter, projection).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to search for questions', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
 };
 
-exports.getQuestions = function( filter , callback) {
+exports.getQuestions = function(filter, callback) {
 	logger.info('Getting question');
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.find( filter ).toArray(function(err, result) {
+		collection.find(filter).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for questions', err);
 			}
@@ -126,6 +130,26 @@ exports.findUsages = function(id, callback) {
 			}
 			done();
 			callback(err, result);
+		});
+	});
+};
+exports.submitAnswer = function(id, answer, callback) {
+	logger.info('Submit Answer');
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.findOne({
+			'_id' : dbManager.id(id)
+		}, function(err, result) {
+			if (!!err) {
+				logger.error('unable to submit for question [%s]', err.message);
+			}
+			done();
+			// TODO : need to improve logic so that it can handle all type of
+			// question
+			if (result.answer === answer) {
+				callback(err, true);
+			} else {
+				callback(err, false);
+			}
 		});
 	});
 };
