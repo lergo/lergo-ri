@@ -8,9 +8,10 @@
  **/
 
 var fs = require('fs');
+var path = require('path');
 var _  = require('lodash');
-var meConf = 'conf/dev/me.json';
-var prodConf = 'conf/prod.json';
+var meConf = path.resolve('conf/dev/me.json');
+var prodConf = path.resolve('conf/prod.json');
 
 var conf;
 

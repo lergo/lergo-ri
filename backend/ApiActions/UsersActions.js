@@ -63,7 +63,7 @@ exports.login = {
 exports.validateUser = {
     'spec': {
         'description': 'Validate User Login',
-        'name': 'login',
+        'name': 'validateUserLogin',
         'path': '/backend/users/{userId}/validate',
         'summary': 'User validation',
         'method': 'POST',
@@ -92,17 +92,16 @@ exports.validateUser = {
 };
 
 
-exports.requestPasswordReset = {
+exports.resendValidateEmail = {
     'spec': {
-        'description': 'User login',
-        'name': 'login',
-        'path': '/backend/users/login',
-        'summary': 'user logs in and creates a new session. The backend is responsible to maintain the session.',
+        'description': 'Send validation email again',
+        'name': 'resendValidationEmail',
+        'path': '/backend/users/validate/resend',
+        'summary': 'Resend user validation email',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'loginCredentials',
                 require: true,
                 'description': 'login credentials',
                 'type': 'LoginCredentials'
@@ -111,33 +110,33 @@ exports.requestPasswordReset = {
         'errorResponses': [
             {
                 'code': 500,
-                'reason': 'unable to login'
+                'reason': 'unable to send email'
             },
             {
                 'code': 401,
-                'reason': 'wrong username/password'
+                'reason': 'invalid user details'
             }
         ],
-        'nickname': 'login'
+        'nickname': 'resendValidationEmail'
 
     },
-    'action': controllers.users.login
+    'action': controllers.users.resendValidationEmail
 };
 
-exports.resetPassword = {
+exports.changePassword = {
     'spec': {
-        'description': 'User login',
-        'name': 'login',
-        'path': '/backend/users/login',
-        'summary': 'user logs in and creates a new session. The backend is responsible to maintain the session.',
+        'description': 'Change Password',
+        'name': 'changePassword',
+        'path': '/backend/users/changePassword',
+        'summary': 'user changes password after clicking "request password reset" email.',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'loginCredentials',
+                'name': 'reset password details',
                 require: true,
-                'description': 'login credentials',
-                'type': 'LoginCredentials'
+                'description': 'details for resetting password',
+                'type': 'ChangePasswordDetails'
             }
         ],
         'errorResponses': [
@@ -153,7 +152,39 @@ exports.resetPassword = {
         'nickname': 'login'
 
     },
-    'action': controllers.users.login
+    'action': controllers.users.changePassword
+};
+
+exports.resetPasswordRequest = {
+    'spec': {
+        'description': 'Request Password Reset',
+        'name': 'resetPasswordRequest',
+        'path': '/backend/users/requestPasswordReset',
+        'summary': 'user requests a password reset. A link is delivered to the user that leads to the password reset page.',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'resetPasswordDetails',
+                require: true,
+                'description': 'an object containing optional username and optional email. One of the two is required.',
+                'type': 'RequestResetPasswordDetails'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to login'
+            },
+            {
+                'code': 401,
+                'reason': 'wrong username/password'
+            }
+        ],
+        'nickname': 'resetPasswordRequest'
+
+    },
+    'action': controllers.users.requestPasswordReset
 };
 
 exports.logout = {
@@ -195,7 +226,7 @@ exports.isLoggedIn = {
 exports.createQuestion = {
     'spec': {
         'description': 'Create question',
-        'name': 'create',
+        'name': 'createQuestion',
         'path': '/backend/user/questions',
         'summary': 'Create new question',
         'method': 'POST',
@@ -354,7 +385,7 @@ exports.findQuestionUsages = {
 exports.createLesson = {
     'spec': {
         'description': 'Create lesson',
-        'name': 'create',
+        'name': 'createLesson',
         'path': '/backend/user/lessons',
         'summary': 'Create new lesson',
         'method': 'POST',
@@ -424,7 +455,7 @@ exports.getUserLessonById = {
 exports.updateLesson = {
     'spec': {
         'description': 'Create lesson',
-        'name': 'create',
+        'name': 'updateLesson',
         'path': '/backend/user/lessons/{id}',
         'summary': 'Update lesson',
         'method': 'POST',

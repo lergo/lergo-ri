@@ -1,6 +1,7 @@
 {
     "cookieSessionSecret" : null,
     "dbUrl" : null,
+    "hmacKey" : null,
     "emailSettings" : {
         "type" : "SMTP",
         "opts" : {
@@ -10,8 +11,14 @@
                 "pass" : "__pass"
             }
         },
+        "defaultFrom" : "__default_from_address__",
         "mails" : {
 
+        }
+    } ,
+    "tests" : {
+        "TestMailSender" : {
+            "to" : "__to__"
         }
     }
 

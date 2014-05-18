@@ -18,6 +18,10 @@ var OpenIDStrategy = require('passport-openid').Strategy;
 var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
 var lergoMiddleware = require('./backend/LergoMiddleware');
+var services = require('./backend/services');
+var path = require('path');
+
+services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 //var errorManager = appContext.errorManager;
 
 var app = module.exports = express();
@@ -48,7 +52,11 @@ app.use(bodyParser());
 app.use(methodOverride());
 app.use(cookieParser());
 app.use(cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
+
+// lergo middlewares.. not optimized right now..
+// not all requests need emailResources. we should optimize it somehow later
 app.use(lergoMiddleware.origin);
+app.use(lergoMiddleware.emailResources);
 app.use('/backend/user', controllers.users.loggedInMiddleware);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));

@@ -8,6 +8,11 @@ var logger = require('log4js').getLogger('EmailTemplateService');
 
 
 exports.load = function( templatesDir, callback ){
+
+    if ( !callback ){
+        callback = function(){};
+    }
+
     emailTemplates(templatesDir, function(err, template) {
         if (!!err ) {
             logger.error('error while trying to load email templates', err);
@@ -37,4 +42,8 @@ exports.load = function( templatesDir, callback ){
 
 exports.renderResetPassword = function( locals  , callback ){
     exports.template('resetPassword', locals, callback );
+};
+
+exports.renderUserValidationEmail = function( locals, callback ){
+    exports.template('validateUser', locals, callback );
 };

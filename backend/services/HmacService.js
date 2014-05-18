@@ -1,8 +1,12 @@
 var conf = require('./Conf');
 
 var crypto = require('crypto')
-    , key = conf.hmacKey
-    , hash;
+    , key = conf.hmacKey;
+
+
+if ( !key ){
+    throw new Error('please define an hmacKey');
+}
 
 // items - array of items to include in hmac
 exports.createHmac = function ( items ){

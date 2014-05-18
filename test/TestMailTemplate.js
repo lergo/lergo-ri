@@ -12,7 +12,7 @@ function doTest() {
         "lergoLink" : "http://localhost:9000/resetPassword",
         "lergoLogoAbsoluteUrl" : "http://localhost:9000"
     };
-    service.renderResetPassword(mailVars, function () {
+    service.renderResetPassword(mailVars, function ( err, html, txt ) {
         logger.info(arguments);
     });
 }
