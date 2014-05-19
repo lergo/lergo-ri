@@ -1,5 +1,6 @@
 'use strict';
 var managers = require('../managers');
+var services = require('../services');
 
 var logger = require('log4js').getLogger('QuestionsController');
 
@@ -152,5 +153,22 @@ exports.submitAnswers = function(req, res) {
 		});
 		res.send(map);
 	});
+};
+
+
+// returns { 'correct' : true/false }
+exports.checkQuestionAnswer = function( req, res ){
+    var questionWithAnswer = req.body;
+
+    var handler = services.questionHandler.getHandler( questionWithAnswer );
+
+    if ( handler.isCorrect () ){
+        res.send( { 'correct' : true } );
+    }else{
+        res.send( { 'correct' : false } );
+    }
+
+
+
 };
 

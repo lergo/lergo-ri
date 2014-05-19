@@ -377,3 +377,26 @@ exports.submitAnswers = {
 	},
 	'action' : controllers.questions.submitAnswers
 };
+
+
+exports.checkQuestionAnswer = {
+    'spec' : {
+        'description' : 'Check Question Answer',
+        'name' : 'checkQuestionAnswer',
+        'path' : '/backend/questions/checkAnswer',
+        'summary' : 'checks if user answered question correctly',
+        'method' : 'POST',
+        'parameters' : [ {
+            'paramType' : 'body',
+            'name' : 'question with answer',
+            required : true,
+            'type' : 'Question'
+        } ],
+        'errorResponses' : [ {
+            'code' : 500,
+            'reason' : 'unable to check answer'
+        } ],
+        'nickname' : 'checkQuestionAnswer'
+    },
+    'action' : controllers.questions.checkQuestionAnswer
+};
