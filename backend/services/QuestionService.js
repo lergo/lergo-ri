@@ -6,10 +6,7 @@ function TrueFalseQuestionHandler( question ){
     this.isCorrect = function(){
         return question.userAnswer === question.answer;
     };
-
-
 }
-
 
 
 exports.getHandler = function(question){
