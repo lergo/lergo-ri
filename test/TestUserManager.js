@@ -63,7 +63,7 @@ describe('UserManager', function () {
 
                 },
                 function runTest() {
-                    usersManager.saveUser({'username': 'guy@domain.com'}, function (err, user) {
+                    usersManager.createUser({'username': 'guy@domain.com'}, function (err, user) {
                         logger.info('user was saved.' + JSON.stringify(user) + ' - lets see it');
 
                         usersManager.getUserByEmail('guy@domain.com', function (err, user) {
