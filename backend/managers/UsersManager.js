@@ -58,7 +58,7 @@ exports.getUserDetailsError = function (user) {
     }
 };
 
-exports.createUser = function ( emailResources, user, callback) {
+exports.createUser = function (emailResources, user, callback) {
     logger.info('saving user');
 
     var userError = exports.getUserDetailsError(user);
@@ -98,16 +98,15 @@ exports.createUser = function ( emailResources, user, callback) {
                 else {
                     logger.info('user [%s] creating successfully. sending validation email', user.username);
                     done();
-                    exports.sendValidationEmail( emailResources, user, function(err, user){
-                        if ( !!err ){
-                           callback( new errorManager.ErrorSendingValidationEmail(err, user.email));
+                    exports.sendValidationEmail(emailResources, user, function (err, user) {
+                        if (!!err) {
+                            callback(new errorManager.ErrorSendingValidationEmail(err, user.email));
                             return;
                         }
 
-                        callback( null, user );
+                        callback(null, user);
                         return;
                     });
-
 
 
                 }
@@ -205,10 +204,10 @@ exports.sendValidationEmail = function (emailResources, user, callback) {
             'text': text,
             'html': html
         }, function (err) {
-            if ( !!err ){
-                callback( new errorManager.InternalServerError('error sending email',err));
-            }else{
-                callback( null, user );
+            if (!!err) {
+                callback(new errorManager.InternalServerError('error sending email', err));
+            } else {
+                callback(null, user);
             }
 
         });
