@@ -148,6 +148,17 @@ upgrade_main(){
 
      fi
 
+     if [ -z $ME_JSON_URL ];then
+             echo "missing me json url"
+             exit 1
+          else
+             echo "updating me json configuration"
+             cd /var/www/lergo/lergo-ri
+             mkdir -p conf/dev/
+             run_wget -O conf/dev/me.json $ME_JSON_URL
+
+     fi
+
 }
 
 set -e
