@@ -10,7 +10,7 @@ function getUserPublicDetails(user) {
 
 exports.signup = function (req, res) {
     var user = req.body;
-    managers.users.createUser(user, function (err, obj) {
+    managers.users.createUser(req.emailResources, user, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
