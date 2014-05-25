@@ -350,7 +350,7 @@ exports.changePassword = function (changePasswordDetails, user, callback) {
 };
 
 exports.findUser = function (filter, callback) {
-    logger.info('getting user with filter [%s]', JSON.filter(filter));
+    logger.info('getting user with filter [%s]', JSON.stringify(filter));
     dbManager.connect('users', function (db, collection, done) {
         collection.findOne(filter, function (err, obj) {
             callback(err, obj);
