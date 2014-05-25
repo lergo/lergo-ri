@@ -20,7 +20,8 @@
         "cookie-parser": "*",
         "method-override": "*",
         "cookie-session": "*",
-        "errorhandler": "*"
+        "errorhandler": "*",
+        "email-templates" : "*"
     },
     "devDependencies": {
         "grunt": "~0.4.1",
@@ -63,7 +64,8 @@
         "cookie-parser",
         "method-override",
         "cookie-session",
-        "errorhandler"
+        "errorhandler",
+        "email-templates"
 
     ],
     "engines": {
