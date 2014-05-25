@@ -13,7 +13,6 @@ var _  = require('lodash');
 var meConf = path.resolve('conf/dev/me.json');
 var prodConf = path.resolve('conf/prod.json');
 
-var conf;
 
 var data = fs.readFileSync(prodConf, 'utf8');
 if (!!data) {

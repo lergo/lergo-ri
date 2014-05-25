@@ -1,7 +1,7 @@
 var conf = require('./Conf');
 
-var crypto = require('crypto')
-    , key = conf.hmacKey;
+var crypto = require('crypto');
+var key = conf.hmacKey;
 
 
 if ( !key ){
@@ -9,8 +9,8 @@ if ( !key ){
 }
 
 // items - array of items to include in hmac
-exports.createHmac = function ( items ){
-    return crypto.createHmac('sha1', key).update(JSON.stringify(arguments)).digest('hex')
+exports.createHmac = function ( /*items*/ ){
+    return crypto.createHmac('sha1', key).update(JSON.stringify(arguments)).digest('hex');
 };
 
 //

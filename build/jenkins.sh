@@ -28,9 +28,17 @@ Xvfb :1 &
 #cd $1
  
 curl -s -o ./use-node https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/node/use-node
-NODE_VERSION=0.8.14 . ./use-node
- 
-npm install -g grunt-cli bower
+NODE_VERSION=0.10.14 . ./use-node
+
+
+install_bower_cli(  ){
+    npm cache clear
+    echo "install bower cli retry ::: $1"
+    npm install -g grunt-cli bower
+}
+
+
+for i in 1 2 3 4 5 6 7 8 9; do install_bower_cli $i && break || sleep 1; done
  
 curl -s -o ./use-ruby https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/ruby/use-ruby
 RUBY_VERSION=2.0.0-p247 \
@@ -42,8 +50,23 @@ rm -f build.id
 echo "building lergo-ui"
 cd lergo-ui
 
-npm install
-bower install
+install_dependencies(  ){
+    echo "retry ::: $1"
+    npm cache clear
+    if [ ! -e node_modules ]; then
+        rm -Rf node_modules
+    fi
+    npm install
+
+    if [ ! -e app/bower_components ]; then
+       rm -Rf app/bower_components
+    fi
+    bower cache clean
+    bower install
+}
+
+for i in 1 2 3 4 5 6 7 8 9; do install_dependencies $i && break || sleep 1; done
+
 grunt build --no-color
 
 COMMITS_TEMPLATE=dist/views/version/_commits.html
@@ -68,6 +91,9 @@ cd ../../
 echo "building lergo-ri"
 
 cd lergo-ri
+if [ ! -d node_modules ]; then
+    rm -Rf node_modules
+fi
 npm install 
 grunt build --no-color
 cd dist

@@ -23,36 +23,35 @@ var logger = require('log4js').getLogger('LergoEmailService');
  */
 function getTransport() {
     logger.info(emailSettings.type, emailSettings.opts);
-	var smtpTransport = nodemailer.createTransport(emailSettings.type, emailSettings.opts);
-	return smtpTransport;
+    var smtpTransport = nodemailer.createTransport(emailSettings.type, emailSettings.opts);
+    return smtpTransport;
 }
-
 
 
 /**
  * This method sends mail as per the opts give opts structure should look like
- * 
+ *
  * opts{ To: CC: bcc: subject: text: html: }
  */
 
-exports.sendMail = function(opts, callback) {
-	var transport = getTransport();
+exports.sendMail = function (opts, callback) {
+    var transport = getTransport();
 
-    if ( !opts.hasOwnProperty('from') ){
-          opts.from = emailSettings.defaultFrom;
+    if (!opts.hasOwnProperty('from')) {
+        opts.from = emailSettings.defaultFrom;
     }
 
     logger.info(opts);
 
 
-    transport.sendMail( opts, function( error, response ) {
-		if ( !!error ) {
-			logger.error('error in sending mail   to : [%s]', opts.to);
-			callback(error);
-		} else {
-			logger.info('Message sent: ' + response.message);
-			transport.close();
-			callback(null);
-		}
-	});
+    transport.sendMail(opts, function (error, response) {
+        if (!!error) {
+            logger.error('error in sending mail   to : [%s]', opts.to);
+            callback(error);
+        } else {
+            logger.info('Message sent: ' + response.message);
+            transport.close();
+            callback(null);
+        }
+    });
 };

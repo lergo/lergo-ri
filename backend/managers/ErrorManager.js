@@ -12,7 +12,7 @@ function createSendFn( err ){
 
 function createNewError( code, message, responseCode ){
     return function( e, description ){
-        debugger;
+//        debugger;
         this.code = code;
         this.message = message;
         this.responseCode = responseCode;

@@ -36,7 +36,7 @@ function isValidEmail(email) {
     return email.match(emailRegex);
 }
 
-function getUserHmacDetails( user ){
+function getUserHmacDetails(user) {
     return [user._id, user.email, user.username, user.password ];
 }
 
@@ -45,7 +45,7 @@ function getUserHmacDetails( user ){
  * otherwise null
  * @param user - the user to validate
  */
-exports.getUserDetailsError = function( user ) {
+exports.getUserDetailsError = function (user) {
     if (!isValidEmail(user.email)) {
         logger.info('User email [%s] is invalid .',
             user.email);
@@ -61,13 +61,13 @@ exports.getUserDetailsError = function( user ) {
 exports.createUser = function (user, callback) {
     logger.info('saving user');
 
-    var userError = exports.getUserDetailsError( user );
-    if ( !!userError ){
-        callback( userError );
+    var userError = exports.getUserDetailsError(user);
+    if (!!userError) {
+        callback(userError);
         return;
     }
 
-    exports.isUserExists(user, null,  function (err, result) {
+    exports.isUserExists(user, null, function (err, result) {
         logger.info(arguments);
         if (!!err) {
             logger.error('error getting user by email');
@@ -108,39 +108,38 @@ exports.createUser = function (user, callback) {
 };
 
 
-
-exports.updateUser = function( user, callback ){
+exports.updateUser = function (user, callback) {
     logger.info('updating user');
 
-    var userError = exports.getUserDetailsError( user );
+    var userError = exports.getUserDetailsError(user);
 
-    if ( !!userError ){
+    if (!!userError) {
         callback(userError);
         return;
     }
 
-    dbManager.connect('users', function(db, collection, done){
-        collection.update( { '_id' : user._id }, user, function(err){
+    dbManager.connect('users', function (db, collection, done) {
+        collection.update({ '_id': user._id }, user, function (err) {
 
-            if ( !!err ){
+            if (!!err) {
                 logger.error('error updating user [%s]', user.username, err);
                 done();
                 callback(new errorManager.InternalServerError(err));
                 return;
-            }else{
+            } else {
                 logger.info('updated user [%s] successfully', user.username);
                 done();
-                callback(null, user );
+                callback(null, user);
                 return;
             }
         });
-    })
+    });
 
 };
 
-exports.encryptUserPassword = function( password ){
+exports.encryptUserPassword = function (password) {
     return sha1(password);
-} ;
+};
 
 /**
  *
@@ -173,33 +172,31 @@ exports.loginUser = function (loginCredentials, callback) {
 };
 
 
-
-
 /**
  *
  * @param linkBase  - e.g. http://www.lergodev.info/views/session/validateUser.html
  * @param user - the user want to validate
  */
-exports.sendValidationEmail = function( emailResources , user, callback ){
-    if ( !user.email ){
-        throw new Error('user ', user , ' does not have an email. fix corrupted data in database');
+exports.sendValidationEmail = function (emailResources, user, callback) {
+    if (!user.email) {
+        throw new Error('user ', user, ' does not have an email. fix corrupted data in database');
     }
-    logger.info('sending validation email', user );
+    logger.info('sending validation email', user);
     var emailVars = {};
-    _.merge( emailVars, emailResources );
-    var validationLink = emailResources.lergoBaseUrl + '#/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac( getUserHmacDetails(user )));
+    _.merge(emailVars, emailResources);
+    var validationLink = emailResources.lergoBaseUrl + '#/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
-    _.merge( emailVars, { 'link' : validationLink , 'name' : user.username });
+    _.merge(emailVars, { 'link': validationLink, 'name': user.username });
 
-    services.emailTemplates.renderUserValidationEmail( emailVars , function( err, html, text ){
-        services.email.sendMail( {
-                'to': user.email,
-                'subject': 'LerGO validation',
-                'text': text,
-                'html': html
-        } , function(err ){
-            callback( err, user  );
-        })
+    services.emailTemplates.renderUserValidationEmail(emailVars, function (err, html, text) {
+        services.email.sendMail({
+            'to': user.email,
+            'subject': 'LerGO validation',
+            'text': text,
+            'html': html
+        }, function (err) {
+            callback(err, user);
+        });
     });
 };
 
@@ -218,29 +215,31 @@ exports.findUserByIdWithHmac = function (userId, hmac, callback) {
             return;
         }
 
-        callback( null, user );
+        callback(null, user);
     });
 };
 
-exports.validateUser = function( userId , hmac, callback  ){
-    logger.info('validation user [%s]', userId );
-    exports.findUserByIdWithHmac( userId, hmac, function( err, user ){
+exports.validateUser = function (userId, hmac, callback) {
+    logger.info('validation user [%s]', userId);
+    exports.findUserByIdWithHmac(userId, hmac, function (err, user) {
 
-        if ( !!err ){
+        if (!!err) {
             callback(new errorManager.UserValidationFailed(err));
             return;
         }
         logger.info('user validation passed');
         user.validated = true;
-        exports.updateUser( user , function( err ){
-            if ( !! err ){
-                logger.error('error while updating user',err);
-                callback( new errorManager.UserValidationFailed(err) );
+        exports.updateUser(user, function (err) {
+            if (!!err) {
+                logger.error('error while updating user', err);
+                callback(new errorManager.UserValidationFailed(err));
                 return;
             }
             logger.info('user updated successfully');
-            user.getId = function(){ return user._id };
-            callback( null, user);
+            user.getId = function () {
+                return user._id;
+            };
+            callback(null, user);
         });
     });
 };
@@ -260,75 +259,77 @@ exports.findUserById = function (userId, callback) {
     });
 };
 
-exports.sendResetPasswordMail = function( emailResources, resetDetails, callback ){
+exports.sendResetPasswordMail = function (emailResources, resetDetails, callback) {
 
-    logger.info('sending reset password mail ', resetDetails );
-    exports.findUser( { '$or' : [ { 'username' : resetDetails.username } , { 'email' : resetDetails.email } ] }, function( err, user ){
-        logger.info( arguments);
+    logger.info('sending reset password mail ', resetDetails);
+    exports.findUser({ '$or': [
+        { 'username': resetDetails.username } ,
+        { 'email': resetDetails.email }
+    ] }, function (err, user) {
+        logger.info(arguments);
 
-        if ( !!err ){
-            logger.info('failed to find user', resetDetails );
-            callback( err );
+        if (!!err) {
+            logger.info('failed to find user', resetDetails);
+            callback(err);
             return;
         }
-        if ( !user.email ){
-            throw new Error('user ', user , ' does not have an email. fix corrupted data in database');
+        if (!user.email) {
+            throw new Error('user ', user, ' does not have an email. fix corrupted data in database');
         }
 
 
         var emailVars = {};
-        _.merge( emailVars, emailResources );
-        var changePasswordLink = emailResources.lergoBaseUrl + '#/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac( getUserHmacDetails(user )));
+        _.merge(emailVars, emailResources);
+        var changePasswordLink = emailResources.lergoBaseUrl + '#/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
-        _.merge( emailVars, { 'link' : changePasswordLink , 'name' : user.username });
+        _.merge(emailVars, { 'link': changePasswordLink, 'name': user.username });
 
-        services.emailTemplates.renderResetPassword( emailVars , function( err, html, text ){
-            services.email.sendMail( {
+        services.emailTemplates.renderResetPassword(emailVars, function (err, html, text) {
+            services.email.sendMail({
                 'to': user.email,
                 'subject': 'LerGO Reset Password Request',
                 'text': text,
                 'html': html
-            } , function(err ){
-                callback( err  );
-            })
+            }, function (err) {
+                callback(err);
+            });
         });
 
 
-
-    } );
+    });
 
 };
 
 
-exports.changePassword = function( changePasswordDetails, callback ){
+exports.changePassword = function (changePasswordDetails, user, callback) {
 
-    if ( changePasswordDetails.password !== changePasswordDetails.passwordConfirm ){
+    if (changePasswordDetails.password !== changePasswordDetails.passwordConfirm) {
         callback(new errorManager.InternalServerError('password does not match confirm password'));
         return;
     }
 
-    function changePassword ( user ){
+    function changePassword(user) {
         var newPassword = changePasswordDetails.password;
-        user.password =  exports.encryptUserPassword( newPassword );
-        exports.updateUser( user, callback );
+        user.password = exports.encryptUserPassword(newPassword);
+        exports.updateUser(user, callback);
     }
 
-    if ( !!changePasswordDetails.hmac ){
+    if (!!changePasswordDetails.hmac) {
         logger.info('using email link');
 
-        exports.findUserByIdWithHmac( changePasswordDetails.userId , changePasswordDetails.hmac, function( err, user ) {
+        exports.findUserByIdWithHmac(changePasswordDetails.userId, changePasswordDetails.hmac, function (err, user) {
 
             if (!!err) {
                 callback(new errorManager.UserValidationFailed(err));
                 return;
             }
 
-            changePassword( user );
+            changePassword(user);
         });
 
-    }else if ( !!req.user ){
-         changePassword( req.user );
-    }else{
+    } else if (!!user) {
+        changePassword(user);
+    } else {
         callback(new errorManager.InternalServerError('there is no user on the request and i do not have changePasswordDetails'));
     }
 
@@ -345,17 +346,19 @@ exports.findUser = function (filter, callback) {
 };
 
 
-
-exports.isUserExists = function ( username, email, callback ){
-   exports.findUser( { '$or' : [ {'username' : username } , { 'email' : email }]}, function ( err, result ){
-       if ( !!err ){
-           callback(err);
-       } else {
-           callback( null, !result );
-       }
-   });
+exports.isUserExists = function (username, email, callback) {
+    exports.findUser({ '$or': [
+        {'username': username } ,
+        { 'email': email }
+    ]}, function (err, result) {
+        if (!!err) {
+            callback(err);
+        } else {
+            callback(null, !result);
+        }
+    });
 };
 
 exports.getUserByEmail = function (email, username, callback) {
-    exports.findUser( {'email' : email}, callback);
+    exports.findUser({'email': email}, callback);
 };

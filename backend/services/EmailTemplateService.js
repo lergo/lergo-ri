@@ -1,6 +1,4 @@
-var path           = require('path')
-
-    , emailTemplates = require('email-templates');
+var emailTemplates = require('email-templates');
 
 
 

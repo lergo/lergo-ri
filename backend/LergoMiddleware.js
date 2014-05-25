@@ -1,8 +1,8 @@
 
-var logger = require('log4js').getLogger('LergoMiddleware');
+//var logger = require('log4js').getLogger('LergoMiddleware');
 
 exports.origin = function( req, res, next){
-    var _origin = req.protocol + "://" +req.get('Host')  ;
+    var _origin = req.protocol + '://' +req.get('Host')  ;
     req.origin = _origin;
 
     // expects a URL from root "/some/page" which will result in "protocol://host:port/some/page"
