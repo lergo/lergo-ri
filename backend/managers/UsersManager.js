@@ -67,7 +67,7 @@ exports.createUser = function (emailResources, user, callback) {
         return;
     }
 
-    exports.isUserExists(user, null, function (err, result) {
+    exports.isUserExists(user.username, user.email, function (err, result) {
         logger.info(arguments);
         if (!!err) {
             logger.error('error getting user by email');
@@ -188,7 +188,7 @@ exports.loginUser = function (loginCredentials, callback) {
  */
 exports.sendValidationEmail = function (emailResources, user, callback) {
     if (!user.email) {
-        throw new Error('user ', user, ' does not have an email. fix corrupted data in database');
+        callback( new errorManager.InternalServerError( new Error('user ' +  user._id + ' does not have an email. fix corrupted data in database') ) );
     }
     logger.info('sending validation email', user);
     var emailVars = {};
@@ -350,7 +350,7 @@ exports.changePassword = function (changePasswordDetails, user, callback) {
 };
 
 exports.findUser = function (filter, callback) {
-    logger.info('getting user with filter [%s]', filter);
+    logger.info('getting user with filter [%s]', JSON.filter(filter));
     dbManager.connect('users', function (db, collection, done) {
         collection.findOne(filter, function (err, obj) {
             callback(err, obj);
