@@ -195,7 +195,12 @@ exports.sendValidationEmail = function (emailResources, user, callback) {
             'text': text,
             'html': html
         }, function (err) {
-            callback(err, user);
+            if ( !!err ){
+                callback( new errorManager.InternalServerError('error sending email',err));
+            }else{
+                callback( null, user );
+            }
+
         });
     });
 };
