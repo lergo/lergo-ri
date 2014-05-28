@@ -6,12 +6,22 @@
 var port = 3000;
 
 var express = require('express');
+var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
+var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
+var errorHandler = require('errorhandler');
 //var routes = require('./backend/Routes');
 var swagger = require('swagger-node-express');
 var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
 var appContext = require('./backend/ApplicationContext');
 var logger = appContext.logManager.getLogger('server');
+var lergoMiddleware = require('./backend/LergoMiddleware');
+var services = require('./backend/services');
+var path = require('path');
+
+services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 //var errorManager = appContext.errorManager;
 
 var app = module.exports = express();
@@ -35,23 +45,21 @@ var controllers = require('./backend/controllers');
 // Configuration
 var useStatic = express.static(__dirname + '/swagger-ui/dist');
 logger.info(typeof(useStatic));
-app.configure(function () {
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser());
-    app.use(express.cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
-    app.use('/backend/user', controllers.users.loggedInMiddleware);
-    app.use(app.router);
-    app.use('/public', express.static(__dirname + '/public'));
-    app.use('/swagger', function () {
-        return useStatic.apply(this, arguments);
-    });
-});
 
-app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(bodyParser());
+app.use(methodOverride());
+app.use(cookieParser());
+app.use(cookieSession( { 'secret' : appContext.conf.cookieSessionSecret } ));
 
+// lergo middlewares.. not optimized right now..
+// not all requests need emailResources. we should optimize it somehow later
+app.use(lergoMiddleware.origin);
+app.use(lergoMiddleware.emailResources);
+app.use('/backend/user', controllers.users.loggedInMiddleware);
+
+app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 // Routes
 
@@ -148,6 +156,16 @@ var server = app.listen(port, function () {
 //    logger.info('possible routes are : ' +JSON.stringify(app.routes.routes,{},4));
 });
 
+
+
+//app.use('/public', express.static(__dirname + '/public'));
+app.use('/swagger', function () {
+    return useStatic.apply(this, arguments);
+});
+
+
+
+
 logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
 // do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
@@ -156,4 +174,6 @@ process.on('uncaughtException', function (err) {
     // handle the error safely
     logger.info(err);
 });
+
+
 

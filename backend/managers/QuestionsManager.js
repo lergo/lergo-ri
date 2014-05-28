@@ -24,15 +24,14 @@ exports.createQuestion = function(question, callback) {
 	});
 };
 
-exports.updateQuestion = function(question, id, callback) {
+exports.updateQuestion = function(question, callback) {
 	logger.info('Updating question');
+
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.save({
-			'_id' : dbManager.id(id),
-			'questionText' : question.questionText,
-			'options' : question.options,
-			'correctAnswer' : question.correctAnswer
-		}, function(err) {
+		collection.update({
+			'_id' : question._id,
+			'userId' : question.userId
+		}, question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
 				callback(new errorManager.InternalServerError());
@@ -78,12 +77,56 @@ exports.getQuestionById = function(id, callback) {
 	});
 };
 
-exports.getQuestions = function(callback) {
+exports.getUserQuestions = function(userId, callback) {
+	logger.info('getting user questions');
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.find({
+			'userId' : userId
+		}).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to query for questions', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
+
+exports.search = function(filter, projection, callback) {
+	logger.info('finding questions with filter ', filter, projection);
+
+	dbManager.connect('questions', function(db, collection, done) {
+		collection.find(filter, projection).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to search for questions', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
+
+exports.getQuestions = function(filter, callback) {
 	logger.info('Getting question');
 	dbManager.connect('questions', function(db, collection, done) {
-		collection.find().toArray(function(err, result) {
+		collection.find(filter).toArray(function(err, result) {
 			if (!!err) {
-				logger.error('unable to query for questions [%s]', err.message);
+				logger.error('unable to query for questions', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
+
+exports.findUsages = function(id, callback) {
+	logger.info('Finding usages of the question');
+	dbManager.connect('lessons', function(db, collection, done) {
+		collection.find({
+			'steps.items' : dbManager.id(id)
+		}).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to find usage of questions [%s]', err.message);
 			}
 			done();
 			callback(err, result);

@@ -80,8 +80,8 @@ upgrade_main(){
         cd /tmp
         echo "seems like there's a new build. I will install it"
 
-        mkdir -p /var/www/lergo/lergo-ri
-        mkdir -p /var/www/lergo/lergo-ui
+        # mkdir -p /var/www/lergo/lergo-ri
+        # mkdir -p /var/www/lergo/lergo-ui
 
         echo "install ui"
         LERGO_RI_LOCATION=/var/www/lergo/lib/lergo-ri
@@ -145,6 +145,17 @@ upgrade_main(){
         cd /var/www/lergo/lergo-ri
         mkdir -p conf/dev/
         run_wget -O conf/dev/meConf.js $ME_CONF_URL
+
+     fi
+
+     if [ -z $ME_JSON_URL ];then
+             echo "missing me json url"
+             exit 1
+          else
+             echo "updating me json configuration"
+             cd /var/www/lergo/lergo-ri
+             mkdir -p conf/dev/
+             run_wget -O conf/dev/me.json $ME_JSON_URL
 
      fi
 

@@ -12,7 +12,7 @@ upstream lergo-backend {
 server {
 
   listen        80;
-  server_name   $DOMAIN;
+  server_name   $DOMAIN $MORE_DOMAINS;
   access_log    /var/log/nginx/$DOMAIN/access.log;
   error_log     /var/log/nginx/$DOMAIN/error.log;
   error_page    404    /404.html;
@@ -22,6 +22,8 @@ server {
 
  location /backend{
       proxy_pass http://lergo-backend;
+      proxy_set_header Host      \$host;
+      proxy_set_header X-Real-IP \$remote_addr;
  }
 
  location / {

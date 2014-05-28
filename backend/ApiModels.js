@@ -1,5 +1,44 @@
 
 exports.models = {
+    'ChangePasswordDetails' : {
+        'id': 'ChangePasswordDetails',
+        'description' : 'Details for changing password',
+        'properties' : {
+            'userId' : {
+                'type' : 'string',
+                'description' : 'id of user changing the password. if user is logged in, this is optional'
+            },
+            'hmac' : {
+                'type' : 'string',
+                'description': 'hmac given on email link. if user is logged in, this is optional'
+            },
+
+            'newPassword' : {
+                'type' : 'string',
+                'description' : 'the new password'
+            },
+            'newPasswordConfirm' : {
+                'type' : 'string',
+                'description' : 'new password retype'
+            }
+        }
+    },
+    'ResetPasswordDetails' : {
+        'id' : 'RequestResetPasswordDetails',
+        'description' : 'Details needed to create reset password request. ' +
+            'All are optional but at least one is required for operation to succeed',
+        'properties' : {
+            'username' : {
+                'type' : 'string',
+                'description' : 'a username'
+            },
+            'email' : {
+                'type' : 'string',
+                'description' : 'an email address'
+            }
+
+        }
+    },
     'UserSignupForm': {
         'id': 'UserSignupForm',
         'description': 'The signup form details',
@@ -13,6 +52,10 @@ exports.models = {
             'username': {
                 'type': 'string',
                 'description': 'The login username'
+            },
+            'email' : {
+                'type' : 'string',
+                'description' : 'An email address for validation process'
             },
             'password': {
                 'type': 'string',
@@ -54,27 +97,7 @@ exports.models = {
     },
     'Question' : {
         'id' : 'Question',
-        'description' : 'Question to be submitted',
-        'required': [
-            'questionText',
-            'options',
-            'correctAnswer'
-        ],
-        'properties' : {
-            'questionText' : {
-                'type' : 'string',
-                'description' : 'Question description'
-            },
-            'options' : {
-                'type' : 'string',
-                'description' : 'Answer options for the question '
-            },
-            'correctAnswer' : {
-                'type' : 'string',
-                'description' : 'Correct answer from the options '
-            }
-
-        }
+        'description' : 'Question to be submitted'
     },
     'Lesson' : {
         'id' : 'Lesson',
@@ -88,5 +111,9 @@ exports.models = {
                 'description' : 'Lesson name'
             }
         }
+    },
+    'UserValidationData' : {
+        'id' : 'EmailValidationData',
+        'description' : 'used to validate user'
     }
 };

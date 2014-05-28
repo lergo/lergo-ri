@@ -58,7 +58,7 @@ describe('QuestionsManager', function() {
 
 			async.waterfall([
 				function testUpdateQuestion() {
-					questionsManager.getQuestions(function(done, returnObject) {
+					questionsManager.getQuestions( {}, function(done, returnObject) {
 						assert(returnObject);
 						assert.equal(returnObject.length, 1);
 						id = returnObject[0]._id;
