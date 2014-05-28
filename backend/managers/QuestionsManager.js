@@ -133,23 +133,3 @@ exports.findUsages = function(id, callback) {
 		});
 	});
 };
-exports.submitAnswer = function(id, answer, callback) {
-	logger.info('Submit Answer');
-	dbManager.connect('questions', function(db, collection, done) {
-		collection.findOne({
-			'_id' : dbManager.id(id)
-		}, function(err, result) {
-			if (!!err) {
-				logger.error('unable to submit for question [%s]', err.message);
-			}
-			done();
-			// TODO : need to improve logic so that it can handle all type of
-			// question
-			if (result.answer === answer) {
-				callback(err, true);
-			} else {
-				callback(err, false);
-			}
-		});
-	});
-};
