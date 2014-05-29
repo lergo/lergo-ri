@@ -30,13 +30,21 @@ function TrueFalseQuestionHandler(question) {
 		return question.userAnswer === question.answer;
 	};
 }
+function OpenQuestionHandler(question) {
+	this.isCorrect = function() {
+		return true;
+	};
 
+}
 exports.getHandler = function(question) {
 	if (question.type === 'exactMatch') {
 		return new ExactMatchQuestionHandler(question);
 	}
 	if (question.type === 'multipleChoices') {
 		return new MultiChoiceQuestionHandler(question);
+	}
+	if (question.type === 'openQuestion') {
+		return new OpenQuestionHandler(question);
 	}
 	return new TrueFalseQuestionHandler(question);
 
