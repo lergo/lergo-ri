@@ -35,9 +35,9 @@ describe('QuestionsManager', function() {
 			};
 			async.waterfall([
 				function testCreateQuestion() {
-					questionsManager.createQuestion(question, function(done, obj) {
+					questionsManager.createQuestion(question, function(err, obj) {
 						logger.info('Question [%s] created successfully', obj);
-						questionsManager.getQuestionById(obj._id, function(done, question) {
+						questionsManager.getQuestionById(obj._id, function(err, question) {
 							assert(question);
 						});
 						done();

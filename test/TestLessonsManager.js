@@ -31,11 +31,12 @@ describe('LessonsManager', function() {
 			var lesson = {
 				'lessonText' : 'Who is president of America',
 				'options' : 'Bill Gates , Brack Obama,Louis Philip',
-				'correctAnswer' : 'Brack Obama'
+				'correctAnswer' : 'Brack Obama',
+                'name': 'Test Lesson Name'
 			};
 			async.waterfall([
 				function testCreateLesson() {
-					lessonsManager.createLesson(lesson, function(done, obj) {
+					lessonsManager.createLesson(lesson, function(err, obj) {
 						logger.info('Lesson [%s] created successfully', obj);
 						lessonsManager.getLesson( { '_id' : obj._id }, function(done, lesson) {
 							assert(lesson);
@@ -52,25 +53,27 @@ describe('LessonsManager', function() {
 			var modifiedLesson = {
 				'lessonText' : 'Who is president of America',
 				'options' : 'Bill Gates ,Brack Obama,Louis Philip',
-				'correctAnswer' : 'Bill Gates'
+				'correctAnswer' : 'Bill Gates',
+                'name': 'Test Lesson Name'
 			};
 			var id;
 
 			async.waterfall([
 				function testUpdateLesson() {
-					lessonsManager.getLessons(function(done, returnObject) {
+					lessonsManager.getLesson(function(err, returnObject) {
 						assert(returnObject);
 						assert.equal(returnObject.length, 1);
 						id = returnObject[0]._id;
+                        modifiedLesson["_id"] = id;
 					});
 
-					lessonsManager.updateLesson(modifiedLesson, id, function(done, updatedObject) {
+					lessonsManager.updateLesson(modifiedLesson, function(err, updatedObject) {
 						logger.info('Lesson [%s] updated successfully', updatedObject);
 						assert(updatedObject);
 
 					});
-
-					lessonsManager.getLesson( { '_id' : id } , function(done, obj) {
+                    logger.info('************* HELLO %s', modifiedLesson._id);
+					lessonsManager.getLesson( { '_id' : id } , function(err, obj) {
 						assert(obj);
 						assert.equal(obj.correctAnswer, modifiedLesson.correctAnswer);
 					});
@@ -85,7 +88,8 @@ describe('LessonsManager', function() {
 			var newLesson = {
 				'lessonText' : 'Who is Newton ?',
 				'options' : 'Scientist ,Cricketer,Politician',
-				'correctAnswer' : 'Scientist'
+				'correctAnswer' : 'Scientist',
+                'name': 'Test Lesson Name'
 			};
 			var id;
 
@@ -94,16 +98,19 @@ describe('LessonsManager', function() {
 
 					lessonsManager.createLesson(newLesson, function(done, returnObject) {
 						assert(returnObject);
-						id = returnObject._id
+						id = returnObject._id;
+                        newLesson["_id"] = id;
 					});
 
-					lessonsManager.deleteLesson(id, function(done, obj) {
-						logger.info('Lesson [%s] deleted successfully', obj);
-						assert(obj);
+					lessonsManager.deleteLesson(id, newLesson.userId, function(err) {
+                        // Commented out since when looking on LessonsManager.deleteLesson, I see that it only invokes
+                        // the callback with err (and not (err, obj), as implied by this test).
+//						logger.info('Lesson [%s] deleted successfully', obj);
+//						assert(obj);
 
 					});
 
-					lessonsManager.getLesson( { 'fake' : 'guy' }, function(id, done, returnObject) {
+					lessonsManager.getLesson( { 'fake' : 'guy' }, function(id, returnObject) {
 						assert(!returnObject);
 					});
 					done();
