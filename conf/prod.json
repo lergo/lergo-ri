@@ -1,6 +1,6 @@
 {
-    "cookieSessionSecret" : null,
-    "dbUrl" : null,
+    "cookieSessionSecret" : "cookieSessionSecret",
+    "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
     "emailSettings" : {
         "type" : "SMTP",

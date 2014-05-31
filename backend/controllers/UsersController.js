@@ -5,7 +5,7 @@ var logger = managers.log.getLogger('UsersController');
 logger.info('initializing');
 
 function getUserPublicDetails(user) {
-    return { 'email': user.email, 'username': user.username };
+    return { 'username': user.username };
 }
 
 exports.signup = function (req, res) {

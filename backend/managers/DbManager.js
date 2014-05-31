@@ -1,12 +1,15 @@
 'use strict';
-var appContext = require('../ApplicationContext');
+
+var conf = require('../services/Conf');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
-var logger = appContext.logManager.getLogger('DbManager');
+var logger = require('log4js').getLogger('DbManager');
 
-logger.info('initializing DbManager');
-var _dbUrl = appContext.conf.dbUrl;
 
+var _dbUrl = conf.dbUrl;
+
+
+logger.info('initializing DbManager :: ' , _dbUrl );
 
 /**
  *
@@ -39,8 +42,26 @@ exports.connect = function (collection, callback) {
     });
 };
 
+/**
+ * will convert a string or list of strings to mongo objectID.
+ * in case it is already a mongo objectID, it is left untouched
+ * @param id
+ * @returns mongo objectID or array of mongo objectID.
+ */
 exports.id = function( id ){
-    return mongodb.ObjectID( id );
+    if ( typeof(id) === 'string') {
+        return mongodb.ObjectID(id);
+    } else if ( Array.isArray(id) ){
+        id = id.map(function (idString) {
+            if ( typeof(idString) === 'string') {
+                return mongodb.ObjectID(idString);
+            }else{
+                return idString;
+            }
+        });
+        return id;
+    }
+    return id;
 };
 
 

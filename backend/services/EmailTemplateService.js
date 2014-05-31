@@ -6,7 +6,6 @@ var logger = require('log4js').getLogger('EmailTemplateService');
 
 
 exports.load = function( templatesDir, callback ){
-
     if ( !callback ){
         callback = function(){};
     }
@@ -40,6 +39,10 @@ exports.load = function( templatesDir, callback ){
 
 exports.renderResetPassword = function( locals  , callback ){
     exports.template('resetPassword', locals, callback );
+};
+
+exports.renderLessonInvitation = function( locals, callback ){
+    exports.template('lessonInvite', locals, callback );
 };
 
 exports.renderUserValidationEmail = function( locals, callback ){

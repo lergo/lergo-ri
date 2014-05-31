@@ -1,8 +1,7 @@
 'use strict';
-var appContext = require('../ApplicationContext');
-var logger = appContext.logManager.getLogger('LessonsManager');
-var dbManager = appContext.dbManager;
-var errorManager = appContext.errorManager;
+var logger = require('log4js').getLogger('LessonsManager');
+var dbManager = require('./DbManager');
+var errorManager = require('./ErrorManager');
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');

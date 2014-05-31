@@ -1,10 +1,10 @@
 'use strict';
-var appContext = require('../ApplicationContext');
+
 var sha1 = require('sha1');
-var logger = appContext.logManager.getLogger('UsersManager');
-var dbManager = appContext.dbManager;
+var logger = require('log4js').getLogger('UsersManager');
+var dbManager = require('./DbManager');
 var services = require('../services');
-var errorManager = appContext.errorManager;
+var errorManager = require('./ErrorManager');
 var _ = require('lodash');
 
 /**

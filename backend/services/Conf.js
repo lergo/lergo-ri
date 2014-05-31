@@ -11,7 +11,7 @@ var fs = require('fs');
 var path = require('path');
 var _  = require('lodash');
 var meConf = path.resolve('conf/dev/me.json');
-var prodConf = path.resolve('conf/prod.json');
+var prodConf = path.resolve(path.join(__dirname,'../../','conf/prod.json'));
 
 
 var data = fs.readFileSync(prodConf, 'utf8');

@@ -53,13 +53,14 @@ exports.getQuestionById = function (req, res) {
         }
     });
 };
-exports.updateQuestion = function (req, res) {
+exports.updateUserQuestion = function (req, res) {
+    logger.info('updating question');
     var question = req.body;
 
     logger.info(question);
     question._id = managers.db.id(question._id);
     question.userId = managers.db.id(req.user._id);
-    managers.questions.updateQuestion(question, function (err, obj) {
+    managers.questions.updateUserQuestion( question, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -97,14 +98,13 @@ exports.findUserQuestionsByIds = function (req, res) {
     var objectIds = [];
     logger.info(req.query.ids);
     try {
-        objectIds = req.query.ids;
+        objectIds = [].concat(req.query.ids); // handle case where there's only one id.
     } catch (err) {
         logger.error('unable to parse query ids', req.query.ids);
     }
+
     logger.info('this is object ids', objectIds);
-    objectIds = objectIds.map(function (idString) {
-        return managers.db.id(idString);
-    });
+    objectIds = managers.db.id(objectIds);
 
     logger.info(typeof(objectIds));
 

@@ -353,7 +353,7 @@ exports.updateQuestion = {
         ],
         'nickname': 'updateQuestion'
     },
-    'action': controllers.questions.updateQuestion
+    'action': controllers.questions.updateUserQuestion
 };
 exports.findQuestionUsages = {
     'spec': {
@@ -515,17 +515,23 @@ exports.deleteLesson = {
 };
 
 
+/**
+ *
+ * An action for logged in user to invite others for a lesson.
+ * Since we have the userId on the session, we will want to keep track of it.
+ *
+ */
 exports.lessonInviteCreate = {
     'spec': {
         'description': 'Create a lesson invitation',
         'name': 'lessonInviteCreate',
-        'path': '/backend/user/lessons/{id}/invite/create',
+        'path': '/backend/user/lessons/{lessonId}/invitations/create',
         'summary': 'create a lesson invitation instance and sends an email',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'id',
+                'name': 'lessonId',
                 required: true,
                 'description': 'ID of lesson to invite to',
                 'type': 'string'
@@ -540,6 +546,45 @@ exports.lessonInviteCreate = {
         'nickname': 'lessonInviteCreate'
     },
     'action': controllers.lessonsInvitations.create
+};
+
+exports.lessonsInvitationsGetById = {
+    'spec': {
+        'description': 'Get a lesson invitation by id',
+        'name': 'lessonInviteCreate',
+        'path': '/backend/lessonsinvitations/{id}/build',
+        'summary': 'create a lesson invitation instance and sends an email',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'id',
+                required: true,
+                'description': 'ID of lesson to invite to',
+                'type': 'string'
+            },{
+                'paramType' : 'query',
+                'name' : 'construct',
+                'required' : false,
+                'description' : 'if true, the invitation will construct its lesson in case one was not constructed before',
+                'type' : 'boolean'
+            },
+            {
+                'paramType' : 'query',
+                'name' : 'constructForce',
+                'required' : false,
+                'description' : 'if true, the invitation will construct its lessons. if one was already constructed, it will be reconstructed'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to get lesson invitation'
+            }
+        ],
+        'nickname': 'lessonInviteCreate'
+    },
+    'action': controllers.lessonsInvitations.build
 };
 
 exports.submitAnswers = {

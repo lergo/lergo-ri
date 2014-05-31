@@ -1,8 +1,7 @@
 'use strict';
-var appContext = require('../ApplicationContext');
-var logger = appContext.logManager.getLogger('QuestionsManager');
-var dbManager = appContext.dbManager;
-var errorManager = appContext.errorManager;
+var logger = require('log4js').getLogger('QuestionsManager');
+var dbManager = require('./DbManager');
+var errorManager = require('./ErrorManager');
 
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
@@ -24,10 +23,18 @@ exports.createQuestion = function(question, callback) {
 	});
 };
 
-exports.updateQuestion = function(question, callback) {
+/**
+ * finds question by user and updates the question.
+ * @param question
+ * @param callback
+ */
+exports.updateUserQuestion = function(question, callback) {
 	logger.info('Updating question');
 
 	dbManager.connect('questions', function(db, collection, done) {
+
+        // prevent malicious users from making a fraud request to update someone else's question
+        // find the user by using both the userId and questionId.
 		collection.update({
 			'_id' : question._id,
 			'userId' : question.userId
@@ -118,6 +125,7 @@ exports.getQuestions = function(filter, callback) {
 		});
 	});
 };
+
 
 exports.findUsages = function(id, callback) {
 	logger.info('Finding usages of the question');

@@ -91,14 +91,22 @@ cd ../../
 echo "building lergo-ri"
 
 cd lergo-ri
-if [ ! -d node_modules ]; then
-    rm -Rf node_modules
-fi
-npm install 
-grunt build --no-color
-cd dist
-npm install --production
-npm pack
+
+
+build_ri(){
+    echo "build_ri try :: $1"
+    if [ ! -d node_modules ]; then
+        rm -Rf node_modules
+    fi
+    npm install
+    grunt build --no-color
+    cd dist
+    npm install --production
+    npm pack
+
+}
+
+for i in 1 2 3 4 5 6 7 8 9; do build_ri $i && break || sleep 1; done
 
 
 # for future test needs, we have a mongo db for testing for free from cloudbees.
