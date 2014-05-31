@@ -2,8 +2,8 @@
 var assert = require('assert');
 var appContext = require('../backend/managers');
 var logger = appContext.log.getLogger('TestLessonsManager');
-var lessonsManager = appContext.lessonsManager;
-var dbManager = appContext.dbManager;
+var lessonsManager = appContext.lessons;
+var dbManager = appContext.db;
 var async = require('async');
 before(function() {
 	logger.info('Test for LessonsManager started');

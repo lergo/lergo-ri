@@ -7,7 +7,7 @@ var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsManager');
 var models = require('../models');
 var async = require('async');
-var COLLECTION_NAME = 'lessonsInvitations';
+var     COLLECTION_NAME = 'lessonsInvitations';
 /**
  *
  *
