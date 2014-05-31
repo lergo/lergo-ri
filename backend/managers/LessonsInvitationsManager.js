@@ -55,8 +55,8 @@ exports.search = function (filter, projection, callback) {
             callback(null, result);
             return;
 
-        })
-    })
+        });
+    });
 };
 
 exports.find = exports.search;
@@ -69,7 +69,7 @@ exports.updateLessonInvitation = function (invitation, callback) {
             done();
             callback(err, result);
             return;
-        })
+        });
     });
 };
 
@@ -102,7 +102,6 @@ exports.create = function (emailResources, invitation, callback) {
 
 exports.sendInvitationMail = function (emailResources, invitationData, callback) {
 
-    debugger;
     var invitationModel = new Invitation(invitationData);
 
     var emailVars = {};

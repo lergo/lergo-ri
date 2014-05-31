@@ -96,19 +96,10 @@ exports.build = function( req, res ){
             logger.info('constructing invitation');
             managers.lessonsInvitations.buildLesson( result, function( err, constructed ){
                 res.send(constructed);
-            })
+            });
         }else{
             res.send(result);
         }
 
     });
-};
-
-/**
- * This function
- * @param req
- * @param res
- */
-exports.getLesson = function( req, res ){
-
 };

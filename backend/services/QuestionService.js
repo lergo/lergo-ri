@@ -30,7 +30,7 @@ function TrueFalseQuestionHandler(question) {
 		return question.userAnswer === question.answer;
 	};
 }
-function OpenQuestionHandler(question) {
+function OpenQuestionHandler(/*question*/) {
 	this.isCorrect = function() {
 		return true;
 	};
