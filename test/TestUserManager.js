@@ -1,10 +1,10 @@
 'use strict';
 var assert = require('assert');
-var appContext = require('../backend/ApplicationContext');
-var logger = appContext.logManager.getLogger('TestUserManager');
+var appContext = require('../backend/managers');
+var logger = appContext.log.getLogger('TestUserManager');
 //var usersManager = require('../backend/managers/UsersManager');
-var usersManager = appContext.usersManager;
-var dbManager = appContext.dbManager;
+var usersManager = appContext.users;
+var dbManager = appContext.db;
 var async = require('async');
 //dbManager.setUrl('mongodb://127.0.0.1:27017/lergo-test');
 

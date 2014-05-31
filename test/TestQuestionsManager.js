@@ -1,9 +1,9 @@
 'use strict';
 var assert = require('assert');
-var appContext = require('../backend/ApplicationContext');
-var logger = appContext.logManager.getLogger('TestQuestionsManager');
-var questionsManager = appContext.questionsManager;
-var dbManager = appContext.dbManager;
+var appContext = require('../backend/managers');
+var logger = appContext.log.getLogger('TestQuestionsManager');
+var questionsManager = appContext.questions;
+var dbManager = appContext.db;
 var async = require('async');
 before(function() {
 	logger.info('Test for QuestionsManager started');

@@ -1,7 +1,7 @@
 'use strict';
 var assert = require('assert');
-var appContext = require('../backend/ApplicationContext');
-var logger = appContext.logManager.getLogger('TestLessonsManager');
+var appContext = require('../backend/managers');
+var logger = appContext.log.getLogger('TestLessonsManager');
 var lessonsManager = appContext.lessonsManager;
 var dbManager = appContext.dbManager;
 var async = require('async');
