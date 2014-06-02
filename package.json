@@ -21,7 +21,7 @@
         "method-override": "*",
         "cookie-session": "*",
         "errorhandler": "*",
-        "email-templates" : "*"
+        "email-templates" : "0.1.8"
     },
     "devDependencies": {
         "grunt": "~0.4.1",
