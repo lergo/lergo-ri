@@ -28,7 +28,7 @@ exports.buildLesson = function (invitation, callback) {
             questionsId = dbManager.id(questionsId);
             questionsManager.search({ '_id': { '$in': questionsId }}, {}, _callback);
         },function updateLessonInvitation( result, _callback) {
-            invitation.quiztItems = result;
+            invitation.quizItems = result;
             updatedInvitation = invitation;
             exports.updateLessonInvitation(invitation, _callback);
             return;
