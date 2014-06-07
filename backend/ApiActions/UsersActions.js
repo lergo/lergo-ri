@@ -548,6 +548,42 @@ exports.lessonInviteCreate = {
     'action': controllers.lessonsInvitations.create
 };
 
+
+/**
+
+ */
+exports.lessonInviteReportUpdate = {
+    'spec': {
+        'description': 'update lesson report',
+        'name': 'lessonInviteReportUpdate',
+        'path': '/backend/lessonsinvitations/{invitationId}/report',
+        'summary': 'updates lesson report',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'invitationId',
+                required: true,
+                'description': 'ID of lesson invitation',
+                'type': 'string'
+            },{
+                'paramType' : 'body',
+                'required': true,
+                'description' : 'the report',
+                'type' : 'LessonInvitationReport'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to create lesson invitation'
+            }
+        ],
+        'nickname': 'lessonInviteCreate'
+    },
+    'action': controllers.lessonsInvitations.report
+};
+
 exports.lessonsInvitationsGetById = {
     'spec': {
         'description': 'Get a lesson invitation by id',

@@ -48,6 +48,17 @@ exports.create = function (req, res) {
     });
 };
 
+exports.report = function( req, res ){
+    managers.lessonsInvitations.updateReport( req.params.invitationId, req.body , function(err, result){
+        if ( !!err ){
+            err.send(res);
+            return;
+        }else{
+            res.send(result);
+        }
+    });
+};
+
 
 exports.list = function (req, res) {
     findLesson( req, res, function(){

@@ -41,6 +41,27 @@ exports.buildLesson = function (invitation, callback) {
     ]);
 };
 
+exports.updateReport = function( invitationId, report, callback ){
+    logger.info('updating report on invitation ', invitationId);
+
+    // when we are updating the report - we want to make sure no one is abusing us..
+    // we do this by making sure the report and invitation both point to same lesson.
+    // it is hardly realistic that someone will be able to guess the combination of the invitation ID and the report ID
+    // who both look at the same lesson
+
+    dbManager.connect(COLLECTION_NAME, function(db, collection, done){
+
+        collection.update({ '_id' : dbManager.id(invitationId), 'lessonId' : report.data.lessonId }, { '$set' : { 'report' : report }}, function( err/*, count, response*/ ){
+            if ( !!err ){
+                done();
+                callback(new errorManager.InternalServerError( err, 'unable to update report'));
+                return;
+            }
+            callback( null, report );
+        });
+    });
+};
+
 exports.search = function (filter, projection, callback) {
     logger.info('finding the invitation', filter);
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
