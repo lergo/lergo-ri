@@ -19,6 +19,9 @@
     "tests" : {
         "TestMailSender" : {
             "to" : "__to__"
+        },
+        "TestLessonsInvitationsManager": {
+            "invitation": { "invitee": { "email": "testlergomail@mailinator.com"}}
         }
     }
 

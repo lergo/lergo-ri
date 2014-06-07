@@ -3,21 +3,32 @@
 function ExactMatchQuestionHandler(question) {
 
 	this.isCorrect = function() {
-		return question.answer.indexOf(question.userAnswer) > -1;
+		var answers = [];
+		question.options.forEach(function(value) {
+			answers.push(value.label);
+		});
+		return answers.indexOf(question.userAnswer) > -1;
 	};
 }
 function MultiChoiceQuestionHandler(question) {
 
 	this.isCorrect = function() {
+		var answers = [];
+		question.options.forEach(function(value) {
+			if (value.checked === true) {
+				answers.push(value.label);
+			}
+		});
+
 		if (question.userAnswer.length === undefined) {
 			return false;
 		}
-		if (question.userAnswer.length !== question.answer.length) {
+		if (question.userAnswer.length !== answers.length) {
 			return false;
 		}
 		var result = true;
 		question.userAnswer.forEach(function(value) {
-			if (question.answer.indexOf(value) < 0) {
+			if (answers.indexOf(value) < 0) {
 				result = false;
 			}
 		});
@@ -30,7 +41,7 @@ function TrueFalseQuestionHandler(question) {
 		return question.userAnswer === question.answer;
 	};
 }
-function OpenQuestionHandler(/*question*/) {
+function OpenQuestionHandler(/* question */) {
 	this.isCorrect = function() {
 		return true;
 	};

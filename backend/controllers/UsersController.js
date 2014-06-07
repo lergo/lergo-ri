@@ -12,7 +12,7 @@ exports.signup = function (req, res) {
     var user = req.body;
     managers.users.createUser(req.emailResources, user, function (err, obj) {
         if (!!err) {
-            err.send(res);
+            res.send(err);
             return;
         } else {
             res.send({ 'username': obj.username, 'message': 'created successfully'});
