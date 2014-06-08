@@ -68,7 +68,7 @@ exports.sendLessonInviteReportReady = function(req, res ){
 
         res.send(200);
 
-    })
+    });
 };
 
 
@@ -80,7 +80,7 @@ exports.getReport = function( req, res ){
         }
 
         res.send(report);
-    })
+    });
 };
 
 

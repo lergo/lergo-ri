@@ -8,7 +8,47 @@ var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsManager');
 var models = require('../models');
 var async = require('async');
-var     COLLECTION_NAME = 'lessonsInvitations';
+var COLLECTION_NAME = 'lessonsInvitations';
+
+
+
+
+function Invitation(invitation) {
+
+    var self = this;
+
+    self.getEmail = function () {
+        return invitation.invitee.email;
+    };
+
+    self.setReportSent = function (value) {
+        invitation.report.sent = value;
+    };
+
+    self.isReportSent = function () {
+        return !!invitation.report.sent;
+    };
+
+    self.getName = function () {
+        return invitation.invitee.email;
+    };
+
+    self.getInviter = function (callback) {
+
+        return usersManager.findUser({ '_id': dbManager.id(invitation.inviter) }, function (err, result) {
+            if (!!err) {
+                callback(err);
+                return;
+            }
+            callback(null, result);
+        });
+    };
+
+
+}
+
+
+
 /**
  *
  *
@@ -20,21 +60,21 @@ exports.buildLesson = function (invitation, callback) {
     var lessonId = invitation.lessonId;
     var updatedInvitation = null;
     async.waterfall([
-        function getLessonById( _callback ){
-            lessonsManager.getLesson({ _id: dbManager.id(lessonId) },_callback);
-        }, function getAllQuizItems( result, _callback ){
+        function getLessonById(_callback) {
+            lessonsManager.getLesson({ _id: dbManager.id(lessonId) }, _callback);
+        }, function getAllQuizItems(result, _callback) {
             invitation.lesson = result;
-            var lessonModel = new models.Lesson( result );
-            var questionsId = lessonModel.getAllQuestionIds( );
+            var lessonModel = new models.Lesson(result);
+            var questionsId = lessonModel.getAllQuestionIds();
             questionsId = dbManager.id(questionsId);
             questionsManager.search({ '_id': { '$in': questionsId }}, {}, _callback);
-        },function updateLessonInvitation( result, _callback) {
+        }, function updateLessonInvitation(result, _callback) {
             invitation.quizItems = result;
             updatedInvitation = invitation;
             exports.updateLessonInvitation(invitation, _callback);
             return;
 
-        }, function invokeCallback( ){
+        }, function invokeCallback() {
             callback(null, updatedInvitation);
         }
 
@@ -42,7 +82,7 @@ exports.buildLesson = function (invitation, callback) {
     ]);
 };
 
-exports.updateReport = function( invitationId, report, callback ){
+exports.updateReport = function (invitationId, report, callback) {
     logger.info('updating report on invitation ', invitationId);
 
     // when we are updating the report - we want to make sure no one is abusing us..
@@ -50,47 +90,46 @@ exports.updateReport = function( invitationId, report, callback ){
     // it is hardly realistic that someone will be able to guess the combination of the invitation ID and the report ID
     // who both look at the same lesson
 
-    dbManager.connect(COLLECTION_NAME, function(db, collection, done){
+    dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
 
-        collection.update({ '_id' : dbManager.id(invitationId), 'lessonId' : report.data.lessonId }, { '$set' : { 'report' : report }}, function( err/*, count, response*/ ){
-            if ( !!err ){
+        collection.update({ '_id': dbManager.id(invitationId), 'lessonId': report.data.lessonId }, { '$set': { 'report': report }}, function (err/*, count, response*/) {
+            if (!!err) {
                 done();
-                callback(new errorManager.InternalServerError( err, 'unable to update report'));
+                callback(new errorManager.InternalServerError(err, 'unable to update report'));
                 return;
             }
-            callback( null, report );
+            callback(null, report);
         });
     });
 };
 
 
-exports.getReport = function( invitationId , callback ){
-    exports.search( { '_id' : dbManager.id(invitationId) } , { 'report' : 1 }, function(err, result){
-     if ( !!err ){
-          callback(err);
-         return;
-     }
+exports.getReport = function (invitationId, callback) {
+    exports.search({ '_id': dbManager.id(invitationId) }, { 'report': 1 }, function (err, result) {
+        if (!!err) {
+            callback(err);
+            return;
+        }
 
         callback(null, result.report);
     });
 };
 
-exports.sendReportLink = function( emailResources, invitationId, callback ){
+exports.sendReportLink = function (emailResources, invitationId, callback) {
     logger.info('send report is ready email');
-    exports.search({ '_id' : dbManager.id(invitationId)}, {}, function(err, invitationData){
-        if ( !!err ){
+    exports.search({ '_id': dbManager.id(invitationId)}, {}, function (err, invitationData) {
+        if (!!err) {
             callback(err);
             return;
         }
         var invitationModel = new Invitation(invitationData);
 
-        if ( invitationModel.isReportSent() ){
+        if (invitationModel.isReportSent()) {
             callback(null);
         }
 
-        debugger;
-        invitationModel.getInviter( function( err, inviter ){
-            if ( !!err ){
+        invitationModel.getInviter(function (err, inviter) {
+            if (!!err) {
                 callback(err);
                 return;
             }
@@ -108,20 +147,20 @@ exports.sendReportLink = function( emailResources, invitationId, callback ){
                     'text': text,
                     'html': html
                 }, function (err) {
-                    if ( !!err ) {
+                    if (!!err) {
                         logger.error('error while sending report', err);
                         callback(err);
-                    }else{
+                    } else {
                         logger.info('saving report sent true');
                         invitationModel.setReportSent(true);
-                        exports.updateLessonInvitation( invitationData, function(){} );
+                        exports.updateLessonInvitation(invitationData, function () {
+                        });
                     }
                 });
             });
 
-        })
+        });
     });
-
 
 
 };
@@ -149,7 +188,7 @@ exports.find = exports.search;
 
 exports.updateLessonInvitation = function (invitation, callback) {
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
-        collection.update({ _id: invitation._id }, invitation, function ( err, result ) {
+        collection.update({ _id: invitation._id }, invitation, function (err, result) {
             logger.info('after update', arguments);
             done();
             callback(err, result);
@@ -158,39 +197,7 @@ exports.updateLessonInvitation = function (invitation, callback) {
     });
 };
 
-function Invitation(invitation) {
 
-    var self = this;
-
-    self.getEmail = function () {
-        return invitation.invitee.email;
-    };
-
-    self.setReportSent = function( value ){
-        invitation.report.sent = value;
-    };
-
-    self.isReportSent = function(){
-        return !!invitation.report.sent;
-    };
-
-    self.getName = function () {
-        return invitation.invitee.email;
-    };
-
-    self.getInviter = function( callback ){
-
-        return usersManager.findUser({ '_id' : dbManager.id(invitation.inviter) }, function(err, result){
-            if ( !!err ){
-                callback(err);
-                return;
-            }
-            callback(null, result);
-        })
-    }
-
-
-}
 
 exports.create = function (emailResources, invitation, callback) {
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
