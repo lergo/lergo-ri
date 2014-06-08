@@ -37,6 +37,10 @@ exports.load = function( templatesDir, callback ){
  * @param callback
  */
 
+exports.renderReportReady = function( locals, callback ){
+    exports.template('lessonReportReady', locals, callback );
+};
+
 exports.renderResetPassword = function( locals  , callback ){
     exports.template('resetPassword', locals, callback );
 };

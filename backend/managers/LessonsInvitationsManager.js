@@ -1,6 +1,7 @@
 var dbManager = require('./DbManager');
 var services = require('../services');
 var lessonsManager = require('./LessonsManager');
+var usersManager = require('./UsersManager');
 var errorManager = require('./ErrorManager');
 var questionsManager = require('./QuestionsManager');
 var _ = require('lodash');
@@ -62,10 +63,73 @@ exports.updateReport = function( invitationId, report, callback ){
     });
 };
 
+
+exports.getReport = function( invitationId , callback ){
+    exports.search( { '_id' : dbManager.id(invitationId) } , { 'report' : 1 }, function(err, result){
+     if ( !!err ){
+          callback(err);
+         return;
+     }
+
+        callback(null, result.report);
+    });
+};
+
+exports.sendReportLink = function( emailResources, invitationId, callback ){
+    logger.info('send report is ready email');
+    exports.search({ '_id' : dbManager.id(invitationId)}, {}, function(err, invitationData){
+        if ( !!err ){
+            callback(err);
+            return;
+        }
+        var invitationModel = new Invitation(invitationData);
+
+        if ( invitationModel.isReportSent() ){
+            callback(null);
+        }
+
+        debugger;
+        invitationModel.getInviter( function( err, inviter ){
+            if ( !!err ){
+                callback(err);
+                return;
+            }
+
+            var emailVars = {};
+            _.merge(emailVars, emailResources);
+            var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/invitations/' + invitationData._id + '/report';
+
+            _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName });
+
+            services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
+                services.email.sendMail({
+                    'to': inviter.email,
+                    'subject': 'Someone finished their lesson',
+                    'text': text,
+                    'html': html
+                }, function (err) {
+                    if ( !!err ) {
+                        logger.error('error while sending report', err);
+                        callback(err);
+                    }else{
+                        logger.info('saving report sent true');
+                        invitationModel.setReportSent(true);
+                        exports.updateLessonInvitation( invitationData, function(){} );
+                    }
+                });
+            });
+
+        })
+    });
+
+
+
+};
+
 exports.search = function (filter, projection, callback) {
     logger.info('finding the invitation', filter);
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
-        collection.findOne(filter, function (err, result) {
+        collection.findOne(filter, projection, function (err, result) {
 
             if (!!err) {
                 done();
@@ -102,9 +166,28 @@ function Invitation(invitation) {
         return invitation.invitee.email;
     };
 
+    self.setReportSent = function( value ){
+        invitation.report.sent = value;
+    };
+
+    self.isReportSent = function(){
+        return !!invitation.report.sent;
+    };
+
     self.getName = function () {
         return invitation.invitee.email;
     };
+
+    self.getInviter = function( callback ){
+
+        return usersManager.findUser({ '_id' : dbManager.id(invitation.inviter) }, function(err, result){
+            if ( !!err ){
+                callback(err);
+                return;
+            }
+            callback(null, result);
+        })
+    }
 
 
 }

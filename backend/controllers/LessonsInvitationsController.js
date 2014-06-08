@@ -59,6 +59,30 @@ exports.report = function( req, res ){
     });
 };
 
+exports.sendLessonInviteReportReady = function(req, res ){
+    managers.lessonsInvitations.sendReportLink( req.emailResources, req.params.invitationId, function( err ){
+        if ( !!err ){
+            err.send(res);
+            return;
+        }
+
+        res.send(200);
+
+    })
+};
+
+
+exports.getReport = function( req, res ){
+    managers.lessonsInvitations.getReport( req.params.invitationId, function( err, report ){
+        if ( !!err ){
+            err.send(res);
+            return;
+        }
+
+        res.send(report);
+    })
+};
+
 
 exports.list = function (req, res) {
     findLesson( req, res, function(){

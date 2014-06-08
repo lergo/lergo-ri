@@ -583,6 +583,63 @@ exports.lessonInviteReportUpdate = {
     },
     'action': controllers.lessonsInvitations.report
 };
+/**
+
+ */
+exports.sendLessonInviteReportReady = {
+    'spec': {
+        'description': 'send email to inviter saying a report is ready',
+        'name': 'sendLessonInviteReportReady',
+        'path': '/backend/lessonsinvitations/{invitationId}/reportReady',
+        'summary': 'updates lesson report',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'invitationId',
+                required: true,
+                'description': 'ID of lesson invitation',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to send report ready email'
+            }
+        ],
+        'nickname': 'sendLessonInviteReportReady'
+    },
+    'action': controllers.lessonsInvitations.sendLessonInviteReportReady
+};
+
+
+exports.getLessonsInvitationsReport = {
+    'spec': {
+        'description': 'gets a report',
+        'name': 'getLessonsInvitationsReport',
+        'path': '/backend/lessonsinvitations/{invitationId}/getReport',
+        'summary': 'get a report',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'invitationId',
+                required: true,
+                'description': 'ID of lesson invitation',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to send report ready email'
+            }
+        ],
+        'nickname': 'getLessonsInvitationsReport'
+    },
+    'action': controllers.lessonsInvitations.getReport
+};
 
 exports.lessonsInvitationsGetById = {
     'spec': {
