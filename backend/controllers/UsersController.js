@@ -116,18 +116,18 @@ exports.requestPasswordReset = function (req, res) {
 };
 
 exports.changePassword = function (req, res) {
-    setTimeout(function () {
-        logger.info('changing password for user');
-        var changePasswordDetails = req.body;
 
-        managers.users.changePassword(changePasswordDetails, function (err/*, result*/) {
-            if (!!err) {
-                res.send(500, err);
-            } else {
-                res.send(200, { 'message': 'password changed successfully'});
-            }
-        });
-    }, 200000);
+    logger.info('changing password for user');
+    var changePasswordDetails = req.body;
+
+    managers.users.changePassword(changePasswordDetails, req.user, function (err/*, result*/) {
+        if (!!err) {
+            res.send(500, err);
+        } else {
+            res.send(200, { 'message': 'password changed successfully'});
+        }
+    });
+
 
 };
 
