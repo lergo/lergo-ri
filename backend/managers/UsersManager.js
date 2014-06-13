@@ -276,10 +276,33 @@ exports.findUserById = function (userId, callback) {
 exports.sendResetPasswordMail = function (emailResources, resetDetails, callback) {
 
     logger.info('sending reset password mail ', resetDetails);
-    exports.findUser({ '$or': [
-        { 'username': resetDetails.username } ,
-        { 'email': resetDetails.email }
-    ] }, function (err, user) {
+
+
+    // at the meantime we have 1-1 relationship between username and email
+    // so we can allow users to submit only email on forgot password..
+
+
+    // later we will have multiple usernames for email, so we will have "forgot username" and "forgot password"
+    // forgot password should then accept only username
+    // forgot username should accept only email
+
+    if ( !resetDetails.username && !resetDetails.email ){
+        callback('must have username or email');
+        return;
+    }
+
+
+    var filters = {};
+
+    if ( !!resetDetails.username ){
+        filters.username = resetDetails.username;
+    }
+
+    if ( !!resetDetails.email ){
+        filters.email = resetDetails.email;
+    }
+
+    exports.findUser( filters, function (err, user) {
         logger.info(arguments);
 
         if (!!err) {
@@ -373,6 +396,10 @@ exports.isUserExists = function (username, email, callback) {
     });
 };
 
-exports.getUserByEmail = function (email, username, callback) {
+exports.getUserByEmail = function (email, callback) {
     exports.findUser({'email': email}, callback);
+};
+
+exports.getUserByUsername = function ( username, callback) {
+    exports.findUser({'username': username}, callback);
 };
