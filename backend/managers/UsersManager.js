@@ -49,12 +49,12 @@ exports.getUserDetailsError = function (user) {
     if (!isValidEmail(user.email)) {
         logger.info('User email [%s] is invalid .',
             user.email);
-        return new errorManager.InvalidUsername();
+        return new errorManager.InvalidEmail();
     }
 
     if (!isValidUserName(user.username)) {
         logger.info('User name [%s] is invalid. User name should not be lesser then 3 characters it should only contain alphanumeric characters and underscore ');
-        return new errorManager.InvalidEmail();
+        return new errorManager.InvalidUsername();
     }
 };
 
@@ -67,6 +67,7 @@ exports.createUser = function (emailResources, user, callback) {
         return;
     }
 
+
     exports.isUserExists(user.username, user.email, function (err, result) {
         logger.info(arguments);
         if (!!err) {
@@ -77,7 +78,7 @@ exports.createUser = function (emailResources, user, callback) {
 
         if (!!result) {
             logger.info('user with email [%s] or username [%s] already exists', user.email, user.username);
-            callback(new errorManager.InvalidUsername());
+            callback(new errorManager.UsernameAlreadyExists());
             return;
         }
 

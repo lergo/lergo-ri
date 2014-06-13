@@ -34,7 +34,8 @@ var errorsDefinition = {
     'UserValidationFailed' : createNewError(9, 'user validation failed', 401),
     'UserAlreadyValidated' : createNewError(10, 'user already validated', 500),
     'ErrorSendingValidationEmail' : createNewError(11, 'unable to send validation email', 500),
-    'NotFound' : createNewError(12, 'resource not found', 404)
+    'NotFound' : createNewError(12, 'resource not found', 404),
+    'UsernameAlreadyExists' : createNewError( 13, 'username already exists', 500 )
 };
 
 
