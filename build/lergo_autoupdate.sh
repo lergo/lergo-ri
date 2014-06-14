@@ -5,7 +5,7 @@ if [ -e $CURRENT_BUILD_FILE ]; then
      VERSION_BEFORE="`cat $CURRENT_BUILD_FILE`"
 fi
 
-echo "version before is : $VERSION_BEFORE"
+
 
 
 chmod +x /var/www/lergo/lergo-ri/build/*.sh
@@ -18,13 +18,10 @@ if [ -e $CURRENT_BUILD_FILE ]; then
      VERSION_AFTER="`cat $CURRENT_BUILD_FILE`"
 fi
 
-echo "version after is : $VERSION_AFTER"
+
 
 if [ "$VERSION_BEFORE" != "$VERSION_AFTER" ]; then
-    echo "restarting lergo"
     /etc/init.d/lergo restart >> /var/log/lergo_auto_update 2>&1
-else
-    echo "same version. not restarting"
 fi
 
 
