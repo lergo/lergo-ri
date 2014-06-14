@@ -5,14 +5,15 @@ var logger = managers.log.getLogger('UsersController');
 logger.info('initializing');
 
 function getUserPublicDetails(user) {
-    return { 'username': user.username };
+    return { 'username': user.username, 'isAdmin' : user.isAdmin };
 }
 
 exports.signup = function (req, res) {
     var user = req.body;
     managers.users.createUser(req.emailResources, user, function (err, obj) {
         if (!!err) {
-            res.send(err);
+            err.send(res);
+
             return;
         } else {
             res.send({ 'username': obj.username, 'message': 'created successfully'});
@@ -163,10 +164,12 @@ exports.loggedInMiddleware = function (req, res, next) {
 
 
 exports.isAdminMiddleware = function (req, res, next) {
-    if (!req.user.isAdmin) {
-        managers.error.NotAdmin.send(res);
-        return;
-    }
-
-    next();
+    exports.loggedInMiddleware( req, res, function(){
+        if (!req.user.isAdmin) {
+            logger.info('user not admin. returning error');
+            new managers.error.NotAdmin().send(res);
+            return;
+        }
+        next();
+    });
 };

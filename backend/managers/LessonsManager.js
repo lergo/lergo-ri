@@ -59,6 +59,11 @@ exports.deleteLesson = function(id, userId,  callback) {
 	});
 };
 
+exports.incrementViews = function( lessonId, callback ){
+    dbManager.connect('lessons', function(db, collection, done){
+        collection.update( { '_id' : dbManager.id(lessonId)}, { '$inc' : { 'views' : 1 }}, function(){ done(); if ( !!callback ) { callback(arguments); } } );
+    });
+};
 
 exports.getLesson = function( filter , callback) {
 	logger.info('Fetching lesson by ID');
@@ -86,3 +91,20 @@ exports.getUserLessons = function( userId, callback) {
 		});
 	});
 };
+
+
+exports.find = function( filter, projection, callback ){
+    logger.info('finding lessons');
+    dbManager.connect('lessons', function(db, collection, done){
+        collection.find( filter, projection).toArray( function(err, result ){
+            if ( !!err ){
+                logger.error('unable to find lessons [%s]', err.message);
+            }
+
+            done();
+            callback(err, result);
+        });
+    });
+};
+
+exports.search = exports.find;

@@ -61,6 +61,7 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.emailResources);
 app.use('/backend/user', controllers.users.loggedInMiddleware);
+app.use('/backend/admin', controllers.users.isAdminMiddleware);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 

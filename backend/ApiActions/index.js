@@ -1,4 +1,6 @@
 exports.usersActions = require('./UsersActions');
+exports.publicActions = require('./PublicActions');
+exports.adminActions = require('./AdminActions');
 
 
 function addAllActions ( actions ){
@@ -14,7 +16,9 @@ function addAllActions ( actions ){
 
 
 exports.actions = [];
+addAllActions( exports.publicActions );
 addAllActions( exports.usersActions );
+addAllActions( exports.adminActions );
 
 
 

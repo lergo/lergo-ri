@@ -11,8 +11,6 @@ var async = require('async');
 var COLLECTION_NAME = 'lessonsInvitations';
 
 
-
-
 function Invitation(invitation) {
 
     var self = this;
@@ -48,7 +46,6 @@ function Invitation(invitation) {
 }
 
 
-
 /**
  *
  *
@@ -74,6 +71,8 @@ exports.buildLesson = function (invitation, callback) {
             exports.updateLessonInvitation(invitation, _callback);
             return;
 
+        }, function addCounterOnLesson(callback) {
+            lessonsManager.incrementViews(lessonId, callback);
         }, function invokeCallback() {
             callback(null, updatedInvitation);
         }
@@ -196,7 +195,6 @@ exports.updateLessonInvitation = function (invitation, callback) {
         });
     });
 };
-
 
 
 exports.create = function (emailResources, invitation, callback) {
