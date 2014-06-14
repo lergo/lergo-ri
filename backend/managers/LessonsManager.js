@@ -2,6 +2,7 @@
 var logger = require('log4js').getLogger('LessonsManager');
 var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
+var _ = require('lodash');
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
@@ -108,6 +109,32 @@ exports.find = function( filter, projection, callback ){
 
             done();
             callback(err, result);
+        });
+    });
+};
+
+exports.getPublicLessons = function ( callback ) {
+    var usersManager = require('./UsersManager');
+    var result = [];
+    var usersId = [];
+    dbManager.connect('lessons', function (db, collection, done) {
+        collection.find({ 'public': {'$exists': true } }, {}).each(function (err, obj) {
+            logger.info('handling lesson');
+            if (obj === null) { //means we found all lessons
+                done();
+                usersManager.getPublicUsersDetailsMapByIds(usersId, function (err, usersById) {
+                    logger.info('got users map', usersById );
+                    result.forEach(function (item) {
+                        item.user = _.omit(usersById[item.userId.toHexString()], '_id');
+                    });
+
+                    callback(null,result);
+                    return;
+                });
+            }else {
+                usersId.push(obj.userId);
+                result.push(obj);
+            }
         });
     });
 };

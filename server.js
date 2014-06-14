@@ -61,6 +61,7 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 // lergo middlewares.. not optimized right now..
 // not all requests need emailResources. we should optimize it somehow later
 app.use(lergoMiddleware.origin);
+app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
 app.use('/backend/user', controllers.users.loggedInMiddleware);
 app.use('/backend/admin', controllers.users.isAdminMiddleware);

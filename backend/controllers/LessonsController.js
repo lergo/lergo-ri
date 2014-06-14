@@ -95,12 +95,7 @@ exports.adminUpdateLesson = function (req, res) {
 };
 
 exports.getPublicLessons = function( req, res ){
-    managers.lessons.find( { 'public' : {'$exists'  : true } }, {}, function( err, result){
-        if ( !!err ){
-            err.send(res);
-            return;
-        }else{
-            res.send(result);
-        }
+    managers.lessons.getPublicLessons( function( err, result ){
+        res.send(result);
     });
 };

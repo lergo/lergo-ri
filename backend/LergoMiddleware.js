@@ -26,3 +26,13 @@ exports.emailResources = function( req, res, next ){
     };
     next();
 };
+
+exports.addGetQueryList = function( req, res, next ){
+
+    req.getQueryList = function(key){
+        // return a query param as list. using [].concat hack to handle case where the value is not a list
+        return req.query.hasOwnProperty(key) ? [].concat(req.query[key]) : [];
+    };
+    next();
+
+};

@@ -52,6 +52,7 @@ function Invitation(invitation) {
  * Once someone opens an invitation, our first step is to build the lesson
  *
  * @param invitation
+ * @param callback
  */
 exports.buildLesson = function (invitation, callback) {
     var lessonId = invitation.lessonId;
@@ -71,7 +72,7 @@ exports.buildLesson = function (invitation, callback) {
             exports.updateLessonInvitation(invitation, _callback);
 
 
-        }, function addCounterOnLesson( updateResult, _callback) {
+        }, function addCounterOnLesson(_callback) {
             lessonsManager.incrementViews(lessonId, _callback);
         }, function invokeCallback() {
             callback(null, updatedInvitation);

@@ -95,14 +95,7 @@ exports.getUserQuestions = function (req, res) {
  */
 exports.findUserQuestionsByIds = function (req, res) {
 
-    var objectIds = [];
-    logger.info(req.query.ids);
-    try {
-        objectIds = [].concat(req.query.ids); // handle case where there's only one id.
-    } catch (err) {
-        logger.error('unable to parse query ids', req.query.ids);
-    }
-
+    var objectIds = req.getQueryList('ids');
     logger.info('this is object ids', objectIds);
     objectIds = managers.db.id(objectIds);
 

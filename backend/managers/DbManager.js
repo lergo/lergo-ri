@@ -11,6 +11,27 @@ var _dbUrl = conf.dbUrl;
 
 logger.info('initializing DbManager :: ' , _dbUrl );
 
+
+// add an easy way to turn a result to map
+exports.toMap = function( cursor, callback ){
+    logger.info('turning result to map');
+    var result = {};
+    cursor.each(function(err, doc){
+        logger.info('handling doc', doc);
+        if ( !!err ){
+            callback(err);
+        }
+
+        if ( doc === null ){
+            callback(null, result);
+            return;
+        }else{
+            result[doc._id.toHexString()] = doc;
+        }
+    });
+} ;
+
+
 /**
  *
  * @param collection - name of collection. nullable
@@ -28,6 +49,7 @@ exports.connect = function (collection, callback) {
             if (collection) {
                 logger.info('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
+
             }
             callback(db, _collection, /**done**/function () {
                 logger.info('closing connection from done');
@@ -36,7 +58,7 @@ exports.connect = function (collection, callback) {
 
             });
         } catch (e) { // close if got an error
-            logger.info('catching error, closing connection');
+            logger.error('catching error, closing connection',e);
             db.close();
         }
     });
@@ -71,3 +93,5 @@ exports.drop = function () {
         done();
     });
 };
+
+

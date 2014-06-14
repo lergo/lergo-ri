@@ -5,7 +5,7 @@ var logger = managers.log.getLogger('UsersController');
 logger.info('initializing');
 
 function getUserPublicDetails(user) {
-    return { 'username': user.username, 'isAdmin' : user.isAdmin };
+    return { 'username': user.username, 'isAdmin' : user.isAdmin, '_id' : user._id };
 }
 
 exports.signup = function (req, res) {
@@ -173,3 +173,5 @@ exports.isAdminMiddleware = function (req, res, next) {
         next();
     });
 };
+
+

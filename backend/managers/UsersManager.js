@@ -383,6 +383,17 @@ exports.findUser = function (filter, callback) {
     });
 };
 
+exports.getPublicUsersDetailsMapByIds = function( ids, callback ){
+    logger.info('finding users ',ids);
+    dbManager.connect('users', function(db, collection, done){
+        var cursor = collection.find({ '_id' : { '$in' : ids } }, { 'username' : 1, '_id' : 1 });
+        dbManager.toMap( cursor, function( err,  map ){
+            done();
+            callback(err,map);
+        });
+    });
+};
+
 
 exports.isUserExists = function (username, email, callback) {
     exports.findUser({ '$or': [
