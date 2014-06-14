@@ -18,7 +18,9 @@ var OpenIDStrategy = require('passport-openid').Strategy;
 
 var logger = require('log4js').getLogger('server');
 var lergoMiddleware = require('./backend/LergoMiddleware');
+logger.info('loading services');
 var services = require('./backend/services');
+logger.info('services loaded');
 var path = require('path');
 var conf = services.conf;
 
