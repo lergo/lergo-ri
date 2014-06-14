@@ -127,7 +127,7 @@ exports.build = function( req, res ){
             err.send(res);
             return;
         }
-        if ( !!constructForce || !res.lesson && construct ){
+        if ( ( !!constructForce ||  !result.lesson ) && construct  ){
             logger.info('constructing invitation');
             managers.lessonsInvitations.buildLesson( result, function( err, constructed ){
                 res.send(constructed);

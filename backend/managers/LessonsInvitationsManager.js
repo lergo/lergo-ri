@@ -69,10 +69,10 @@ exports.buildLesson = function (invitation, callback) {
             invitation.quizItems = result;
             updatedInvitation = invitation;
             exports.updateLessonInvitation(invitation, _callback);
-            return;
 
-        }, function addCounterOnLesson(callback) {
-            lessonsManager.incrementViews(lessonId, callback);
+
+        }, function addCounterOnLesson( updateResult, _callback) {
+            lessonsManager.incrementViews(lessonId, _callback);
         }, function invokeCallback() {
             callback(null, updatedInvitation);
         }

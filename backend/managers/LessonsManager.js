@@ -61,7 +61,12 @@ exports.deleteLesson = function(id, userId,  callback) {
 
 exports.incrementViews = function( lessonId, callback ){
     dbManager.connect('lessons', function(db, collection, done){
-        collection.update( { '_id' : dbManager.id(lessonId)}, { '$inc' : { 'views' : 1 }}, function(){ done(); if ( !!callback ) { callback(arguments); } } );
+        collection.update( { '_id' : dbManager.id(lessonId)}, { '$inc' : { 'views' : 1 }}, function(){
+            done();
+            if ( !!callback ) {
+                callback(arguments);
+            }
+        } );
     });
 };
 
