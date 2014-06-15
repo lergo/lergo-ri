@@ -83,9 +83,17 @@ exports.buildLesson = function (invitation, callback) {
             exports.updateLessonInvitation(invitation, _callback);
 
 
-        }, function addCounterOnLesson(_callback) {
-            lessonsManager.incrementViews(lessonId, _callback);
+        }, function addCounterOnLesson( result, _callback) {
+            lessonsManager.incrementViews(lessonId, function( err ){
+                /* guy - I don't know why simply passing _callback does not work. have to write a function to do that */
+                if ( !!err ){
+                    logger.error('error incrementing views on lesson', err);
+                }
+                logger.info('after increment');
+                _callback();
+            });
         }, function invokeCallback() {
+            logger.info('done building lesson. sending back to callback');
             callback(null, updatedInvitation);
         }
 

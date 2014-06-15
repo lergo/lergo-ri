@@ -130,6 +130,11 @@ exports.build = function( req, res ){
         if ( ( !!constructForce ||  !result.lesson ) && construct  ){
             logger.info('constructing invitation');
             managers.lessonsInvitations.buildLesson( result, function( err, constructed ){
+                if ( !!err ) {
+                    logger.error('error while constructing lesson', err);
+                    res.send(500);
+                    return;
+                }
                 res.send(constructed);
             });
         }else{
