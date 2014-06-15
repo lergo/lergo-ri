@@ -19,6 +19,10 @@ function Invitation(invitation) {
         return invitation.invitee.email;
     };
 
+    self.isAnonymous = function(){
+        return invitation.anonymous;
+    };
+
     self.setReportSent = function (value) {
         invitation.report.sent = value;
     };
@@ -111,8 +115,9 @@ exports.updateReport = function (invitationId, report, callback) {
 
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
 
-        collection.update({ '_id': dbManager.id(invitationId), 'lessonId': report.data.lessonId }, { '$set': { 'report': report }}, function (err/*, count, response*/) {
+        collection.update({ '_id': dbManager.id(invitationId), 'lessonId': dbManager.id(report.data.lessonId) }, { '$set': { 'report': report }}, function (err/*, count, response*/) {
             if (!!err) {
+                logger.error('unable to update report', err);
                 done();
                 callback(new errorManager.InternalServerError(err, 'unable to update report'));
                 return;
@@ -143,8 +148,14 @@ exports.sendReportLink = function (emailResources, invitationId, callback) {
         }
         var invitationModel = new Invitation(invitationData);
 
+        if ( invitationModel.isAnonymous() ){
+            callback('unable to send link if anonymous');
+            return;
+        }
+
         if (invitationModel.isReportSent()) {
             callback(null);
+            return;
         }
 
         invitationModel.getInviter(function (err, inviter) {
@@ -217,11 +228,12 @@ exports.updateLessonInvitation = function (invitation, callback) {
 };
 
 
-exports.create = function (emailResources, invitation, callback) {
+exports.create = function ( invitation, callback) {
+    invitation.lessonId = dbManager.id(invitation.lessonId);
     dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
         collection.insert(invitation, {}, function (err, result) {
             done();
-            exports.sendInvitationMail(emailResources, result[0], callback);
+            callback( err, result[0] );
             return;
         });
 

@@ -20,6 +20,19 @@ function findLesson(req, res, next) {
     });
 }
 
+function findPublicLesson( req, res, next ){
+    var lessonId = req.params.lessonId;
+    managers.lessons.getLesson({'_id' : managers.db.id(lessonId), 'public' : {'$exists' : true } }, function( err, result ){
+        if ( !!err ){
+            logger.error('unable to find lesson', err);
+            err.send(res);
+        }else{
+            req.lesson = result;
+            next();
+        }
+    });
+}
+
 
 exports.create = function (req, res) {
     findLesson(req, res, function () {
@@ -36,7 +49,33 @@ exports.create = function (req, res) {
         if (!!req.user) {  // add inviter in case we have details
             invitationObj.inviter = req.user._id;
         }
-        managers.lessonsInvitations.create(req.emailResources, invitationObj, function (err, result) {
+        managers.lessonsInvitations.create(invitationObj, function (err, result) {
+            if (!!err) {
+                logger.error('unable to create lesson invitation', err);
+                err.send(res);
+                return;
+            } else {
+                logger.info('sending invitation email');
+                managers.lessonsInvitations.sendInvitationMail(req.emailResources, result, function( err ){
+                    if ( !!err ){
+                        logger.info('error while sending invitation');
+                        err.send(res);
+                        return;
+                    }
+                    res.send(result);
+                });
+
+            }
+        });
+    });
+};
+
+exports.createAnonymous = function (req, res) {
+    findPublicLesson(req, res, function () {
+        logger.info('creating invitation for lesson', req.lesson);
+        var invitation = { 'anonymous' : true, 'lessonId' : req.lesson._id };
+
+        managers.lessonsInvitations.create(invitation, function (err, result) {
             if (!!err) {
                 logger.error('unable to create lesson invitation', err);
                 err.send(res);
