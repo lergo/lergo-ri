@@ -252,7 +252,7 @@ exports.sendInvitationMail = function (emailResources, invitationData, callback)
 		services.emailTemplates.renderLessonInvitation(emailVars, function(err, html, text) {
 			services.email.sendMail({
 				'to' : invitationModel.getEmail(),
-				'subject' : invitationModel.getLessonTitle(),
+				'subject' : lesson.name,
 				'text' : text,
 				'html' : html
 			}, function(err) {
