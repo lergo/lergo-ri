@@ -355,6 +355,28 @@ exports.updateQuestion = {
     },
     'action': controllers.questions.updateUserQuestion
 };
+exports.deleteQuestion = {
+		'spec' : {
+			'description' : 'Delete question corresponding to the id',
+			'name' : 'deleteLesson',
+			'path' : '/backend/user/questions/{id}/delete',
+			'summary' : 'Delete question corresponding to the id',
+			'method' : 'POST',
+			'parameters' : [ {
+				'paramType' : 'path',
+				'name' : 'id',
+				required : true,
+				'description' : 'ID of question that needs to be deleted',
+				'type' : 'string'
+			} ],
+			'errorResponses' : [ {
+				'code' : 500,
+				'reason' : 'unable to delete question'
+			} ],
+			'nickname' : 'deleteQuestion'
+		},
+		'action' : controllers.questions.deleteQuestion
+};
 exports.findQuestionUsages = {
     'spec': {
         'description': 'find question usages',

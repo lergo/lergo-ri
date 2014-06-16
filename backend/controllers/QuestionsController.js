@@ -165,3 +165,16 @@ exports.checkQuestionAnswer = function( req, res ){
 
 };
 
+exports.deleteQuestion = function (req, res) {
+    var id = req.params.id;
+    managers.questions.deleteQuestion(id, req.user._id, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};
+
