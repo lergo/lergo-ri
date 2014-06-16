@@ -54,11 +54,12 @@ exports.updateUserQuestion = function(question, callback) {
 	});
 };
 
-exports.deleteQuestion = function(id, callback) {
-	logger.info('Creating question');
+exports.deleteQuestion = function(id, userId ,callback) {
+	logger.info('Deleting question');
 	dbManager.connect('questions', function(db, collection, done) {
 		collection.remove({
-			'_id' : dbManager.id(id)
+			'_id' : dbManager.id(id),
+			'userId' : userId
 		}, function(err) {
 			if (!!err) {
 				logger.error('unable to query for user [%s]', err.message);
