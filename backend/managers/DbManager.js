@@ -9,6 +9,20 @@ var logger = require('log4js').getLogger('DbManager');
 var _dbUrl = conf.dbUrl;
 
 
+var dbConnection = null;
+function getDbConnection( callback ){
+
+    if ( dbConnection != null ){
+        logger.info('using cached connection');
+        callback(null, dbConnection);
+    }else{
+        MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){
+            callback(err,db);
+        });
+    }
+
+}
+
 logger.info('initializing DbManager :: ' , _dbUrl );
 
 
@@ -38,7 +52,7 @@ exports.toMap = function( cursor, callback ){
  * @param callback = function(db, collection, doneFn)
  */
 exports.connect = function (collection, callback) {
-    MongoClient.connect(_dbUrl, {}, function (err, db) {
+    getDbConnection( function (err, db) {
         logger.info('connected to db successfully');
         var _collection = null;
         if (err) {
@@ -52,14 +66,13 @@ exports.connect = function (collection, callback) {
 
             }
             callback(db, _collection, /**done**/function () {
-                logger.info('closing connection from done');
-
-                db.close();
+                /*logger.info('closing connection from done');*/
+               /* db.close();*/
 
             });
         } catch (e) { // close if got an error
-            logger.error('catching error, closing connection',e);
-            db.close();
+            /*logger.error('catching error, closing connection',e);*/
+           /* db.close();*/
         }
     });
 };
