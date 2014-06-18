@@ -65,6 +65,10 @@ exports.connect = function (collection, callback) {
                 _collection = db.collection(collection);
 
             }
+            // GUY - 'done' was once used for closing the connection.
+            // turns out we don't need to close the connection..
+            // see documentation - http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
+            // so you can ignore 'done' from now on and we can get read of it.
             callback(db, _collection, /**done**/function () {
                 /*logger.info('closing connection from done');*/
                /* db.close();*/
