@@ -12,11 +12,12 @@ var _dbUrl = conf.dbUrl;
 var dbConnection = null;
 function getDbConnection( callback ){
 
-    if ( dbConnection != null ){
+    if ( !!dbConnection && dbConnection !== null ){
         logger.info('using cached connection');
         callback(null, dbConnection);
     }else{
         MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){
+            dbConnection = db;
             callback(err,db);
         });
     }
