@@ -122,6 +122,7 @@ exports.updateReport = function (invitationId, report, callback) {
                 callback(new errorManager.InternalServerError(err, 'unable to update report'));
                 return;
             }
+            done();
             callback(null, report);
         });
     });
