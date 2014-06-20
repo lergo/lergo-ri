@@ -6,6 +6,7 @@ var _ = require('lodash');
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
+    lesson.createdAt = new Date();
 	dbManager.connect('lessons', function(db, collection, done) {
 		collection.insert(lesson, function(err) {
 			if (!!err) {
