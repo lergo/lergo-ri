@@ -182,6 +182,7 @@ exports.getLessons = function(filter, callback) {
 			done();
 			callback(err, result);
 		});
+		
 	});
 };
 
