@@ -3,8 +3,8 @@ var managers = require('../managers');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 
+// finds a lesson owned by currently logged in user
 function findLesson(req, res, next) {
-
     var lessonId = req.params.lessonId;
     logger.info('finding lesson', JSON.stringify(lessonId));
     managers.lessons.getLesson({ '_id': managers.db.id(lessonId)    , 'userId': req.user._id }, function (err, result) {
@@ -20,7 +20,24 @@ function findLesson(req, res, next) {
     });
 }
 
-function findPublicLesson( req, res, next ){
+
+// find a lesson only by id -- use only when required.. prefer to use other methods.
+function findAnyLesson( req, res, next ) {
+    var lessonId = req.params.lessonId;
+    managers.lessons.getLesson({'_id': managers.db.id(lessonId) }, function (err, result) {
+        if (!!err) {
+            logger.error('unable to find lesson', err);
+            err.send(res);
+        } else {
+            req.lesson = result;
+            next();
+        }
+    });
+}
+
+// verifies that the lesson is public
+// guy - commenting for now because it is never used!
+/*function findPublicLesson( req, res, next ){
     var lessonId = req.params.lessonId;
     managers.lessons.getLesson({'_id' : managers.db.id(lessonId), 'public' : {'$exists' : true } }, function( err, result ){
         if ( !!err ){
@@ -31,7 +48,7 @@ function findPublicLesson( req, res, next ){
             next();
         }
     });
-}
+}*/
 
 
 exports.create = function (req, res) {
@@ -71,7 +88,7 @@ exports.create = function (req, res) {
 };
 
 exports.createAnonymous = function (req, res) {
-    findPublicLesson(req, res, function () {
+    findAnyLesson(req, res, function () {
         logger.info('creating invitation for lesson', req.lesson);
         var invitation = { 'anonymous' : true, 'lessonId' : req.lesson._id };
 
