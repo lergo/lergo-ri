@@ -172,4 +172,17 @@ exports.getPublicLessons = function(callback) {
 	});
 };
 
+exports.getLessons = function(filter, callback) {
+	logger.info('Getting lessons');
+	dbManager.connect('lessons', function(db, collection, done) {
+		collection.find(filter).toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to query for lessons', err);
+			}
+			done();
+			callback(err, result);
+		});
+	});
+};
+
 exports.search = exports.find;
