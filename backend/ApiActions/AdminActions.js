@@ -50,3 +50,27 @@ exports.updateLesson = {
     },
     'action': controllers.lessons.adminUpdateLesson
 };
+
+
+exports.getUsers = {
+    'spec': {
+        'description': 'Get users',
+        'name': 'getUsers',
+        'path': '/backend/admin/users',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'get users',
+        'method': 'GET',
+        'parameters': [
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getUsers'
+    },
+    'action': controllers.users.getAll
+};
+

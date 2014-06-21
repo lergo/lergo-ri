@@ -58,6 +58,12 @@ exports.resendValidationEmail = function (req, res) {
     });
 };
 
+exports.getAll = function( req, res ){
+    managers.users.find( {}, {},function(err, users){
+        res.send(users);
+    });
+};
+
 exports.login = function (req, res) {
     var loginCredentials = req.body;
     managers.users.loginUser(loginCredentials, function (err, loggedInUser) {
@@ -161,6 +167,9 @@ exports.loggedInMiddleware = function (req, res, next) {
         next();
     });
 };
+
+
+
 
 
 exports.isAdminMiddleware = function (req, res, next) {

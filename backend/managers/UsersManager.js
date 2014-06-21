@@ -58,6 +58,7 @@ exports.getUserDetailsError = function (user) {
     }
 };
 
+
 exports.createUser = function (emailResources, user, callback) {
     logger.info('saving user');
 
@@ -189,7 +190,7 @@ exports.loginUser = function (loginCredentials, callback) {
  */
 exports.sendValidationEmail = function (emailResources, user, callback) {
     if (!user.email) {
-        callback( new errorManager.InternalServerError( new Error('user ' +  user._id + ' does not have an email. fix corrupted data in database') ) );
+        callback(new errorManager.InternalServerError(new Error('user ' + user._id + ' does not have an email. fix corrupted data in database')));
     }
     logger.info('sending validation email', user);
     var emailVars = {};
@@ -287,7 +288,7 @@ exports.sendResetPasswordMail = function (emailResources, resetDetails, callback
     // forgot password should then accept only username
     // forgot username should accept only email
 
-    if ( !resetDetails.username && !resetDetails.email ){
+    if (!resetDetails.username && !resetDetails.email) {
         callback('must have username or email');
         return;
     }
@@ -295,15 +296,15 @@ exports.sendResetPasswordMail = function (emailResources, resetDetails, callback
 
     var filters = {};
 
-    if ( !!resetDetails.username ){
+    if (!!resetDetails.username) {
         filters.username = resetDetails.username;
     }
 
-    if ( !!resetDetails.email ){
+    if (!!resetDetails.email) {
         filters.email = resetDetails.email;
     }
 
-    exports.findUser( filters, function (err, user) {
+    exports.findUser(filters, function (err, user) {
         logger.info(arguments);
 
         if (!!err) {
@@ -383,13 +384,21 @@ exports.findUser = function (filter, callback) {
     });
 };
 
-exports.getPublicUsersDetailsMapByIds = function( ids, callback ){
-    logger.info('finding users ',ids);
-    dbManager.connect('users', function(db, collection, done){
-        var cursor = collection.find({ '_id' : { '$in' : ids } }, { 'username' : 1, '_id' : 1 });
-        dbManager.toMap( cursor, function( err,  map ){
+exports.find = function (filter, projection, callback) {
+    dbManager.connect('users', function (db, collection) {
+        collection.find(filter, projection).toArray(function (err, result) {
+            callback(err, result);
+        });
+    });
+};
+
+exports.getPublicUsersDetailsMapByIds = function (ids, callback) {
+    logger.info('finding users ', ids);
+    dbManager.connect('users', function (db, collection, done) {
+        var cursor = collection.find({ '_id': { '$in': ids } }, { 'username': 1, '_id': 1 });
+        dbManager.toMap(cursor, function (err, map) {
             done();
-            callback(err,map);
+            callback(err, map);
         });
     });
 };
@@ -412,6 +421,6 @@ exports.getUserByEmail = function (email, callback) {
     exports.findUser({'email': email}, callback);
 };
 
-exports.getUserByUsername = function ( username, callback) {
+exports.getUserByUsername = function (username, callback) {
     exports.findUser({'username': username}, callback);
 };
