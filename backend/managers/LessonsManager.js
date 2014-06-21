@@ -172,12 +172,21 @@ exports.getPublicLessons = function(callback) {
 	});
 };
 
+// todo : organize this code into "role" based pattern
 exports.getLessonIntro = function( lessonId, callback ){
     dbManager.connect('lessons', function(db, collection/*, done*/){
         collection.findOne({
             '_id' : dbManager.id( lessonId )
         }, function( err, result ){
-            callback(err, result);
+
+            usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
+                result.user = usersById[result.userId];
+                result.timeStamp = result._id.getTimestamp();
+                result.questionsCount = getQuestionCount(result);
+                callback(err, result);
+            });
+
+
         });
     });
 };
