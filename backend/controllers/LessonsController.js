@@ -101,7 +101,7 @@ exports.getPublicLessons = function( req, res ){
 };
 
 exports.getLessonIntro = function( req, res ){
-    managers.lessons.getLessonIntro( req.param.lessonId, function(err, result){
+    managers.lessons.getLessonIntro( req.params.lessonId, function(err, result){
         res.send(result);
     });
 };

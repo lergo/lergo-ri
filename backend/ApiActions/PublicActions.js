@@ -43,7 +43,7 @@ exports.getLesson = {
         ],
         'nickname': 'getPublicLesson'
     },
-    'action': controllers.lessons.getPublicLessons
+    'action': controllers.lessons.getLessonIntro
 };
 
 

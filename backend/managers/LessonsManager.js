@@ -172,7 +172,7 @@ exports.getPublicLessons = function(callback) {
 	});
 };
 
-exports.LessonIntro = function( lessonId, callback ){
+exports.getLessonIntro = function( lessonId, callback ){
     dbManager.connect('lessons', function(db, collection/*, done*/){
         collection.findOne({
             '_id' : dbManager.id( lessonId )
