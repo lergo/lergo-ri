@@ -46,3 +46,26 @@ exports.createAnonymousInvitation = {
     },
     'action': controllers.lessonsInvitations.createAnonymous
 };
+
+exports.getStatistics = {
+	    'spec': {
+	        'description': 'Get system statistics ',
+	        'name': 'getPublicLessons',
+	        'path': '/backend/public/system/statistics',
+	        // 'notes': 'Returns 200 if everything went well, otherwise returns
+	        // error response',
+	        'summary': 'Get system statistics ',
+	        'method': 'GET',
+	        'parameters': [
+
+	        ],
+	        'errorResponses': [
+	            {
+	                'code': 500,
+	                'reason': 'server error'
+	            }
+	        ],
+	        'nickname': 'getStatistics'
+	    },
+	    'action': controllers.stats.getStatistics
+};
