@@ -2,6 +2,8 @@
 
 DOMAIN=my.domain.com
 ME_CONF_URL=location_of_an_online_me_conf
+S3_BACKUP_PATH=s3://lergodev-backups/mongo
+MAILTO=send.me@cron.errors
 
 
 # you can also host this file online, and write the following

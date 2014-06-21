@@ -8,14 +8,12 @@ install_main(){
 
     init
 
-
-
     yum -y install dos2unix wget
 
 
 
     install_mongo
-    /etc/init.d/mongod start
+    /etc/init.d/mongod start || echo "mongo start failed. probably already running. moving on... "
 
     install_node
 
