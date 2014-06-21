@@ -15,7 +15,7 @@ function getQuestionCount(item) {
 		}
 	}
 	return qCount;
-};
+}
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
@@ -170,6 +170,16 @@ exports.getPublicLessons = function(callback) {
 			}
 		});
 	});
+};
+
+exports.LessonIntro = function( lessonId, callback ){
+    dbManager.connect('lessons', function(db, collection/*, done*/){
+        collection.findOne({
+            '_id' : dbManager.id( lessonId )
+        }, function( err, result ){
+            callback(err, result);
+        });
+    });
 };
 
 exports.getLessons = function(filter, callback) {

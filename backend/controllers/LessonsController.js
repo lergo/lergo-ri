@@ -99,3 +99,9 @@ exports.getPublicLessons = function( req, res ){
         res.send(result);
     });
 };
+
+exports.getLessonIntro = function( req, res ){
+    managers.lessons.getLessonIntro( req.param.lessonId, function(err, result){
+        res.send(result);
+    });
+};

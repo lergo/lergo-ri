@@ -45,6 +45,11 @@ function Invitation(invitation) {
             callback(null, result);
         });
     };
+
+    self.getLessonIdStr = function(){
+        return invitation.lessonId.toString();
+    };
+
     self.getLesson = function(callback) {
 
 		return lessonsManager.getLesson({
@@ -260,7 +265,7 @@ exports.sendInvitationMail = function (emailResources, invitationData, callback)
 	}, function sendInvitation() {
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
-		var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/invitations/' + invitationData._id + '/display';
+		var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/' + invitationModel.getLessonIdStr() + '/intro?invitationId=' + invitationData._id ;
 
 		_.merge(emailVars, {
 			'link' : lessonInviteLink,

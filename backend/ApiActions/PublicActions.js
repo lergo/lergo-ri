@@ -23,6 +23,30 @@ exports.getPublicLessons = {
 };
 
 
+exports.getLesson = {
+    'spec': {
+        'description': 'Get public lesson',
+        'name': 'getPublicLesson',
+        'path': '/backend/public/lessons/{lessonId}',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Get public lesson by id',
+        'method': 'GET',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getPublicLesson'
+    },
+    'action': controllers.lessons.getPublicLessons
+};
+
+
 exports.createAnonymousInvitation = {
     'spec': {
         'description': 'Create an anonymous lesson invitation',
@@ -48,24 +72,24 @@ exports.createAnonymousInvitation = {
 };
 
 exports.getStatistics = {
-	    'spec': {
-	        'description': 'Get system statistics ',
-	        'name': 'getPublicLessons',
-	        'path': '/backend/public/system/statistics',
-	        // 'notes': 'Returns 200 if everything went well, otherwise returns
-	        // error response',
-	        'summary': 'Get system statistics ',
-	        'method': 'GET',
-	        'parameters': [
+    'spec': {
+        'description': 'Get system statistics ',
+        'name': 'getPublicLessons',
+        'path': '/backend/public/system/statistics',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Get system statistics ',
+        'method': 'GET',
+        'parameters': [
 
-	        ],
-	        'errorResponses': [
-	            {
-	                'code': 500,
-	                'reason': 'server error'
-	            }
-	        ],
-	        'nickname': 'getStatistics'
-	    },
-	    'action': controllers.stats.getStatistics
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getStatistics'
+    },
+    'action': controllers.stats.getStatistics
 };
