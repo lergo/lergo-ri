@@ -56,7 +56,7 @@ exports.create = function (req, res) {
         logger.info('creating invitation for lesson', req.lesson);
         var invitation = req.body;
 
-        if ( !invitation.invitee || !invitation.invitee.email ){
+        if ( !invitation.invitee || !invitation.invitee.name ){
             new managers.error.InternalServerError(null, 'missing invitee').send(res);
             return;
         }
@@ -73,14 +73,15 @@ exports.create = function (req, res) {
                 return;
             } else {
                 logger.info('sending invitation email');
-                managers.lessonsInvitations.sendInvitationMail(req.emailResources, result, function( err ){
-                    if ( !!err ){
-                        logger.info('error while sending invitation');
-                        err.send(res);
-                        return;
-                    }
-                    res.send(result);
-                });
+                res.send(  result );
+//                managers.lessonsInvitations.sendInvitationMail(req.emailResources, result, function( err ){
+//                    if ( !!err ){
+//                        logger.info('error while sending invitation');
+//                        err.send(res);
+//                        return;
+//                    }
+//                    res.send(result);
+//                });
 
             }
         });

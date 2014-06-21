@@ -15,9 +15,7 @@ function Invitation(invitation) {
 
     var self = this;
 
-    self.getEmail = function () {
-        return invitation.invitee.email;
-    };
+
 
     self.isAnonymous = function(){
         return invitation.anonymous;
@@ -32,7 +30,7 @@ function Invitation(invitation) {
     };
 
     self.getName = function () {
-        return invitation.invitee.email;
+        return invitation.invitee.name;
     };
 
     self.getInviter = function (callback) {
@@ -174,7 +172,7 @@ exports.sendReportLink = function (emailResources, invitationId, callback) {
             _.merge(emailVars, emailResources);
             var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/invitations/' + invitationData._id + '/report';
 
-            _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName });
+            _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName, 'inviteeName' : invitationModel.getName(), 'lessonTitle' : invitationData.lesson.name });
 
             services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
                 services.email.sendMail({
@@ -247,43 +245,3 @@ exports.create = function ( invitation, callback) {
 };
 
 
-exports.sendInvitationMail = function (emailResources, invitationData, callback) {
-
-    var invitationModel = new Invitation(invitationData);
-    var inviter = null;
-	var lesson = null;
-	async.waterfall([ function getLesson(_callback) {
-		invitationModel.getLesson(function(err, _lesson) {
-			lesson = _lesson;
-			_callback(err);
-		});
-	}, function getInviter(_callback) {
-		invitationModel.getInviter(function(err, _inviter) {
-			inviter = _inviter;
-			_callback(err);
-		});
-	}, function sendInvitation() {
-		var emailVars = {};
-		_.merge(emailVars, emailResources);
-		var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/' + invitationModel.getLessonIdStr() + '/intro?invitationId=' + invitationData._id ;
-
-		_.merge(emailVars, {
-			'link' : lessonInviteLink,
-			'name' : invitationModel.getName(),
-			'inviterName' : inviter.fullName,
-			'inviterEmail' : inviter.email,
-			'lessonTitle' : lesson.name
-		});
-
-		services.emailTemplates.renderLessonInvitation(emailVars, function(err, html, text) {
-			services.email.sendMail({
-				'to' : invitationModel.getEmail(),
-				'subject' : lesson.name,
-				'text' : text,
-				'html' : html
-			}, function(err) {
-				callback(err);
-			});
-		});
-	} ]);
-};
