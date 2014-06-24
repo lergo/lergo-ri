@@ -93,14 +93,23 @@ exports.createAnonymous = function (req, res) {
         logger.info('creating invitation for lesson', req.lesson);
         var invitation = { 'anonymous' : true, 'lessonId' : req.lesson._id };
 
-        managers.lessonsInvitations.create(invitation, function (err, result) {
-            if (!!err) {
-                logger.error('unable to create lesson invitation', err);
-                err.send(res);
-                return;
-            } else {
-                res.send(result);
+        // in case user is logged in, set him as invitee
+        require('./UsersController').optionalUserOnRequest(req, res,  function(){
+
+
+            if ( !!req.user ){
+                invitation.invitee = { 'name' : req.user.username };
             }
+
+            managers.lessonsInvitations.create(invitation, function (err, result) {
+                if (!!err) {
+                    logger.error('unable to create lesson invitation', err);
+                    err.send(res);
+                    return;
+                } else {
+                    res.send(result);
+                }
+            });
         });
     });
 };

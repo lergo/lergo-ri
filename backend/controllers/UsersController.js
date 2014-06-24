@@ -152,14 +152,27 @@ exports.logout = function (req, res) {
  * get a user from cookie on request, and calls next request handler
  */
 exports.loggedInMiddleware = function (req, res, next) {
+    exports.optionalUserOnRequest( req, res , function(){
+        if ( !req.user ){
+            new managers.error.NotLoggedIn().send(res);
+            return;
+        }
+        next();
+    });
+};
+
+
+// sometimes, even though the path is public, we will want to check if the user is logged in or not.
+// so we can use details like username where it is optional.
+exports.optionalUserOnRequest = function(req, res, next){
     var userId = req.session.userId;
     if (!userId) {
-        new managers.error.NotLoggedIn().send(res);
-        return;
+        next();
     }
     managers.users.findUserById(userId, function (err, obj) {
         if (!!err) {
-            err.send(res);
+            logger.error('unable to find user by id',JSON.stringify(err));
+//            err.send(res);
             return;
         }
         req.user = obj;
@@ -167,7 +180,6 @@ exports.loggedInMiddleware = function (req, res, next) {
         next();
     });
 };
-
 
 
 
