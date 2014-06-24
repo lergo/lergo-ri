@@ -52,7 +52,7 @@ function findAnyLesson( req, res, next ) {
 
 
 exports.create = function (req, res) {
-    findLesson(req, res, function () {
+    findAnyLesson(req, res, function () {
         logger.info('creating invitation for lesson', req.lesson);
         var invitation = req.body;
 
