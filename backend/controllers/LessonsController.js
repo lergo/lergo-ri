@@ -1,6 +1,23 @@
 'use strict';
 var managers = require('../managers');
+var services = require('../services');
 
+
+function getLessonForUser(req, res, next) {
+    managers.lessons.getLesson({'_id': services.db.id(req.params.id || req.params.lessonId), 'userId': req.user._id }, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else if (!obj) {
+            new managers.error.NotFound(null, 'could not find lesson').send(res);
+            return;
+        } else {
+            req.lesson = obj;
+            next();
+        }
+
+    });
+}
 
 exports.createLesson = function (req, res) {
     var lesson = {};
@@ -27,20 +44,14 @@ exports.getUserLessons = function (req, res) {
     });
 };
 exports.getUserLessonById = function (req, res) {
-    var id = req.params.id;
-
-    managers.lessons.getLesson({ '_id': managers.db.id(id), 'userId': req.user._id }, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(obj);
-            return;
-        }
+    getLessonForUser(req, res, function next() {
+        res.send(req.lesson);
     });
 };
+
 exports.updateLesson = function (req, res) {
     var lesson = req.body;
+
     lesson.userId = req.user._id;
     lesson._id = managers.db.id(lesson._id);
     managers.lessons.updateLesson(lesson, function (err, obj) {
@@ -53,6 +64,7 @@ exports.updateLesson = function (req, res) {
         }
     });
 };
+
 exports.deleteLesson = function (req, res) {
     var id = req.params.id;
     managers.lessons.deleteLesson(id, req.user._id, function (err, obj) {
@@ -94,14 +106,22 @@ exports.adminUpdateLesson = function (req, res) {
     });
 };
 
-exports.getPublicLessons = function( req, res ){
-    managers.lessons.getPublicLessons( function( err, result ){
+exports.getPublicLessons = function (req, res) {
+    managers.lessons.getPublicLessons(function (err, result) {
         res.send(result);
     });
 };
 
-exports.getLessonIntro = function( req, res ){
-    managers.lessons.getLessonIntro( req.params.lessonId, function(err, result){
+exports.getLessonIntro = function (req, res) {
+    managers.lessons.getLessonIntro(req.params.lessonId, function (err, result) {
         res.send(result);
+    });
+};
+
+exports.copyLesson = function (req, res) {
+    getLessonForUser(req, res, function next() {
+        managers.lessons.copyLesson(req.lesson, function (err, result) {
+            res.send(result);
+        });
     });
 };

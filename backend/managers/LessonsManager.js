@@ -1,6 +1,11 @@
 'use strict';
+// todo user "managers" instead..
+// since this is a manager, we cannot simply require('./index');
+// we need to use setTimeout( function(){ managers = require('./index'); },0);
+// hopefully this will cause the event loop to execute after index.js is initialized.
+
 var logger = require('log4js').getLogger('LessonsManager');
-var dbManager = require('./DbManager');
+var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
 var _ = require('lodash');
@@ -20,27 +25,47 @@ function getQuestionCount(item) {
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
 	lesson.createdAt = new Date();
-	lesson.age=8;
-	dbManager.connect('lessons', function(db, collection, done) {
+    if ( !lesson.age) {
+        lesson.age = 8;
+    }
+	services.db.connect('lessons', function(db, collection) {
 		collection.insert(lesson, function(err) {
 			if (!!err) {
 				logger.error('error creating lesson [%s] : [%s]', lesson.name, err);
 				callback(new errorManager.InternalServerError());
-				done();
 				return;
 			} else {
 				logger.info('Lesson [%s] created successfully. invoking callback', lesson.name);
 				callback(null, lesson);
-				done();
 				return;
 			}
 		});
 	});
 };
 
+exports.copyLesson = function (lesson, callback) {
+    delete lesson._id;
+    lesson.name = 'Copy of : ' + lesson.name;
+    lesson.createAt = new Date();
+    lesson.userId = services.db.id(lesson.userId);
+    services.db.connect('lessons', function (db, collection) {
+        collection.insert(lesson, function (err) {
+            if (!!err) {
+                logger.error('error copying lesson [%s]', lesson.name, err);
+                callback(new errorManager.InternalServerError());
+                return;
+            } else {
+                logger.info('Lesson [%s] copied successfully', lesson.name);
+                callback(null, lesson);
+                return;
+            }
+        });
+    });
+};
+
 exports.updateLesson = function(lesson, callback) {
 	logger.info('Updating lesson');
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.update({
 			'_id' : lesson._id,
 			'userId' : lesson.userId
@@ -62,9 +87,9 @@ exports.updateLesson = function(lesson, callback) {
 
 exports.deleteLesson = function(id, userId, callback) {
 	logger.info('Deleting lesson');
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.remove({
-			'_id' : dbManager.id(id),
+			'_id' : services.db.id(id),
 			'userId' : userId
 		}, function(err) {
 			if (!!err) {
@@ -77,9 +102,9 @@ exports.deleteLesson = function(id, userId, callback) {
 };
 
 exports.incrementViews = function(lessonId, callback) {
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.update({
-			'_id' : dbManager.id(lessonId)
+			'_id' : services.db.id(lessonId)
 		}, {
 			'$inc' : {
 				'views' : 1
@@ -94,8 +119,8 @@ exports.incrementViews = function(lessonId, callback) {
 };
 
 exports.getLesson = function(filter, callback) {
-	logger.info('Fetching lesson by ID');
-	dbManager.connect('lessons', function(db, collection, done) {
+	logger.info('Fetching lesson by ID', JSON.stringify(filter));
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.findOne(filter, function(err, item) {
 			if (!!err) {
 				logger.error('unable to query for lesson [%s]', err.message);
@@ -115,7 +140,7 @@ exports.getLesson = function(filter, callback) {
 
 exports.getUserLessons = function(userId, callback) {
 	logger.info('Getting lessons');
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.find({
 			'userId' : userId
 		}).toArray(function(err, result) {
@@ -130,7 +155,7 @@ exports.getUserLessons = function(userId, callback) {
 
 exports.find = function(filter, projection, callback) {
 	logger.info('finding lessons');
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.find(filter, projection).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to find lessons [%s]', err.message);
@@ -144,7 +169,7 @@ exports.find = function(filter, projection, callback) {
 exports.getPublicLessons = function(callback) {
 	var result = [];
 	var usersId = [];
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.find({
 			'public' : {
 				'$exists' : true
@@ -174,9 +199,9 @@ exports.getPublicLessons = function(callback) {
 
 // todo : organize this code into "role" based pattern
 exports.getLessonIntro = function( lessonId, callback ){
-    dbManager.connect('lessons', function(db, collection/*, done*/){
+    services.db.connect('lessons', function(db, collection/*, done*/){
         collection.findOne({
-            '_id' : dbManager.id( lessonId )
+            '_id' : services.db.id( lessonId )
         }, function( err, result ){
 
             usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
@@ -193,7 +218,7 @@ exports.getLessonIntro = function( lessonId, callback ){
 
 exports.getLessons = function(filter, callback) {
 	logger.info('Getting lessons');
-	dbManager.connect('lessons', function(db, collection, done) {
+	services.db.connect('lessons', function(db, collection, done) {
 		collection.find(filter).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for lessons', err);

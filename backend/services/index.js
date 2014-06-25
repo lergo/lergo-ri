@@ -1,5 +1,7 @@
 var logger = require('log4js').getLogger('index');
 logger.info('loading email service');
+exports.conf = require('./Conf');
+logger.info('all services loaded');
 exports.email=require('./LergoEmailService');
 logger.info('loading questions service');
 exports.questionHandler = require('./QuestionService');
@@ -8,5 +10,4 @@ exports.emailTemplates = require('./EmailTemplateService');
 logger.info('loading hmac service');
 exports.hmac = require('./HmacService');
 logger.info('loading conf');
-exports.conf = require('./Conf');
-logger.info('all services loaded');
+exports.db = require('./DbService');

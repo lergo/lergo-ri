@@ -1,69 +1,9 @@
 'use strict';
 
-
-/*****************************************************************
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *              DEPRECATED........................
- *
- *
- *              Don't add code here...............
- *
- *              please use services/dbService.js instead
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * @type {exports}
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var conf = require('../services/Conf');
+var conf = require('./Conf');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
-var logger = require('log4js').getLogger('DbManager');
+var logger = require('log4js').getLogger('DbService');
 
 
 var _dbUrl = conf.dbUrl;
@@ -132,12 +72,12 @@ exports.connect = function (collection, callback) {
             // so you can ignore 'done' from now on and we can get read of it.
             callback(db, _collection, /**done**/function () {
                 /*logger.info('closing connection from done');*/
-               /* db.close();*/
+                /* db.close();*/
 
             });
         } catch (e) { // close if got an error
             /*logger.error('catching error, closing connection',e);*/
-           /* db.close();*/
+            /* db.close();*/
         }
     });
 };

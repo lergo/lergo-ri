@@ -430,6 +430,27 @@ exports.createLesson = {
     },
     'action': controllers.lessons.createLesson
 };
+
+exports.createLesson = {
+    'spec': {
+        'description': 'Create lesson',
+        'name': 'create',
+        'path': '/backend/user/lessons/{id}/copy',
+        'summary': 'copy lesson. prefix title with "Copy for" new lesson',
+        'method': 'POST',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to copy'
+            }
+        ],
+        'nickname': 'copyLesson'
+    },
+    'action': controllers.lessons.copyLesson
+};
 exports.getUserLessons = {
     'spec': {
         'description': 'Get lessons',
