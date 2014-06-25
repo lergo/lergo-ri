@@ -94,7 +94,7 @@ describe('QuestionsManager', function() {
 
 					questionsManager.createQuestion(newQuestion, function(done, returnObject) {
 						assert(returnObject);
-						id = returnObject._id
+						id = returnObject._id;
 					});
 
 					questionsManager.deleteQuestion(id, function(done, obj) {

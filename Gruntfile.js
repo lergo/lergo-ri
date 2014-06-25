@@ -64,23 +64,29 @@ module.exports = function (grunt) {
         },
         jshint: {
 
-            options: {
-                jshintrc: '.jshintrc'
+            backend: {
+                options: {
+                    jshintrc: '.jshintrc'
+                },
+                files: {
+                    'src': [
+                        'Gruntfile.js',
+                        'server.js',
+                        '*.js',
+                        'backend/**/*.js'
+                    ]
+                }
             },
-            all: [
-                'Gruntfile.js',
-                'server.js',
-                '*.js',
-                'backend/{,*/}*.js'
-            ],
 
             test: {
                 options: {
                     jshintrc: 'test.jshintrc'
                 },
-                all: [
-                    'test/{,*/}*.js'
-                ]
+                files: {
+                    'src': [
+                        'test/**/*.js'
+                    ]
+                }
             }
         }
     });

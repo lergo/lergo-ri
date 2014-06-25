@@ -64,7 +64,7 @@ describe('LessonsManager', function() {
 						assert(returnObject);
 						assert.equal(returnObject.length, 1);
 						id = returnObject[0]._id;
-                        modifiedLesson["_id"] = id;
+                        modifiedLesson._id = id;
 					});
 
 					lessonsManager.updateLesson(modifiedLesson, function(err, updatedObject) {
@@ -99,10 +99,10 @@ describe('LessonsManager', function() {
 					lessonsManager.createLesson(newLesson, function(done, returnObject) {
 						assert(returnObject);
 						id = returnObject._id;
-                        newLesson["_id"] = id;
+                        newLesson._id = id;
 					});
 
-					lessonsManager.deleteLesson(id, newLesson.userId, function(err) {
+					lessonsManager.deleteLesson(id, newLesson.userId, function(/*err*/) {
                         // Commented out since when looking on LessonsManager.deleteLesson, I see that it only invokes
                         // the callback with err (and not (err, obj), as implied by this test).
 //						logger.info('Lesson [%s] deleted successfully', obj);
