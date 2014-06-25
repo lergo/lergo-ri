@@ -431,10 +431,10 @@ exports.createLesson = {
     'action': controllers.lessons.createLesson
 };
 
-exports.createLesson = {
+exports.copyLesson = {
     'spec': {
-        'description': 'Create lesson',
-        'name': 'create',
+        'description': 'Copy lesson',
+        'name': 'copy',
         'path': '/backend/user/lessons/{id}/copy',
         'summary': 'copy lesson. prefix title with "Copy for" new lesson',
         'method': 'POST',
