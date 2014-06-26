@@ -45,6 +45,7 @@ exports.createLesson = function(lesson, callback) {
 
 exports.copyLesson = function (lesson, callback) {
     delete lesson._id;
+    delete lesson.public;
     lesson.name = 'Copy of : ' + lesson.name;
     lesson.createAt = new Date();
     lesson.userId = services.db.id(lesson.userId);
