@@ -129,9 +129,9 @@ exports.getLesson = function(filter, callback) {
 			} else {
 				done();
 				usersManager.findUserById(item.userId, function(err, user) {
-					item.user = user;
+//					item.user = user;
 					item.timeStamp = item._id.getTimestamp();
-					item.questionsCount = getQuestionCount(item);
+//					item.questionsCount = getQuestionCount(item);
 					callback(err, item);
 				});
 			}
@@ -208,7 +208,7 @@ exports.getLessonIntro = function( lessonId, callback ){
             usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
                 result.user = usersById[result.userId];
                 result.timeStamp = result._id.getTimestamp();
-                result.questionsCount = getQuestionCount(result);
+//                result.questionsCount = getQuestionCount(result);
                 callback(err, result);
             });
 
