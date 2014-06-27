@@ -119,24 +119,20 @@ exports.incrementViews = function(lessonId, callback) {
 	});
 };
 
-exports.getLesson = function(filter, callback) {
-	logger.info('Fetching lesson by ID', JSON.stringify(filter));
-	services.db.connect('lessons', function(db, collection, done) {
-		collection.findOne(filter, function(err, item) {
-			if (!!err) {
-				logger.error('unable to query for lesson [%s]', err.message);
-				callback(null, item);
-			} else {
-				done();
-				usersManager.findUserById(item.userId, function(err, user) {
-//					item.user = user;
-					item.timeStamp = item._id.getTimestamp();
-//					item.questionsCount = getQuestionCount(item);
-					callback(err, item);
-				});
-			}
-		});
-	});
+exports.getLesson = function (filter, callback) {
+    logger.info('Fetching lesson by ID', JSON.stringify(filter));
+    services.db.connect('lessons', function (db, collection, done) {
+        collection.findOne(filter, function (err, item) {
+                if (!!err) {
+                    logger.error('unable to query for lesson [%s]', err.message);
+                    callback(null, item);
+                } else {
+                    item.timeStamp = item._id.getTimestamp();
+                    callback(err, item);
+                }
+            }
+        );
+    });
 };
 
 exports.getUserLessons = function(userId, callback) {
@@ -227,7 +223,7 @@ exports.getLessons = function(filter, callback) {
 			done();
 			callback(err, result);
 		});
-		
+
 	});
 };
 
