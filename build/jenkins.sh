@@ -28,7 +28,7 @@ Xvfb :1 &
 #cd $1
  
 curl -s -o ./use-node https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/node/use-node
-NODE_VERSION=0.10.14 . ./use-node
+NODE_VERSION=0.10.24 . ./use-node
 
 
 install_bower_cli(  ){
@@ -102,6 +102,14 @@ build_ri(){
     grunt build --no-color
     cd dist
     npm install --production
+
+# echo "running npm install on contextify"
+# MY_DIR=`pwd`
+# cd node_modules/email-templates/node_modules/juice2/node_modules/jsdom/node_modules/contextify/
+# npm install
+# cd $MY_DIR
+# echo "finished running install on contextify"
+
     npm pack
 
 }
@@ -129,3 +137,4 @@ fi
 \cp -f lergo-ri/dist/*.tgz artifacts
 \cp -f lergo-ui/dist/*.tgz artifacts
 \cp -f build.id artifacts
+\cp -f lergo-ri/build/install.sh artifacts
