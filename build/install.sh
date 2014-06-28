@@ -87,7 +87,7 @@ upgrade_main(){
             mkdir -p $LERGO_RI_LOCATION
         fi
 
-        if [ -z BACKEND_URL ];then
+        if [ -z "$BACKEND_URL" ];then
             BACKEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ri-0.0.0.tgz
             echo "BACKEND_URL not specified. using default [$BACKEND_URL]"
         fi
@@ -108,7 +108,7 @@ upgrade_main(){
             mkdir -p $LERGO_UI_LOCATION
         fi
 
-        if [ -z FRONTEND_URL ];then
+        if [ -z "$FRONTEND_URL" ];then
             FRONTEND_URL=https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/lergo-ui-0.0.0.tgz
             echo "FRONTEND_URL not specified. using default [$FRONTEND_URL]"
         fi
