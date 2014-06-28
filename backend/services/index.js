@@ -11,3 +11,4 @@ logger.info('loading hmac service');
 exports.hmac = require('./HmacService');
 logger.info('loading conf');
 exports.db = require('./DbService');
+exports.phraseApp = require('./PhraseApp');
