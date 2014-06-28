@@ -57,11 +57,11 @@ exports.createLesson = function(lesson, callback) {
 
 exports.copyLesson = function (lesson, callback) {
 
-    // pick only the following fields:
-    // age, description, name, steps, userId
-    lesson = _.pick(lesson, ['age','description','name','steps','userId']);
+    // pick only specific fields.
+
+    lesson = _.pick(lesson, ['age','description','name','steps','userId','language','subject','tags']);
     lesson.name = 'Copy of : ' + lesson.name;
-    lesson.createAt = new Date();
+    lesson.createdAt = new Date();
     lesson.userId = services.db.id(lesson.userId);
 
     services.db.connect('lessons', function (db, collection) {
