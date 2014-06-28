@@ -121,7 +121,7 @@ exports.incrementViews = function(lessonId, callback) {
 
 exports.getLesson = function (filter, callback) {
     logger.info('Fetching lesson by ID', JSON.stringify(filter));
-    services.db.connect('lessons', function (db, collection, done) {
+    services.db.connect('lessons', function (db, collection/*, done*/) {
         collection.findOne(filter, function (err, item) {
                 if (!!err) {
                     logger.error('unable to query for lesson [%s]', err.message);
