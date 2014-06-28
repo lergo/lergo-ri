@@ -5,6 +5,11 @@ ME_CONF_URL=location_of_an_online_me_conf
 S3_BACKUP_PATH=s3://lergodev-backups/mongo
 MAILTO=send.me@cron.errors
 
+# for prefetching translations
+PHRASEAPP_TOKEN=__token__
+
+
+
 
 # you can also host this file online, and write the following
 # eval "`wget --no-cache --no-check-certificate -O - url_to_file | dos2unix`"
