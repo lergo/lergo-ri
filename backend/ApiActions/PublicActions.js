@@ -93,3 +93,32 @@ exports.getStatistics = {
     },
     'action': controllers.stats.getStatistics
 };
+
+exports.getTranslations = {
+    'spec': {
+        'description': 'Get translation for locale',
+        'name': 'getPublicLessons',
+        'path': '/backend/public/translations/{locale}.json',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Get system translation',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'locale',
+                required: true,
+                'description': 'locale to fetch',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getTranslation'
+    },
+    'action': controllers.stats.getTranslation
+};
