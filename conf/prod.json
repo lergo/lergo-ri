@@ -2,6 +2,10 @@
     "cookieSessionSecret" : "cookieSessionSecret",
     "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
+    "translations" : {
+        "method" : "phraseapp",
+        "phraseAppToken" : null
+    },
     "emailSettings" : {
         "type" : "SMTP",
         "opts" : {
