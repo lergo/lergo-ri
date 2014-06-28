@@ -4,7 +4,7 @@ var conf = require('./Conf');
 
 var logger = require('log4js').getLogger('PhraseApp');
 var Client = require('node-rest-client').Client;
-var client = new Client;
+var client = new Client();
 
 if ( conf.translations.method === 'phraseapp' && !conf.translations.phraseAppToken){
     throw 'need to configure phraseapp token';
