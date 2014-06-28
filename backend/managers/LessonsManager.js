@@ -43,12 +43,27 @@ exports.createLesson = function(lesson, callback) {
 	});
 };
 
+
+/**
+ *
+ *
+ *
+ * This function copies a lesson while picking very specific fields from it.
+ *
+ *
+ * @param lesson
+ * @param callback
+ */
+
 exports.copyLesson = function (lesson, callback) {
-    delete lesson._id;
-    delete lesson.public;
+
+    // pick only the following fields:
+    // age, description, name, steps, userId
+    lesson = _.pick(lesson, ['age','description','name','steps','userId']);
     lesson.name = 'Copy of : ' + lesson.name;
     lesson.createAt = new Date();
     lesson.userId = services.db.id(lesson.userId);
+
     services.db.connect('lessons', function (db, collection) {
         collection.insert(lesson, function (err) {
             if (!!err) {
