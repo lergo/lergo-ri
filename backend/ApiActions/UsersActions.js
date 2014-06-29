@@ -451,6 +451,26 @@ exports.copyLesson = {
     },
     'action': controllers.lessons.copyLesson
 };
+exports.copyQuestion = {
+    'spec': {
+        'description': 'Copy question',
+        'name': 'copy',
+        'path': '/backend/user/questions/{id}/copy',
+        'summary': 'copy question. prefix title with "Copy for" new question',
+        'method': 'POST',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to copy'
+            }
+        ],
+        'nickname': 'copyQuestion'
+    },
+    'action': controllers.questions.copyQuestion
+};
 exports.getUserLessons = {
     'spec': {
         'description': 'Get lessons',

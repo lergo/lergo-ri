@@ -30,6 +30,22 @@ exports.findUsages = function (req, res) {
 };
 
 
+function getUserQuestionById(req, res, next) {
+    var questionId = req.params.questionId || req.params.id;
+    managers.questions.search({ 'userId': req.user._id, '_id': managers.db.id(questionId)}, {}, function (err, data) {
+        try {
+            if (!err && !!data && !!data.length && data.length > 0) {
+                req.question = data[0];
+            }
+        } catch (e) {
+            logger.error('unable to getUserQuestionById', e);
+
+        }
+        next();
+    });
+}
+
+
 exports.getQuestions = function (req, res) {
     managers.questions.getQuestions( { 'userId' : req.user._id }, function (err, obj) {
         if (!!err) {
@@ -57,7 +73,7 @@ exports.updateUserQuestion = function (req, res) {
     logger.info('updating question');
     var question = req.body;
 
-    logger.info(question);
+    logger.debug('question from body',question);
     question._id = managers.db.id(question._id);
     question.userId = managers.db.id(req.user._id);
     managers.questions.updateUserQuestion( question, function (err, obj) {
@@ -179,3 +195,11 @@ exports.deleteQuestion = function (req, res) {
     });
 };
 
+
+exports.copyQuestion = function (req, res) {
+    getUserQuestionById(req, res, function next() {
+        managers.questions.copyQuestion(req.question, function (err, result) {
+            res.send(result);
+        });
+    });
+};

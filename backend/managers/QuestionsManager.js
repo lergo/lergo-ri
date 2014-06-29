@@ -2,6 +2,7 @@
 var logger = require('log4js').getLogger('QuestionsManager');
 var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
+var _ = require('lodash');
 
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
@@ -9,8 +10,8 @@ exports.createQuestion = function(question, callback) {
 	dbManager.connect('questions', function(db, collection, done) {
 		collection.insert(question, function(err) {
 			if (!!err) {
-				logger.error('error creating question [%s] : [%s]', question.questionText, err);
-				callback(new errorManager.InternalServerError());
+				logger.error('error creating question [%s] : [%s]', question.question, err);
+				callback(new errorManager.InternalServerError(err,'unable to create question'));
 				done();
 				return;
 			} else {
@@ -21,6 +22,29 @@ exports.createQuestion = function(question, callback) {
 			}
 		});
 	});
+};
+
+exports.copyQuestion = function( question, callback ){
+    logger.info('Copying question');
+
+    // use omit and not pick, because there are different types of questions
+    question = _.omit( question, [ '_id','lastUpdate' ] );
+
+    question.question = 'Copy of : ' + question.question;
+
+    dbManager.connect('questions', function( db, collection ){
+        collection.insert(question, function(err){
+            if ( !!err ){
+                logger.error('error copying question [%s] : [%s]', question.question, err );
+                callback(new errorManager.InternalServerError(err, 'unable to copy question'));
+                return;
+            }else{
+                logger.info('question copied successfully');
+                callback(null, question);
+                return;
+            }
+        });
+    });
 };
 
 /**
@@ -40,12 +64,12 @@ exports.updateUserQuestion = function(question, callback) {
 			'userId' : question.userId
 		}, question, function(err) {
 			if (!!err) {
-				logger.error('error in updating question [%s] : [%s]', question.questionText, err);
+				logger.error('error in updating question [%s] : [%s]', question.question , err);
 				callback(new errorManager.InternalServerError());
 				done();
 				return;
 			} else {
-				logger.info('Question [%s] updated successfully. invoking callback', question.questionText);
+				logger.info('Question [%s] updated successfully. invoking callback', question.question );
 				callback(null, question);
 				done();
 				return;
@@ -85,6 +109,8 @@ exports.getQuestionById = function(id, callback) {
 	});
 };
 
+
+
 exports.getUserQuestions = function(userId, callback) {
 	logger.info('getting user questions');
 	dbManager.connect('questions', function(db, collection, done) {
@@ -99,6 +125,7 @@ exports.getUserQuestions = function(userId, callback) {
 		});
 	});
 };
+
 
 exports.search = function(filter, projection, callback) {
 	logger.info('finding questions with filter ', filter, projection);
