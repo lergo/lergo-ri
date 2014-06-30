@@ -24,7 +24,7 @@ fi
 
 echo creating backup
 file_timestamp=`date +%Y%m%d_%H%M%S_%N`
-dump_filename="dump_$file_timstamp.tar.gz"
+dump_filename="dump_$file_timestamp.tar.gz"
 mongodump
 tar -czvf $dump_filename dump
 rm -Rf dump
