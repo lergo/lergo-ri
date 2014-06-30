@@ -64,7 +64,10 @@ install_main(){
 
 upgrade_main(){
 
-     LATEST_BUILD_ID=`wget --no-cache --no-check-certificate -O - https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/build.id`
+     if [ -z "$BUILD_ID_URL" ]; then
+         BUILD_ID_URL = "https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/build.id"
+     fi
+     LATEST_BUILD_ID=`wget --no-cache --no-check-certificate -O - $BUILD_ID_URL`
      CURRENT_BUILD_FILE=/var/www/lergo/build.id
      CURRENT_BUILD_ID=""
      if [ -e $CURRENT_BUILD_FILE ]; then
