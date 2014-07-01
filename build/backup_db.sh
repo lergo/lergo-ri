@@ -1,3 +1,13 @@
+#! /bin/sh
+
+
+# when pointing cron to this file, omit the extension.
+# /etc/cron.hourly/backup_db --> .../lergo-ri/build/backup_db.sh
+# otherwise cron will silently ignore
+
+# the shebang (! /bin/sh ) is also crucial for cron. don't remove it.
+
+
 set -e
 eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
 SYSCONFIG_FILE=lergo read_sysconfig
