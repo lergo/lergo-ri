@@ -729,7 +729,9 @@ exports.lessonsInvitationsGetById = {
                 'paramType' : 'query',
                 'name' : 'constructForce',
                 'required' : false,
-                'description' : 'if true, the invitation will construct its lessons. if one was already constructed, it will be reconstructed'
+                'description' : 'if true, the invitation will construct its lessons. if one was already constructed, it will be reconstructed',
+
+                'type':'boolean'
             }
         ],
         'errorResponses': [
