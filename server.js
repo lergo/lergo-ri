@@ -113,6 +113,15 @@ for ( var i in actions ){
     }
 }
 
+
+/**
+ * send front-end the public configuration.
+ * used for integrating with google analytics and stuff..
+ */
+app.get('/backend/public/conf', function( req, res ){
+    res.send('var ' + (req.params.name || 'conf') + '=' + JSON.stringify(services.conf.public) + ';' );
+});
+
 swagger.configure('http://localhost:3000', '0.1');
 //app.use('/api-docs', swagger.resourceListing);
 

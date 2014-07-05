@@ -2,6 +2,9 @@
     "cookieSessionSecret" : "cookieSessionSecret",
     "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
+    "public" : {
+        "googleAnalyticsCode" : null
+    },
     "translations" : {
         "method" : "phraseapp",
         "phraseAppToken" : null
