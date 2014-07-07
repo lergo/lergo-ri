@@ -1,6 +1,9 @@
 exports.usersActions = require('./UsersActions');
 exports.publicActions = require('./PublicActions');
 exports.adminActions = require('./AdminActions');
+exports.lessonsActions = require('./LessonsActions');
+exports.systemActions = require('./SystemActions');
+exports.lessonsInvitations = require('./LessonsInvitationsActions');
 var logger = require('log4js').getLogger('index');
 
 
@@ -21,6 +24,12 @@ logger.info('adding user actions');
 addAllActions( exports.usersActions );
 logger.info('adding admin actions');
 addAllActions( exports.adminActions );
+logger.info('adding lessons actions');
+addAllActions( exports.lessonsActions );
+logger.info('adding system');
+addAllActions( exports.systemActions );
+logger.info('adding lessons invitations');
+addAllActions( exports.lessonsInvitations );
 
 
 

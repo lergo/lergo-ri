@@ -1,5 +1,8 @@
 var logger = require('log4js').getLogger('Lesson');
+var AbstractModel = require('./AbstractModel');
+var db = require('../services/DbService');
 
+Lesson.collectionName = 'lessons';
 
 function Lesson( data ){
     this.data = data;
@@ -21,6 +24,8 @@ Lesson.prototype.getAllQuestionIds = function(){
     return questionIds;
 };
 
+
+AbstractModel.enhance(Lesson);
 
 module.exports = Lesson;
 

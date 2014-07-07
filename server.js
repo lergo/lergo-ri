@@ -22,13 +22,18 @@ logger.info('loading services');
 var services = require('./backend/services');
 logger.info('services loaded');
 var path = require('path');
+var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
+
+var middlewares = require('./backend/middlewares');
 
 
 services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 //var errorManager = appContext.errorManager;
 
 var app = module.exports = express();
+var backendHandler = express();
+var swaggerAppHandler = backendHandler;
 
 /** swagger configuration: start **/
 
@@ -39,7 +44,7 @@ swagger.setHeaders = function setHeaders(res) {
     res.header('Content-Type', 'application/json; charset=utf-8');
 };
 swagger.configureSwaggerPaths('', '/api/api-docs', '');
-swagger.setAppHandler(app);
+swagger.setAppHandler(swaggerAppHandler);
 
 /** swagger configuration :end **/
 
@@ -63,11 +68,12 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
-app.use('/backend/user', controllers.users.loggedInMiddleware);
-app.use('/backend/admin', controllers.users.isAdminMiddleware);
+app.use('/backend/user', middlewares.users.loggedInMiddleware);
+app.use('/backend/admin', middlewares.users.isAdminMiddleware);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
+app.use('/backend', backendHandler);
 // Routes
 
 app.get('/swagger', function (req, res, next) {
@@ -103,7 +109,23 @@ var actions = require('./backend/ApiActions').actions;
 for ( var i in actions ){
     if ( actions.hasOwnProperty(i) ){
         var action = actions[i];
-        logger.info('adding [%s]', action.spec.name);
+
+        if ( !action.action ){
+            throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
+        }
+        logger.info('adding [%s] [%s] [%s]', action.spec.name, action.spec.nickname, typeof(action.action));
+
+        // add middlewares
+        if ( !!action.middlewares ){
+
+            for ( var m = 0; m < action.middlewares.length; m++) {
+
+                var middleware = action.middlewares[m];
+                logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
+                swaggerAppHandler.use(action.spec.path, middleware);
+            }
+        }
+
         var method = action.spec.method;
         if ( method === 'POST' ){
             swagger.addPost( action );

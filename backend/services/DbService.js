@@ -54,17 +54,20 @@ exports.toMap = function( cursor, callback ){
  */
 exports.connect = function (collection, callback) {
     getDbConnection( function (err, db) {
-        logger.info('connected to db successfully');
+
         var _collection = null;
         if (err) {
             throw err;
         }
+        logger.info('connected to db successfully');
 
         try {
             if (collection) {
                 logger.info('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
 
+            }else{
+                logger.warn('openning connection without collection');
             }
             // GUY - 'done' was once used for closing the connection.
             // turns out we don't need to close the connection..

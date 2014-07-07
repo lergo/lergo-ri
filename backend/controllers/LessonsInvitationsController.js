@@ -20,39 +20,7 @@ function findLesson(req, res, next) {
     });
 }
 
-
-// find a lesson only by id -- use only when required.. prefer to use other methods.
-function findAnyLesson( req, res, next ) {
-    var lessonId = req.params.lessonId;
-    managers.lessons.getLesson({'_id': managers.db.id(lessonId) }, function (err, result) {
-        if (!!err) {
-            logger.error('unable to find lesson', err);
-            err.send(res);
-        } else {
-            req.lesson = result;
-            next();
-        }
-    });
-}
-
-// verifies that the lesson is public
-// guy - commenting for now because it is never used!
-/*function findPublicLesson( req, res, next ){
-    var lessonId = req.params.lessonId;
-    managers.lessons.getLesson({'_id' : managers.db.id(lessonId), 'public' : {'$exists' : true } }, function( err, result ){
-        if ( !!err ){
-            logger.error('unable to find lesson', err);
-            err.send(res);
-        }else{
-            req.lesson = result;
-            next();
-        }
-    });
-}*/
-
-
 exports.create = function (req, res) {
-    findAnyLesson(req, res, function () {
         logger.info('creating invitation for lesson', req.lesson);
         var invitation = req.body;
 
@@ -85,32 +53,25 @@ exports.create = function (req, res) {
 
             }
         });
-    });
 };
 
 exports.createAnonymous = function (req, res) {
-    findAnyLesson(req, res, function () {
-        logger.info('creating invitation for lesson', req.lesson);
-        var invitation = { 'anonymous' : true, 'lessonId' : req.lesson._id };
+    logger.info('creating invitation for lesson', req.lesson);
+    var invitation = { 'anonymous': true, 'lessonId': req.lesson._id };
 
-        // in case user is logged in, set him as invitee
-        require('./UsersController').optionalUserOnRequest(req, res,  function(){
+    // in case user is logged in, set him as invitee
+    if (!!req.user) {
+        invitation.invitee = { 'name': req.user.username };
+    }
 
-
-            if ( !!req.user ){
-                invitation.invitee = { 'name' : req.user.username };
-            }
-
-            managers.lessonsInvitations.create(invitation, function (err, result) {
-                if (!!err) {
-                    logger.error('unable to create lesson invitation', err);
-                    err.send(res);
-                    return;
-                } else {
-                    res.send(result);
-                }
-            });
-        });
+    managers.lessonsInvitations.create(invitation, function (err, result) {
+        if (!!err) {
+            logger.error('unable to create lesson invitation', err);
+            err.send(res);
+            return;
+        } else {
+            res.send(result);
+        }
     });
 };
 

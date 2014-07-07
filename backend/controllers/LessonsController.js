@@ -19,19 +19,7 @@ function getLessonForUser(req, res, next) {
     });
 }
 
-exports.createLesson = function (req, res) {
-    var lesson = {};
-    lesson.userId = req.user._id;
-    managers.lessons.createLesson(lesson, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(obj);
-            return;
-        }
-    });
-};
+
 exports.getUserLessons = function (req, res) {
     managers.lessons.getUserLessons(req.user._id, function (err, obj) {
         if (!!err) {
@@ -123,5 +111,47 @@ exports.copyLesson = function (req, res) {
         managers.lessons.copyLesson(req.lesson, function (err, result) {
             res.send(result);
         });
+    });
+};
+
+
+/**
+ *
+ *
+ *              ---- new function format.
+ *              this format will align to a new API REST format similar to http://api.stackexchange.com/docs/
+ *
+ *              it will assume user was authorized to get here, and will NOT assume user own the resource.
+ *
+ *              For example - update lesson will not assume the editor is the user on the request, but will
+ *              assume the user on the request is allowed to edit this lesson;
+ *
+ *
+ *
+ */
+
+exports.update = function( req, res ){
+
+};
+
+/**
+ *
+ * Creates a new lesson and assigns it to the logged in user.
+ *
+ * @param req
+ * @param res
+ */
+
+exports.create = function (req, res) {
+    var lesson = {};
+    lesson.userId = req.user._id;
+    managers.lessons.createLesson(lesson, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
     });
 };

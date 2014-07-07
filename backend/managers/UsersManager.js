@@ -5,6 +5,7 @@ var logger = require('log4js').getLogger('UsersManager');
 var dbManager = require('./DbManager');
 var services = require('../services');
 var errorManager = require('./ErrorManager');
+var User = require('../models/User');
 var _ = require('lodash');
 
 /**
@@ -262,17 +263,7 @@ exports.validateUser = function (userId, hmac, callback) {
 
 exports.findUserById = function (userId, callback) {
     logger.info('getting user with id [%s]', userId);
-    dbManager.connect('users', function (db, collection, done) {
-
-        collection.findOne({'_id': dbManager.id(userId)}, function (err, result) {
-            if (!!err) {
-                logger.error('unable to query for user [%s]', err.message);
-            }
-            done();
-            callback(err, result);
-        });
-
-    });
+    return User.findById( userId, { /*projection*/ }, callback );
 };
 
 exports.sendResetPasswordMail = function (emailResources, resetDetails, callback) {
@@ -312,8 +303,15 @@ exports.sendResetPasswordMail = function (emailResources, resetDetails, callback
             callback(err);
             return;
         }
+
+        if ( !user ){
+            callback( new errorManager.NotFound(null, 'could not find user'));
+            return;
+        }
+
+        debugger;
         if (!user.email) {
-            throw new Error('user ', user, ' does not have an email. fix corrupted data in database');
+            throw new Error('user '+ JSON.stringify(user) + ' does not have an email. fix corrupted data in database');
         }
 
 
@@ -376,12 +374,8 @@ exports.changePassword = function (changePasswordDetails, user, callback) {
 
 exports.findUser = function (filter, callback) {
     logger.info('getting user with filter [%s]', JSON.stringify(filter));
-    dbManager.connect('users', function (db, collection, done) {
-        collection.findOne(filter, function (err, obj) {
-            callback(err, obj);
-            done();
-        });
-    });
+    User.findOne( filter, {}, callback);
+
 };
 
 exports.find = function (filter, projection, callback) {

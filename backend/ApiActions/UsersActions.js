@@ -1,9 +1,12 @@
 var controllers = require('../controllers');
+
+var middlewares = require('../middlewares');
+
 exports.signup = {
     'spec': {
         'description': 'Sign up a new user',
         'name': 'signup',
-        'path': '/backend/users/signup',
+        'path': '/users/signup',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
         'summary': 'Sign up a new user',
@@ -32,7 +35,7 @@ exports.login = {
     'spec': {
         'description': 'User login',
         'name': 'login',
-        'path': '/backend/users/login',
+        'path': '/users/login',
         'summary': 'user logs in and creates a new session. The backend is responsible to maintain the session.',
         'method': 'POST',
         'parameters': [
@@ -64,7 +67,7 @@ exports.validateUser = {
     'spec': {
         'description': 'Validate User Login',
         'name': 'validateUserLogin',
-        'path': '/backend/users/{userId}/validate',
+        'path': '/users/{userId}/validate',
         'summary': 'User validation',
         'method': 'POST',
         'parameters': [
@@ -96,7 +99,7 @@ exports.resendValidateEmail = {
     'spec': {
         'description': 'Send validation email again',
         'name': 'resendValidationEmail',
-        'path': '/backend/users/validate/resend',
+        'path': '/users/validate/resend',
         'summary': 'Resend user validation email',
         'method': 'POST',
         'parameters': [
@@ -127,7 +130,7 @@ exports.changePassword = {
     'spec': {
         'description': 'Change Password',
         'name': 'changePassword',
-        'path': '/backend/users/changePassword',
+        'path': '/users/changePassword',
         'summary': 'user changes password after clicking "request password reset" email.',
         'method': 'POST',
         'parameters': [
@@ -159,7 +162,7 @@ exports.resetPasswordRequest = {
     'spec': {
         'description': 'Request Password Reset',
         'name': 'resetPasswordRequest',
-        'path': '/backend/users/requestPasswordReset',
+        'path': '/users/requestPasswordReset',
         'summary': 'user requests a password reset. A link is delivered to the user that leads to the password reset page.',
         'method': 'POST',
         'parameters': [
@@ -191,7 +194,7 @@ exports.logout = {
     'spec': {
         'description': 'Logout. Ends session.',
         'name': 'logout',
-        'path': '/backend/users/logout',
+        'path': '/users/logout',
         'summary': 'logs out user. removes session. returns 200',
         'method': 'POST',
         'parameters': [],
@@ -206,7 +209,7 @@ exports.isLoggedIn = {
     'spec': {
         'description': 'Is User Logged In?',
         'name': 'isLoggedIn',
-        'path': '/backend/user/loggedin',
+        'path': '/user/loggedin',
         'summary': 'returns user public details iff user is logged in. Otherwise 401.',
         'method': 'GET',
         'parameters': [],
@@ -219,6 +222,7 @@ exports.isLoggedIn = {
         'nickname': 'isLoggedIn'
 
     },
+
     'action': controllers.users.isLoggedIn
 };
 
@@ -227,7 +231,7 @@ exports.createQuestion = {
     'spec': {
         'description': 'Create question',
         'name': 'create',
-        'path': '/backend/user/questions',
+        'path': '/user/questions',
         'summary': 'Create new question',
         'method': 'POST',
         'parameters': [
@@ -253,7 +257,7 @@ exports.getQuestions = {
     'spec': {
         'description': 'Get questions',
         'name': 'getQuestions',
-        'path': '/backend/user/questions',
+        'path': '/user/questions',
         'summary': 'Get all questions',
         'method': 'GET',
         'parameters': [],
@@ -272,7 +276,7 @@ exports.findQuestionsByIds = {
     'spec': {
         'description': 'Finds multiple questions by list of ids',
         'name': 'findQuestionsById',
-        'path': '/backend/questions/find',
+        'path': '/questions/find',
         'summary': 'Finds multiple questions by list of ids',
         'method': 'GET',
         'parameters': [
@@ -300,7 +304,7 @@ exports.getQuestionById = {
     'spec': {
         'description': 'Get question by id',
         'name': 'getQuestions',
-        'path': '/backend/user/questions/{id}',
+        'path': '/user/questions/{id}',
         'summary': 'Get question by id',
         'method': 'GET',
         'parameters': [
@@ -326,7 +330,7 @@ exports.updateQuestion = {
     'spec': {
         'description': 'Updates question',
         'name': 'update question',
-        'path': '/backend/user/questions/{id}',
+        'path': '/user/questions/{id}',
         'summary': 'Update question',
         'method': 'POST',
         'parameters': [
@@ -359,7 +363,7 @@ exports.deleteQuestion = {
     'spec' : {
         'description' : 'Delete question corresponding to the id',
         'name' : 'deleteLesson',
-        'path' : '/backend/user/questions/{id}/delete',
+        'path' : '/user/questions/{id}/delete',
         'summary' : 'Delete question corresponding to the id',
         'method' : 'POST',
         'parameters' : [ {
@@ -381,7 +385,7 @@ exports.findQuestionUsages = {
     'spec': {
         'description': 'find question usages',
         'name': 'findQuestionUsages',
-        'path': '/backend/user/questions/{id}/usages',
+        'path': '/user/questions/{id}/usages',
         'summary': 'find question usages',
         'method': 'GET',
         'parameters': [
@@ -404,38 +408,12 @@ exports.findQuestionUsages = {
     'action': controllers.questions.findUsages
 };
 
-exports.createLesson = {
-    'spec': {
-        'description': 'Create lesson',
-        'name': 'create',
-        'path': '/backend/user/lessons',
-        'summary': 'Create new lesson',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'body',
-                'name': 'lesson',
-                required: true,
-                'description': 'Lesson details',
-                'type': 'Lesson'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to create'
-            }
-        ],
-        'nickname': 'createLesson'
-    },
-    'action': controllers.lessons.createLesson
-};
 
 exports.copyLesson = {
     'spec': {
         'description': 'Copy lesson',
         'name': 'copy',
-        'path': '/backend/user/lessons/{id}/copy',
+        'path': '/user/lessons/{id}/copy',
         'summary': 'copy lesson. prefix title with "Copy for" new lesson',
         'method': 'POST',
         'parameters': [
@@ -455,7 +433,7 @@ exports.copyQuestion = {
     'spec': {
         'description': 'Copy question',
         'name': 'copy',
-        'path': '/backend/user/questions/{id}/copy',
+        'path': '/user/questions/{id}/copy',
         'summary': 'copy question. prefix title with "Copy for" new question',
         'method': 'POST',
         'parameters': [
@@ -475,7 +453,7 @@ exports.getUserLessons = {
     'spec': {
         'description': 'Get lessons',
         'name': 'getLessons',
-        'path': '/backend/user/lessons',
+        'path': '/user/lessons',
         'summary': 'Get all lessons',
         'method': 'GET',
         'parameters': [],
@@ -493,7 +471,7 @@ exports.getUserLessonById = {
     'spec': {
         'description': 'Get user lesson by id',
         'name': 'getUserLessonsById',
-        'path': '/backend/user/lessons/{id}',
+        'path': '/user/lessons/{id}',
         'summary': 'Get lesson by id',
         'method': 'GET',
         'parameters': [
@@ -519,7 +497,7 @@ exports.updateLesson = {
     'spec': {
         'description': 'Create lesson',
         'name': 'create',
-        'path': '/backend/user/lessons/{id}',
+        'path': '/user/lessons/{id}',
         'summary': 'Update lesson',
         'method': 'POST',
         'parameters': [
@@ -554,7 +532,7 @@ exports.deleteLesson = {
     'spec': {
         'description': 'Delete lesson corresponding to the id',
         'name': 'deleteLesson',
-        'path': '/backend/user/lessons/{id}/delete',
+        'path': '/user/lessons/{id}/delete',
         'summary': 'Delete lesson corresponding to the id',
         'method': 'POST',
         'parameters': [
@@ -588,7 +566,7 @@ exports.lessonInviteCreate = {
     'spec': {
         'description': 'Create a lesson invitation',
         'name': 'lessonInviteCreate',
-        'path': '/backend/user/lessons/{lessonId}/invitations/create',
+        'path': '/user/lessons/{lessonId}/invitations/create',
         'summary': 'create a lesson invitation instance and sends an email',
         'method': 'POST',
         'parameters': [
@@ -619,7 +597,7 @@ exports.lessonInviteReportUpdate = {
     'spec': {
         'description': 'update lesson report',
         'name': 'lessonInviteReportUpdate',
-        'path': '/backend/lessonsinvitations/{invitationId}/report',
+        'path': '/lessonsinvitations/{invitationId}/report',
         'summary': 'updates lesson report',
         'method': 'POST',
         'parameters': [
@@ -653,7 +631,7 @@ exports.sendLessonInviteReportReady = {
     'spec': {
         'description': 'send email to inviter saying a report is ready',
         'name': 'sendLessonInviteReportReady',
-        'path': '/backend/lessonsinvitations/{invitationId}/reportReady',
+        'path': '/lessonsinvitations/{invitationId}/reportReady',
         'summary': 'updates lesson report',
         'method': 'POST',
         'parameters': [
@@ -681,7 +659,7 @@ exports.getLessonsInvitationsReport = {
     'spec': {
         'description': 'gets a report',
         'name': 'getLessonsInvitationsReport',
-        'path': '/backend/lessonsinvitations/{invitationId}/getReport',
+        'path': '/lessonsinvitations/{invitationId}/getReport',
         'summary': 'get a report',
         'method': 'GET',
         'parameters': [
@@ -708,7 +686,7 @@ exports.lessonsInvitationsGetById = {
     'spec': {
         'description': 'Get a lesson invitation by id',
         'name': 'lessonInviteCreate',
-        'path': '/backend/lessonsinvitations/{id}/build',
+        'path': '/lessonsinvitations/{id}/build',
         'summary': 'create a lesson invitation instance and sends an email',
         'method': 'GET',
         'parameters': [
@@ -749,7 +727,7 @@ exports.submitAnswers = {
     'spec' : {
         'description' : 'Submit Answers',
         'name' : 'Submit Answers',
-        'path' : '/backend/questions/submitAnswers',
+        'path' : '/questions/submitAnswers',
         'summary' : 'Submit Answers',
         'method' : 'GET',
         'parameters' : [ {
@@ -773,7 +751,7 @@ exports.checkQuestionAnswer = {
     'spec' : {
         'description' : 'Check Question Answer',
         'name' : 'checkQuestionAnswer',
-        'path' : '/backend/questions/checkAnswer',
+        'path' : '/questions/checkAnswer',
         'summary' : 'checks if user answered question correctly',
         'method' : 'POST',
         'parameters' : [ {
@@ -789,4 +767,31 @@ exports.checkQuestionAnswer = {
         'nickname' : 'checkQuestionAnswer'
     },
     'action' : controllers.questions.checkQuestionAnswer
+};
+
+
+exports.getUsers = {
+    'spec': {
+        'description': 'Get users',
+        'name': 'getUsers',
+        'path': '/users/get/all',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'get users',
+        'method': 'GET',
+        'parameters': [
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getUsers'
+    },
+    'action': controllers.users.getAll,
+    'middlewares' : [
+        middlewares.users.exists,
+        middlewares.users.isAdmin
+    ]
 };
