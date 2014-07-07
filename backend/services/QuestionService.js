@@ -35,6 +35,29 @@ function MultiChoiceQuestionHandler(question) {
 		return result;
 	};
 }
+
+function FillInTheBlanksQuestionHandler(question) {
+
+	this.isCorrect = function() {
+		var answers = [];
+		question.answer.forEach(function(value) {
+			if (!!value) {
+				answers.push(value);
+			}
+		});
+		if (question.userAnswer.length === undefined) {
+			return false;
+		}
+
+		var result = true;
+		answers.forEach(function(value) {
+			if (answers.indexOf(value) !== question.userAnswer.indexOf(value)) {
+				result = false;
+			}
+		});
+		return result;
+	};
+}
 function TrueFalseQuestionHandler(question) {
 
 	this.isCorrect = function() {
@@ -56,6 +79,9 @@ exports.getHandler = function(question) {
 	}
 	if (question.type === 'openQuestion') {
 		return new OpenQuestionHandler(question);
+	}
+	if (question.type === 'fillInTheBlanks') {
+		return new FillInTheBlanksQuestionHandler(question);
 	}
 	return new TrueFalseQuestionHandler(question);
 
