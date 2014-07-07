@@ -1,9 +1,7 @@
-var db = require('../services/DbService');
 var AbstractModel = require('./AbstractModel');
 
 
-
- function User( data ){
+function User(data) {
     this.data = data;
 }
 

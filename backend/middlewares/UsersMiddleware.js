@@ -12,11 +12,10 @@ exports.loggedInMiddleware = function loggedInMiddleware(req, res, next) {
             new managers.error.NotLoggedIn().send(res);
             return;
         }
-        debugger;
         next();
     });
 };
-exports.exists = function exists ( ){exports.loggedInMiddleware.apply(null,arguments)}; // alias
+exports.exists = function exists ( ){exports.loggedInMiddleware.apply(null,arguments);}; // alias
 
 // sometimes, even though the path is public, we will want to check if the user is logged in or not.
 // so we can use details like username where it is optional.
@@ -27,7 +26,6 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
     }
     managers.users.findUserById(userId, function (err, obj) {
         if (!!err) {
-            debugger;
             logger.error('unable to find user by id',JSON.stringify(err));
 //            err.send(res);
             return;

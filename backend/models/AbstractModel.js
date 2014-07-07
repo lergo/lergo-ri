@@ -10,7 +10,7 @@ function enhance( Class ) {
     }
 
     Class.findById = function (id, projection, callback ) {
-        if ( typeof(projection) == 'function'){
+        if ( typeof(projection) === 'function'){
             callback = projection;
             projection = {};
         }
@@ -25,7 +25,7 @@ function enhance( Class ) {
 
     Class.find = function (filter, projection, callback) {
 
-        if ( typeof(projection) == 'function'){
+        if ( typeof(projection) === 'function'){
             callback = projection;
             projection = {};
         }

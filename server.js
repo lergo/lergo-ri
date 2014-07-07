@@ -48,8 +48,6 @@ swagger.setAppHandler(swaggerAppHandler);
 
 /** swagger configuration :end **/
 
-var controllers = require('./backend/controllers');
-
 
 // Configuration
 var useStatic = express.static(__dirname + '/swagger-ui/dist');

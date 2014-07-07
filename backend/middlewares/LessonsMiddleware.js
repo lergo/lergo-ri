@@ -15,7 +15,6 @@ var logger = require('log4js').getLogger('LessonsMiddleware');
  */
 exports.exists= function exists( req, res, next ){
     logger.info('checking if lesson exists : ' , req.params.lessonId );
-    debugger;
     Lesson.findById( req.params.lessonId, function(err, result){
         if ( !!err ){
             res.send(500,err);
@@ -51,7 +50,7 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
         res.send(400);
         return;
     }
-    if ( !!user.isAdmin || lesson.userId == user._id ){
+    if ( !!user.isAdmin || lesson.userId === user._id ){
         next();
     }
 };

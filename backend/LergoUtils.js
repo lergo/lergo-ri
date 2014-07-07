@@ -8,7 +8,7 @@ exports.functionName = function(fun) {
         var ret = fun.toString();
         ret = ret.substr('function '.length);
         ret = ret.substr(0, ret.indexOf('('));
-        if (ret.trim().length == 0) {
+        if (ret.trim().length === 0) {
             throw 'function has no name :: ' + fun.toString();
         }
         return ret;

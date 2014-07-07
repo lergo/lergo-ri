@@ -309,7 +309,6 @@ exports.sendResetPasswordMail = function (emailResources, resetDetails, callback
             return;
         }
 
-        debugger;
         if (!user.email) {
             throw new Error('user '+ JSON.stringify(user) + ' does not have an email. fix corrupted data in database');
         }

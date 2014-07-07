@@ -1,7 +1,7 @@
 'use strict';
 var managers = require('../managers');
 var services = require('../services');
-
+var logger = require('log4js').getLogger('LessonsController');
 
 function getLessonForUser(req, res, next) {
     managers.lessons.getLesson({'_id': services.db.id(req.params.id || req.params.lessonId), 'userId': req.user._id }, function (err, obj) {
@@ -131,7 +131,7 @@ exports.copyLesson = function (req, res) {
  */
 
 exports.update = function( req, res ){
-
+    logger.info('lessons update',req,res);
 };
 
 /**
