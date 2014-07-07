@@ -5,7 +5,7 @@ logger.info('initializing ErrorManager');
 
 function createSendFn( err ){
     return function(res){
-        res.send(JSON.stringify(err), err.responseCode);
+        res.send( err.responseCode, JSON.stringify(err) );
     };
 }
 
