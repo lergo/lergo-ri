@@ -451,10 +451,10 @@ exports.copyQuestion = {
 };
 exports.getUserLessons = {
     'spec': {
-        'description': 'Get lessons',
+        'description': 'Get user lessons',
         'name': 'getLessons',
-        'path': '/user/lessons',
-        'summary': 'Get all lessons',
+        'path': '/user/me/lessons',
+        'summary': 'Get user lessons',
         'method': 'GET',
         'parameters': [],
         'errorResponses': [
@@ -466,65 +466,6 @@ exports.getUserLessons = {
         'nickname': 'getLessons'
     },
     'action': controllers.lessons.getUserLessons
-};
-exports.getUserLessonById = {
-    'spec': {
-        'description': 'Get user lesson by id',
-        'name': 'getUserLessonsById',
-        'path': '/user/lessons/{id}',
-        'summary': 'Get lesson by id',
-        'method': 'GET',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of lesson that needs to be fetched',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to get lesson'
-            }
-        ],
-        'nickname': 'getUserLessonById'
-    },
-    'action': controllers.lessons.getUserLessonById
-};
-exports.updateLesson = {
-    'spec': {
-        'description': 'Create lesson',
-        'name': 'create',
-        'path': '/user/lessons/{id}',
-        'summary': 'Update lesson',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'body',
-                'name': 'lesson',
-                required: true,
-                'description': 'Lesson details',
-                'type': 'Lesson'
-            },
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of lesson that needs to be updated',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to update'
-            }
-        ],
-        'nickname': 'updateLesson'
-    },
-    'action': controllers.lessons.updateLesson
 };
 
 

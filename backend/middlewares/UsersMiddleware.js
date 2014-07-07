@@ -23,6 +23,7 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
     var userId = req.session.userId;
     if (!userId) {
         next();
+        return;
     }
     managers.users.findUserById(userId, function (err, obj) {
         if (!!err) {

@@ -43,14 +43,43 @@ exports.exists= function exists( req, res, next ){
  * lesson - the lesson we are editting
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
+    logger.info('checking if user can edit lesson');
     var user = req.user;
     var lesson = req.lesson;
     if ( !user || !lesson ){
-
         res.send(400);
         return;
     }
-    if ( !!user.isAdmin || lesson.userId === user._id ){
+    debugger;
+    if ( !!user.isAdmin || lesson.userId.equals(user._id) ){
         next();
+        return;
     }
+
+    res.send(400);
+};
+
+/*
+    Whether this user can see private lessons
+
+ */
+exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
+    logger.info('checking if user can see private lessons');
+    if ( !req.user.isAdmin ){
+        res.send(400);
+        return;
+    }
+    next();
+};
+
+exports.userCanViewLesson = function userCanViewLesson( req, res, next ){
+
+    if ( !req.user && !req.lesson.public ){
+        logger.debug('no user on session and lesson not public');
+        res.send(400);
+        return;
+    }
+
+    next();
+
 };

@@ -92,19 +92,24 @@ exports.connect = function (collection, callback) {
  * @returns mongo objectID or array of mongo objectID.
  */
 exports.id = function( id ){
-    if ( typeof(id) === 'string') {
-        return mongodb.ObjectID(id);
-    } else if ( Array.isArray(id) ){
-        id = id.map(function (idString) {
-            if ( typeof(idString) === 'string') {
-                return mongodb.ObjectID(idString);
-            }else{
-                return idString;
-            }
-        });
+    try {
+        if (typeof(id) === 'string') {
+            return mongodb.ObjectID(id);
+        } else if (Array.isArray(id)) {
+            id = id.map(function (idString) {
+                if (typeof(idString) === 'string') {
+                    return mongodb.ObjectID(idString);
+                } else {
+                    return idString;
+                }
+            });
+            return id;
+        }
         return id;
+    }catch(e){
+        logger.error('unable to convert to objectId',id);
+        throw e;
     }
-    return id;
 };
 
 

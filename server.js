@@ -120,7 +120,9 @@ for ( var i in actions ){
 
                 var middleware = action.middlewares[m];
                 logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
-                swaggerAppHandler.use(action.spec.path, middleware);
+
+                // switch between swagger syntax {id} to express :id
+                swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
             }
         }
 

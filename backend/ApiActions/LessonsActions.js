@@ -1,6 +1,32 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 
+exports.getAdminLessons = {
+    'spec': {
+        'description': 'Gets all lessons',
+        'name': 'getAllLessons',
+        'path': '/lessons/get/all',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Get admin lessons',
+        'method': 'GET',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getAdminLessons'
+    },
+    'middlewares': [
+        middlewares.users.exists,
+        middlewares.lessons.userCanSeePrivateLessons
+    ],
+    'action': controllers.lessons.getAdminLessons
+};
 
 
 exports.createLesson = {
@@ -33,12 +59,45 @@ exports.createLesson = {
     'action': controllers.lessons.create
 };
 
+exports.getUserLessonById = {
+    'spec': {
+        'description': 'Get lesson by id',
+        'name': 'getUserLessonsById',
+        'path': '/lessons/{lessonId}',
+        'summary': 'Get lesson by id',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be fetched',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to get lesson'
+            }
+        ],
+
+        'nickname': 'getLessonById'
+    },
+    'middlewares' : [
+        middlewares.users.optionalUserOnRequest,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanViewLesson
+    ],
+    'action': controllers.lessons.getLessonById
+};
+
 
 
 exports.editLesson = {
     'spec': {
         'description': 'Edit Lesson',
-        'name': 'editLesson',
+        'name': 'updateLesson',
         'path': '/lessons/{lessonId}/update',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
@@ -51,6 +110,13 @@ exports.editLesson = {
                 required: true,
                 'description': 'The updated lesson',
                 'type': 'Lesson'
+            } ,
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be fetched',
+                'type': 'string'
             }
         ],
         'errorResponses': [
@@ -61,31 +127,15 @@ exports.editLesson = {
         ],
         'nickname': 'editLesson'
     },
+    'middlewares' : [
+        middlewares.users.exists,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanEdit
+    ],
     'action': controllers.lessons.update
 };
 
-exports.getAdminLessons = {
-    'spec': {
-        'description': 'Gets all lessons',
-        'name': 'getAdminLessons',
-        'path': '/lessons/get/all',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
-        'summary': 'Get admin lessons',
-        'method': 'GET',
-        'parameters': [
 
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getAdminLessons'
-    },
-    'action': controllers.lessons.getAdminLessons
-};
 
 
 

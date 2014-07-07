@@ -31,27 +31,18 @@ exports.getUserLessons = function (req, res) {
         }
     });
 };
-exports.getUserLessonById = function (req, res) {
-    getLessonForUser(req, res, function next() {
-        res.send(req.lesson);
-    });
+
+// assumes user and lesson exists and user can see lesson
+// or lesson is public and then we don't need user
+exports.getLessonById = function (req, res) {
+    if ( !req.lesson ){
+        new managers.error.NotFound('could not find lesson').send(res);
+        return;
+    }
+    res.send(req.lesson);
 };
 
-exports.updateLesson = function (req, res) {
-    var lesson = req.body;
 
-    lesson.userId = req.user._id;
-    lesson._id = managers.db.id(lesson._id);
-    managers.lessons.updateLesson(lesson, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(obj);
-            return;
-        }
-    });
-};
 
 exports.deleteLesson = function (req, res) {
     var id = req.params.id;
@@ -131,7 +122,20 @@ exports.copyLesson = function (req, res) {
  */
 
 exports.update = function( req, res ){
-    logger.info('lessons update',req,res);
+    logger.info('updating lesson');
+    var lesson = req.body;
+
+    lesson.userId = req.lesson.userId;
+    lesson._id = managers.db.id(lesson._id);
+    managers.lessons.updateLesson(lesson, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
 };
 
 /**
