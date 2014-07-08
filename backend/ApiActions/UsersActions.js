@@ -1,6 +1,6 @@
 var controllers = require('../controllers');
-
 var middlewares = require('../middlewares');
+var permissions = require('../permissions');
 
 exports.signup = {
     'spec': {
@@ -734,5 +734,30 @@ exports.getUsers = {
     'middlewares' : [
         middlewares.users.exists,
         middlewares.users.isAdmin
+    ]
+};
+
+exports.getPermissions = {
+    'spec': {
+        'description': 'Get user permissions',
+        'name': 'getUserPermissions',
+        'path': '/user/permissions',
+
+        'summary': 'get user permissions',
+        'method': 'GET',
+        'parameters': [
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getUserPermissions'
+    },
+    'action': function(req, res){ res.send(permissions.app.getPermissions( req.user ))},
+    'middlewares' : [
+        middlewares.users.exists
+
     ]
 };

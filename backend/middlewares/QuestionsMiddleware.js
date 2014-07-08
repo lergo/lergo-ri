@@ -6,7 +6,7 @@ var permissions = require('../permissions');
 
  includes middlewares regarding lessons
 
-**/
+ **/
 
 
 /**
@@ -50,7 +50,7 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 };
 
 /*
-    Whether this user can see private lessons
+ Whether this user can see private lessons
 
  */
 exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
