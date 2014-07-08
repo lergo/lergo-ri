@@ -46,7 +46,7 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.info('checking if user can edit lesson');
-    permissions.lesson.userCanEdit( req.lesson, req.user ) ? next() : res.send(400);
+    return permissions.lesson.userCanEdit( req.lesson, req.user ) ? next() : res.send(400);
 };
 
 /*

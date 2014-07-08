@@ -21,5 +21,5 @@ exports.getPermissions = function( question, user ){
         'canEdit' : exports.userCanEdit(question,user),
         'canCopy' : exports.userCanCopy(question,user),
         'canDelete' : exports.userCanDelete(question,user)
-    }
+    };
 };

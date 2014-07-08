@@ -755,7 +755,7 @@ exports.getPermissions = {
         ],
         'nickname': 'getUserPermissions'
     },
-    'action': function(req, res){ res.send(permissions.app.getPermissions( req.user ))},
+    'action': function(req, res){ res.send(permissions.app.getPermissions( req.user ));},
     'middlewares' : [
         middlewares.users.exists
 

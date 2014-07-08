@@ -29,5 +29,5 @@ exports.getPermissions = function( lesson, user ){
         'canCopy' : exports.userCanCopy(lesson,user),
         'canDelete' : exports.userCanDelete(lesson,user),
         'canPublish' : exports.userCanPublish(lesson,user)
-    }
+    };
 };
