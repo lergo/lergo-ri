@@ -4,7 +4,7 @@ var services = require('../services');
 
 var logger = require('log4js').getLogger('QuestionsController');
 
-exports.createQuestion = function (req, res) {
+exports.create = function (req, res) {
     var question = req.body;
     question.userId = managers.db.id(req.user._id);
     managers.questions.createQuestion(question, function (err, obj) {
@@ -58,25 +58,18 @@ exports.getQuestions = function (req, res) {
     });
 };
 exports.getQuestionById = function (req, res) {
-    var id = req.params.id;
-    managers.questions.getQuestionById(id, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(obj);
-            return;
-        }
-    });
+    logger.info('getting question by id');
+    res.send(req.question);
 };
-exports.updateUserQuestion = function (req, res) {
+
+exports.update = function (req, res) {
     logger.info('updating question');
     var question = req.body;
 
     logger.debug('question from body',question);
     question._id = managers.db.id(question._id);
     question.userId = managers.db.id(req.user._id);
-    managers.questions.updateUserQuestion( question, function (err, obj) {
+    managers.questions.updateQuestion( question, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;

@@ -2,48 +2,20 @@ var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');
 
-exports.getAdminLessons = {
+exports.create = {
     'spec': {
-        'description': 'Gets all lessons',
-        'name': 'getAllLessons',
-        'path': '/lessons/get/all',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
-        'summary': 'Get admin lessons',
-        'method': 'GET',
-        'parameters': [
-
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getAdminLessons'
-    },
-    'middlewares': [
-        middlewares.users.exists,
-        middlewares.lessons.userCanSeePrivateLessons
-    ],
-    'action': controllers.lessons.getAdminLessons
-};
-
-
-exports.createLesson = {
-    'spec': {
-        'description': 'Create lesson',
+        'description': 'Create question',
         'name': 'create',
-        'path': '/lessons/create',
-        'summary': 'Create new lesson',
+        'path': '/questions/create',
+        'summary': 'Create new question',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'lesson',
+                'name': 'question',
                 required: true,
-                'description': 'Lesson details',
-                'type': 'Lesson'
+                'description': 'Question details',
+                'type': 'Question'
             }
         ],
         'errorResponses': [
@@ -52,27 +24,27 @@ exports.createLesson = {
                 'reason': 'unable to create'
             }
         ],
-        'nickname': 'createLesson'
+        'nickname': 'createQuestion'
     },
     'middlewares' : [
         middlewares.users.exists
     ],
-    'action': controllers.lessons.create
+    'action': controllers.questions.create
 };
 
-exports.getUserLessonById = {
+exports.getById  = {
     'spec': {
-        'description': 'Get lesson by id',
-        'name': 'getUserLessonsById',
-        'path': '/lessons/{lessonId}',
-        'summary': 'Get lesson by id',
+        'description': 'Get question by id',
+        'name': 'getQuestionById',
+        'path': '/questions/{questionId}',
+        'summary': 'Get question by id',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'questionId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of question that needs to be fetched',
                 'type': 'string'
             }
         ],
@@ -83,14 +55,12 @@ exports.getUserLessonById = {
             }
         ],
 
-        'nickname': 'getLessonById'
+        'nickname': 'getQuestionById'
     },
     'middlewares' : [
-        middlewares.users.optionalUserOnRequest,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanViewLesson
+        middlewares.questions.exists
     ],
-    'action': controllers.lessons.getLessonById
+    'action': controllers.questions.getQuestionById
 };
 
 
@@ -98,17 +68,17 @@ exports.getUserPermissions = {
     'spec': {
         'description': 'Get user lesson permission',
         'name': 'getUserLessonPermissions',
-        'path': '/lessons/{lessonId}/permissions',
+        'path': '/questions/{questionId}/permissions',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
-        'summary': 'get user permissions for lesson',
+        'summary': 'get user permissions for question',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'questionId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of question',
                 'type': 'string'
             }
         ],
@@ -118,38 +88,38 @@ exports.getUserPermissions = {
                 'reason': 'unable to get permissions'
             }
         ],
-        'nickname': 'getUserLessonPermissions'
+        'nickname': 'getUserQuestionPermissions'
     },
     'middlewares': [
         middlewares.users.exists,
-        middlewares.lessons.exists
+        middlewares.questions.exists
     ],
-    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.lesson,req.user)); }
+    'action': function( req, res ){ res.send(permissions.questions.getPermissions(req.question,req.user)); }
 };
 
 
-exports.editLesson = {
+exports.editQuestion = {
     'spec': {
-        'description': 'Edit Lesson',
-        'name': 'updateLesson',
-        'path': '/lessons/{lessonId}/update',
+        'description': 'Edit Question',
+        'name': 'updateQuestion',
+        'path': '/questions/{questionId}/update',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
-        'summary': 'user edits a lesson',
+        'summary': 'user edits a question',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'lesson',
+                'name': 'question',
                 required: true,
                 'description': 'The updated lesson',
-                'type': 'Lesson'
+                'type': 'Question'
             } ,
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'questionId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of question',
                 'type': 'string'
             }
         ],
@@ -159,14 +129,14 @@ exports.editLesson = {
                 'reason': 'unable to signup'
             }
         ],
-        'nickname': 'editLesson'
+        'nickname': 'editQuestion'
     },
     'middlewares' : [
         middlewares.users.exists,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit
+        middlewares.questions.exists,
+        middlewares.questions.userCanEdit
     ],
-    'action': controllers.lessons.update
+    'action': controllers.questions.update
 };
 
 

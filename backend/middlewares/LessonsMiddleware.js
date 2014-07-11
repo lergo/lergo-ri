@@ -54,8 +54,9 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 
  */
 exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
+
     logger.info('checking if user can see private lessons');
-    if ( !req.user.isAdmin ){
+    if ( !permissions.app.userCanManage(req.user) ){
         res.send(400);
         return;
     }

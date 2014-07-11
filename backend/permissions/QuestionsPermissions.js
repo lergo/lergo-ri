@@ -7,6 +7,7 @@ exports.userCanEdit = function( question, user ){
     return  !!user.isAdmin || question.userId.equals(user._id) ;
 };
 
+
 exports.userCanCopy = function( question ,user ){
     return question.userId.equals(user._id);
 };

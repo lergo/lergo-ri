@@ -227,32 +227,6 @@ exports.isLoggedIn = {
 };
 
 
-exports.createQuestion = {
-    'spec': {
-        'description': 'Create question',
-        'name': 'create',
-        'path': '/user/questions',
-        'summary': 'Create new question',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'body',
-                'name': 'question',
-                required: true,
-                'description': 'Question details',
-                'type': 'Question'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to create'
-            }
-        ],
-        'nickname': 'createQuestion'
-    },
-    'action': controllers.questions.createQuestion
-};
 exports.getQuestions = {
     'spec': {
         'description': 'Get questions',
@@ -326,39 +300,7 @@ exports.getQuestionById = {
     },
     'action': controllers.questions.getQuestionById
 };
-exports.updateQuestion = {
-    'spec': {
-        'description': 'Updates question',
-        'name': 'update question',
-        'path': '/user/questions/{id}',
-        'summary': 'Update question',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'body',
-                'name': 'question',
-                required: true,
-                'description': 'Question details',
-                'type': 'Question'
-            },
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of question that needs to be updated',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to update'
-            }
-        ],
-        'nickname': 'updateQuestion'
-    },
-    'action': controllers.questions.updateUserQuestion
-};
+
 exports.deleteQuestion = {
     'spec' : {
         'description' : 'Delete question corresponding to the id',

@@ -1,5 +1,5 @@
-var Lesson = require('../models/Lesson');
-var logger = require('log4js').getLogger('LessonsMiddleware');
+var Question = require('../models/Question');
+var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
 
 /**
@@ -16,8 +16,8 @@ var permissions = require('../permissions');
  * @param next
  */
 exports.exists= function exists( req, res, next ){
-    logger.info('checking if lesson exists : ' , req.params.lessonId );
-    Lesson.findById( req.params.lessonId, function(err, result){
+    logger.info('checking if question exists : ' , req.params.questionId );
+    Question.findById( req.params.questionId, function(err, result){
         if ( !!err ){
             res.send(500,err);
             return;
@@ -27,8 +27,8 @@ exports.exists= function exists( req, res, next ){
             return;
         }
 
-        logger.info('putting lesson on request', result);
-        req.lesson = result;
+        logger.info('putting question on request', result);
+        req.question = result;
 
         next();
 
@@ -37,7 +37,7 @@ exports.exists= function exists( req, res, next ){
 
 
 /**
- * Whether user can edit the lesson or not
+ * Whether user can edit the question or not
  *
  * assumes request contains
  *
@@ -45,31 +45,19 @@ exports.exists= function exists( req, res, next ){
  * lesson - the lesson we are editting
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
-    logger.info('checking if user can edit lesson');
-    return permissions.lesson.userCanEdit( req.lesson, req.user ) ? next() : res.send(400);
+    logger.info('checking if user can edit');
+    return permissions.questions.userCanEdit( req.question, req.user ) ? next() : res.send(400);
 };
 
 /*
- Whether this user can see private lessons
+ Whether this user can see private questions
 
  */
-exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
-    logger.info('checking if user can see private lessons');
-    if ( !req.user.isAdmin ){
+exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res, next){
+    logger.info('checking if user can see');
+    if ( !permissions.app.userCanManage(req.user) ){
         res.send(400);
         return;
     }
     next();
-};
-
-exports.userCanViewLesson = function userCanViewLesson( req, res, next ){
-
-    if ( !req.user && !req.lesson.public ){
-        logger.debug('no user on session and lesson not public');
-        res.send(400);
-        return;
-    }
-
-    next();
-
 };

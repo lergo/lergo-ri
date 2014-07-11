@@ -3,6 +3,7 @@ var logger = require('log4js').getLogger('QuestionsManager');
 var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
 var _ = require('lodash');
+var Question = require('../models/Question');
 
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
@@ -52,7 +53,7 @@ exports.copyQuestion = function( question, callback ){
  * @param question
  * @param callback
  */
-exports.updateUserQuestion = function(question, callback) {
+exports.updateQuestion = function(question, callback) {
 	logger.info('Updating question');
 
 	dbManager.connect('questions', function(db, collection, done) {
@@ -95,18 +96,7 @@ exports.deleteQuestion = function(id, userId ,callback) {
 };
 
 exports.getQuestionById = function(id, callback) {
-	logger.info('Creating question');
-	dbManager.connect('questions', function(db, collection, done) {
-		collection.findOne({
-			'_id' : dbManager.id(id)
-		}, function(err, result) {
-			if (!!err) {
-				logger.error('unable to query for question [%s]', err.message);
-			}
-			done();
-			callback(err, result);
-		});
-	});
+    Question.findById( id, callback  );
 };
 
 
