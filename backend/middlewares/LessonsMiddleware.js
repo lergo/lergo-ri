@@ -17,22 +17,26 @@ var permissions = require('../permissions');
  */
 exports.exists= function exists( req, res, next ){
     logger.debug('checking if lesson exists : ' , req.params.lessonId );
-    Lesson.findById( req.params.lessonId, function(err, result){
-        if ( !!err ){
-            res.send(500,err);
-            return;
-        }
-        if ( !result ){
-            res.send(404);
-            return;
-        }
+    try {
+        Lesson.findById(req.params.lessonId, function (err, result) {
+            if (!!err) {
+                res.send(500, err);
+                return;
+            }
+            if (!result) {
+                res.send(404);
+                return;
+            }
 
-        logger.debug('putting lesson on request', result);
-        req.lesson = result;
+            logger.debug('putting lesson on request', result);
+            req.lesson = result;
 
-        next();
+            next();
 
-    } );
+        });
+    }catch(e){
+        res.send(404);
+    }
 };
 
 
