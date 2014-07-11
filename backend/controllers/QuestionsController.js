@@ -68,7 +68,7 @@ exports.update = function (req, res) {
 
     logger.debug('question from body',question);
     question._id = managers.db.id(question._id);
-    question.userId = managers.db.id(req.user._id);
+    question.userId = managers.db.id(req.question.userId);
     managers.questions.updateQuestion( question, function (err, obj) {
         if (!!err) {
             err.send(res);

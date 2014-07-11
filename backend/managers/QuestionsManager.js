@@ -61,8 +61,7 @@ exports.updateQuestion = function(question, callback) {
         // prevent malicious users from making a fraud request to update someone else's question
         // find the user by using both the userId and questionId.
 		collection.update({
-			'_id' : question._id,
-			'userId' : question.userId
+			'_id' : question._id
 		}, question, function(err) {
 			if (!!err) {
 				logger.error('error in updating question [%s] : [%s]', question.question , err);
