@@ -16,7 +16,7 @@ var permissions = require('../permissions');
  * @param next
  */
 exports.exists= function exists( req, res, next ){
-    logger.info('checking if lesson exists : ' , req.params.lessonId );
+    logger.debug('checking if lesson exists : ' , req.params.lessonId );
     Lesson.findById( req.params.lessonId, function(err, result){
         if ( !!err ){
             res.send(500,err);
@@ -27,7 +27,7 @@ exports.exists= function exists( req, res, next ){
             return;
         }
 
-        logger.info('putting lesson on request', result);
+        logger.debug('putting lesson on request', result);
         req.lesson = result;
 
         next();
@@ -45,8 +45,13 @@ exports.exists= function exists( req, res, next ){
  * lesson - the lesson we are editting
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
-    logger.info('checking if user can edit lesson');
+    logger.debug('checking if user can edit lesson');
     return permissions.lessons.userCanEdit( req.lesson, req.user ) ? next() : res.send(400);
+};
+
+
+exports.userCanDelete = function userCanDelete(req, res, next){
+    return permissions.lessons.userCanDelete( req.lesson, req.user ) ? next() : res.send(400);
 };
 
 /*
@@ -55,7 +60,7 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
  */
 exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
 
-    logger.info('checking if user can see private lessons');
+    logger.debug('checking if user can see private lessons');
     if ( !permissions.app.userCanManage(req.user) ){
         res.send(400);
         return;

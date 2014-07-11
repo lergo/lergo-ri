@@ -262,7 +262,7 @@ exports.validateUser = function (userId, hmac, callback) {
 };
 
 exports.findUserById = function (userId, callback) {
-    logger.info('getting user with id [%s]', userId);
+    logger.debug('getting user with id [%s]', userId);
     return User.findById( userId, { /*projection*/ }, callback );
 };
 

@@ -14,13 +14,12 @@ exports.userCanCopy = function( lesson ,user ){
 };
 
 exports.userCanDelete = function( lesson ,user ){
-    return lesson.userId.equals(user._id);
+    return !!user.isAdmin || lesson.userId.equals(user._id);
 };
 
 exports.userCanPublish = function( lesson,user) {
     return !!user.isAdmin;
 };
-
 
 
 exports.getPermissions = function( lesson, user ){

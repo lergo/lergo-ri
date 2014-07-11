@@ -411,32 +411,6 @@ exports.getUserLessons = {
 };
 
 
-exports.deleteLesson = {
-    'spec': {
-        'description': 'Delete lesson corresponding to the id',
-        'name': 'deleteLesson',
-        'path': '/user/lessons/{id}/delete',
-        'summary': 'Delete lesson corresponding to the id',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of lesson that needs to be deleted',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to delete lesson'
-            }
-        ],
-        'nickname': 'deleteLesson'
-    },
-    'action': controllers.lessons.deleteLesson
-};
 
 
 /**

@@ -2,6 +2,18 @@
     "cookieSessionSecret" : "cookieSessionSecret",
     "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
+    "log4js" : {
+        "appenders" : [
+            { "type" : "console" }
+        ],
+        "levels" : {
+            "DbService" : "INFO",
+            "DbManager" : "INFO",
+            "UsersMiddleware" : "INFO",
+            "UsersManager" : "INFO",
+            "LessonsMiddleware" : "INFO"
+        }
+    },
     "public" : {
         "googleAnalyticsCode" : null
     },

@@ -114,7 +114,7 @@ exports.toMap = function( cursor, callback ){
  */
 exports.connect = function (collection, callback) {
     getDbConnection( function (err, db) {
-        logger.info('connected to db successfully');
+        logger.debug('connected to db successfully');
         var _collection = null;
         if (err) {
             throw err;
@@ -122,7 +122,7 @@ exports.connect = function (collection, callback) {
 
         try {
             if (collection) {
-                logger.info('opening connection on [' + collection + ']');
+                logger.debug('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
 
             }

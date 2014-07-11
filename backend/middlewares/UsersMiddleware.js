@@ -7,7 +7,7 @@ var logger = require('log4js').getLogger('UsersMiddleware');
 exports.loggedInMiddleware = function loggedInMiddleware(req, res, next) {
 
     exports.optionalUserOnRequest( req, res , function(){
-        logger.info('checking loggedin middleware');
+        logger.debug('checking loggedin middleware');
         if ( !req.user ){
             new managers.error.NotLoggedIn().send(res);
             return;
@@ -32,7 +32,7 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
             return;
         }
         req.user = obj;
-        logger.info('placed user on request');
+        logger.debug('placed user on request');
         next();
     });
 };

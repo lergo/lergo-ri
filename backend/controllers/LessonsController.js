@@ -43,21 +43,6 @@ exports.getLessonById = function (req, res) {
 };
 
 
-
-exports.deleteLesson = function (req, res) {
-    var id = req.params.id;
-    managers.lessons.deleteLesson(id, req.user._id, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(obj);
-            return;
-        }
-    });
-};
-
-
 exports.getAdminLessons = function (req, res) {
     managers.lessons.find({}, {}, function (err, result) {
         if (!!err) {
@@ -150,6 +135,18 @@ exports.create = function (req, res) {
     var lesson = {};
     lesson.userId = req.user._id;
     managers.lessons.createLesson(lesson, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};
+
+exports.deleteLesson = function (req, res) {
+    managers.lessons.deleteLesson(req.lesson._id, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;

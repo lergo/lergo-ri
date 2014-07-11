@@ -16,7 +16,8 @@ var swagger = require('swagger-node-express');
 var passport = require('passport');
 var OpenIDStrategy = require('passport-openid').Strategy;
 
-var logger = require('log4js').getLogger('server');
+var log4js = require('log4js');
+var logger = log4js.getLogger('server');
 var lergoMiddleware = require('./backend/LergoMiddleware');
 logger.info('loading services');
 var services = require('./backend/services');
@@ -24,6 +25,10 @@ logger.info('services loaded');
 var path = require('path');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
+
+if ( !!services.conf.log4js ){
+    log4js.configure(services.conf.log4js);
+}
 
 var middlewares = require('./backend/middlewares');
 

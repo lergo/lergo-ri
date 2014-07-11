@@ -13,7 +13,7 @@ var dbConnection = null;
 function getDbConnection( callback ){
 
     if ( !!dbConnection && dbConnection !== null ){
-        logger.info('using cached connection');
+        logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
         MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){
@@ -32,7 +32,7 @@ exports.toMap = function( cursor, callback ){
     logger.info('turning result to map');
     var result = {};
     cursor.each(function(err, doc){
-        logger.info('handling doc', doc);
+        logger.debug('handling doc', doc);
         if ( !!err ){
             callback(err);
         }
@@ -59,11 +59,11 @@ exports.connect = function (collection, callback) {
         if (err) {
             throw err;
         }
-        logger.info('connected to db successfully');
+        logger.debug('connected to db successfully');
 
         try {
             if (collection) {
-                logger.info('opening connection on [' + collection + ']');
+                logger.debug('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
 
             }else{

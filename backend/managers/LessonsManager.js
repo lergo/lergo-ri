@@ -100,17 +100,15 @@ exports.updateLesson = function(lesson, callback) {
 	});
 };
 
-exports.deleteLesson = function(id, userId, callback) {
-	logger.info('Deleting lesson');
-	services.db.connect('lessons', function(db, collection, done) {
+exports.deleteLesson = function(id, callback) {
+	logger.info('Deleting lesson : ' + id);
+	services.db.connect('lessons', function(db, collection) {
 		collection.remove({
-			'_id' : services.db.id(id),
-			'userId' : userId
+			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {
 				logger.error('unable to query for user [%s]', err.message);
 			}
-			done();
 			callback(err);
 		});
 	});
