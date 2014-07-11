@@ -21,7 +21,7 @@ function findLesson(req, res, next) {
 }
 
 exports.create = function (req, res) {
-    logger.info('creating invitation for lesson', req.lesson);
+    logger.debug('creating invitation for lesson', req.lesson);
     var invitation = req.body;
 
     if (!invitation.invitee || !invitation.invitee.name) {

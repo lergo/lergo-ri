@@ -69,13 +69,7 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
 };
 
 exports.userCanViewLesson = function userCanViewLesson( req, res, next ){
-
-    if ( !req.user && !req.lesson.public ){
-        logger.debug('no user on session and lesson not public');
-        res.send(400);
-        return;
-    }
-
+    //everyone can see any lesson
     next();
 
 };

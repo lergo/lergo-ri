@@ -11,7 +11,11 @@
             "DbManager" : "INFO",
             "UsersMiddleware" : "INFO",
             "UsersManager" : "INFO",
-            "LessonsMiddleware" : "INFO"
+            "LessonsMiddleware" : "INFO",
+            "LessonsInvitationsController" : "INFO",
+            "PhraseApp" : "INFO",
+            "StatisticsController" : "INFO"
+
         }
     },
     "public" : {

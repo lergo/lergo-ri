@@ -26,7 +26,7 @@ exports.getTranslation = function (req, res) {
         var locale = req.params.locale;
         //todo: don't use service phraseapp, use "TranslationManager" instead.
         services.phraseApp.getTranslation(locale, function (data/*, response*/) {
-            logger.info('got translations');
+            logger.debug('got translations');
             res.send(data);
         });
     }

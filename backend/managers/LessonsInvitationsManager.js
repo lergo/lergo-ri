@@ -245,3 +245,9 @@ exports.create = function ( invitation, callback) {
 };
 
 
+exports.deleteByLessonId = function( lessonId, callback ){
+    services.db.connect(COLLECTION_NAME, function(db, collection){
+        collection.remove({'lessonId' : services.db.id(lessonId)}, callback );
+    });
+};
+

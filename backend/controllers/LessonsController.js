@@ -146,13 +146,23 @@ exports.create = function (req, res) {
 };
 
 exports.deleteLesson = function (req, res) {
-    managers.lessons.deleteLesson(req.lesson._id, function (err, obj) {
+    managers.lessons.deleteLesson(req.lesson._id, function (err, deletedLesson) {
         if (!!err) {
+            logger.error('error deleting lesson',err);
             err.send(res);
             return;
         } else {
-            res.send(obj);
-            return;
+            managers.lessonsInvitations.deleteByLessonId(req.lesson._id, function (err/*, deletedInvitations*/) {
+                if (!!err) {
+                    logger.error('error deleting lessons invitations',err);
+                    err.send(res);
+                    return;
+                } else {
+                    res.send(deletedLesson);
+                    return;
+                }
+            });
         }
     });
+
 };
