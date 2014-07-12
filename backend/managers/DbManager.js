@@ -73,7 +73,7 @@ var dbConnection = null;
 function getDbConnection( callback ){
 
     if ( !!dbConnection && dbConnection !== null ){
-        logger.info('using cached connection');
+        logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
         MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){

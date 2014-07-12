@@ -27,7 +27,7 @@ exports.exists= function exists( req, res, next ){
             return;
         }
 
-        logger.info('putting question on request', result);
+        logger.debug('putting question on request', result);
         req.question = result;
 
         next();
@@ -45,7 +45,7 @@ exports.exists= function exists( req, res, next ){
  * lesson - the lesson we are editting
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
-    logger.info('checking if user can edit');
+    logger.debug('checking if user can edit');
     return permissions.questions.userCanEdit( req.question, req.user ) ? next() : res.send(400);
 };
 
@@ -54,7 +54,7 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 
  */
 exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res, next){
-    logger.info('checking if user can see');
+    logger.debug('checking if user can see');
     if ( !permissions.app.userCanManage(req.user) ){
         res.send(400);
         return;

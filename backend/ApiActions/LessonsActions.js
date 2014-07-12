@@ -30,6 +30,34 @@ exports.getAdminLessons = {
 };
 
 
+exports.getLessonIntro = {
+    'spec': {
+        'description': 'Gets all lessons',
+        'name': 'getLessonIntro',
+        'path': '/lessons/{lessonId}/intro',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Get lesson intro',
+        'method': 'GET',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getLessonIntro'
+    },
+    'middlewares': [
+        middlewares.users.exists,
+        middlewares.lessons.exists
+    ],
+    'action': controllers.lessons.getLessonIntro
+};
+
+
 exports.createLesson = {
     'spec': {
         'description': 'Create lesson',

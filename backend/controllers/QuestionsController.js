@@ -108,8 +108,6 @@ exports.findUserQuestionsByIds = function (req, res) {
     logger.info('this is object ids', objectIds);
     objectIds = managers.db.id(objectIds);
 
-    logger.info(typeof(objectIds));
-
     managers.questions.search({ '_id': { '$in': objectIds }}, { 'userId': 0 }, function (err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to find user questions by ids').send(res);
