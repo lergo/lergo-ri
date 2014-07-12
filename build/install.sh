@@ -169,6 +169,13 @@ upgrade_main(){
 
      fi
 
+     if [ "$PHRASEAPP_TOKEN" != "" ];then
+        echo "phraseapp token exists. fetching translations"
+        /var/www/lergo/lergo-ri/build/fetch_translations.sh
+     else
+        echo "phraseapp token does not exist. not fetching translations"
+     fi
+
 }
 
 set -e
