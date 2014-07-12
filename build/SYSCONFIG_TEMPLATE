@@ -1,12 +1,23 @@
 # a system level configuration for lergo - which nginx domain should it occupy etc..
 
 DOMAIN=my.domain.com
+MORE_DOMAINS=another.domain.com andmore.domain.com
 ME_CONF_URL=location_of_an_online_me_conf
+ME_JSON_URL=location_of_an_online_me_json
 S3_BACKUP_PATH=s3://lergodev-backups/mongo
 MAILTO=send.me@cron.errors
 
 # for prefetching translations
 PHRASEAPP_TOKEN=__token__
+
+DB_BACKUP_ENCRYPT_KEY=__encrypt_key___
+
+
+#enable specific build version - below are the latest build urls which are also the default
+BUILD_ID_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/build.id"
+BACKEND_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/lergo-ri-0.0.0.tgz"
+FRONTEND_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/lergo-ui-0.0.0.tgz"
+
 
 
 
