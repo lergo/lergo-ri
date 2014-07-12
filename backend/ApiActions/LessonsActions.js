@@ -51,7 +51,7 @@ exports.getLessonIntro = {
         'nickname': 'getLessonIntro'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.users.optionalUserOnRequest,
         middlewares.lessons.exists
     ],
     'action': controllers.lessons.getLessonIntro
