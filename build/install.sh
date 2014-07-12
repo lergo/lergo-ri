@@ -64,6 +64,8 @@ install_main(){
 
 upgrade_main(){
 
+    init
+
      if [ -z "$BUILD_ID_URL" ]; then
          BUILD_ID_URL="https://guymograbi.ci.cloudbees.com/job/build-lergo/ws/artifacts/build.id"
      fi
