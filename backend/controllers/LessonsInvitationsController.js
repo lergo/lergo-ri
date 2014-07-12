@@ -22,45 +22,20 @@ function findLesson(req, res, next) {
 
 exports.create = function (req, res) {
     logger.debug('creating invitation for lesson', req.lesson);
-    var invitation = req.body;
 
-    if (!invitation.invitee || !invitation.invitee.name) {
-        new managers.error.InternalServerError(null, 'missing invitee').send(res);
-        return;
+    var invitation = req.body || {};
+    var anonymous = !req.body || JSON.stringify(req.body) === '{}';
+
+    invitation = _.merge({ 'anonymous': anonymous, 'lessonId': req.lesson._id }, invitation);
+
+    // add inviter in case we have details and this is not an anonymous invitation
+    if (!!req.user && !anonymous ) {
+        invitation.inviter = req.user._id;
     }
-    var invitationObj = _.merge({'lessonId': req.lesson._id}, invitation);
 
-
-    if (!!req.user) {  // add inviter in case we have details
-        invitationObj.inviter = req.user._id;
-    }
-    managers.lessonsInvitations.create(invitationObj, function (err, result) {
-        if (!!err) {
-            logger.error('unable to create lesson invitation', err);
-            err.send(res);
-            return;
-        } else {
-            logger.info('sending invitation email');
-            res.send(result);
-//                managers.lessonsInvitations.sendInvitationMail(req.emailResources, result, function( err ){
-//                    if ( !!err ){
-//                        logger.info('error while sending invitation');
-//                        err.send(res);
-//                        return;
-//                    }
-//                    res.send(result);
-//                });
-
-        }
-    });
-};
-
-exports.createAnonymous = function (req, res) {
-    logger.info('creating invitation for lesson', req.lesson);
-    var invitation = { 'anonymous': true, 'lessonId': req.lesson._id };
-
-    // in case user is logged in, set him as invitee
-    if (!!req.user) {
+    // in case user is logged in and there's no invitee details, set logged in user as invitee
+    if ( anonymous && !!req.user) {
+        logger.debug('setting invitee on invitation');
         invitation.invitee = { 'name': req.user.username };
     }
 
@@ -152,6 +127,10 @@ exports.build = function (req, res) {
     managers.lessonsInvitations.find({'_id': managers.db.id(id)}, {}, function (err, result) {
         if (!!err) {
             err.send(res);
+            return;
+        }
+        if ( !result ){
+            res.send(404);
             return;
         }
         if (( !!constructForce || !result.lesson ) && construct) {
