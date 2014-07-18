@@ -18,6 +18,9 @@ db.lessons.find().forEach(function(lesson){
     }
 });
 
+db.lessons.update({'tags' : ''}, {'$set' : { 'tags' : [] } }, { 'multi':true});
+
+
 // converts tags to array of objects { 'label' : tag_value }
 db.questions.find().forEach(function(question){
     if ( !question.tags ){
@@ -35,3 +38,5 @@ db.questions.find().forEach(function(question){
         }
     }
 });
+
+db.questions.update({'tags' : ''}, {'$set' : { 'tags' : [] } }, { 'multi':true});
