@@ -230,6 +230,37 @@ exports.deleteLesson = {
 };
 
 
+exports.likeLesson = {
+    'spec': {
+        'description': 'Delete lesson corresponding to the id',
+        'name': 'deleteLesson',
+        'path': '/lessons/{lessonId}/delete',
+        'summary': 'Delete lesson corresponding to the id',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be deleted',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to delete lesson'
+            }
+        ],
+        'nickname': 'deleteLesson'
+    },
+    'middlewares' : [
+        middlewares.users.exists,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanDelete
+    ],
+    'action': controllers.lessons.deleteLesson
+};
 
 
 
