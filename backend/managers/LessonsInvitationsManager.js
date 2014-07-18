@@ -139,6 +139,11 @@ exports.getReport = function (invitationId, callback) {
             return;
         }
 
+        if ( !result ){
+            callback(new errorManager.NotFound(null, 'could not find report'));
+            return;
+        }
+
         callback(null, result.report);
     });
 };

@@ -1,3 +1,4 @@
+/*jshint -W079 */
 var db = require('../services/DbService');
 var logger = require('log4js').getLogger('AbstractModel');
 
