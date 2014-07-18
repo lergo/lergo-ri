@@ -23,7 +23,7 @@ function createNewError( code, message, responseCode ){
 }
 
 var errorsDefinition = {
-    'InvalidUsername' : createNewError(1,'invalid username',500),
+    'InvalidUsername' : createNewError(1,'Wrong username or password, please try again',500),
     'InternalServerError' : createNewError(2, 'unknown error', 500),
     'NotLoggedIn' : createNewError(3, 'not logged in', 401),
     'NotAdmin' : createNewError(4, 'requires admin permissions', 401),
@@ -35,7 +35,7 @@ var errorsDefinition = {
     'UserAlreadyValidated' : createNewError(10, 'user already validated', 500),
     'ErrorSendingValidationEmail' : createNewError(11, 'unable to send validation email', 500),
     'NotFound' : createNewError(12, 'resource not found', 404),
-    'UsernameAlreadyExists' : createNewError( 13, 'username already exists', 500 )
+    'UsernameAlreadyExists' : createNewError( 13, 'email already exists in the system', 500 )
 };
 
 

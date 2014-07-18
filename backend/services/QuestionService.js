@@ -49,13 +49,14 @@ function FillInTheBlanksQuestionHandler(question) {
 			return false;
 		}
 
-		var result = true;
-		answers.forEach(function(value) {
-			if (answers.indexOf(value) !== question.userAnswer.indexOf(value)) {
-				result = false;
+		for ( var i = 0; i < answers.length; i++) {
+			var values = answers[i].split(';');
+			if (values.indexOf(question.userAnswer[i]) === -1) {
+				return false;
 			}
-		});
-		return result;
+		}
+
+		return true;
 	};
 }
 function TrueFalseQuestionHandler(question) {
