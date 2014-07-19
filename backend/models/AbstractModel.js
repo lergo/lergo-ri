@@ -10,6 +10,10 @@ function enhance( Class ) {
         throw Class.name + ' has no collectionName defined';
     }
 
+    Class.connect = function( callback ){
+        db.connect(Class.collectionName, callback);
+    };
+
     Class.findById = function (id, projection, callback ) {
         if ( typeof(projection) === 'function'){
             callback = projection;
@@ -19,7 +23,7 @@ function enhance( Class ) {
     };
 
     Class.findOne = function(filter, projection, callback ){
-        db.connect(Class.collectionName, function( db, collection ){
+        Class.connect( function( db, collection ){
             collection.findOne(filter, projection,callback);
         });
     };
@@ -31,7 +35,7 @@ function enhance( Class ) {
             projection = {};
         }
 
-        db.connect(Class.collectionName, function (db, collection) {
+        Class.connect( function (db, collection) {
             collection.find(filter, projection).toArray(callback);
         });
     };

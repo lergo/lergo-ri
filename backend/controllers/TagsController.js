@@ -1,8 +1,10 @@
 'use strict';
 var services = require('../services');
+var managers = require('../managers');
 var logger = require('log4js').getLogger('TagsController');
 var async = require('async');
 var _ = require('lodash');
+var models = require('../models');
 
 exports.getTopTags = function (req, res) {
 
@@ -24,52 +26,90 @@ exports.getTopTags = function (req, res) {
     });
 };
 
-
 // find all tags like 'like' filter.
 
 //  db.lessons.aggregate( { $unwind : '$tags' },  { $group : {_id : '$tags.label' } }, { $match : { '_id' : /tom/i } } )
 //  db.lessons.aggregate( { $unwind : '$tags' },  { $match : {'tags.label' : /tom/i } }, { $group : { _id : '$tags.label' } })
 exports.getTagsByFilter = function (req, res) {
+
     var like = req.param('like');
     like = new RegExp(like, 'i');
 
+    var lessonsId = req.getQueryList('lessonsId');
+    lessonsId = services.db.id(lessonsId);
+
+    var questionsId = req.getQueryList('questionsId');
+    questionsId = services.db.id(questionsId);
+
+    logger.info('lessonsId',lessonsId);
+
     var result = [];
 
-    function findTagsOnCollection( collectionName, callback ){
+
+    function findTagsOnCollection( collectionName, like, ids, callback ){
+        var match = { $match : { 'tags.label' : like || '' }};
+        if ( !!ids && ids.length > 0){
+            match.$match._id = { '$in' : ids };
+        }
+
         services.db.connect( collectionName, function (db, collection) {
             collection.aggregate([
                     { $unwind: '$tags' },
-                    { $match: {'tags.label': like } },
+                    match,
                     { $group: { _id: '$tags.label' } },
                     { $project: { _id : '$_id' , 'label' : '$_id'}}
                 ],
                 function (err, tags) {
-                    logger.trace('found results', tags);
-                    result = result.concat(tags);
-                    callback();
+                    callback( err, tags );
                 });
         });
     }
 
+
+    function findCallback( err, tags, next ) {
+        if (!!err) {
+            next(err);
+            return;
+        } else {
+            result = result.concat(tags);
+            next();
+
+        }
+    }
+
+
     function findTagsOnLessons( next ){
-        findTagsOnCollection( 'lessons', next);
+        findTagsOnCollection( 'lessons', like, lessonsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
     function findTagsOnQuestions( next ){
-        findTagsOnCollection('questions', next);
+        findTagsOnCollection('questions', like, questionsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
-    async.parallel(
-        [
-            findTagsOnLessons,
-            findTagsOnQuestions
-        ],
-        function(){
-            logger.info('finished getting tags');
-            res.send(_.uniq(result, 'label'));
-        }
-    );
+    function main() {
+        async.parallel(
+            [
+                findTagsOnLessons,
+                findTagsOnQuestions
+            ],
+            function () {
+                logger.debug('finished fetching labels');
+                res.send(_.uniq(result, 'label'));
+            }
+        );
+    }
 
-
-
+    if ( lessonsId.length > 0 ){
+        models.Lesson.getAllQuestionsIdsForLessons( lessonsId, function( err, result ){
+            if ( !!err ){
+                new managers.error.InternalServerError(err,'unable to get all lessons questions').send(res);
+                return;
+            }
+            logger.info('questionsId result', result);
+            questionsId = questionsId.concat(services.db.id(result));
+            main();
+        });
+    }else{
+        main();
+    }
 };
