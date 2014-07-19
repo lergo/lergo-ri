@@ -1,5 +1,8 @@
 'use strict';
 var services = require('../services');
+var logger = require('log4js').getLogger('TagsController');
+var async = require('async');
+var _ = require('lodash');
 
 exports.getTopTags = function (req, res) {
 
@@ -29,16 +32,44 @@ exports.getTopTags = function (req, res) {
 exports.getTagsByFilter = function (req, res) {
     var like = req.param('like');
     like = new RegExp(like, 'i');
-    services.db.connect('lessons', function (db, collection) {
-        collection.aggregate([
-                { $unwind: '$tags' },
-                { $match: {'tags.label': like } },
-                { $group: { _id: '$tags.label' } }
-            ],
-            function (err, result) {
-                res.send(result);
-            });
-    });
+
+    var result = [];
+
+    function findTagsOnCollection( collectionName, callback ){
+        services.db.connect( collectionName, function (db, collection) {
+            collection.aggregate([
+                    { $unwind: '$tags' },
+                    { $match: {'tags.label': like } },
+                    { $group: { _id: '$tags.label' } },
+                    { $project: { _id : '$_id' , 'label' : '$_id'}}
+                ],
+                function (err, tags) {
+                    logger.trace('found results', tags);
+                    result = result.concat(tags);
+                    callback();
+                });
+        });
+    }
+
+    function findTagsOnLessons( next ){
+        findTagsOnCollection( 'lessons', next);
+    }
+
+    function findTagsOnQuestions( next ){
+        findTagsOnCollection('questions', next);
+    }
+
+    async.parallel(
+        [
+            findTagsOnLessons,
+            findTagsOnQuestions
+        ],
+        function(){
+            logger.info('finished getting tags');
+            res.send(_.uniq(result, 'label'));
+        }
+    );
+
 
 
 };
