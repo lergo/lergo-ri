@@ -5,6 +5,7 @@ exports.lessonsActions = require('./LessonsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');
 exports.lessonsInvitations = require('./LessonsInvitationsActions');
+//exports.likes=require('./LikesActions');
 exports.tags = require('./TagsActions');
 var logger = require('log4js').getLogger('index');
 
@@ -36,6 +37,8 @@ logger.info('adding lessons invitations');
 addAllActions( exports.lessonsInvitations );
 logger.info('adding tags');
 addAllActions( exports.tags );
+//logger.info('adding likes');
+//addAllActions( exports.likes );
 
 
 
