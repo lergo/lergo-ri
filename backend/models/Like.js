@@ -1,4 +1,5 @@
-var logger = require('log4js').getLogger('Like');
+
+var services = require('../services');
 var AbstractModel = require('./AbstractModel');
 
 
@@ -18,9 +19,14 @@ Like.ItemTypes = {
 Like.createNew = function( itemType, itemId, userId ){
     return {
         'itemType' : itemType,
-        'itemId' : itemId,
-        'userId' : userId
-    }
+        'itemId' : services.db.id(itemId),
+        'userId' : services.db.id(userId)
+
+    };
+};
+
+Like.createNewFromRequest = function( req ){
+    return Like.createNew(req.likeItemType, req.user._id, req.likeItem._id);
 };
 
 AbstractModel.enhance(Like);

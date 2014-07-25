@@ -653,7 +653,7 @@ exports.getPermissions = {
 exports.getLike = {
     'spec': {
         'description': 'Get like',
-        'name': 'get like',
+        'name': 'getLike',
         'path': '/user/me/like/{itemType}/{itemId}',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
@@ -686,7 +686,7 @@ exports.getLike = {
     },
     'middlewares': [
         middlewares.users.exists,
-        middlewares.likes,itemExists,
+        middlewares.likes.itemExists,
         middlewares.likes.exists
     ],
     'action': controllers.likes.getLike

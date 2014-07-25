@@ -8,53 +8,57 @@ var questionsMiddleware = require('./QuestionsMiddleware');
 
 
 // if item we want to like exists.. must exist..
-exports.itemExists = function optionalLikeItemId( req, res, next ){
-   logger.debug('finding itemId for like on request');
-    if ( !req.param.itemType ){
-        logger.info('itemType is missing, moving on');
-        res.send(400,'must specify item details to like');
+exports.itemExists = function itemExists(req, res, next) {
+    logger.debug('finding itemId for like on request');
+    var itemType = req.params.itemType;
+    var itemId = req.params.itemId;
+    if (!itemType) {
+        logger.info('itemType is missing, failing..');
+        res.send(400, 'must specify item details to like');
         return;
     }
 
     async.parallel(
         [
-            function findLesson(){
-                if ( req.param.itemType === Like.ItemTypes.LESSON ) {
+            function findLesson() {
+                if (itemType === Like.ItemTypes.LESSON) {
                     req.likeItemType = Like.ItemTypes.LESSON;
-                    req.param.lessonId = req.param.itemId;
-                    lessonsMiddleware.exists( req, res, function(){
+                    req.params.lessonId = itemId;
+                    lessonsMiddleware.exists(req, res, function () {
                         req.likeItem = req.lesson;
                         next();
                     });
                 }
             },
-            function findQuestion(){
-                if ( req.param.itemType === Like.ItemTypes.QUESTION ) {
+            function findQuestion() {
+                if (itemType === Like.ItemTypes.QUESTION) {
                     req.likeItemType = Like.ItemTypes.QUESTION;
-                    req.params.questionId = req.param.itemId;
-                    questionsMiddleware.exists(req, res, function(){
+                    req.params.questionId = itemId;
+                    questionsMiddleware.exists(req, res, function () {
                         req.likeItem = req.question;
                         next();
-                    })
+                    });
                 }
             }
         ],
-        function verifyItemExists(){
+        function verifyItemExists() {
 
             // guy - we will reach here if itemType does not match anything..
-              if ( !req.likeItem ){
-                  res.send(400, 'item does not exist');
-              }
+            if (!req.likeItem) {
+                res.send(400, 'item does not exist');
+                return;
+            }
+            next();
         }
-    )
+    );
 
 };
 
 // if like itself exists
-exports.optionalExists= function optionalExists( req, res, next ){
-    logger.debug('checking if like exists' );
+exports.optionalExists = function optionalExists(req, res, next) {
+    logger.debug('checking if like exists');
 
-    if ( !req.likeItemId ){
+    if (!req.params.itemId) {
         logger.debug('itemId is missing. moving on.');
         next();
         return;
@@ -62,14 +66,17 @@ exports.optionalExists= function optionalExists( req, res, next ){
 
     try {
         Like.findOne(
-            Like.createNew(req.likeItemType, req.user._id, req.likeItem._id),
+            Like.createNewFromRequest(req),
             function (err, result) {
+                logger.info('got result', result);
                 if (!!err || !result) {
+                    logger.debug('got error or no result, moving on.. ');
                     next();
                     return;
                 }
                 req.like = result;
-            })
+                next();
+            });
     } catch (e) {
         logger.debug('unable to check if like exists', e);
         next();
@@ -77,25 +84,27 @@ exports.optionalExists= function optionalExists( req, res, next ){
 };
 
 // if like itself does exist
-exports.exists= function exists( req, res, next ){
+exports.exists = function exists(req, res, next) {
     logger.info('making sure like does not exist');
-    exports.optionalExists( req, res , function(){
-        if ( !req.like ){
-            res.send(400,'already exists');
-        }else{
+    exports.optionalExists(req, res, function () {
+        if (!req.like) {
+            logger.debug('like exists, failing');
+            res.send(400, 'already exists');
+        } else {
+            logger.debug('like does not exist, moving on');
             next();
         }
-    })
+    });
 };
 
 // if like itself does not exist
-exports.notExists= function notExists( req, res, next ){
+exports.notExists = function notExists(req, res, next) {
     logger.info('making sure like does not exist');
-    exports.optionalExists( req, res , function(){
-        if ( !!req.like ){
-            res.send(400,'already exists');
-        }else{
+    exports.optionalExists(req, res, function () {
+        if (!!req.like) {
+            res.send(400, 'already exists');
+        } else {
             next();
         }
-    })
+    });
 };

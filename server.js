@@ -116,7 +116,7 @@ for ( var i in actions ){
         if ( !action.action ){
             throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
         }
-        logger.info('adding [%s] [%s] [%s]', action.spec.name, action.spec.nickname, typeof(action.action));
+        logger.info('adding [%s] [%s] [%s] [%s]:[%s]', action.spec.name, action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
 
         // add middlewares
         if ( !!action.middlewares ){
@@ -124,7 +124,12 @@ for ( var i in actions ){
             for ( var m = 0; m < action.middlewares.length; m++) {
 
                 var middleware = action.middlewares[m];
-                logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
+                try {
+                    logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
+                }catch(e){
+                    logger.error('error while adding action on middleware at index [' + m + ']', action.spec.name);
+                    throw e;
+                }
 
                 // switch between swagger syntax {id} to express :id
                 swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);

@@ -1,11 +1,10 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
-var permissions = require('../permissions');
 
-exports.createLessonLike = {
+exports.createLike = {
     'spec': {
         'description': 'User likes this lesson',
-        'name': 'getAllLessons',
+        'name': 'createLike',
         'path': '/likes/{itemType}/{itemId}/create',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
@@ -39,10 +38,10 @@ exports.createLessonLike = {
     },
     'middlewares': [
         middlewares.users.exists,
-        middlewares.likes,itemExists,
+        middlewares.likes.itemExists,
         middlewares.likes.notExists
     ],
-    'action': controllers.likes.createLessonLike
+    'action': controllers.likes.createLike
 };
 
 
@@ -81,8 +80,10 @@ exports.countLikes = {
     },
     'middlewares': [
         middlewares.users.exists,
-        middlewares.likes,itemExists,
-        middlewares.likes,optionalLikeItemId
+        middlewares.likes.itemExists
     ],
-    'action': controllers.likes.createLessonLike
+    'action': controllers.likes.countLikes
 };
+
+
+
