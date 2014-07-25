@@ -642,3 +642,52 @@ exports.getPermissions = {
 
     ]
 };
+
+
+/***
+ *
+ *  User Likes Read Operations
+ *
+ *
+ */
+exports.getLike = {
+    'spec': {
+        'description': 'Get like',
+        'name': 'get like',
+        'path': '/user/me/like/{itemType}/{itemId}',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'gets a like',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'itemId',
+                'required': true,
+                'description': 'item id',
+                'type': 'ObjectIDHash'
+            },
+            {
+                'paramType': 'path',
+                'name': 'itemType',
+                'required': true,
+                'description': 'item type',
+                'type': 'LikeItemType'
+            }
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getItemLike'
+    },
+    'middlewares': [
+        middlewares.users.exists,
+        middlewares.likes,itemExists,
+        middlewares.likes.exists
+    ],
+    'action': controllers.likes.getLike
+};
