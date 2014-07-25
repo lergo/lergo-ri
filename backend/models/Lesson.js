@@ -1,8 +1,6 @@
 var logger = require('log4js').getLogger('Lesson');
 var AbstractModel = require('./AbstractModel');
 
-
-
 function Lesson(data) {
     this.data = data;
 }
@@ -22,6 +20,30 @@ Lesson.prototype.getAllQuestionIds = function () {
     }
     logger.info('found the following question ids', questionIds);
     return questionIds;
+};
+
+/**
+ * Flattens all quizItems on all lessons,
+ * and groups all quizItems values into a single set.
+ * http://stackoverflow.com/a/13281819/1068746
+ *
+ * @param lessonsIds
+ * @param callback
+ */
+Lesson.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
+    Lesson.connect( function (db, collection) {
+        var aggregation = [
+            {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : lessonsIds} }},
+            { $project: { _id : 0, 'steps.quizItems':1} },
+            {$unwind : '$steps'},
+            {$unwind : '$steps.quizItems'},
+            {'$group' :{_id : 'a', res:{$addToSet:'$steps.quizItems'}}}
+        ];
+        collection.aggregate( aggregation ,
+        function(err, result){
+            callback(err, result.length > 0 ? result[0].res : undefined);
+        });
+    });
 };
 
 

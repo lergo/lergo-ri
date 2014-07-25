@@ -15,7 +15,7 @@
         "crypto": "*",
         "node-uuid": "*",
         "lodash": "*",
-        "nodemailer": "*",
+        "nodemailer": "0.7.1",
         "body-parser": "*",
         "cookie-parser": "*",
         "method-override": "*",

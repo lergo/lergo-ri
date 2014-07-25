@@ -7,15 +7,7 @@
             { "type" : "console" }
         ],
         "levels" : {
-            "DbService" : "INFO",
-            "DbManager" : "INFO",
-            "UsersMiddleware" : "INFO",
-            "UsersManager" : "INFO",
-            "LessonsMiddleware" : "INFO",
-            "QuestionsMiddleware" : "INFO",
-            "LessonsInvitationsController" : "INFO",
-            "PhraseApp" : "INFO",
-            "StatisticsController" : "INFO"
+                "[all]":"INFO"
 
         }
     },
