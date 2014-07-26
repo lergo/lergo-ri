@@ -7,7 +7,7 @@
             { "type" : "console" }
         ],
         "levels" : {
-                "[all]":"DEBUG"
+                "[all]":"INFO"
 
         }
     },

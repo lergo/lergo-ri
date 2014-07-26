@@ -26,11 +26,22 @@ module.exports = function (grunt) {
         yeoman: yeomanConfig,
 
         mochaTest: {
-            test: {
-                options: {
-                    reporter: 'spec'
+            beforeBuild: {
+                test: {
+                    options: {
+                        reporter: 'spec'
+                    }
                 },
-                src: ['test/**/*.js']
+                files: { 'src' : ['test/beforeBuild/mocha/**/*.js'] }
+            },
+            afterBuild : {
+                test: {
+                    options: {
+                        reporter: 'spec'
+                    }
+
+                },
+                files:  { 'src'  : ['test/afterBuild/mocha/**/*.js'] }
             }
         },
         clean: {
@@ -113,7 +124,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', [
-        'mochaTest'
+        'mochaTest:beforeBuild'
     ]);
 
     grunt.registerTask('default', [
