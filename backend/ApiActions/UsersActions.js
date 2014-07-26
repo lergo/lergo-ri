@@ -654,7 +654,7 @@ exports.getLike = {
     'spec': {
         'description': 'Get like',
         'name': 'getLike',
-        'path': '/user/me/like/{itemType}/{itemId}',
+        'path': '/user/me/likes/{itemType}/{itemId}',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
         'summary': 'gets a like',

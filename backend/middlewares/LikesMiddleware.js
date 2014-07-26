@@ -7,7 +7,9 @@ var lessonsMiddleware = require('./LessonsMiddleware');
 var questionsMiddleware = require('./QuestionsMiddleware');
 
 
-// if item we want to like exists.. must exist..
+// finds the item we want to like/dislike/count likes etc..
+// if this item does not exist - we cannot move on.
+// also puts on request abstract properties for both lesson and question
 exports.itemExists = function itemExists(req, res, next) {
     logger.debug('finding itemId for like on request');
     var itemType = req.params.itemType;
@@ -68,12 +70,12 @@ exports.optionalExists = function optionalExists(req, res, next) {
         Like.findOne(
             Like.createNewFromRequest(req),
             function (err, result) {
-                logger.info('got result', result);
                 if (!!err || !result) {
-                    logger.debug('got error or no result, moving on.. ');
+                    logger.debug('got error or no result, moving on.. ',err,result);
                     next();
                     return;
                 }
+                logger.info('got result', result);
                 req.like = result;
                 next();
             });
@@ -85,13 +87,13 @@ exports.optionalExists = function optionalExists(req, res, next) {
 
 // if like itself does exist
 exports.exists = function exists(req, res, next) {
-    logger.info('making sure like does not exist');
+    logger.info('making sure like exist');
     exports.optionalExists(req, res, function () {
         if (!req.like) {
-            logger.debug('like exists, failing');
-            res.send(400, 'already exists');
+            logger.debug('like does not exist, failing');
+            res.send(400, 'no such like');
         } else {
-            logger.debug('like does not exist, moving on');
+            logger.debug('like exist, moving on');
             next();
         }
     });
@@ -99,8 +101,9 @@ exports.exists = function exists(req, res, next) {
 
 // if like itself does not exist
 exports.notExists = function notExists(req, res, next) {
-    logger.info('making sure like does not exist');
+    logger.debug('making sure like does not exist');
     exports.optionalExists(req, res, function () {
+        logger.debug('looking if like exists on req');
         if (!!req.like) {
             res.send(400, 'already exists');
         } else {

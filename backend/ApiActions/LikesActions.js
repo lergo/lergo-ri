@@ -45,6 +45,51 @@ exports.createLike = {
 };
 
 
+
+exports.deleteLike = {
+    'spec': {
+        'description': 'User dislikes this lesson',
+        'name': 'deleteLike',
+        'path': '/likes/{itemType}/{itemId}/delete',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'User dislikes this lesson',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'itemId',
+                'required': true,
+                'description': 'item id',
+                'type': 'ObjectIDHash'
+            },
+            {
+                'paramType': 'path',
+                'name': 'itemType',
+                'required': true,
+                'description': 'item type',
+                'type': 'LikeItemType'
+            }
+
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'deleteLike'
+    },
+    'middlewares': [
+        middlewares.users.exists,
+        middlewares.likes.itemExists,
+        middlewares.likes.exists
+    ],
+    'action': controllers.likes.deleteLike
+};
+
+
 exports.countLikes = {
     'spec': {
         'description': 'Count likes',
