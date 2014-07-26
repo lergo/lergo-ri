@@ -23,6 +23,12 @@ function enhance( Class ) {
     };
 
     Class.findOne = function(filter, projection, callback ){
+
+        if ( typeof(projection) === 'function'){ // projection must be the callback, replace with empty object
+            callback = projection;
+            projection = {};
+        }
+
         Class.connect( function( db, collection ){
             collection.findOne(filter, projection,callback);
         });

@@ -15,6 +15,6 @@ exports.functionName = function(fun) {
     }
 
     if ( !fun ){
-        throw 'function is missing';
+        throw 'function is missing ' + fun.toString();
     }
 };
