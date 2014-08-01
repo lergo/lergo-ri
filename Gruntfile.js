@@ -119,17 +119,21 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'jshint',
-        'copy'//,
-//        'test'
+        'copy'
     ]);
 
-    grunt.registerTask('test', [
+
+
+    grunt.registerTask('testBefore', [
         'mochaTest:beforeBuild'
+    ]);
+
+    grunt.registerTask('testAfter', [
+        'mochaTest:afterBuild'
     ]);
 
     grunt.registerTask('default', [
         'jshint',
-//        'test',
         'build'
     ]);
 };

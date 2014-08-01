@@ -1,8 +1,8 @@
 'use strict';
 //var path = require('path');
-var assert = require('assert');
-var conf = require('../../backend/services/Conf');
-var service = require('../../backend/services/LergoEmailService');
+//var assert = require('assert');
+var conf = require('../../../backend/services/Conf');
+var service = require('../../../backend/services/LergoEmailService');
 var logger = require('log4js').getLogger('TestMailSender');
 
 logger.info('loaded services');
