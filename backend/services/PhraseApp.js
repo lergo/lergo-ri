@@ -7,7 +7,7 @@ var Client = require('node-rest-client').Client;
 var client = new Client();
 
 if ( conf.translations.method === 'phraseapp' && !conf.translations.phraseAppToken){
-    throw 'need to configure phraseapp token';
+    throw new Error('need to configure phraseapp token');
 }
 
 
