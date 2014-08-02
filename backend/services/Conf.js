@@ -10,7 +10,7 @@
 var fs = require('fs');
 var path = require('path');
 var _  = require('lodash');
-var meConf = path.resolve('conf/dev/me.json');
+var meConf = process.env.LERGO_ME_CONF||path.resolve('conf/dev/me.json');
 var prodConf = path.resolve(path.join(__dirname,'../../','conf/prod.json'));
 
 

@@ -99,7 +99,9 @@ build_ri(){
         rm -Rf node_modules
     fi
     npm install
+    grunt testBefore
     grunt build --no-color
+    grunt testAfter
     cd dist
     npm install --production
 
