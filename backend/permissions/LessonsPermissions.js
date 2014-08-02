@@ -1,4 +1,4 @@
-
+'use strict';
 
 exports.userCanEdit = function( lesson, user ){
     if ( !user || !lesson ){

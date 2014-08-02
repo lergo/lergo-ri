@@ -1,3 +1,4 @@
+'use strict';
 var nodemailer = require('nodemailer');
 var emailSettings = require('./Conf').emailSettings;
 var logger = require('log4js').getLogger('LergoEmailService');

@@ -1,4 +1,4 @@
-
+'use strict';
 //var logger = require('log4js').getLogger('LergoMiddleware');
 
 exports.origin = function( req, res, next){

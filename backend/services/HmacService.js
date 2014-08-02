@@ -1,3 +1,4 @@
+'use strict';
 var conf = require('./Conf');
 
 var crypto = require('crypto');

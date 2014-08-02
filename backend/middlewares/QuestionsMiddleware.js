@@ -1,3 +1,4 @@
+'use strict';
 var Question = require('../models/Question');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');

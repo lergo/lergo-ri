@@ -1,4 +1,4 @@
-
+'use strict';
 
 exports.userCanEdit = function( question, user ){
     if ( !user || !question ){

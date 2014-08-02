@@ -1,3 +1,4 @@
+'use strict';
 /*jshint -W079 */
 var db = require('../services/DbService');
 var logger = require('log4js').getLogger('AbstractModel');
@@ -43,6 +44,17 @@ function enhance( Class ) {
 
         Class.connect( function (db, collection) {
             collection.find(filter, projection).toArray(callback);
+        });
+    };
+
+
+    Class.prototype.update = function( callback ){
+        logger.info('updating');
+        var self = this;
+        this.data._id = db.id(this.data._id);
+        Class.connect(function (db, collection) {
+            logger.info('connected. running update', self.data._id);
+            collection.update({ '_id': self.data._id}, self.data, callback || function(){ logger.info('updated successfully'); });
         });
     };
 }
