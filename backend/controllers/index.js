@@ -5,3 +5,4 @@ exports.lessonsInvitations = require('./LessonsInvitationsController');
 exports.system= require('./SystemController');
 exports.tags= require('./TagsController');
 exports.likes= require('./LikesController');
+exports.reports= require('./ReportsController');

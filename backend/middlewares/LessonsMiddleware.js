@@ -1,3 +1,4 @@
+'use strict';
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');

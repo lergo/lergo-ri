@@ -1,72 +1,13 @@
-var dbManager = require('./DbManager');
+'use strict';
 var services = require('../services');
 var lessonsManager = require('./LessonsManager');
-var usersManager = require('./UsersManager');
 var errorManager = require('./ErrorManager');
 var questionsManager = require('./QuestionsManager');
-var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsManager');
 var models = require('../models');
 var async = require('async');
-var COLLECTION_NAME = 'lessonsInvitations';
-
-
-function Invitation(invitation) {
-
-    var self = this;
-
-
-
-    self.isAnonymous = function(){
-        return invitation.anonymous;
-    };
-
-    self.setReportSent = function (value) {
-        invitation.report.sent = value;
-    };
-
-    self.isReportSent = function () {
-        return !!invitation.report.sent;
-    };
-
-    self.getName = function () {
-        return invitation.invitee.name;
-    };
-
-    self.getInviter = function (callback) {
-
-        return usersManager.findUser({ '_id': dbManager.id(invitation.inviter) }, function (err, result) {
-            if (!!err) {
-                callback(err);
-                return;
-            }
-            callback(null, result);
-        });
-    };
-
-    self.getLessonIdStr = function(){
-        return invitation.lessonId.toString();
-    };
-
-    self.getLesson = function(callback) {
-
-		return lessonsManager.getLesson({
-			'_id' : dbManager.id(invitation.lessonId)
-		}, function(err, result) {
-			if (!!err) {
-				callback(err);
-				return;
-			}
-			callback(null, result);
-		});
-	};
-
-}
-
 
 /**
- *
- *
  * Once someone opens an invitation, our first step is to build the lesson
  *
  * @param invitation
@@ -77,12 +18,12 @@ exports.buildLesson = function (invitation, callback) {
     var updatedInvitation = null;
     async.waterfall([
         function getLessonById(_callback) {
-            lessonsManager.getLesson({ _id: dbManager.id(lessonId) }, _callback);
+            lessonsManager.getLesson({ _id: services.db.id(lessonId) }, _callback);
         }, function getAllQuizItems(result, _callback) {
             invitation.lesson = result;
             var lessonModel = new models.Lesson(result);
             var questionsId = lessonModel.getAllQuestionIds();
-            questionsId = dbManager.id(questionsId);
+            questionsId = services.db.id(questionsId);
             questionsManager.search({ '_id': { '$in': questionsId }}, {}, _callback);
         }, function updateLessonInvitation(result, _callback) {
             invitation.quizItems = result;
@@ -108,105 +49,11 @@ exports.buildLesson = function (invitation, callback) {
     ]);
 };
 
-exports.updateReport = function (invitationId, report, callback) {
-    logger.info('updating report on invitation ', invitationId);
 
-    // when we are updating the report - we want to make sure no one is abusing us..
-    // we do this by making sure the report and invitation both point to same lesson.
-    // it is hardly realistic that someone will be able to guess the combination of the invitation ID and the report ID
-    // who both look at the same lesson
-
-    dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
-
-        collection.update({ '_id': dbManager.id(invitationId), 'lessonId': dbManager.id(report.data.lessonId) }, { '$set': { 'report': report }}, function (err/*, count, response*/) {
-            if (!!err) {
-                logger.error('unable to update report', err);
-                done();
-                callback(new errorManager.InternalServerError(err, 'unable to update report'));
-                return;
-            }
-            done();
-            callback(null, report);
-        });
-    });
-};
-
-
-exports.getReport = function (invitationId, callback) {
-    exports.search({ '_id': dbManager.id(invitationId) }, { 'report': 1 }, function (err, result) {
-        if (!!err) {
-            callback(err);
-            return;
-        }
-
-        if ( !result ){
-            callback(new errorManager.NotFound(null, 'could not find report'));
-            return;
-        }
-
-        callback(null, result.report);
-    });
-};
-
-exports.sendReportLink = function (emailResources, invitationId, callback) {
-    logger.info('send report is ready email');
-    exports.search({ '_id': dbManager.id(invitationId)}, {}, function (err, invitationData) {
-        if (!!err) {
-            callback(err);
-            return;
-        }
-        var invitationModel = new Invitation(invitationData);
-
-        if ( invitationModel.isAnonymous() ){
-            callback('unable to send link if anonymous');
-            return;
-        }
-
-        if (invitationModel.isReportSent()) {
-            callback(null);
-            return;
-        }
-
-        invitationModel.getInviter(function (err, inviter) {
-            if (!!err) {
-                callback(err);
-                return;
-            }
-
-            var emailVars = {};
-            _.merge(emailVars, emailResources);
-            var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/invitations/' + invitationData._id + '/report';
-
-            _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName, 'inviteeName' : invitationModel.getName(), 'lessonTitle' : invitationData.lesson.name });
-
-            services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
-                services.email.sendMail({
-                    'to': inviter.email,
-                    'subject': 'Someone finished their lesson',
-                    'text': text,
-                    'html': html
-                }, function (err) {
-                    if (!!err) {
-                        logger.error('error while sending report', err);
-                        callback(err);
-                    } else {
-                        logger.info('saving report sent true');
-                        invitationModel.setReportSent(true);
-                        exports.updateLessonInvitation(invitationData, function () {
-                        });
-                    }
-                });
-            });
-
-        });
-    });
-
-
-};
 
 exports.search = function (filter, projection, callback) {
     logger.info('finding the invitation', filter);
-    dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
+    models.LessonInvitation.connect(function (db, collection, done) {
         collection.findOne(filter, projection, function (err, result) {
 
             if (!!err) {
@@ -226,7 +73,7 @@ exports.find = exports.search;
 
 
 exports.updateLessonInvitation = function (invitation, callback) {
-    dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
+    models.LessonInvitation.connect( function (db, collection, done) {
         collection.update({ _id: invitation._id }, invitation, function (err, result) {
             logger.info('after update', arguments);
             done();
@@ -238,8 +85,8 @@ exports.updateLessonInvitation = function (invitation, callback) {
 
 
 exports.create = function ( invitation, callback) {
-    invitation.lessonId = dbManager.id(invitation.lessonId);
-    dbManager.connect(COLLECTION_NAME, function (db, collection, done) {
+    invitation.lessonId = services.db.id(invitation.lessonId);
+    models.LessonInvitation.connect( function (db, collection, done) {
         collection.insert(invitation, {}, function (err, result) {
             done();
             callback( err, result[0] );
@@ -251,7 +98,7 @@ exports.create = function ( invitation, callback) {
 
 
 exports.deleteByLessonId = function( lessonId, callback ){
-    services.db.connect(COLLECTION_NAME, function(db, collection){
+    models.LessonInvitation.connect(function(db, collection){
         collection.remove({'lessonId' : services.db.id(lessonId)}, callback );
     });
 };

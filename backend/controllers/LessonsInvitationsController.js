@@ -1,3 +1,4 @@
+'use strict';
 var managers = require('../managers');
 
 var _ = require('lodash');
@@ -47,41 +48,6 @@ exports.create = function (req, res) {
         } else {
             res.send(result);
         }
-    });
-};
-
-exports.report = function (req, res) {
-    managers.lessonsInvitations.updateReport(req.params.invitationId, req.body, function (err, result) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else {
-            res.send(result);
-        }
-    });
-};
-
-exports.sendLessonInviteReportReady = function (req, res) {
-    managers.lessonsInvitations.sendReportLink(req.emailResources, req.params.invitationId, function (err) {
-        if (!!err) {
-            err.send(res);
-            return;
-        }
-
-        res.send(200);
-
-    });
-};
-
-
-exports.getReport = function (req, res) {
-    managers.lessonsInvitations.getReport(req.params.invitationId, function (err, report) {
-        if (!!err) {
-            err.send(res);
-            return;
-        }
-
-        res.send(report);
     });
 };
 

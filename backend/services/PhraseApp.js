@@ -1,3 +1,4 @@
+'use strict';
 // view-source:https://phraseapp.com/api/v1/translations/download?auth_token=763e0c5319edc79ae9392fc0d498fea9&locale_name=en&format=nested_json
 
 var conf = require('./Conf');

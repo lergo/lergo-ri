@@ -1,3 +1,4 @@
+'use strict';
 var logger = require('log4js').getLogger('Lesson');
 var AbstractModel = require('./AbstractModel');
 

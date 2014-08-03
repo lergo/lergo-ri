@@ -1,4 +1,4 @@
-
+'use strict';
 
 exports.userCanManage = function( user ){
     return !!user.isAdmin;
