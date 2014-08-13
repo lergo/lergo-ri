@@ -62,3 +62,15 @@ exports.sendReportReady = function (req, res) {
 
     });
 };
+
+exports.getUserReports = function (req, res) {
+    managers.reports.getUserReports(req.user._id, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};

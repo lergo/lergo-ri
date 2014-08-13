@@ -1,7 +1,9 @@
 'use strict';
+var Report = require('../models').Report;
 var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
+
 
 exports.sendReportLink = function (emailResources, report, callback) {
     logger.info('send report is ready email');
@@ -49,4 +51,16 @@ exports.sendReportLink = function (emailResources, report, callback) {
 
     });
 
+};
+
+exports.getUserReports = function(userId, callback) {
+	Report.connect(function(db, collection, done) {
+		collection.find().toArray(function(err, result) {
+			if (!!err) {
+				logger.error('unable to query for reports [%s]', err.message);
+			}
+			done();
+			callback(err, result);
+		});
+	});
 };
