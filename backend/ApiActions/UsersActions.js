@@ -206,6 +206,29 @@ exports.logout = {
     'action': controllers.users.logout
 };
 
+exports.disqusLogin = {
+    'spec': {
+        'description': 'Get disqus details',
+        'name': 'disqusLogin',
+        'path': '/user/disqusLogin',
+        'summary': 'returns login details for disqus',
+        'method': 'GET',
+        'parameters': [],
+        'errorResponses': [
+            {
+                'code': 401,
+                'reason': 'not logged in'
+            }
+        ],
+        'nickname': 'disqusLogin'
+
+    },
+    'middlewares' : [
+        middlewares.users.exists
+    ],
+    'action': controllers.users.disqusLogin
+};
+
 exports.isLoggedIn = {
     'spec': {
         'description': 'Is User Logged In?',
