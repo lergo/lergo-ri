@@ -434,6 +434,25 @@ exports.getUserLessons = {
     'action': controllers.lessons.getUserLessons
 };
 
+exports.getUserReports = {
+	    'spec': {
+	        'description': 'Get user Reports',
+	        'name': 'getReports',
+	        'path': '/user/me/reports',
+	        'summary': 'Get user reports',
+	        'method': 'GET',
+	        'parameters': [],
+	        'errorResponses': [
+	            {
+	                'code': 500,
+	                'reason': 'unable to get reports'
+	            }
+	        ],
+	        'nickname': 'getReports'
+	    },
+	    'action': controllers.reports.getUserReports
+	};
+
 
 exports.lessonsInvitationsGetById = {
     'spec': {

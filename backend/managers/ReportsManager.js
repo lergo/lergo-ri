@@ -1,7 +1,9 @@
 'use strict';
+var Report = require('../models').Report;
 var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
+
 
 exports.sendReportLink = function (emailResources, report, callback) {
     logger.info('send report is ready email');
@@ -49,4 +51,22 @@ exports.sendReportLink = function (emailResources, report, callback) {
 
     });
 
+};
+
+exports.getUserReports = function(userId, callback) {
+    userId = services.db.id(userId);
+	Report.find({ $or :  [ { 'userId' : userId }, { 'userId' : userId.toString()}, { 'data.inviter' : userId} , { 'data.inviter' : userId.toString()} ]},{},callback);
+};
+
+exports.deleteReport = function(id, callback) {
+	Report.connect(function(db, collection) {
+		collection.remove({
+			'_id' : services.db.id(id)
+		}, function(err) {
+			if (!!err) {
+				logger.error('unable to delete report [%s]', err.message);
+			}
+			callback(err);
+		});
+	});
 };
