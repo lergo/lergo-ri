@@ -77,6 +77,7 @@ exports.updateReport = {
         'nickname': 'updateReport'
     },
     'middlewares' : [
+        middlewares.users.optionalUserOnRequest,
         middlewares.reports.exists
     ],
     'action': controllers.reports.updateReport

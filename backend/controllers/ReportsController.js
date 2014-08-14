@@ -38,6 +38,10 @@ exports.updateReport = function(req, res) {
 	var report = req.body;
 	report._id = services.db.id(report._id);
 	report.invitationId = services.db.id(report.invitationId); // convert to db
+    if ( !!req.user ){
+        // if the person who is doing the lesson is logged in, we want to know that.
+        report.userId = req.user._id;
+    }
 	// id.
 	logger.info('creating report to update');
 	new Report(report).update(function(err) {
