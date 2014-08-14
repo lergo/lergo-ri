@@ -116,3 +116,35 @@ exports.sendReportReady = {
     'action': controllers.reports.sendReportReady
 };
 
+exports.deleteReport = {
+	    'spec': {
+	        'description': 'Delete report corresponding to the id',
+	        'name': 'deleteReport',
+	        'path': '/reports/{reportId}/delete',
+	        'summary': 'Delete report corresponding to the id',
+	        'method': 'POST',
+	        'parameters': [
+	            {
+	                'paramType': 'path',
+	                'name': 'reportId',
+	                required: true,
+	                'description': 'ID of report that needs to be deleted',
+	                'type': 'string'
+	            }
+	        ],
+	        'errorResponses': [
+	            {
+	                'code': 500,
+	                'reason': 'unable to delete report'
+	            }
+	        ],
+	        'nickname': 'deleteReport'
+	    },
+	    'middlewares' : [
+	        middlewares.users.exists,
+	        middlewares.reports.exists,
+	        middlewares.reports.userCanDelete
+	    ],
+	    'action': controllers.reports.deleteReport
+	};
+

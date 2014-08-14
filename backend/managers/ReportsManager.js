@@ -64,3 +64,16 @@ exports.getUserReports = function(userId, callback) {
 		});
 	});
 };
+
+exports.deleteReport = function(id, callback) {
+	Report.connect(function(db, collection) {
+		collection.remove({
+			'_id' : services.db.id(id)
+		}, function(err) {
+			if (!!err) {
+				logger.error('unable to delete report [%s]', err.message);
+			}
+			callback(err);
+		});
+	});
+};
