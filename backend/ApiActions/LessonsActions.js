@@ -1,3 +1,5 @@
+'use strict';
+
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');

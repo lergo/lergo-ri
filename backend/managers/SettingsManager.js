@@ -1,3 +1,4 @@
+'use strict';
 var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
 var logger = require('log4js').getLogger('SettingsManager');

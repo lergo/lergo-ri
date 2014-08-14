@@ -124,7 +124,6 @@ exports.countLikes = {
         'nickname': 'countLikes'
     },
     'middlewares': [
-        middlewares.users.exists,
         middlewares.likes.itemExists
     ],
     'action': controllers.likes.countLikes

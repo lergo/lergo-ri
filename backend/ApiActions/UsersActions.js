@@ -1,3 +1,4 @@
+'use strict';
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');
@@ -205,6 +206,29 @@ exports.logout = {
     'action': controllers.users.logout
 };
 
+exports.disqusLogin = {
+    'spec': {
+        'description': 'Get disqus details',
+        'name': 'disqusLogin',
+        'path': '/user/disqusLogin',
+        'summary': 'returns login details for disqus',
+        'method': 'GET',
+        'parameters': [],
+        'errorResponses': [
+            {
+                'code': 401,
+                'reason': 'not logged in'
+            }
+        ],
+        'nickname': 'disqusLogin'
+
+    },
+    'middlewares' : [
+        middlewares.users.exists
+    ],
+    'action': controllers.users.disqusLogin
+};
+
 exports.isLoggedIn = {
     'spec': {
         'description': 'Is User Logged In?',
@@ -410,99 +434,25 @@ exports.getUserLessons = {
     'action': controllers.lessons.getUserLessons
 };
 
+exports.getUserReports = {
+	    'spec': {
+	        'description': 'Get user Reports',
+	        'name': 'getReports',
+	        'path': '/user/me/reports',
+	        'summary': 'Get user reports',
+	        'method': 'GET',
+	        'parameters': [],
+	        'errorResponses': [
+	            {
+	                'code': 500,
+	                'reason': 'unable to get reports'
+	            }
+	        ],
+	        'nickname': 'getReports'
+	    },
+	    'action': controllers.reports.getUserReports
+	};
 
-
-/**
-
- */
-exports.lessonInviteReportUpdate = {
-    'spec': {
-        'description': 'update lesson report',
-        'name': 'lessonInviteReportUpdate',
-        'path': '/lessonsinvitations/{invitationId}/report',
-        'summary': 'updates lesson report',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'invitationId',
-                required: true,
-                'description': 'ID of lesson invitation',
-                'type': 'string'
-            },{
-                'paramType' : 'body',
-                'required': true,
-                'description' : 'the report',
-                'type' : 'LessonInvitationReport'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to create lesson invitation'
-            }
-        ],
-        'nickname': 'lessonInviteCreate'
-    },
-    'action': controllers.lessonsInvitations.report
-};
-/**
-
- */
-exports.sendLessonInviteReportReady = {
-    'spec': {
-        'description': 'send email to inviter saying a report is ready',
-        'name': 'sendLessonInviteReportReady',
-        'path': '/lessonsinvitations/{invitationId}/reportReady',
-        'summary': 'updates lesson report',
-        'method': 'POST',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'invitationId',
-                required: true,
-                'description': 'ID of lesson invitation',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to send report ready email'
-            }
-        ],
-        'nickname': 'sendLessonInviteReportReady'
-    },
-    'action': controllers.lessonsInvitations.sendLessonInviteReportReady
-};
-
-
-exports.getLessonsInvitationsReport = {
-    'spec': {
-        'description': 'gets a report',
-        'name': 'getLessonsInvitationsReport',
-        'path': '/lessonsinvitations/{invitationId}/getReport',
-        'summary': 'get a report',
-        'method': 'GET',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'invitationId',
-                required: true,
-                'description': 'ID of lesson invitation',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to send report ready email'
-            }
-        ],
-        'nickname': 'getLessonsInvitationsReport'
-    },
-    'action': controllers.lessonsInvitations.getReport
-};
 
 exports.lessonsInvitationsGetById = {
     'spec': {

@@ -1,3 +1,4 @@
+'use strict';
 exports.functionName = function(fun) {
     if ( !!fun) {
 

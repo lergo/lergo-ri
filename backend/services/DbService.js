@@ -65,9 +65,10 @@ exports.connect = function (collection, callback) {
             if (collection) {
                 logger.debug('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
+                logger.debug('connection open');
 
             }else{
-                logger.warn('openning connection without collection');
+                logger.warn('opening connection without collection');
             }
             // GUY - 'done' was once used for closing the connection.
             // turns out we don't need to close the connection..
@@ -78,9 +79,12 @@ exports.connect = function (collection, callback) {
                 /* db.close();*/
 
             });
+
         } catch (e) { // close if got an error
             /*logger.error('catching error, closing connection',e);*/
             /* db.close();*/
+            throw e;
+
         }
     });
 };

@@ -1,3 +1,4 @@
+'use strict';
 var nodemailer = require('nodemailer');
 var emailSettings = require('./Conf').emailSettings;
 var logger = require('log4js').getLogger('LergoEmailService');
@@ -22,7 +23,6 @@ var logger = require('log4js').getLogger('LergoEmailService');
  * create a transport for sending mails
  */
 function getTransport() {
-    logger.info(emailSettings.type, emailSettings.opts);
     var smtpTransport = nodemailer.createTransport(emailSettings.type, emailSettings.opts);
     return smtpTransport;
 }
@@ -36,14 +36,10 @@ function getTransport() {
 
 exports.sendMail = function (opts, callback) {
     var transport = getTransport();
-
+    logger.info(opts);
     if (!opts.hasOwnProperty('from')) {
         opts.from = emailSettings.defaultFrom;
     }
-
-    logger.info(opts);
-
-
     transport.sendMail(opts, function (error, response) {
         if (!!error) {
             logger.error('error in sending mail   to : [%s]', opts.to, error);

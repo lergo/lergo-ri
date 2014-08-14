@@ -20,3 +20,4 @@ To add an admin user, you should use the following mongodb query
 db.users.update({ 'username' : 'USERNAME' }, {'$set' : {'isAdmin' : true}})
 ```
 
+
