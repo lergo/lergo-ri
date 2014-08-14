@@ -26,8 +26,8 @@ describe('Disqus', function(){
             expect(ssoObj.hasOwnProperty('pubKey')).to.be(true);
             expect(ssoObj.hasOwnProperty('auth')).to.be(true);
             done();
-        })
-    })
+        });
+    });
 });
 
 

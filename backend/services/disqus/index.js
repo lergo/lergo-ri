@@ -1,6 +1,4 @@
-
-
-
+'use strict';
 exports.configure = function( conf ){
     if ( !!conf.enabled ){
         exports.client = require('./Disqus');
