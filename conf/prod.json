@@ -12,7 +12,13 @@
         }
     },
     "public" : {
-        "googleAnalyticsCode" : null
+        "googleAnalyticsCode" : null,
+        "disqus" : {
+            "enabled" : false,
+            "shortname" : "lergo",
+            "lessonsCategory" : null
+        }
+
     },
     "translations" : {
         "method" : "phraseapp",
@@ -39,6 +45,14 @@
         "TestLessonsInvitationsManager": {
             "invitation": { "invitee": { "email": "testlergomail@mailinator.com"}}
         }
+    },
+    "disqus" : {
+        "enabled" : false,
+        "apiKey" : "__apiKey__",
+        "apiSecret" : "__apiSecret__",
+        "authorizeUrl" : "https://disqus.com/api/oauth/2.0/authorize/",
+        "accessTokenUrl" : "https://disqus.com/api/oauth/2.0/access_token/"
+
     }
 
 }

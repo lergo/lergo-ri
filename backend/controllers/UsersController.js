@@ -1,7 +1,9 @@
 'use strict';
 var managers = require('../managers');
+var services = require('../services');
 var logger = managers.log.getLogger('UsersController');
 
+var disqusClient = services.disqus.configure(services.conf.disqus).client;
 
 logger.info('initializing');
 
@@ -21,6 +23,12 @@ exports.signup = function (req, res) {
             return;
         }
     });
+};
+
+
+// returns the disqus sso details required
+exports.disqusLogin = function( req, res ){
+    res.send(disqusClient.ssoObj({ 'id' : req.user._id, 'username' : req.user.username, 'email' : req.user.email }));
 };
 
 // the validation email is sent after signup or after login. user must provide username and password.
