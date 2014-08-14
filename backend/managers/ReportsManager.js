@@ -54,15 +54,8 @@ exports.sendReportLink = function (emailResources, report, callback) {
 };
 
 exports.getUserReports = function(userId, callback) {
-	Report.connect(function(db, collection, done) {
-		collection.find().toArray(function(err, result) {
-			if (!!err) {
-				logger.error('unable to query for reports [%s]', err.message);
-			}
-			done();
-			callback(err, result);
-		});
-	});
+    userId = services.db.id(userId);
+	Report.find({ $or :  [ { 'userId' : userId }, { 'userId' : userId.toString()}, { 'data.inviter' : userId} , { 'data.inviter' : userId.toString()} ]},{},callback);
 };
 
 exports.deleteReport = function(id, callback) {
