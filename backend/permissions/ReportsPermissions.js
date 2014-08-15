@@ -1,7 +1,7 @@
 'use strict';
 
 exports.userCanDelete = function(report, user) {
-	return !!user.isAdmin || report.data.inviter===user._id.toString();
+	return !!user.isAdmin || report.data.inviter === user._id.toString();
 };
 
 exports.userCanDeleteItSelf = function(report, user) {
@@ -11,6 +11,6 @@ exports.userCanDeleteItSelf = function(report, user) {
 exports.getPermissions = function(report, user) {
 	return {
 		'canDelete' : exports.userCanDelete(report, user),
-		'canDeleteItSelf' : exports.userCanDeleteItSelf(lesson, user)
+		'canDeleteItSelf' : exports.userCanDeleteItSelf(report, user)
 	};
 };

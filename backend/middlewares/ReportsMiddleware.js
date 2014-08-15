@@ -34,6 +34,6 @@ exports.userCanDelete = function userCanDelete(req, res, next) {
 		req.deleteUserInfo = true;
 		return next();
 	} else {
-		return res.send(400)
+		return res.send(400);
 	}
 };
