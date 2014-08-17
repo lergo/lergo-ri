@@ -1,5 +1,5 @@
 'use strict';
-var logger = require('log4js').getLogger('EmailTemplateService');
+//var logger = require('log4js').getLogger('EmailTemplateService');
 
 // loading this module asynchronous.
 // this might not be best practice - as we might get requests that require email
@@ -11,16 +11,16 @@ exports.load = function( templatesDir, callback ){
         callback = function(){};
     }
     setTimeout( function(){
-        var emailTemplates = require('email-templates');
-        emailTemplates(templatesDir, function(err, template) {
-            if (!!err ) {
-                logger.error('error while trying to load email templates', err);
-                throw err;
-            }
-            logger.info('loaded email templates successfully');
-            exports.template = template;
-            callback();
-        });
+//        var emailTemplates = require('email-templates');
+//        emailTemplates(templatesDir, function(err, template) {
+//            if (!!err ) {
+//                logger.error('error while trying to load email templates', err);
+//                throw err;
+//            }
+//            logger.info('loaded email templates successfully');
+//            exports.template = template;
+//            callback();
+//        });
     },0);
 };
 
