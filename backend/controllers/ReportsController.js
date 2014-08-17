@@ -38,10 +38,11 @@ exports.updateReport = function(req, res) {
 	var report = req.body;
 	report._id = services.db.id(report._id);
 	report.invitationId = services.db.id(report.invitationId); // convert to db
-    if ( !!req.user ){
-        // if the person who is doing the lesson is logged in, we want to know that.
-        report.userId = req.user._id;
-    }
+	if (!!req.user) {
+		// if the person who is doing the lesson is logged in, we want to know
+		// that.
+		report.userId = req.user._id;
+	}
 	// id.
 	logger.info('creating report to update');
 	new Report(report).update(function(err) {
@@ -81,15 +82,34 @@ exports.getUserReports = function(req, res) {
 };
 
 exports.deleteReport = function(req, res) {
-	managers.reports.deleteReport(req.report._id, function(err, deletedReport) {
-		if (!!err) {
-			logger.error('error deleting report', err);
-			err.send(res);
-			return;
-		} else {
-			res.send(deletedReport);
-			return;
-		}
-	});
+	// when an looged in user tries to delete report of the lesson done by him
+	// in order of someone else invite dont delete the report just remove the
+	// userId from the report so that it will be available to inviter but not to
+	// logged in invitee.
+	if (!!req.deleteUserInfo) {
+		var report = req.report;
+		delete report.userId;
+		new Report(report).update(function(err) {
+			logger.info('report updated');
+			if (!!err) {
+				new managers.error.InternalServerError(err, 'unable to update report').send(res);
+				return;
+			} else {
+				res.send(report);
+				return;
+			}
+		});
+	} else {
+		managers.reports.deleteReport(req.report._id, function(err, deletedReport) {
+			if (!!err) {
+				logger.error('error deleting report', err);
+				err.send(res);
+				return;
+			} else {
+				res.send(deletedReport);
+				return;
+			}
+		});
+	}
 
 };
