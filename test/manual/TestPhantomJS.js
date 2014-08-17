@@ -1,6 +1,6 @@
 'use strict';
 var page = require('webpage').create();
-page.open('http://www.lergo.org/#/public/lessons/53ce54a5a7fe54ef52ade6de/intro', function () {
+page.open('http://www.lergo.org/#!/public/lessons/53ce54a5a7fe54ef52ade6de/intro', function () {
     console.log(page.content);
 //    phantom.exit();
 });

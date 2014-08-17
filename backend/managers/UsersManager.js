@@ -196,7 +196,7 @@ exports.sendValidationEmail = function (emailResources, user, callback) {
     logger.info('sending validation email', user);
     var emailVars = {};
     _.merge(emailVars, emailResources);
-    var validationLink = emailResources.lergoBaseUrl + '/#/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+    var validationLink = emailResources.lergoBaseUrl + '/#!/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
     _.merge(emailVars, { 'link': validationLink, 'name': user.username });
 
@@ -316,7 +316,7 @@ exports.sendResetPasswordMail = function (emailResources, resetDetails, callback
 
         var emailVars = {};
         _.merge(emailVars, emailResources);
-        var changePasswordLink = emailResources.lergoBaseUrl + '/#/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+        var changePasswordLink = emailResources.lergoBaseUrl + '/#!/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac=' + encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
         _.merge(emailVars, { 'link': changePasswordLink, 'name': user.username });
 
