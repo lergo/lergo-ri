@@ -23,6 +23,7 @@ logger.info('loading services');
 var services = require('./backend/services');
 logger.info('services loaded');
 var path = require('path');
+var sm = require('sitemap');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
 
@@ -212,6 +213,46 @@ app.use('/swagger', function () {
 });
 
 
+app.get('/backend/sitemap.xml', function(req, res){
+    var Lesson = require('./backend/models/Lesson');
+    var dateFormat = require('dateformat');
+
+    Lesson.connect(function(db, collection){
+
+        collection.find({ 'public' : { '$exists' : true }},{ '_id' : 1, 'lastUpdate':1 }).sort( { 'lastUpdate' : -1 }).limit(10000).toArray(function(err, result) {
+
+            var sitemap = sm.createSitemap({
+                hostname: req.origin,
+                cacheTime: 6000000,        // 600 sec - cache purge period
+                urls: [ ]
+            });
+
+            for (var i = 0; i < result.length; i++) {
+                var lesson = result[i];
+                var entry = { url: '/#!/public/lessons/' + lesson._id + '/intro', changefreq: 'hourly', priority: 0.5 };
+
+                if (!!lesson.lastUpdate) {
+                    console.log('last update exists');
+                    entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'yyyy-mm-dd');
+                    console.log(entry.lastmod);
+//                entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'YYYY-MM-DDThh:mmTZD');
+                }
+
+                sitemap.urls.push(entry);
+            }
+
+            sitemap.toXML(function (xml) {
+                res.header('Content-Type', 'application/xml');
+                res.send(xml);
+            });
+        });
+
+    });
+
+//
+
+
+}) ;
 
 
 logger.info('catching all exceptions');
