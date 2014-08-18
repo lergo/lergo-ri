@@ -250,9 +250,34 @@ app.get('/backend/sitemap.xml', function(req, res){
     });
 
 //
-
-
 }) ;
+
+app.get('/backend/crawler', function(req, res){
+    var url = req.param('_escaped_fragment_');
+    url = req.absoluteUrl('/index.html#' + decodeURIComponent(url) );
+    logger.info('prerendering url : ' + url ) ;
+
+
+    var phantom = require('phantom');
+    phantom.create(function (ph) {
+        return ph.createPage(function (page) {
+            page.open(url, function ( status ) {
+                if ( status === 'fail'){
+                    res.send(500,'unable to open url');
+                    ph.exit();
+                }else {
+                    page.evaluate(function () {
+                        return document.documentElement.innerHTML;
+                    }, function (result) {
+                        res.send( result);
+                        ph.exit();
+                    });
+                }
+
+            });
+        });
+    });
+});
 
 
 logger.info('catching all exceptions');

@@ -17,19 +17,19 @@ server {
   error_log     /var/log/nginx/$DOMAIN/error.log;
   error_page    404    /404.html;
   error_page    503    /503.html;
+  root /var/www/lergo/lergo-ui;
+  index index.html
+  autoindex off;
 
-  rewrite  ^/$  /index.html  last;
+  if ($args ~ _escaped_fragment_) {
+      rewrite ^(.*)$ /backend/crawler break;
+  }
 
  location /backend{
       proxy_pass http://lergo-backend;
       proxy_set_header Host      \$host;
       proxy_set_header X-Real-IP \$remote_addr;
  }
-
- location / {
-    autoindex off;
-    root /var/www/lergo/lergo-ui;
-  }
 
 }
 
