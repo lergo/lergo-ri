@@ -103,6 +103,12 @@ upgrade_main(){
         tar -xzvf lergo-ri.tgz
         ln -Tfs /var/www/lergo/lib/lergo-ri/package /var/www/lergo/lergo-ri
 
+        if [ "$SEO_SUPPORT" != "false" ];then
+            echo "installing phantom by default"
+            cd /var/www/lergo/lergo-ri
+            npm install phantom
+        fi
+
        # npm install $BACKEND_URL --verbose -g --prefix /var/www/lergo
        # ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
 
