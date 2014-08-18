@@ -23,6 +23,15 @@ install_main(){
         npm install -g bower
     fi
 
+    if [ -h /usr/bin/phantomjs ]; then
+        echo "phantomjs already installed. skipping ... "
+    else
+        npm install -g phantomjs
+    fi
+
+
+
+
     if [ -h /usr/bin/grunt ]; then
         echo "grunt-cli is already installed. skipping.. "
     else
