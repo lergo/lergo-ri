@@ -71,7 +71,9 @@
     "cookie-session",
     "errorhandler",
     "email-templates",
-    "node-rest-client"
+    "node-rest-client",
+      "sitemap",
+      "dateformat"
   ],
   "engines": {
     "node": ">=0.8.0"
