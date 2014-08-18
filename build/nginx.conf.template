@@ -21,7 +21,7 @@ server {
   index index.html
   autoindex off;
 
-  if ($args ~ _escaped_fragment_) {
+  if (\$args ~ "_escaped_fragment_") {
       rewrite ^(.*)$ /backend/crawler break;
   }
 

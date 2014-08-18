@@ -254,7 +254,7 @@ app.get('/backend/sitemap.xml', function(req, res){
 
 app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
-    url = req.absoluteUrl('/index.html#' + decodeURIComponent(url) );
+    url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     logger.info('prerendering url : ' + url ) ;
 
 
