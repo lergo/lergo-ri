@@ -27,6 +27,9 @@ install_main(){
         echo "phantomjs already installed. skipping ... "
     else
         npm install -g phantomjs
+        yum install -y freetype
+        yum install -y fontconfig
+        yum install -y gcc-c++
     fi
 
 
