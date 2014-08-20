@@ -75,7 +75,8 @@
     "node-rest-client",
     "phantom",
     "sitemap",
-    "dateformat"
+    "dateformat",
+    "loggly"
   ],
   "engines": {
     "node": ">=0.8.0"
