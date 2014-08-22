@@ -23,7 +23,7 @@ server {
 
 
   location ~ /index.html {
-    if ($args ~ "_escaped_fragment_") {
+    if (\$args ~ "_escaped_fragment_") {
          rewrite ^(.*)$ /backend/crawler;
     }
   }
