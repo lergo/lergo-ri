@@ -20,6 +20,7 @@ server {
   root /var/www/lergo/lergo-ui;
   index index.html
   autoindex off;
+  rewrite ^/$ \$scheme://\$host/index.html break;
 
 
   location ~ /index.html {
