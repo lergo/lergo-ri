@@ -83,10 +83,8 @@ exports.getLessonIntro = function (req, res) {
 };
 
 exports.copyLesson = function (req, res) {
-    getLessonForUser(req, res, function next() {
-        managers.lessons.copyLesson(req.lesson, function (err, result) {
-            res.send(result);
-        });
+    managers.lessons.copyLesson(req.user, req.lesson, function (err, result) {
+        res.send(result);
     });
 };
 

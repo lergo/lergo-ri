@@ -151,7 +151,7 @@ exports.getUserPermissions = {
         'nickname': 'getUserLessonPermissions'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.users.optionalUserOnRequest,
         middlewares.lessons.exists
     ],
     'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.lesson,req.user)); }
@@ -264,6 +264,30 @@ exports.likeLesson = {
     'action': controllers.lessons.deleteLesson
 };
 
+exports.copyLesson = {
+    'spec': {
+        'description': 'Copy lesson',
+        'name': 'copy',
+        'path': '/lessons/{lessonId}/copy',
+        'summary': 'copy lesson. prefix title with "Copy for" new lesson',
+        'method': 'POST',
+        'parameters': [
 
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to copy'
+            }
+        ],
+        'nickname': 'copyLesson'
+    },
+    'middlewares' : [
+        middlewares.users.exists,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanCopy
+    ],
+    'action': controllers.lessons.copyLesson
+};
 
 

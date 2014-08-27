@@ -21,11 +21,11 @@ exports.exists= function exists( req, res, next ){
     try {
         Lesson.findById(req.params.lessonId, function (err, result) {
             if (!!err) {
-                res.send(500, err);
+                res.status(500).send(err);
                 return;
             }
             if (!result) {
-                res.send(404);
+                res.status(404).send('');
                 return;
             }
 
@@ -36,7 +36,7 @@ exports.exists= function exists( req, res, next ){
 
         });
     }catch(e){
-        res.send(404);
+        res.status(404).send('');
     }
 };
 
@@ -51,12 +51,16 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit lesson');
-    return permissions.lessons.userCanEdit( req.lesson, req.user ) ? next() : res.send(400);
+    return permissions.lessons.userCanEdit( req.lesson, req.user ) ? next() : res.status(400).send('');
 };
 
 
 exports.userCanDelete = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanDelete( req.lesson, req.user ) ? next() : res.send(400);
+    return permissions.lessons.userCanDelete( req.lesson, req.user ) ? next() : res.status(400).send('');
+};
+
+exports.userCanCopy = function userCanDelete(req, res, next){
+    return permissions.lessons.userCanCopy( req.lesson, req.user ) ? next() : res.status(400).send('');
 };
 
 /*
@@ -67,7 +71,7 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
 
     logger.debug('checking if user can see private lessons');
     if ( !permissions.app.userCanManage(req.user) ){
-        res.send(400);
+        res.status(400).send('');
         return;
     }
     next();

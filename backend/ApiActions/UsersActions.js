@@ -375,26 +375,7 @@ exports.findQuestionUsages = {
 };
 
 
-exports.copyLesson = {
-    'spec': {
-        'description': 'Copy lesson',
-        'name': 'copy',
-        'path': '/user/lessons/{id}/copy',
-        'summary': 'copy lesson. prefix title with "Copy for" new lesson',
-        'method': 'POST',
-        'parameters': [
 
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to copy'
-            }
-        ],
-        'nickname': 'copyLesson'
-    },
-    'action': controllers.lessons.copyLesson
-};
 exports.copyQuestion = {
     'spec': {
         'description': 'Copy question',
