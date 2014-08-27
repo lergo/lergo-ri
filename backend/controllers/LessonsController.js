@@ -1,24 +1,7 @@
 'use strict';
 var managers = require('../managers');
-var services = require('../services');
+
 var logger = require('log4js').getLogger('LessonsController');
-
-function getLessonForUser(req, res, next) {
-    managers.lessons.getLesson({'_id': services.db.id(req.params.id || req.params.lessonId), 'userId': req.user._id }, function (err, obj) {
-        if (!!err) {
-            err.send(res);
-            return;
-        } else if (!obj) {
-            new managers.error.NotFound(null, 'could not find lesson').send(res);
-            return;
-        } else {
-            req.lesson = obj;
-            next();
-        }
-
-    });
-}
-
 
 exports.getUserLessons = function (req, res) {
     managers.lessons.getUserLessons(req.user._id, function (err, obj) {
