@@ -1,7 +1,6 @@
 'use strict';
 exports.usersActions = require('./UsersActions');
 exports.publicActions = require('./PublicActions');
-exports.adminActions = require('./AdminActions');
 exports.lessonsActions = require('./LessonsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');

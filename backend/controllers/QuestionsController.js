@@ -6,7 +6,7 @@ var logger = require('log4js').getLogger('QuestionsController');
 
 exports.create = function (req, res) {
     var question = req.body;
-    question.userId = managers.db.id(req.user._id);
+    question.userId = managers.db.id(req.sessionUser._id);
     managers.questions.createQuestion(question, function (err, obj) {
         if (!!err) {
             err.send(res);
@@ -32,7 +32,7 @@ exports.findUsages = function (req, res) {
 
 function getUserQuestionById(req, res, next) {
     var questionId = req.params.questionId || req.params.id;
-    managers.questions.search({ 'userId': req.user._id, '_id': managers.db.id(questionId)}, {}, function (err, data) {
+    managers.questions.search({ 'userId': req.sessionUser._id, '_id': managers.db.id(questionId)}, {}, function (err, data) {
         try {
             if (!err && !!data && !!data.length && data.length > 0) {
                 req.question = data[0];
@@ -47,7 +47,7 @@ function getUserQuestionById(req, res, next) {
 
 
 exports.getQuestions = function (req, res) {
-    managers.questions.getQuestions( { 'userId' : req.user._id }, function (err, obj) {
+    managers.questions.getQuestions( { 'userId' : req.sessionUser._id }, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -81,7 +81,7 @@ exports.update = function (req, res) {
 };
 
 exports.getUserQuestions = function (req, res) {
-    managers.questions.getUserQuestions(req.user._id, function (err, obj) {
+    managers.questions.getUserQuestions(req.sessionUser._id, function (err, obj) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get user questions').send(res);
             return;
@@ -102,9 +102,9 @@ exports.getUserQuestions = function (req, res) {
  * @param req
  * @param res
  */
-exports.findUserQuestionsByIds = function (req, res) {
+exports.findQuestionsByIds = function (req, res) {
 
-    var objectIds = req.getQueryList('ids');
+    var objectIds = req.getQueryList('questionsId');
     logger.info('this is object ids', objectIds);
     objectIds = managers.db.id(objectIds);
 
@@ -175,7 +175,7 @@ exports.checkQuestionAnswer = function( req, res ){
 exports.deleteQuestion = function (req, res) {
     var id = req.params.id;
     logger.info('Deleting question:', id);
-    managers.questions.deleteQuestion(id, req.user._id, function (err, obj) {
+    managers.questions.deleteQuestion(id, req.sessionUser._id, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;

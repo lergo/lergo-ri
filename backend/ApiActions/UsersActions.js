@@ -224,7 +224,7 @@ exports.disqusLogin = {
 
     },
     'middlewares' : [
-        middlewares.users.exists
+        middlewares.session.isLoggedIn
     ],
     'action': controllers.users.disqusLogin
 };
@@ -270,32 +270,7 @@ exports.getQuestions = {
     'action': controllers.questions.getQuestions
 };
 
-exports.findQuestionsByIds = {
-    'spec': {
-        'description': 'Finds multiple questions by list of ids',
-        'name': 'findQuestionsById',
-        'path': '/questions/find',
-        'summary': 'Finds multiple questions by list of ids',
-        'method': 'GET',
-        'parameters': [
-            {
-                'paramType': 'query',
-                'name': 'ids',
-                'required': false,
-                'description': 'list of ids to find',
-                'type': 'array',
-                'items': {
-                    'type': 'string'
-                }
 
-            }
-        ],
-        'nickname': 'findQuestionsById'
-
-
-    },
-    'action': controllers.questions.findUserQuestionsByIds
-};
 
 
 exports.getQuestionById = {
@@ -323,6 +298,42 @@ exports.getQuestionById = {
         'nickname': 'getQuestionById'
     },
     'action': controllers.questions.getQuestionById
+};
+
+
+exports.getUsersById = {
+    'spec': {
+        'description': 'gets users by id. exposes details according to permissions',
+        'name': 'getUsersById',
+        'path': '/users/find',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Find users',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'query',
+                'name': 'usersId',
+                'required': false,
+                'description': 'list of ids to find',
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'findUsers'
+    },
+    'middlewares': [
+        middlewares.session.optionalUserOnRequest
+    ],
+    'action': controllers.users.findUsersById
 };
 
 exports.deleteQuestion = {
@@ -544,8 +555,8 @@ exports.getUsers = {
     },
     'action': controllers.users.getAll,
     'middlewares' : [
-        middlewares.users.exists,
-        middlewares.users.isAdmin
+        middlewares.session.isLoggedIn,
+        middlewares.session.isAdmin
     ]
 };
 
@@ -567,9 +578,9 @@ exports.getPermissions = {
         ],
         'nickname': 'getUserPermissions'
     },
-    'action': function(req, res){ res.send(permissions.app.getPermissions( req.user ));},
+    'action': function(req, res){ res.send(permissions.app.getPermissions( req.sessionUser ));},
     'middlewares' : [
-        middlewares.users.exists
+        middlewares.session.isLoggedIn
 
     ]
 };
@@ -586,6 +597,49 @@ exports.getLike = {
         'description': 'Get like',
         'name': 'getLike',
         'path': '/user/me/likes/{itemType}/{itemId}',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'gets a like',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'itemId',
+                'required': true,
+                'description': 'item id',
+                'type': 'ObjectIDHash'
+            },
+            {
+                'paramType': 'path',
+                'name': 'itemType',
+                'required': true,
+                'description': 'item type',
+                'type': 'LikeItemType'
+            }
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getItemLike'
+    },
+    'middlewares': [
+        middlewares.users.exists,
+        middlewares.likes.itemExists,
+        middlewares.likes.exists
+    ],
+    'action': controllers.likes.getLike
+};
+
+
+exports.getUserPublicDetails = {
+    'spec': {
+        'description': 'Get user public details',
+        'name': 'getUserPublicDetails',
+        'path': '/users/{userId}/likes/{itemType}/{itemId}',
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
         'summary': 'gets a like',

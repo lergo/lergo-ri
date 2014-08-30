@@ -1,19 +1,16 @@
 'use strict';
 var managers = require('../managers');
+var permissions = require('../permissions');
 var services = require('../services');
 var logger = managers.log.getLogger('UsersController');
-
+var User = require('../models/User');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
 
 logger.info('initializing');
 
-function getUserPublicDetails(user) {
-	return {
-		'username' : user.username,
-		'isAdmin' : user.isAdmin,
-		'_id' : user._id
-	};
-}
+exports.getUserPublicDetails = function (req, res ){
+    res.send(User.getUserPublicDetails(req.sessionUser));
+};
 
 exports.signup = function(req, res) {
 	var user = req.body;
@@ -35,47 +32,47 @@ exports.signup = function(req, res) {
 // returns the disqus sso details required
 exports.disqusLogin = function(req, res) {
 	res.send(disqusClient.ssoObj({
-		'id' : req.user._id,
-		'username' : req.user.username,
-		'email' : req.user.email
+		'id' : req.sessionUser._id,
+		'username' : req.sessionUser.username,
+		'email' : req.sessionUser.email
 	}));
 };
 
 // the validation email is sent after signup or after login. user must provide
 // username and password.
-exports.resendValidationEmail = function(req, res) {
+exports.resendValidationEmail = function (req, res) {
 
-	var loginCredentials = req.body;
-	managers.users.loginUser(loginCredentials, function(err, loggedInUser) {
-		if (!!err) {
-			err.send(res);
-			return;
-		}
-		if (!loggedInUser) {
-			new managers.error.WrongLogin().send(res);
-			return;
-		}
+    var loginCredentials = req.body;
+    managers.users.loginUser(loginCredentials, function (err, loggedInUser) {
+        if (!!err) {
+            err.send(res);
+            return;
+        }
+        if (!loggedInUser) {
+            new managers.error.WrongLogin().send(res);
+            return;
+        }
 
-		if (!!loggedInUser.validated) {
-			new managers.error.UserAlreadyValidated().send(res);
-			return;
-		}
+        if (!!loggedInUser.validated) {
+            new managers.error.UserAlreadyValidated().send(res);
+            return;
+        }
 
-		managers.users.sendValidationEmail(req.emailResources, loggedInUser, function(err, user) {
-			if (!!err) {
-				err.send(res);
-				return;
-			}
+        managers.users.sendValidationEmail(req.emailResources, loggedInUser, function (err, user) {
+            if (!!err) {
+                err.send(res);
+                return;
+            }
 
-			if (!user) {
-				new managers.error.InternalServerError(null, 'did not get a user after sending validation email').send(res);
-				return;
-			}
+            if (!user) {
+                new managers.error.InternalServerError(null, 'did not get a user after sending validation email').send(res);
+                return;
+            }
 
-			res.send(getUserPublicDetails(user));
-		});
+            res.send(User.getUserPublicDetails(user));
+        });
 
-	});
+    });
 };
 
 exports.getAll = function(req, res) {
@@ -103,7 +100,7 @@ exports.login = function(req, res) {
 		}
 
 		req.session.userId = loggedInUser.getId();
-		res.send(getUserPublicDetails(loggedInUser));
+		res.send(User.getUserPublicDetails(loggedInUser));
 	});
 };
 
@@ -125,7 +122,7 @@ exports.validateUser = function(req, res) {
 		}
 
 		req.session.userId = validatedUser.getId();
-		res.send(getUserPublicDetails(validatedUser));
+		res.send(User.getUserPublicDetails(validatedUser));
 
 	});
 };
@@ -143,12 +140,47 @@ exports.requestPasswordReset = function(req, res) {
 	});
 };
 
+
+/**
+ * gets a list of ids and returns the corresponding lessons.
+ *
+ * how to pass a list of ids over req query?
+ *
+ * ?idsList[]=1&idsList[]=2&idsList[]=3
+ *
+ * @param req
+ * @param res
+ */
+exports.findUsersById = function (req, res) {
+
+    var objectIds = req.getQueryList('usersId');
+    logger.info('this is object ids', objectIds);
+    objectIds = managers.db.id(objectIds);
+
+    User.find({ '_id': { '$in': objectIds }}, {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
+            return;
+        } else {
+
+            // hide private info if logged in user does not have permissions
+            if ( !permissions.users.canSeePrivateUserDetails(req.sessionUser, null ) ){
+                result = User.getUserPublicDetails( result );
+            }
+
+            res.send(result);
+            return;
+        }
+    });
+};
+
+
 exports.changePassword = function(req, res) {
 
 	logger.info('changing password for user');
 	var changePasswordDetails = req.body;
 
-	managers.users.changePassword(changePasswordDetails, req.user, function(err, user) {
+	managers.users.changePassword(changePasswordDetails, req.sessionUser, function(err, user) {
 		if (!!err) {
 			res.send(500, err);
 		} else {
@@ -164,7 +196,7 @@ exports.changePassword = function(req, res) {
 };
 
 exports.isLoggedIn = function(req, res) {
-	res.send(getUserPublicDetails(req.user));
+	res.send(User.getUserPublicDetails(req.sessionUser));
 };
 
 exports.logout = function(req, res) {

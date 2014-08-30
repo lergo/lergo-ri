@@ -1,10 +1,10 @@
 'use strict';
 var managers = require('../managers');
-
 var logger = require('log4js').getLogger('LessonsController');
+var Lesson = require('../models/Lesson');
 
 exports.getUserLessons = function (req, res) {
-    managers.lessons.getUserLessons(req.user._id, function (err, obj) {
+    managers.lessons.getUserLessons(req.sessionUser._id, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -66,7 +66,7 @@ exports.getLessonIntro = function (req, res) {
 };
 
 exports.copyLesson = function (req, res) {
-    managers.lessons.copyLesson(req.user, req.lesson, function (err, result) {
+    managers.lessons.copyLesson(req.sessionUser, req.lesson, function (err, result) {
         res.send(result);
     });
 };
@@ -114,7 +114,7 @@ exports.update = function( req, res ){
 
 exports.create = function (req, res) {
     var lesson = {};
-    lesson.userId = req.user._id;
+    lesson.userId = req.sessionUser._id;
     managers.lessons.createLesson(lesson, function (err, obj) {
         if (!!err) {
             err.send(res);
@@ -125,6 +125,35 @@ exports.create = function (req, res) {
         }
     });
 };
+
+
+/**
+ * gets a list of ids and returns the corresponding lessons.
+ *
+ * how to pass a list of ids over req query?
+ *
+ * ?idsList[]=1&idsList[]=2&idsList[]=3
+ *
+ * @param req
+ * @param res
+ */
+exports.findLessonsByIds = function (req, res) {
+
+    var objectIds = req.getQueryList('lessonsId');
+    logger.info('this is object ids', objectIds);
+    objectIds = managers.db.id(objectIds);
+
+    Lesson.find({ '_id': { '$in': objectIds }}, {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
+            return;
+        } else {
+            res.send(result);
+            return;
+        }
+    });
+};
+
 
 exports.deleteLesson = function (req, res) {
     managers.lessons.deleteLesson(req.lesson._id, function (err, deletedLesson) {

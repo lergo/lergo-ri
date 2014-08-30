@@ -28,9 +28,37 @@ exports.create = {
         'nickname': 'createQuestion'
     },
     'middlewares' : [
-        middlewares.users.exists
+        middlewares.session.isLoggedIn
     ],
     'action': controllers.questions.create
+};
+
+
+exports.findQuestionsByIds = {
+    'spec': {
+        'description': 'Finds multiple questions by list of ids',
+        'name': 'findQuestionsById',
+        'path': '/questions/find',
+        'summary': 'Finds multiple questions by list of ids',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'query',
+                'name': 'ids',
+                'required': false,
+                'description': 'list of ids to find',
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+
+            }
+        ],
+        'nickname': 'findQuestionsById'
+
+
+    },
+    'action': controllers.questions.findQuestionsByIds
 };
 
 exports.getById  = {
@@ -92,10 +120,10 @@ exports.getUserPermissions = {
         'nickname': 'getUserQuestionPermissions'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.questions.exists
     ],
-    'action': function( req, res ){ res.send(permissions.questions.getPermissions(req.question,req.user)); }
+    'action': function( req, res ){ res.send(permissions.questions.getPermissions(req.question,req.sessionUser)); }
 };
 
 
@@ -133,7 +161,7 @@ exports.editQuestion = {
         'nickname': 'editQuestion'
     },
     'middlewares' : [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.questions.exists,
         middlewares.questions.userCanEdit
     ],

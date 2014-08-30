@@ -60,9 +60,23 @@ exports.copyLesson = function (user, lesson, callback) {
     // pick only specific fields.
 
     var lessonId = lesson._id;
+
+    // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
+    // copy of is transitive property of a lesson;
+    var copyOf = lesson.copyOf;
+
     lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
     lesson.name = 'Copy of : ' + lesson.name;
-    lesson.copyOf = lessonId;
+    lesson.copyOf = [lessonId];
+
+    // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
+    if ( !!copyOf ){ // concatenate the copyOf as it is a transitive property.
+        lesson.copyOf = lesson.copyOf.concat(copyOf);
+    }
+
+
+
+
     lesson.createdAt = new Date();
     lesson.userId = services.db.id(user._id);
 
@@ -186,7 +200,7 @@ exports.getPublicLessons = function(callback) {
 				'$exists' : true
 			}
 		}, {}).each(function(err, obj) {
-			logger.info('handling lesson');
+			logger.debug('handling lesson');
 			if (obj === null) { // means we found all lessons
 				done();
 				usersManager.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {

@@ -37,7 +37,7 @@ exports.createLike = {
         'nickname': 'createLike'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.likes.itemExists,
         middlewares.likes.notExists
     ],
@@ -82,7 +82,7 @@ exports.deleteLike = {
         'nickname': 'deleteLike'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.likes.itemExists,
         middlewares.likes.exists
     ],

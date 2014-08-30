@@ -38,10 +38,10 @@ exports.updateReport = function(req, res) {
 	var report = req.body;
 	report._id = services.db.id(report._id);
 	report.invitationId = services.db.id(report.invitationId); // convert to db
-	if (!!req.user) {
+	if (!!req.sessionUser) {
 		// if the person who is doing the lesson is logged in, we want to know
 		// that.
-		report.userId = req.user._id;
+		report.userId = req.sessionUser._id;
 	}
 	// id.
 	logger.info('creating report to update');
@@ -70,7 +70,7 @@ exports.sendReportReady = function(req, res) {
 };
 
 exports.getUserReports = function(req, res) {
-	managers.reports.getUserReports(req.user._id, function(err, obj) {
+	managers.reports.getUserReports(req.sessionUser._id, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

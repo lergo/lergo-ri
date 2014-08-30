@@ -72,8 +72,8 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
-app.use('/backend/user', middlewares.users.loggedInMiddleware);
-app.use('/backend/admin', middlewares.users.isAdminMiddleware);
+app.use('/backend/user', middlewares.session.isLoggedIn);
+app.use('/backend/admin', middlewares.session.isAdmin);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
@@ -260,6 +260,16 @@ app.get('/backend/crawler', function(req, res){
 
     var phantom = require('phantom');
     phantom.create(function (ph) {
+
+        setTimeout( function(){
+            try{
+                ph.exit();
+            }catch(e){
+                logger.debug('unable to close phantom',e);
+            }
+        }, 30000);
+
+
         return ph.createPage(function (page) {
             page.open(url, function ( status ) {
                 if ( status === 'fail'){

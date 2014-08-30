@@ -92,7 +92,7 @@ exports.toMap = function( cursor, callback ){
     logger.info('turning result to map');
     var result = {};
     cursor.each(function(err, doc){
-        logger.info('handling doc', doc);
+        logger.debug('handling doc', doc);
         if ( !!err ){
             callback(err);
         }

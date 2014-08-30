@@ -8,7 +8,7 @@ var logger = require('log4js').getLogger('LessonsInvitationsController');
 function findLesson(req, res, next) {
     var lessonId = req.params.lessonId;
     logger.info('finding lesson', JSON.stringify(lessonId));
-    managers.lessons.getLesson({ '_id': managers.db.id(lessonId), 'userId': req.user._id }, function (err, result) {
+    managers.lessons.getLesson({ '_id': managers.db.id(lessonId), 'userId': req.sessionUser._id }, function (err, result) {
         if (!!err) {
             logger.error('unable to findLesson', err);
             err.send(res);
@@ -30,14 +30,14 @@ exports.create = function (req, res) {
     invitation = _.merge({ 'anonymous': anonymous, 'lessonId': req.lesson._id }, invitation);
 
     // add inviter in case we have details and this is not an anonymous invitation
-    if (!!req.user && !anonymous ) {
-        invitation.inviter = req.user._id;
+    if (!!req.sessionUser && !anonymous ) {
+        invitation.inviter = req.sessionUser._id;
     }
 
     // in case user is logged in and there's no invitee details, set logged in user as invitee
-    if ( anonymous && !!req.user) {
+    if ( anonymous && !!req.sessionUser) {
         logger.debug('setting invitee on invitation');
-        invitation.invitee = { 'name': req.user.username };
+        invitation.invitee = { 'name': req.sessionUser.username };
     }
 
     managers.lessonsInvitations.create(invitation, function (err, result) {

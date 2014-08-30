@@ -39,7 +39,7 @@ exports.lessonInviteCreate = {
     },
     'middlewares' : [
         middlewares.lessons.exists,
-        middlewares.users.optionalUserOnRequest
+        middlewares.session.optionalUserOnRequest
     ],
     'action': controllers.lessonsInvitations.create
 };

@@ -77,7 +77,7 @@ exports.updateReport = {
         'nickname': 'updateReport'
     },
     'middlewares' : [
-        middlewares.users.optionalUserOnRequest,
+        middlewares.session.optionalUserOnRequest,
         middlewares.reports.exists
     ],
     'action': controllers.reports.updateReport
@@ -142,7 +142,7 @@ exports.deleteReport = {
 	        'nickname': 'deleteReport'
 	    },
 	    'middlewares' : [
-	        middlewares.users.exists,
+	        middlewares.session.isLoggedIn,
 	        middlewares.reports.exists,
 	        middlewares.reports.userCanDelete
 	    ],

@@ -25,7 +25,7 @@ exports.getAdminLessons = {
         'nickname': 'getAdminLessons'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.lessons.userCanSeePrivateLessons
     ],
     'action': controllers.lessons.getAdminLessons
@@ -53,10 +53,43 @@ exports.getLessonIntro = {
         'nickname': 'getLessonIntro'
     },
     'middlewares': [
-        middlewares.users.optionalUserOnRequest,
+        middlewares.session.optionalUserOnRequest,
         middlewares.lessons.exists
     ],
     'action': controllers.lessons.getLessonIntro
+};
+
+
+exports.getLessonsById = {
+    'spec': {
+        'description': 'Gets all lessons by id',
+        'name': 'getLessonsById',
+        'path': '/lessons/find',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'Find lessons',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'query',
+                'name': 'lessonsId',
+                'required': false,
+                'description': 'list of ids to find',
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'findLessons'
+    },
+    'action': controllers.lessons.findLessonsByIds
 };
 
 
@@ -85,7 +118,7 @@ exports.createLesson = {
         'nickname': 'createLesson'
     },
     'middlewares' : [
-        middlewares.users.exists
+        middlewares.session.isLoggedIn
     ],
     'action': controllers.lessons.create
 };
@@ -116,7 +149,7 @@ exports.getUserLessonById = {
         'nickname': 'getLessonById'
     },
     'middlewares' : [
-        middlewares.users.optionalUserOnRequest,
+        middlewares.session.optionalUserOnRequest,
         middlewares.lessons.exists,
         middlewares.lessons.userCanViewLesson
     ],
@@ -151,10 +184,10 @@ exports.getUserPermissions = {
         'nickname': 'getUserLessonPermissions'
     },
     'middlewares': [
-        middlewares.users.optionalUserOnRequest,
+        middlewares.session.optionalUserOnRequest,
         middlewares.lessons.exists
     ],
-    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.lesson,req.user)); }
+    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.lesson,req.sessionUser)); }
 };
 
 
@@ -192,7 +225,7 @@ exports.editLesson = {
         'nickname': 'editLesson'
     },
     'middlewares' : [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanEdit
     ],
@@ -224,7 +257,7 @@ exports.deleteLesson = {
         'nickname': 'deleteLesson'
     },
     'middlewares' : [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanDelete
     ],
@@ -257,7 +290,7 @@ exports.likeLesson = {
         'nickname': 'deleteLesson'
     },
     'middlewares' : [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanDelete
     ],
@@ -283,7 +316,7 @@ exports.copyLesson = {
         'nickname': 'copyLesson'
     },
     'middlewares' : [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanCopy
     ],

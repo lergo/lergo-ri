@@ -51,16 +51,16 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit lesson');
-    return permissions.lessons.userCanEdit( req.lesson, req.user ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanEdit( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
 };
 
 
 exports.userCanDelete = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanDelete( req.lesson, req.user ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanDelete( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
 };
 
 exports.userCanCopy = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanCopy( req.lesson, req.user ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanCopy( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
 };
 
 /*
@@ -70,7 +70,7 @@ exports.userCanCopy = function userCanDelete(req, res, next){
 exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
 
     logger.debug('checking if user can see private lessons');
-    if ( !permissions.app.userCanManage(req.user) ){
+    if ( !permissions.app.userCanManage(req.sessionUser) ){
         res.status(400).send('');
         return;
     }

@@ -27,7 +27,7 @@ Like.createNew = function( itemType, itemId, userId ){
 };
 
 Like.createNewFromRequest = function( req ){
-    return Like.createNew(req.likeItemType, req.likeItem._id, req.user._id);
+    return Like.createNew(req.likeItemType, req.likeItem._id, req.sessionUser._id);
 };
 
 AbstractModel.enhance(Like);
