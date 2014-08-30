@@ -273,32 +273,6 @@ exports.getQuestions = {
 
 
 
-exports.getQuestionById = {
-    'spec': {
-        'description': 'Get question by id',
-        'name': 'getQuestions',
-        'path': '/user/questions/{id}',
-        'summary': 'Get question by id',
-        'method': 'GET',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of question that needs to be fetched',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to get question'
-            }
-        ],
-        'nickname': 'getQuestionById'
-    },
-    'action': controllers.questions.getQuestionById
-};
 
 
 exports.getUsersById = {
@@ -387,26 +361,7 @@ exports.findQuestionUsages = {
 
 
 
-exports.copyQuestion = {
-    'spec': {
-        'description': 'Copy question',
-        'name': 'copy',
-        'path': '/user/questions/{id}/copy',
-        'summary': 'copy question. prefix title with "Copy for" new question',
-        'method': 'POST',
-        'parameters': [
 
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to copy'
-            }
-        ],
-        'nickname': 'copyQuestion'
-    },
-    'action': controllers.questions.copyQuestion
-};
 exports.getUserLessons = {
     'spec': {
         'description': 'Get user lessons',

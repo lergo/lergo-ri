@@ -3,6 +3,53 @@ var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');
 
+
+
+exports.getPublicLessonQuestions = {
+    'spec': {
+        'description': 'find all questions for public lessons ',
+        'name': 'getPublicLessonQuestions',
+        'path': '/questions/publicLessons',
+        'summary': 'finds all questions of public lessons',
+        'method': 'GET',
+        'parameters': [
+        ],
+        'nickname': 'getPublicLessonQuestions'
+
+
+    },
+    'middlewares' : [
+
+        middlewares.lergo.queryParamsDefault
+    ],
+    'action': controllers.questions.getPublicLessonQuestions
+};
+
+exports.copyQuestion = {
+    'spec': {
+        'description': 'Copy question',
+        'name': 'copy',
+        'path': '/questions/{questionId}/copy',
+        'summary': 'copy question. prefix title with "Copy for" new question',
+        'method': 'POST',
+        'parameters': [
+
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to copy'
+            }
+        ],
+        'nickname': 'copyQuestion'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.questions.exists
+    ],
+    'action': controllers.questions.copyQuestion
+};
+
 exports.create = {
     'spec': {
         'description': 'Create question',
@@ -60,6 +107,10 @@ exports.findQuestionsByIds = {
     },
     'action': controllers.questions.findQuestionsByIds
 };
+
+
+
+
 
 exports.getById  = {
     'spec': {

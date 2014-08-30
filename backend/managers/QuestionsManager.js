@@ -4,6 +4,7 @@ var dbManager = require('./DbManager');
 var errorManager = require('./ErrorManager');
 var _ = require('lodash');
 var Question = require('../models/Question');
+var services = require('../services');
 
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
@@ -25,13 +26,14 @@ exports.createQuestion = function(question, callback) {
 	});
 };
 
-exports.copyQuestion = function( question, callback ){
+exports.copyQuestion = function( user, question, callback ){
     logger.info('Copying question');
 
     // use omit and not pick, because there are different types of questions
     question = _.omit( question, [ '_id','lastUpdate' ] );
 
     question.question = 'Copy of : ' + question.question;
+    question.userId = user._id;
 
     dbManager.connect('questions', function( db, collection ){
         collection.insert(question, function(err){
@@ -157,4 +159,18 @@ exports.findUsages = function(id, callback) {
 			callback(err, result);
 		});
 	});
+};
+
+
+exports.getQuestionsById = function (objectIds, callback) {
+    objectIds = services.db.id(objectIds);
+    Question.find({ '_id': { '$in': objectIds }}, { 'userId': 0 }, function (err, result) {
+        if (!!err) {
+            callback(new errorManager.InternalServerError(err, 'unable to find user questions by ids'));
+            return;
+        } else {
+            callback(null, result);
+            return;
+        }
+    });
 };

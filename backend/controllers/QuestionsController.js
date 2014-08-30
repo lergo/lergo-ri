@@ -1,8 +1,9 @@
 'use strict';
 var managers = require('../managers');
 var services = require('../services');
-
+var models = require('../models');
 var logger = require('log4js').getLogger('QuestionsController');
+var _ = require('lodash');
 
 exports.create = function (req, res) {
     var question = req.body;
@@ -28,23 +29,6 @@ exports.findUsages = function (req, res) {
     res.send([]);
 
 };
-
-
-function getUserQuestionById(req, res, next) {
-    var questionId = req.params.questionId || req.params.id;
-    managers.questions.search({ 'userId': req.sessionUser._id, '_id': managers.db.id(questionId)}, {}, function (err, data) {
-        try {
-            if (!err && !!data && !!data.length && data.length > 0) {
-                req.question = data[0];
-            }
-        } catch (e) {
-            logger.error('unable to getUserQuestionById', e);
-
-        }
-        next();
-    });
-}
-
 
 exports.getQuestions = function (req, res) {
     managers.questions.getQuestions( { 'userId' : req.sessionUser._id }, function (err, obj) {
@@ -106,17 +90,17 @@ exports.findQuestionsByIds = function (req, res) {
 
     var objectIds = req.getQueryList('questionsId');
     logger.info('this is object ids', objectIds);
-    objectIds = managers.db.id(objectIds);
 
-    managers.questions.search({ '_id': { '$in': objectIds }}, { 'userId': 0 }, function (err, result) {
-        if (!!err) {
-            new managers.error.InternalServerError(err, 'unable to find user questions by ids').send(res);
-            return;
-        } else {
-            res.send(result);
+
+    managers.questions.getQuestionsById(objectIds, function(err, result){
+        if ( !!err ){
+            err.send(res);
             return;
         }
+
+        res.send(result);
     });
+
 };
 
 exports.findUsages = function (req, res) {
@@ -188,9 +172,38 @@ exports.deleteQuestion = function (req, res) {
 
 
 exports.copyQuestion = function (req, res) {
-    getUserQuestionById(req, res, function next() {
-        managers.questions.copyQuestion(req.question, function (err, result) {
-            res.send(result);
+    managers.questions.copyQuestion( req.sessionUser, req.question, function (err, result) {
+        res.send(result);
+    });
+};
+
+       //db.lessons.aggregate([{'$project':{ 'steps' : '$steps' }}, {'$unwind': '$steps'},{'$match' :{'steps.type' : 'quiz'}}, {'$unwind' : '$steps.quizItems'}, {'$project' : {'item' : '$steps.quizItems'}}])
+
+exports.getPublicLessonQuestions = function(req, res){
+    models.Lesson.connect(function (db, collection) {
+        collection.aggregate([
+            {'$match' : {'public' : {'$exists' : 1 }}},
+            {'$project':{ 'steps' : '$steps' }},
+            {'$unwind': '$steps'},
+            {'$match' :{'steps.type' : 'quiz'}},
+            {'$unwind' : '$steps.quizItems'},
+            {'$project' : {'item' : '$steps.quizItems'}},
+            {'$group': {'_id' : '$item'}},
+            {'$skip' : req.param('_skip') },
+            {'$limit' : req.param('_limit') }
+
+        ], function(err, args){
+            if ( !!err ){
+                res.status(500).send(err);
+                return;
+            }
+            managers.questions.getQuestionsById(_.map(args,'_id'), function(err, result){
+                if ( !!err ){
+                    err.send(res);
+                    return;
+                }
+                res.send(result);
+            });
         });
     });
 };

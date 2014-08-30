@@ -20,11 +20,11 @@ exports.exists= function exists( req, res, next ){
     logger.info('checking if question exists : ' , req.params.questionId );
     Question.findById( req.params.questionId, function(err, result){
         if ( !!err ){
-            res.send(500,err);
+            res.status(500).send(err);
             return;
         }
         if ( !result ){
-            res.send(404);
+            res.status(404).send({});
             return;
         }
 
@@ -47,7 +47,7 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit');
-    return permissions.questions.userCanEdit( req.question, req.sessionUser ) ? next() : res.send(400);
+    return permissions.questions.userCanEdit( req.question, req.sessionUser ) ? next() : res.status(400).send({});
 };
 
 /*
@@ -57,7 +57,7 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res, next){
     logger.debug('checking if user can see');
     if ( !permissions.app.userCanManage(req.sessionUser) ){
-        res.send(400);
+        res.status(400).send({});
         return;
     }
     next();
