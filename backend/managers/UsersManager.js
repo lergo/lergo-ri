@@ -63,6 +63,11 @@ exports.getUserDetailsError = function (user) {
 exports.createUser = function (emailResources, user, callback) {
     logger.info('saving user');
 
+    if ( !user.fullName ){
+        callback( new errorManager.InternalServerError(null, 'missing fullname'));
+        return;
+    }
+
     var userError = exports.getUserDetailsError(user);
     if (!!userError) {
         callback(userError);
