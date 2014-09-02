@@ -29,11 +29,24 @@ exports.createQuestion = function(question, callback) {
 exports.copyQuestion = function( user, question, callback ){
     logger.info('Copying question');
 
+    var copyOf = [];
+    if ( user._id.toString() !== question.userId ){
+        copyOf = copyOf.concat(question._id);
+    }
+
+    // copy of is a transitive property.
+    if ( !!question.copyOf ){
+        copyOf = copyOf.concat(question.copyOf);
+    }
+
     // use omit and not pick, because there are different types of questions
     question = _.omit( question, [ '_id','lastUpdate' ] );
 
     question.question = 'Copy of : ' + question.question;
     question.userId = user._id;
+    if ( copyOf.length > 0 ){
+        question.copyOf = copyOf;
+    }
 
     dbManager.connect('questions', function( db, collection ){
         collection.insert(question, function(err){
@@ -164,7 +177,7 @@ exports.findUsages = function(id, callback) {
 
 exports.getQuestionsById = function (objectIds, callback) {
     objectIds = services.db.id(objectIds);
-    Question.find({ '_id': { '$in': objectIds }}, { 'userId': 0 }, function (err, result) {
+    Question.find({ '_id': { '$in': objectIds }}, { }, function (err, result) {
         if (!!err) {
             callback(new errorManager.InternalServerError(err, 'unable to find user questions by ids'));
             return;
