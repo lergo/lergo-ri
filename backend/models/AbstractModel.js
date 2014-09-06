@@ -47,6 +47,18 @@ function enhance( Class ) {
         });
     };
 
+    Class.count = function (filter, callback) {
+
+        if ( typeof(filter) === 'function'){
+            callback = filter;
+            filter = {};
+        }
+
+        Class.connect( function (db, collection) {
+            collection.count(filter, callback );
+        });
+    };
+
 
     Class.prototype.update = function( callback ){
         logger.info('updating');

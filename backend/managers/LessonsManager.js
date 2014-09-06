@@ -9,6 +9,8 @@ var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
 var _ = require('lodash');
+var Lesson = require('../models/Lesson');
+
 function getQuestionCount(item) {
 	var qCount = 0;
 	if (!item.steps || item.steps.length < 1) {
@@ -62,12 +64,12 @@ exports.copyLesson = function (user, lesson, callback) {
     // copy of is transitive property of a lesson;
     var copyOf = [];
     if ( user._id.toString() !== lesson.userId ){
-        copyOf.concat(lesson._id);
+        copyOf = copyOf.concat(lesson._id);
     }
 
     // copy of is a transitive property.
     if ( !!lesson.copyOf ){
-        copyOf.concat(lesson.copyOf);
+        copyOf = copyOf.concat(lesson.copyOf);
     }
 
     lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
@@ -75,15 +77,6 @@ exports.copyLesson = function (user, lesson, callback) {
     if ( copyOf.length > 0 ){
         lesson.copyOf = copyOf;
     }
-
-
-    // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
-    if ( !!copyOf ){ // concatenate the copyOf as it is a transitive property.
-        lesson.copyOf = lesson.copyOf.concat(copyOf);
-    }
-
-
-
 
     lesson.createdAt = new Date();
     lesson.userId = services.db.id(user._id);
@@ -249,18 +242,14 @@ exports.getLessonIntro = function( lessonId, callback ){
     });
 };
 
-exports.getLessons = function(filter, callback) {
-	logger.info('Getting lessons');
-	services.db.connect('lessons', function(db, collection, done) {
-		collection.find(filter).toArray(function(err, result) {
-			if (!!err) {
-				logger.error('unable to query for lessons', err);
-			}
-			done();
-			callback(err, result);
-		});
-
-	});
+exports.findUsages = function(question, callback) {
+    logger.info('Finding usages of the question');
+    Lesson.find({ 'steps.quizItems' : question._id.toString(), 'userId' : {'$ne' : question.userId } }, {}, function(err, result){
+        if (!!err) {
+            logger.error('unable to find usage of questions [%s]', err.message);
+        }
+        callback(err, result);
+    });
 };
 
 exports.search = exports.find;

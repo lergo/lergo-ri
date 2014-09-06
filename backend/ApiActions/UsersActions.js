@@ -332,33 +332,6 @@ exports.deleteQuestion = {
     },
     'action' : controllers.questions.deleteQuestion
 };
-exports.findQuestionUsages = {
-    'spec': {
-        'description': 'find question usages',
-        'name': 'findQuestionUsages',
-        'path': '/user/questions/{id}/usages',
-        'summary': 'find question usages',
-        'method': 'GET',
-        'parameters': [
-            {
-                'paramType': 'path',
-                'name': 'id',
-                required: true,
-                'description': 'ID of question that usages to be find',
-                'type': 'string'
-            }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to find Usages'
-            }
-        ],
-        'nickname': 'findQuestionUsages'
-    },
-    'action': controllers.questions.findUsages
-};
-
 
 
 

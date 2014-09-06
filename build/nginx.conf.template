@@ -35,6 +35,12 @@ server {
       proxy_set_header X-Real-IP \$remote_addr;
  }
 
+
+ location ~ \.html$ {
+    expires -1;
+    add_header Cache-Control "no-cache, no-store";
+ }
+
 }
 
 END

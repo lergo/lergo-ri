@@ -109,9 +109,6 @@ exports.findQuestionsByIds = {
 };
 
 
-
-
-
 exports.getById  = {
     'spec': {
         'description': 'Get question by id',

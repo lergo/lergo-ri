@@ -1,18 +1,33 @@
 'use strict';
-var managers = require('../managers');
+var models = require('../models');
+var async = require('async');
 var services = require('../services');
 var logger = require('log4js').getLogger('StatisticsController');
 
 // use 'count' instead. currently all questions are in the memory http://stackoverflow.com/a/9337774/1068746
 exports.getStatistics = function (req, res) {
     var stats = {};
-    managers.questions.getQuestions({}, function (err, result) {
-        stats.questionsCount = result.length;
-        managers.lessons.getLessons({}, function (err, result) {
-            stats.lessonsCount = result.length;
+    async.parallel([
+            function countQuestions(callback) {
+                models.Question.count({}, function (err, result) {
+                    stats.questionsCount = result;
+                    callback();
+                });
+            },
+            function countLessons(callback) {
+                models.Lesson.count({}, function (err, result) {
+                    stats.lessonsCount = result;
+                    callback();
+                });
+            }
+        ],
+        function (err) {
+            if (!!err) {
+                res.status(500).send('unable to count', err);
+                return;
+            }
             res.send(stats);
         });
-    });
 };
 
 

@@ -4,6 +4,40 @@ var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');
 
+
+
+// using a question to find lessons.
+// where lesson.userId != question.userId
+exports.findLessonsByOthersUsingQuestion = {
+    'spec': {
+        'description': 'find question usages',
+        'name': 'findQuestionUsages',
+        'path': '/lessons/using/question/{questionId}',
+        'summary': 'find question usages',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'questionId',
+                required: true,
+                'description': 'ID of question that usages to be find',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to find Usages'
+            }
+        ],
+        'nickname': 'findLessonsByQuestionUsage'
+    },
+    'middlewares' : [
+        middlewares.questions.exists
+    ],
+    'action': controllers.lessons.findUsages
+};
+
 exports.getAdminLessons = {
     'spec': {
         'description': 'Gets all lessons',
@@ -364,5 +398,7 @@ exports.copyLesson = {
     ],
     'action': controllers.lessons.copyLesson
 };
+
+
 
 

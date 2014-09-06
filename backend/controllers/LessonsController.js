@@ -221,3 +221,18 @@ exports.deleteLesson = function (req, res) {
     });
 
 };
+
+
+exports.findUsages = function (req, res) {
+    managers.lessons.findUsages(req.question, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};
+
+
