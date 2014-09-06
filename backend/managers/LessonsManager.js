@@ -26,7 +26,7 @@ function getQuestionCount(item) {
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
-	lesson.createdAt = new Date();
+	lesson.createdAt = new Date().toISOString();
     if ( !lesson.age) {
         lesson.age = 8;
     }
@@ -78,7 +78,8 @@ exports.copyLesson = function (user, lesson, callback) {
         lesson.copyOf = copyOf;
     }
 
-    lesson.createdAt = new Date();
+    lesson.createdAt = new Date().toISOString();
+    lesson.lastUpdate = new Date().getTime();
     lesson.userId = services.db.id(user._id);
 
     services.db.connect('lessons', function (db, collection) {
