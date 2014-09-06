@@ -8,7 +8,7 @@ var permissions = require('../permissions');
 
 // using a question to find lessons.
 // where lesson.userId != question.userId
-exports.findLessonsByOthersUsingQuestion = {
+exports.findLessonsUsingQuestion = {
     'spec': {
         'description': 'find question usages',
         'name': 'findQuestionUsages',
