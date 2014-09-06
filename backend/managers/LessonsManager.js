@@ -63,10 +63,9 @@ exports.copyLesson = function (user, lesson, callback) {
     // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
     // copy of is transitive property of a lesson;
     var copyOf = [];
-    if ( user._id.toString() !== lesson.userId ){
-        copyOf = copyOf.concat(lesson._id);
-    }
 
+    // LERGO-412 - we decided we want to remember even if same user.
+    copyOf = copyOf.concat(lesson._id);
     // copy of is a transitive property.
     if ( !!lesson.copyOf ){
         copyOf = copyOf.concat(lesson.copyOf);
