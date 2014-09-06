@@ -44,6 +44,7 @@ exports.copyQuestion = function( user, question, callback ){
 
     question.question = 'Copy of : ' + question.question;
     question.userId = user._id;
+    question.lastUpdate = new Date().getTime();
     if ( copyOf.length > 0 ){
         question.copyOf = copyOf;
     }
