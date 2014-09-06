@@ -1,6 +1,7 @@
 'use strict';
 var logger = require('log4js').getLogger('Lesson');
 var AbstractModel = require('./AbstractModel');
+var _ = require('lodash');
 
 function Lesson(data) {
     this.data = data;
@@ -21,6 +22,29 @@ Lesson.prototype.getAllQuestionIds = function () {
     }
     logger.info('found the following question ids', questionIds);
     return questionIds;
+};
+
+/**
+ *
+ * takes 2 question ids and replaces one with another.
+ *
+ * @param oldQuestionId
+ * @param newQuestionId
+ */
+
+Lesson.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestionId) {
+//    logger.info('replacing question');
+    // for every step of type quiz
+    var quizSteps = _.filter(this.data.steps, {'type': 'quiz'});
+    _.each(quizSteps, function (quiz) {
+        // replace quizItems property with a mapped result that replaces oldQuestionId with newQuestionId
+        quiz.quizItems = _.map(quiz.quizItems, function (qi) {
+            if (qi === oldQuestionId) {
+                logger.info('found matching quiz item. replacing');
+                return newQuestionId;
+            }
+        });
+    });
 };
 
 /**

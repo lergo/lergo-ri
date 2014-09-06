@@ -41,10 +41,11 @@ rm -Rf dump
 
 if [ ! -z "$DB_BACKUP_ENCRYPT_KEY" ]; then
     # encrypt the file if enncryption key is specified
-    openssl aes-256-cbc -a -salt -in $dump_filename -out $dump_filename.enc -K  $DB_BACKUP_ENCRYPT_KEY
+    openssl aes-256-cbc -a -salt -in $dump_filename -out $dump_filename.enc -pass  pass:$DB_BACKUP_ENCRYPT_KEY
 
-    # decrypt this file with "openssl aes-256-cbc -d -a -in secrets.txt.enc -out secrets.txt.new -K password"
+    # decrypt this file with "openssl aes-256-cbc -d -a -in secrets.txt.enc -out secrets.txt.new -pass pass:password"
     # see more at: "http://tombuntu.com/index.php/2007/12/12/simple-file-encryption-with-openssl/"
+    # http://stackoverflow.com/questions/8641109/encrypt-a-file-using-bash-shell-script
 
     rm -rf $dump_filename
     mv $dump_filename.enc $dump_filename

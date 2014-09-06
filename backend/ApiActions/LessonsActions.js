@@ -297,6 +297,48 @@ exports.likeLesson = {
     'action': controllers.lessons.deleteLesson
 };
 
+
+exports.overrideQuestion = {
+    'spec': {
+        'description': 'Copies and replaces question',
+        'name': 'copyAndReplaceQuestion',
+        'path': '/lessons/{lessonId}/question/{questionId}/override',
+        'summary': 'copies and replaces question',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson',
+                'type': 'string'
+            },
+            {
+                'paramType': 'path',
+                'name': 'questionId',
+                required: true,
+                'description': 'ID of question',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to override'
+            }
+        ],
+        'nickname': 'overrideQuestion'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanEdit,
+        middlewares.questions.exists,
+        middlewares.questions.userCanCopy
+    ],
+    'action': controllers.lessons.overrideQuestion
+};
+
 exports.copyLesson = {
     'spec': {
         'description': 'Copy lesson',

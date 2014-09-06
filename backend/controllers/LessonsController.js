@@ -1,5 +1,6 @@
 'use strict';
 var managers = require('../managers');
+var async = require('async');
 var logger = require('log4js').getLogger('LessonsController');
 var Lesson = require('../models/Lesson');
 
@@ -63,6 +64,50 @@ exports.getLessonIntro = function (req, res) {
     managers.lessons.getLessonIntro(req.params.lessonId, function (err, result) {
         res.send(result);
     });
+};
+
+exports.overrideQuestion = function(req, res){
+    logger.info('overriding question :: ' + req.question._id + ' in lesson ::' + req.lesson._id );
+
+    var newQuestion = null;
+    async.waterfall(
+        [
+            function copyQuestion(callback){
+                logger.info('copying question');
+                managers.questions.copyQuestion( req.sessionUser, req.question , callback);
+            },
+            function replaceQuestion( _newQuestion, callback ){
+                logger.info('replacing question');
+                try {
+                    newQuestion = _newQuestion;
+                    var oldQuestion = req.question;
+                    var lessonObj = new Lesson(req.lesson);
+                    lessonObj.replaceQuestionInLesson( oldQuestion._id.toString(), newQuestion._id.toString() );
+                    lessonObj.update();
+                    callback(null);
+                    return;
+                }catch(e){
+                    logger.error('unable to override question', e);
+                    callback(e);
+                    return;
+                }
+                // wrap lesson object with our model and invoke save.
+
+            }
+        ], function( err ){
+            logger.info('override async finished');
+            if ( !!err ){
+                res.status(500).send('unable to replace' + err.message);
+                return;
+            }else if ( newQuestion === null ){
+                res.status(500).send('unknown error');
+                return;
+            }else { // newQuestion != null
+                logger.info('completed successfully');
+                res.status(200).send({'lesson' : req.lesson, 'quizItem' : newQuestion});
+            }
+        }
+    );
 };
 
 exports.copyLesson = function (req, res) {

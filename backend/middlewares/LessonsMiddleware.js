@@ -25,7 +25,7 @@ exports.exists= function exists( req, res, next ){
                 return;
             }
             if (!result) {
-                res.status(404).send('');
+                res.status(404).send('lesson not found');
                 return;
             }
 
@@ -36,7 +36,7 @@ exports.exists= function exists( req, res, next ){
 
         });
     }catch(e){
-        res.status(404).send('');
+        res.status(404).send('lesson not found after exception');
     }
 };
 
