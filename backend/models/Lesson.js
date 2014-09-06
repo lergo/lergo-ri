@@ -42,6 +42,8 @@ Lesson.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestionI
             if (qi === oldQuestionId) {
                 logger.info('found matching quiz item. replacing');
                 return newQuestionId;
+            }else{
+                return qi;
             }
         });
     });

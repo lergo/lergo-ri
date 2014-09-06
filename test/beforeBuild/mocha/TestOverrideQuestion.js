@@ -70,10 +70,12 @@ describe('OverrideQuestion', function () {
 
         it('should do nothing if oldQuestionId is not in quizItems', function () {
             var questionIds = ['123', '124'];
-            replaceQuestion({'steps': [
+            var lesson = {'steps': [
                 {'type': 'video'},
                 {'type': 'quiz', 'quizItems': questionIds}
-            ]});
+            ]};
+            replaceQuestion(lesson);
+            expect(lesson.steps[1].quizItems[0]).to.be('123');
         });
 
         // this actually tests if the function does what it should do
