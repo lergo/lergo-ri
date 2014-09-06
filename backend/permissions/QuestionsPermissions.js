@@ -13,7 +13,7 @@ exports.userCanCopy = function( question ,user ){
 };
 
 exports.userCanDelete = function( question ,user ){
-    return question.userId.equals(user._id);
+    return !!user && question.userId.equals(user._id);
 };
 
 

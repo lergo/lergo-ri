@@ -168,7 +168,7 @@ exports.getUserPermissions = {
         'nickname': 'getUserQuestionPermissions'
     },
     'middlewares': [
-        middlewares.session.isLoggedIn,
+        middlewares.session.optionalUserOnRequest,
         middlewares.questions.exists
     ],
     'action': function( req, res ){ res.send(permissions.questions.getPermissions(req.question,req.sessionUser)); }
