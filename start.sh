@@ -10,7 +10,7 @@ PROCFILE=/proc/$PIDNUMBER
 
 if [ -e $PROCFILE ] && kill -0 $PIDNUMBER; then
     echo 'Service already running' >&2
-    return 1
+    exit 1
 fi
 
 if [ "$USE_FOREVER" = "true" ]; then
