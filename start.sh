@@ -2,6 +2,9 @@ cd "$(dirname "$0")"
 
 echo `pwd`
 
+SYSCONFIG=/etc/sysconfig/lergo
+source $SYSCONFIG &> /dev/null
+
 killall phantomjs
 PIDNAME=lergo.pid
 PIDFILE=/var/run/$PIDNAME
