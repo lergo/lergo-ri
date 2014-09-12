@@ -4,6 +4,7 @@ echo `pwd`
 
 killall phantomjs
 PIDNAME=lergo.pid
+PIDFILE=/var/run/$PIDNAME
 PIDNUMBER=`cat $PIDFILE`
 PROCFILE=/proc/$PIDNUMBER
 
