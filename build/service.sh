@@ -18,44 +18,34 @@ PIDNAME=$SERVICE_NAME
 PIDFILE=/var/run/$SERVICE_NAME.pid
 LOGFILE=/var/log/$SERVICE_NAME.log
 
-SCRIPT="$INSTALL_LOCATION/start.sh"
-chmod +x $SCRIPT
+START_SCRIPT="$INSTALL_LOCATION/start.sh"
+chmod +x $START_SCRIPT
+STOP_SCRIPT="$INSTALL_LOCATION/stop.sh"
+chmod +x $STOP_SCRIPT
+STATUS_SCRIPT="$INSTALL_LOCATION/status.sh"
+chmod +x $STATUS_SCRIPT
 RUNAS=root
 
 
 start() {
-    echo "pidname is [$PIDNAME]"
-  if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
-    echo 'Service already running' >&2
-    return 1
-  fi
-  echo 'Starting service...' >&2
-  local CMD="$SCRIPT &> \"$LOGFILE\" "
-  echo "CMD is [$CMD]"
-  su -c "$CMD" $RUNAS
-  echo 'Service started' >&2
+  su -c "$START_SCRIPT" $RUNAS
 }
 
 stop() {
-  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Service not running' >&2
-    return 1
-  fi
-  echo 'Stopping service…' >&2
-  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-  echo 'Service stopped' >&2
+  su -c "$STOP_SCRIPT" $RUNAS
+}
+
+restart(){
+   if [ "$USE_FORVER" = "true" ];
+       forever restart server.js
+   else
+       stop
+       start
+   fi
 }
 
 status(){
-
-    PROCFILE=/proc/`cat $PIDFILE`
-    if [ -e $PROCFILE ]; then
-        echo "service is running"
-        return 0
-    else
-        echo "service is stopped"
-        return 0
-    fi
+    su -c "$STATUS_SCRIPT" $RUNAS
 }
 
 upgrade(){
@@ -78,10 +68,9 @@ case "$1" in
     status
     ;;
   restart)
-    stop
-    start
+    restart
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|stop|restart|upgrade}"
 esac
 

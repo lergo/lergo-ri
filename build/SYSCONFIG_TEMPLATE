@@ -18,8 +18,8 @@ BUILD_ID_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/bu
 BACKEND_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/lergo-ri-0.0.0.tgz"
 FRONTEND_URL="https://s3.amazonaws.com/lergo-backups/builds/production/latest/lergo-ui-0.0.0.tgz"
 
-
-
+# true if to use forever false otherwise. i recommend use false in staging and true in production.
+USE_FOREVER=true
 
 
 # you can also host this file online, and write the following

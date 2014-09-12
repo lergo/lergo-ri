@@ -41,6 +41,12 @@ install_main(){
         npm install -g grunt-cli
     fi
 
+    if [ -h /usr/bin/forever ]; then
+        echo "forever is already installed. skipping.. "
+    else
+        npm install -g forever
+    fi
+
     install_ruby
     install_compass
 
