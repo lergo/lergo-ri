@@ -67,7 +67,12 @@ module.exports = function (grunt) {
                         expand: true,
                         dest: '<%= yeoman.dist %>',
                         src: [
-                            'package.json', 'backend/**/*', 'build/**/*','conf/**/*','public/**/*', 'swagger-ui/**/*', 'emails/**/*', 'server.js', 'start.sh', 'LICENSE'
+                            'package.json', 'backend/**/*', 'build/**/*','conf/**/*','public/**/*',
+                            'swagger-ui/**/*',
+                            'emails/**/*',
+                            'server.js',
+                            '*.sh',
+                            'LICENSE'
                         ]
                     }
                 ]
