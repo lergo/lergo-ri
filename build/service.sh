@@ -36,7 +36,7 @@ stop() {
 }
 
 restart(){
-   if [ "$USE_FORVER" = "true" ]; then
+   if [ "$USE_FOREVER" = "true" ]; then
        forever restart server.js
    else
        stop

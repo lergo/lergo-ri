@@ -1,3 +1,11 @@
+cd "$(dirname "$0")"
+
+echo `pwd`
+
+SYSCONFIG=/etc/sysconfig/lergo
+source $SYSCONFIG &> /dev/null
+
+
 PIDFILE=lergo.pid
 PIDNUMBER=`cat /var/run/$PIDFILE`
 PROCFILE=/proc/$PIDNUMBER
