@@ -19,8 +19,7 @@ exports.getPublicLessonQuestions = {
 
     },
     'middlewares' : [
-
-        middlewares.lergo.queryParamsDefault
+        middlewares.lergo.queryObjParsing
     ],
     'action': controllers.questions.getPublicLessonQuestions
 };

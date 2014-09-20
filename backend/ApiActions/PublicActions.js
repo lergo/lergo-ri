@@ -1,4 +1,6 @@
 var controllers = require('../controllers');
+var middlewares = require('../middlewares');
+
 exports.getPublicLessons = {
     'spec': {
         'description': 'Get public lessons',
@@ -17,8 +19,12 @@ exports.getPublicLessons = {
                 'reason': 'server error'
             }
         ],
+
         'nickname': 'getPublicLessons'
     },
+    'middlewares' : [
+        middlewares.lergo.queryObjParsing
+    ],
     'action': controllers.lessons.getPublicLessons
 };
 

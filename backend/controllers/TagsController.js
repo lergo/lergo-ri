@@ -57,7 +57,9 @@ exports.getTagsByFilter = function (req, res) {
                     { $unwind: '$tags' },
                     match,
                     { $group: { _id: '$tags.label' } },
+                    { $limit : 10 },
                     { $project: { _id : '$_id' , 'label' : '$_id'}}
+
                 ],
                 function (err, tags) {
                     callback( err, tags );

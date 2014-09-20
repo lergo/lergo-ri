@@ -70,3 +70,10 @@ exports.deleteReport = function(id, callback) {
 		});
 	});
 };
+
+
+exports.complexSearch = function( queryObj, callback ){
+    Report.connect( function( db, collection ){
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
+    });
+};

@@ -1,6 +1,7 @@
 'use strict';
 
 var logger = require('log4js').getLogger('LergoMiddleware');
+var _ = require('lodash');
 
 exports.origin = function origin( req, res, next){
     var _origin = req.protocol + '://' +req.get('Host')  ;
@@ -90,5 +91,72 @@ exports.queryParamsDefault = function queryParamsDefault(req, res, next ){
     next();
 
 
+};
+
+
+exports.renameKey = function( newObj, oldObj, func ){
+    _.each(oldObj, function( value, key ){
+        var newKey = func(key);
+        if ( typeof(value) === 'object'){
+            newObj[newKey] = {};
+            exports.renameKey( newObj[newKey], oldObj[key], func);
+        }else{
+            newObj[newKey] = value;
+        }
+    });
+
+};
+
+exports.replaceDollarPrefix = function( obj ){
+    var newObj = {};
+
+    function renameFunc( oldKey ) {
+        if (oldKey.indexOf('dollar_') === 0) {
+            return '$' + oldKey.substring('dollar_'.length);
+        }
+        return oldKey;
+    }
+
+    exports.renameKey( newObj, obj, renameFunc );
+
+
+    return newObj;
+};
+
+// this middleware handles a stringified query obj for mongo.
+// handles some obvious values (like limit) and makes sure no one is trying to collapse the system
+exports.queryObjParsing = function queryObjParsing ( req, res, next ){
+    try {
+
+        logger.debug('manipulating query object on request');
+        if ( !req.param('query')){
+            res.status(400).send('query obj required but missing on request');
+            return;
+        }
+
+        var queryObj = req.param('query');
+        if ( typeof(queryObj) === 'string' ){
+            queryObj = JSON.parse(queryObj);
+        }
+
+        queryObj = exports.replaceDollarPrefix(queryObj);
+
+        if ( !!queryObj.$page ){
+            queryObj.skip = queryObj.$page.size * ( queryObj.$page.current - 1) ;
+            queryObj.limit = queryObj.$page.size;
+            delete queryObj.$page;
+        }
+
+        // validate limit exists
+        if ( queryObj.filter.limit > 200  ){
+            queryObj.filter.limit = 200;
+        }
+
+        req.queryObj = queryObj;
+        next();
+    }catch(e){
+        res.status(400).send('illegal filter value : ' + e.message + '<br/> ' + req.param('query'));
+        return;
+    }
 };
 

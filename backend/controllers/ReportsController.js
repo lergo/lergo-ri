@@ -70,7 +70,15 @@ exports.sendReportReady = function(req, res) {
 };
 
 exports.getUserReports = function(req, res) {
-	managers.reports.getUserReports(req.sessionUser._id, function(err, obj) {
+
+    if ( !req.queryObj || !req.queryObj.filter ){
+        res.status(500).send('no filter or query object available');
+        return;
+    }
+
+    req.queryObj.filter.userId = req.sessionUser._id;
+
+	managers.reports.complexSearch(req.queryObj, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

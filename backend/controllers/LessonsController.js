@@ -5,7 +5,9 @@ var logger = require('log4js').getLogger('LessonsController');
 var Lesson = require('../models/Lesson');
 
 exports.getUserLessons = function (req, res) {
-    managers.lessons.getUserLessons(req.sessionUser._id, function (err, obj) {
+    var queryObj = req.queryObj;
+    queryObj.filter.userId = req.sessionUser._id;
+    managers.lessons.complexSearch(queryObj, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -28,12 +30,12 @@ exports.getLessonById = function (req, res) {
 
 
 exports.getAdminLessons = function (req, res) {
-    managers.lessons.find({}, {}, function (err, result) {
+
+    managers.lessons.complexSearch( req.queryObj, function (err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all admin lessons').send(res);
             return;
         }
-
         res.send(result);
     });
 };
@@ -55,7 +57,24 @@ exports.adminUpdateLesson = function (req, res) {
 };
 
 exports.getPublicLessons = function (req, res) {
-    managers.lessons.getPublicLessons(function (err, result) {
+
+    try {
+        var queryObj = req.queryObj;
+
+        if (!queryObj.filter || !queryObj.filter.public || queryObj.filter.public.$exists !== 1) {
+
+            throw new Error('public must be $exists 1');
+        }
+    }catch(e){
+        res.status(400).send('illegal filter value : ' + e.message);
+        return;
+    }
+
+    managers.lessons.complexSearch( req.queryObj, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to get all admin lessons').send(res);
+            return;
+        }
         res.send(result);
     });
 };

@@ -253,3 +253,13 @@ exports.findUsages = function(question, callback) {
 };
 
 exports.search = exports.find;
+
+
+exports.complexSearch = function( queryObj, callback ){
+    Lesson.connect( function( db, collection ){
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
+    });
+};
+
+
+

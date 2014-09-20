@@ -96,7 +96,7 @@ exports.updateQuestion = function(question, callback) {
 
 exports.deleteQuestion = function(id, userId ,callback) {
 	logger.info('Deleting question');
-	dbManager.connect('questions', function(db, collection, done) {
+	Question.connect( function(db, collection) {
 		collection.remove({
 			'_id' : dbManager.id(id),
 			'userId' : userId
@@ -104,7 +104,6 @@ exports.deleteQuestion = function(id, userId ,callback) {
 			if (!!err) {
 				logger.error('unable to query for user [%s]', err.message);
 			}
-			done();
 			callback(err);
 		});
 	});
@@ -172,5 +171,12 @@ exports.getQuestionsById = function (objectIds, callback) {
             callback(null, result);
             return;
         }
+    });
+};
+
+
+exports.complexSearch = function( queryObj, callback ){
+    Question.connect( function( db, collection ){
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
     });
 };

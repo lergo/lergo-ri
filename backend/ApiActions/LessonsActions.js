@@ -60,7 +60,8 @@ exports.getAdminLessons = {
     },
     'middlewares': [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.userCanSeePrivateLessons
+        middlewares.lessons.userCanSeePrivateLessons,
+        middlewares.lergo.queryObjParsing
     ],
     'action': controllers.lessons.getAdminLessons
 };

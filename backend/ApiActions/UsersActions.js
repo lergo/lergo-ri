@@ -267,6 +267,9 @@ exports.getQuestions = {
         ],
         'nickname': 'getQuestions'
     },
+    'middlewares' : [
+        middlewares.lergo.queryObjParsing
+    ],
     'action': controllers.questions.getQuestions
 };
 
@@ -351,27 +354,34 @@ exports.getUserLessons = {
         ],
         'nickname': 'getLessons'
     },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lergo.queryObjParsing
+    ],
     'action': controllers.lessons.getUserLessons
 };
 
 exports.getUserReports = {
-	    'spec': {
-	        'description': 'Get user Reports',
-	        'name': 'getReports',
-	        'path': '/user/me/reports',
-	        'summary': 'Get user reports',
-	        'method': 'GET',
-	        'parameters': [],
-	        'errorResponses': [
-	            {
-	                'code': 500,
-	                'reason': 'unable to get reports'
-	            }
-	        ],
-	        'nickname': 'getReports'
-	    },
-	    'action': controllers.reports.getUserReports
-	};
+    'spec': {
+        'description': 'Get user Reports',
+        'name': 'getReports',
+        'path': '/user/me/reports',
+        'summary': 'Get user reports',
+        'method': 'GET',
+        'parameters': [],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to get reports'
+            }
+        ],
+        'nickname': 'getReports'
+    },
+    'middlewares': [
+        middlewares.lergo.queryObjParsing
+    ],
+    'action': controllers.reports.getUserReports
+};
 
 
 exports.lessonsInvitationsGetById = {

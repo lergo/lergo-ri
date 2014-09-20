@@ -7,6 +7,21 @@ var logger = require('log4js').getLogger('StatisticsController');
 // use 'count' instead. currently all questions are in the memory http://stackoverflow.com/a/9337774/1068746
 exports.getStatistics = function (req, res) {
     var stats = {};
+
+    function countMyItems ( model , property ){
+        return function( callback ){
+            if ( !!req.sessionUser ){
+                model.count({'userId' : req.sessionUser._id }, function(err, result){
+                    stats[property] = result;
+                    callback();
+                });
+            }else{
+                callback();
+            }
+        };
+    }
+
+
     async.parallel([
             function countQuestions(callback) {
                 models.Question.count({}, function (err, result) {
@@ -19,7 +34,24 @@ exports.getStatistics = function (req, res) {
                     stats.lessonsCount = result;
                     callback();
                 });
-            }
+            },
+            function countPublicLessons(callback){
+                models.Lesson.count({'public' : {'$exists' : true}}, function(err,result){
+                    stats.publicLessonsCount = result;
+                    callback();
+                });
+
+
+            },
+            function countPrivateLessons(callback){
+                models.Lesson.count({'public' : {'$exists' : false }}, function(err, result){
+                    stats.privateLessonsCount = result;
+                    callback();
+                });
+            },
+            countMyItems( models.Lesson, 'myLessons'),
+            countMyItems( models.Report, 'myReports'),
+            countMyItems( models.Question, 'myQuestions')
         ],
         function (err) {
             if (!!err) {

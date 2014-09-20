@@ -1,4 +1,5 @@
 var controllers = require('../controllers');
+var middlewares = require('../middlewares');
 
 exports.getTranslations = {
     'spec': {
@@ -49,5 +50,8 @@ exports.getStatistics = {
         ],
         'nickname': 'getStatistics'
     },
+    'middlewares': [
+        middlewares.session.optionalUserOnRequest
+    ],
     'action': controllers.system.getStatistics
 };

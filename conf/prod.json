@@ -17,7 +17,11 @@
             "enabled" : false,
             "shortname" : "lergo",
             "lessonsCategory" : null
+        },
+        "filtering" : {
+            "defaultPageSize" : 18
         }
+
 
     },
     "translations" : {
