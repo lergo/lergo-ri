@@ -105,34 +105,8 @@ exports.complexSearch = function (queryObj, builder, callback) {
 
     async.parallel(
         [
-
-            function getTotal(callback) {
-
-                // totalFilter - used to count the total. for example user's reports - we want total to include only reports belonging to user..
-
-                // we will use the queryObj.filter.userId as a default fallback, which I think is good enough. but allow to specify
-                var totalFilter = {};
-                try {
-                    if (!!queryObj.totalFilter) {
-                        totalFilter = queryObj.totalFilter;
-                    } else if (!!queryObj.filter.userId ){
-                        totalFilter.userId = queryObj.filter.userId;
-                    }
-
-                }catch(e){
-                    logger.error('unable to set total filter',e);
-                }
-
-                collection.count( queryObj.totalFilter || {}, function (err, result) {
-                    total = result;
-                    callback(err);
-                });
-            },
             function buildFilter(callback) {
-
                 filter = queryObj.filter; //at first lets just take the filter as it is..
-
-
                 callback();
             },
             function buildSort(callback) {

@@ -43,6 +43,17 @@ exports.getStatistics = function (req, res) {
 
 
             },
+            // counts the reports I am the inviter of
+            function countInvitedReports( callback ){
+                if ( !!req.sessionUser ) {
+                    models.Report.count({'data.inviter': req.sessionUser._id.toString() }, function(err, result){
+                        stats.myInvitedReports = result;
+                        callback();
+                    });
+                }else{
+                    callback();
+                }
+            },
             function countPrivateLessons(callback){
                 models.Lesson.count({'public' : {'$exists' : false }}, function(err, result){
                     stats.privateLessonsCount = result;

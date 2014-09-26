@@ -378,9 +378,33 @@ exports.getUserReports = {
         'nickname': 'getReports'
     },
     'middlewares': [
+        middlewares.session.isLoggedIn,
         middlewares.lergo.queryObjParsing
     ],
     'action': controllers.reports.getUserReports
+};
+
+exports.getStudentsReports = {
+    'spec': {
+        'description': 'Get user students Reports',
+        'name': 'getReportsByStudents',
+        'path': '/user/me/studentsReports',
+        'summary': 'Get user students reports',
+        'method': 'GET',
+        'parameters': [],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to get reports'
+            }
+        ],
+        'nickname': 'getReports'
+    },
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.lergo.queryObjParsing
+    ],
+    'action': controllers.reports.getUserStudentsReports
 };
 
 

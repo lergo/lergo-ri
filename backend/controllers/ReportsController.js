@@ -32,6 +32,30 @@ exports.readReportById = function(req, res) {
 	res.send(req.report);
 };
 
+
+exports.getStudents = function(req, res ){
+
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    Report.connect(function(db, collection){
+        collection.aggregate([
+            { '$match' : { 'data.inviter' : req.sessionUser._id.toString() } },
+            {'$group' : { _id : '$data.invitee.name' } },
+            { '$match' : { '_id' : { '$ne' : null} } },
+            { '$match' : { '_id' :  like || '' }}
+        ], function(err, result){
+            if ( !! err ){
+                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+
+};
+
+
 // assume report exists in the system, verified by middleware
 exports.updateReport = function(req, res) {
 	logger.info('updating report');
@@ -69,6 +93,18 @@ exports.sendReportReady = function(req, res) {
 	});
 };
 
+/**
+ *
+ * Gets reports done by me.
+ *
+ * we model it by putting 'userId' on the report.
+ *
+ * this does not include reports I invited someone else to do.
+ *
+ *
+ * @param req - the request
+ * @param res - the response
+ */
 exports.getUserReports = function(req, res) {
 
     if ( !req.queryObj || !req.queryObj.filter ){
@@ -87,6 +123,37 @@ exports.getUserReports = function(req, res) {
 			return;
 		}
 	});
+};
+
+/**
+ *
+ * gets reports I invited.
+ *
+ *
+ * in this scenario there might not be a userId on the report.
+ * we go by the data.inviter field which holds the inviter's userId - only users can invite..
+ *
+ *
+ * @param req - the request
+ * @param res - the response
+ */
+exports.getUserStudentsReports = function(req, res ){
+    if ( !req.queryObj || !req.queryObj.filter ){
+        res.status(500).send('no filter or query object available');
+        return;
+    }
+
+    req.queryObj.filter['data.inviter'] = req.sessionUser._id.toString();
+
+    managers.reports.complexSearch(req.queryObj, function(err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
 };
 
 exports.deleteReport = function(req, res) {

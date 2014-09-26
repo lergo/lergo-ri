@@ -43,3 +43,5 @@ exports.lessonInviteCreate = {
     ],
     'action': controllers.lessonsInvitations.create
 };
+
+

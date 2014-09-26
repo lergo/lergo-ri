@@ -1,9 +1,7 @@
 'use strict';
 var managers = require('../managers');
-
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
-
 
 
 exports.create = function (req, res) {

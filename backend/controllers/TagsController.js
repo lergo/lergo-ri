@@ -14,7 +14,7 @@ exports.getTopTags = function (req, res) {
 
     // aggregate is much better than map reduce performance-wise : http://blog.mongodb.org/post/62900213496/qaing-new-code-with-mms-map-reduce-vs-aggregation
 
-    services.db.connect('lessons', function (db, collection) {
+    models.Lesson.connect(function (db, collection) {
         collection.aggregate([
             {$unwind: '$tags'} ,
             {$group: {_id: '$tags.label', number: {$sum: 1}}},
