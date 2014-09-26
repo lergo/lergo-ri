@@ -4,22 +4,7 @@ var managers = require('../managers');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 
-// finds a lesson owned by currently logged in user
-function findLesson(req, res, next) {
-    var lessonId = req.params.lessonId;
-    logger.info('finding lesson', JSON.stringify(lessonId));
-    managers.lessons.getLesson({ '_id': managers.db.id(lessonId), 'userId': req.sessionUser._id }, function (err, result) {
-        if (!!err) {
-            logger.error('unable to findLesson', err);
-            err.send(res);
-            return;
-        } else {
-            logger.info('putting lesson on request', result);
-            req.lesson = result;
-            next();
-        }
-    });
-}
+
 
 exports.create = function (req, res) {
     logger.debug('creating invitation for lesson', req.lesson);
@@ -52,20 +37,6 @@ exports.create = function (req, res) {
 };
 
 
-exports.list = function (req, res) {
-    findLesson(req, res, function () {
-        managers.lessonsInvitations.find({ 'lessonId': req.lesson._id }, function (err, result) {
-            if (!!err) {
-                logger.error('unable to find invitations', err);
-                err.send(res);
-                return;
-            } else {
-                res.send(result);
-            }
-        });
-    });
-
-};
 
 
 /**

@@ -142,7 +142,7 @@ exports.requestPasswordReset = function(req, res) {
 
 
 /**
- * gets a list of ids and returns the corresponding lessons.
+ * gets a list of ids and returns the corresponding users.
  *
  * how to pass a list of ids over req query?
  *

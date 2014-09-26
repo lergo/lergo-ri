@@ -3,6 +3,7 @@ var managers = require('../managers');
 var async = require('async');
 var logger = require('log4js').getLogger('LessonsController');
 var Lesson = require('../models/Lesson');
+var _ = require('lodash');
 
 exports.getUserLessons = function (req, res) {
     var queryObj = req.queryObj;
@@ -70,13 +71,43 @@ exports.getPublicLessons = function (req, res) {
         return;
     }
 
-    managers.lessons.complexSearch( req.queryObj, function (err, result) {
-        if (!!err) {
-            new managers.error.InternalServerError(err, 'unable to get all admin lessons').send(res);
-            return;
+    var lessons = [];
+    async.waterfall([
+        function loadLessons ( callback ) {
+            managers.lessons.complexSearch(req.queryObj, function (err, result) {
+                if (!!err) {
+                    callback(new managers.error.InternalServerError(err, 'unable to get all admin lessons'));
+                    return;
+                }
+                lessons = result;
+                callback();
+            });
+        },
+        function loadUsers (callback){
+
+            var usersId = _.map(lessons.data, 'userId');
+            managers.users.getPublicUsersDetailsMapByIds(usersId, function(err, usersById){
+
+                if ( !!err){
+                    callback(new managers.error.InternalServerError(err, 'unable to load users by id'));
+                    return;
+                }
+                _.each(lessons.data, function(l){
+                    l.user = usersById[l.userId];
+                });
+
+                callback();
+            });
         }
-        res.send(result);
+    ] , function returnResponse( err ){
+        if ( !!err ){
+            err.send(res);
+            return;
+        } else {
+            res.send(lessons);
+        }
     });
+
 };
 
 exports.getLessonIntro = function (req, res) {
