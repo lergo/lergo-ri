@@ -638,3 +638,29 @@ exports.getUserPublicDetails = {
     ],
     'action': controllers.likes.getLike
 };
+
+exports.getUsernames = {
+    'spec': {
+        'description': 'Get usernames',
+        'name': 'getUsernames',
+        'path': '/users/usernames',
+        // 'notes': 'Returns 200 if everything went well, otherwise returns
+        // error response',
+        'summary': 'gets a like',
+        'method': 'GET',
+        'parameters': [
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'server error'
+            }
+        ],
+        'nickname': 'getUsernames'
+    },
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.users.canSeeAllUsers
+    ],
+    'action': controllers.users.getUsernames
+};

@@ -2,6 +2,7 @@
 
 var logger = require('log4js').getLogger('LergoMiddleware');
 var _ = require('lodash');
+var services = require('./services');
 
 exports.origin = function origin( req, res, next){
     var _origin = req.protocol + '://' +req.get('Host')  ;
@@ -137,6 +138,14 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
         var queryObj = req.param('query');
         if ( typeof(queryObj) === 'string' ){
             queryObj = JSON.parse(queryObj);
+        }
+
+        try {
+            if (queryObj.filter.hasOwnProperty('userId')){
+                queryObj.filter.userId = services.db.id(queryObj.filter.userId);
+            }
+        }catch(e){
+            logger.info('unable to convert userId to object',e);
         }
 
         queryObj = exports.replaceDollarPrefix(queryObj);

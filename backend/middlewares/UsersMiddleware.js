@@ -2,7 +2,7 @@
 var managers = require('../managers');
 var logger = require('log4js').getLogger('UsersMiddleware');
 var User = require('../models/User');
-
+var permissions = require('../permissions');
 /**
  * get a user from cookie on request, and calls next request handler
  */
@@ -64,4 +64,9 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
         logger.debug('placed user on request');
         next();
     });
+};
+
+
+exports.canSeeAllUsers = function canSeeAllUsers ( req, res, next ){
+    return permissions.users.canSeeAllUsers( req.sessionUser ) ? next() : res.status(400).send('not allowed to do this request');
 };

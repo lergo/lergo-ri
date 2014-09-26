@@ -175,6 +175,25 @@ exports.findUsersById = function (req, res) {
 };
 
 
+exports.getUsernames = function( req, res ){
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    User.connect(function(db, collection){
+        collection.aggregate([
+            { '$project' : { 'username' : '$username'}},
+            {'$match' : { 'username' : like || '' } }
+        ], function(err, result){
+            if ( !!err ){
+                new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+};
+
+
 exports.changePassword = function(req, res) {
 
 	logger.info('changing password for user');
