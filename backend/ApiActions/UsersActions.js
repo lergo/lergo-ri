@@ -565,7 +565,7 @@ exports.getLike = {
         'nickname': 'getItemLike'
     },
     'middlewares': [
-        middlewares.users.exists,
+        middlewares.session.isLoggedIn,
         middlewares.likes.itemExists,
         middlewares.likes.exists
     ],
