@@ -256,6 +256,21 @@ exports.search = exports.find;
 
 
 exports.complexSearch = function( queryObj, callback ){
+
+    if ( !!queryObj.filter.searchText ){
+
+        var text =  new RegExp(queryObj.filter.searchText, 'i');
+
+        if ( !queryObj.filter.$or ){
+            queryObj.filter.$or = [];
+        }
+
+        queryObj.filter.$or.push({ 'name' : text });
+        queryObj.filter.$or.push({ 'description' : text });
+
+        delete queryObj.filter.searchText;
+    }
+
     Lesson.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
     });
