@@ -11,18 +11,6 @@ var usersManager = require('./UsersManager');
 var _ = require('lodash');
 var Lesson = require('../models/Lesson');
 
-function getQuestionCount(item) {
-	var qCount = 0;
-	if (!item.steps || item.steps.length < 1) {
-		return qCount;
-	}
-	for ( var i = 0; i < item.steps.length; i++) {
-		if (!!item.steps[i].quizItems) {
-			qCount = qCount + item.steps[i].quizItems.length;
-		}
-	}
-	return qCount;
-}
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
@@ -209,7 +197,7 @@ exports.getPublicLessons = function(callback) {
 					result.forEach(function(item) {
 						item.user = _.omit(usersById[item.userId.toHexString()], '_id');
 						item.timeStamp = item._id.getTimestamp();
-						item.questionsCount = getQuestionCount(item);
+
 					});
 
 					callback(null, result);

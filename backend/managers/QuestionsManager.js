@@ -181,7 +181,12 @@ exports.complexSearch = function( queryObj, callback ){
     if ( !!queryObj.filter.searchText ){
         var text =  new RegExp(queryObj.filter.searchText, 'i');
 
-        queryObj.filter.question = text;
+        if ( !queryObj.filter.$or ){
+            queryObj.filter.$or = [];
+        }
+
+        queryObj.filter.$or.push({ 'question' : text });
+        queryObj.filter.$or.push({ 'answer' : text });
 
         delete queryObj.filter.searchText;
     }
