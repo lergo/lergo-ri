@@ -176,6 +176,16 @@ exports.getQuestionsById = function (objectIds, callback) {
 
 
 exports.complexSearch = function( queryObj, callback ){
+
+
+    if ( !!queryObj.filter.searchText ){
+        var text =  new RegExp(queryObj.filter.searchText, 'i');
+
+        queryObj.filter.question = text;
+
+        delete queryObj.filter.searchText;
+    }
+
     Question.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
     });
