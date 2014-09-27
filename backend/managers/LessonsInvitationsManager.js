@@ -18,7 +18,7 @@ exports.buildLesson = function (invitation, callback) {
     var updatedInvitation = null;
     async.waterfall([
         function getLessonById(_callback) {
-            lessonsManager.getLesson({ _id: services.db.id(lessonId) }, _callback);
+            lessonsManager.getLessonIntro(lessonId, _callback);
         }, function getAllQuizItems(result, _callback) {
             invitation.lesson = result;
             var lessonModel = new models.Lesson(result);
