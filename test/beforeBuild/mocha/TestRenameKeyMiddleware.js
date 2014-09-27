@@ -33,5 +33,15 @@ describe('rename key', function () {
         expect(newObj.age.$max).to.be(6);
     });
 
+    it('should handle subobjects ', function () {
+        var newObj = lergoMiddleware.replaceDollarPrefix({ 'guy': { 'dollar_key': 'value'}});
+        expect(newObj.guy.$key).to.be('value');
+    });
+
+    it('should not touch arrays', function () {
+        var newObj = lergoMiddleware.replaceDollarPrefix({'guy': { 'dollar_in': [1, 2, 3]}});
+        expect(newObj.guy.$in).to.eql([1, 2, 3]);
+    });
+
 
 });

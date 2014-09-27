@@ -2,6 +2,7 @@
 
 var logger = require('log4js').getLogger('LergoMiddleware');
 var _ = require('lodash');
+var util = require('util');
 var services = require('./services');
 
 exports.origin = function origin( req, res, next){
@@ -98,7 +99,7 @@ exports.queryParamsDefault = function queryParamsDefault(req, res, next ){
 exports.renameKey = function( newObj, oldObj, func ){
     _.each(oldObj, function( value, key ){
         var newKey = func(key);
-        if ( typeof(value) === 'object'){
+        if ( typeof(value) === 'object' && !util.isArray(value)){
             newObj[newKey] = {};
             exports.renameKey( newObj[newKey], oldObj[key], func);
         }else{
@@ -164,7 +165,7 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
         req.queryObj = queryObj;
         next();
     }catch(e){
-        res.status(400).send('illegal filter value : ' + e.message + '<br/> ' + req.param('query'));
+        res.status(400).send(' lergo middleware - illegal filter value : ' + e.message + '<br/> ' + req.param('query'));
         return;
     }
 };

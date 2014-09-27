@@ -67,7 +67,7 @@ exports.getPublicLessons = function (req, res) {
             throw new Error('public must be $exists 1');
         }
     }catch(e){
-        res.status(400).send('illegal filter value : ' + e.message);
+        res.status(400).send('lessons controller - illegal filter value : ' + e.message);
         return;
     }
 
