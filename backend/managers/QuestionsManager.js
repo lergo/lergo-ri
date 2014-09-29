@@ -187,6 +187,7 @@ exports.complexSearch = function( queryObj, callback ){
 
         queryObj.filter.$or.push({ 'question' : text });
         queryObj.filter.$or.push({ 'answer' : text });
+        queryObj.filter.$or.push({ 'options.label' : text }); // LERGO-465 - search should apply to exact match
 
         delete queryObj.filter.searchText;
     }
