@@ -639,6 +639,10 @@ exports.getUserPublicDetails = {
     'action': controllers.likes.getLike
 };
 
+/**
+ * Used, among others,  for "created by" filter in public homepage and in admin.
+ * so this action should be public.
+ */
 exports.getUsernames = {
     'spec': {
         'description': 'Get usernames',
@@ -658,9 +662,7 @@ exports.getUsernames = {
         ],
         'nickname': 'getUsernames'
     },
-    'middlewares': [
-        middlewares.session.isLoggedIn,
-        middlewares.users.canSeeAllUsers
+    'middlewares': [ /* public function */
     ],
     'action': controllers.users.getUsernames
 };
