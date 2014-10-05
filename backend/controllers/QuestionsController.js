@@ -114,9 +114,9 @@ exports.checkQuestionAnswer = function(req, res) {
 };
 
 exports.deleteQuestion = function(req, res) {
-	var id = req.params.id;
+	var id = req.params.questionId;
 	logger.info('Deleting question:', id);
-	managers.questions.deleteQuestion(id, req.sessionUser._id, function(err, obj) {
+	managers.questions.deleteQuestion(id, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
