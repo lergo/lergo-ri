@@ -40,7 +40,7 @@ exports.copyQuestion = function(user, question, callback) {
 	}
 
 	// use omit and not pick, because there are different types of questions
-	question = _.omit(question, [ '_id', 'lastUpdate','views' ]);
+	question = _.omit(question, [ '_id', 'lastUpdate', 'views' ]);
 
 	question.question = 'Copy of : ' + question.question;
 	question.userId = user._id;
@@ -96,15 +96,14 @@ exports.updateQuestion = function(question, callback) {
 	});
 };
 
-exports.deleteQuestion = function(id, userId, callback) {
+exports.deleteQuestion = function(id, callback) {
 	logger.info('Deleting question');
 	Question.connect(function(db, collection) {
 		collection.remove({
-			'_id' : dbManager.id(id),
-			'userId' : userId
+			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {
-				logger.error('unable to query for user [%s]', err.message);
+				logger.error('unable to delete question [%s]', err.message);
 			}
 			callback(err);
 		});

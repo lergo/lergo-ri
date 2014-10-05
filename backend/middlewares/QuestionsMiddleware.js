@@ -66,3 +66,7 @@ exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res
     }
     next();
 };
+
+exports.userCanDelete = function userCanDelete(req, res, next){
+    return permissions.questions.userCanDelete( req.question, req.sessionUser ) ? next() : res.status(400).send('');
+};
