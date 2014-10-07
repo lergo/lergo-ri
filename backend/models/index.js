@@ -3,3 +3,4 @@ exports.Question = require('./Question');
 exports.Like = require('./Like');
 exports.Report = require('./Report');
 exports.LessonInvitation = require('./LessonInvitation');
+exports.HelperContent=require('./HelperContent');

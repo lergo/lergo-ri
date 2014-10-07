@@ -9,6 +9,7 @@ exports.lessonsInvitationsActions = require('./LessonsInvitationsActions');
 exports.tagsActions = require('./TagsActions');
 exports.likesActions = require('./LikesActions');
 exports.reportsActions = require('./ReportsActions');
+exports.helperContentsActions= require('./HelperContentsActions');
 var logger = require('log4js').getLogger('apiActions');
 
 
