@@ -56,18 +56,18 @@ install_dependencies(  ){
     if [ ! -e node_modules ]; then
         rm -Rf node_modules
     fi
-    npm install
+    npm install || return 1
 
     if [ ! -e app/bower_components ]; then
        rm -Rf app/bower_components
     fi
     bower cache clean
-    bower install
+    bower install || return 1
 }
 
 for i in 1 2 3 4 5 6 7 8 9; do install_dependencies $i && break || sleep 1; done
 
-grunt build --no-color
+grunt --no-color
 
 COMMITS_TEMPLATE=dist/views/version/_commits.html
 VERSION_TEMPLATE=dist/views/version/_version.html
@@ -98,12 +98,12 @@ build_ri(){
     if [ ! -d node_modules ]; then
         rm -Rf node_modules
     fi
-    npm install
-    grunt testBefore
-    grunt build --no-color
-    grunt testAfter
+    npm install || return 1
+    grunt testBefore || exit 1
+    grunt build --no-color || exit 1
+    grunt testAfter || exit 1
     cd dist
-    npm install --production
+    npm install --production || return 1
 
 # echo "running npm install on contextify"
 # MY_DIR=`pwd`
