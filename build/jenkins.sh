@@ -91,6 +91,7 @@ cd ../../
 echo "building lergo-ri"
 
 cd lergo-ri
+build/build_decrypt_test_me_json.sh
 
 
 build_ri(){
