@@ -9,97 +9,130 @@ var async = require('async');
 
 /**
  * Once someone opens an invitation, our first step is to build the lesson
- *
+ * 
  * @param invitation
  * @param callback
  */
-exports.buildLesson = function (invitation, callback) {
-    var lessonId = invitation.lessonId;
-    var updatedInvitation = null;
-    async.waterfall([
-        function getLessonById(_callback) {
-            lessonsManager.getLessonIntro(lessonId, _callback);
-        }, function getAllQuizItems(result, _callback) {
-            invitation.lesson = result;
-            var lessonModel = new models.Lesson(result);
-            var questionsId = lessonModel.getAllQuestionIds();
-            questionsId = services.db.id(questionsId);
-            questionsManager.search({ '_id': { '$in': questionsId }}, {}, _callback);
-        }, function updateLessonInvitation(result, _callback) {
-            invitation.quizItems = result;
-            updatedInvitation = invitation;
-            exports.updateLessonInvitation(invitation, _callback);
+exports.buildLesson = function(invitation, callback) {
+	var lessonId = invitation.lessonId;
+	var updatedInvitation = null;
+	async.waterfall([ function getLessonById(_callback) {
+		lessonsManager.getLessonIntro(lessonId, _callback);
+	}, function getAllQuizItems(result, _callback) {
+		invitation.lesson = result;
+		var lessonModel = new models.Lesson(result);
+		var questionsId = lessonModel.getAllQuestionIds();
+		questionsId = services.db.id(questionsId);
+		questionsManager.search({
+			'_id' : {
+				'$in' : questionsId
+			}
+		}, {}, _callback);
+	}, function updateLessonInvitation(result, _callback) {
+		invitation.quizItems = result;
+		updatedInvitation = invitation;
+		exports.updateLessonInvitation(invitation, _callback);
 
+	}, function addCounterOnLesson(result, _callback) {
+		lessonsManager.incrementViews(lessonId, function(err) {
+			/*
+			 * guy - I don't know why simply passing _callback does not work.
+			 * have to write a function to do that
+			 */
+			if (!!err) {
+				logger.error('error incrementing views on lesson', err);
+			}
+			logger.info('after increment');
+			_callback();
+		});
+	}, function invokeCallback() {
+		logger.info('done building lesson. sending back to callback');
+		callback(null, updatedInvitation);
+	}
 
-        }, function addCounterOnLesson( result, _callback) {
-            lessonsManager.incrementViews(lessonId, function( err ){
-                /* guy - I don't know why simply passing _callback does not work. have to write a function to do that */
-                if ( !!err ){
-                    logger.error('error incrementing views on lesson', err);
-                }
-                logger.info('after increment');
-                _callback();
-            });
-        }, function invokeCallback() {
-            logger.info('done building lesson. sending back to callback');
-            callback(null, updatedInvitation);
-        }
-
-
-    ]);
+	]);
 };
 
+exports.search = function(filter, projection, callback) {
+	logger.info('finding the invitation', filter);
+	models.LessonInvitation.connect(function(db, collection, done) {
+		collection.findOne(filter, projection, function(err, result) {
 
+			if (!!err) {
+				done();
+				callback(new errorManager.InternalServerError(err, 'error while getting lesson invitation'));
+				return;
+			}
+			done();
+			callback(null, result);
+			return;
 
-exports.search = function (filter, projection, callback) {
-    logger.info('finding the invitation', filter);
-    models.LessonInvitation.connect(function (db, collection, done) {
-        collection.findOne(filter, projection, function (err, result) {
-
-            if (!!err) {
-                done();
-                callback(new errorManager.InternalServerError(err, 'error while getting lesson invitation'));
-                return;
-            }
-            done();
-            callback(null, result);
-            return;
-
-        });
-    });
+		});
+	});
 };
 
 exports.find = exports.search;
 
-
-exports.updateLessonInvitation = function (invitation, callback) {
-    models.LessonInvitation.connect( function (db, collection, done) {
-        collection.update({ _id: invitation._id }, invitation, function (err, result) {
-            logger.info('after update', arguments);
-            done();
-            callback(err, result);
-            return;
-        });
-    });
+exports.updateLessonInvitation = function(invitation, callback) {
+	models.LessonInvitation.connect(function(db, collection, done) {
+		collection.update({
+			_id : invitation._id
+		}, invitation, function(err, result) {
+			logger.info('after update', arguments);
+			done();
+			callback(err, result);
+			return;
+		});
+	});
 };
 
+exports.create = function(invitation, callback) {
+	invitation.lessonId = services.db.id(invitation.lessonId);
+	models.LessonInvitation.connect(function(db, collection, done) {
+		collection.insert(invitation, {}, function(err, result) {
+			done();
+			callback(err, result[0]);
+			return;
+		});
 
-exports.create = function ( invitation, callback) {
-    invitation.lessonId = services.db.id(invitation.lessonId);
-    models.LessonInvitation.connect( function (db, collection, done) {
-        collection.insert(invitation, {}, function (err, result) {
-            done();
-            callback( err, result[0] );
-            return;
-        });
-
-    });
+	});
 };
 
-
-exports.deleteByLessonId = function( lessonId, callback ){
-    models.LessonInvitation.connect(function(db, collection){
-        collection.remove({'lessonId' : services.db.id(lessonId)}, callback );
-    });
+exports.deleteByLessonId = function(lessonId, callback) {
+	models.LessonInvitation.connect(function(db, collection) {
+		collection.remove({
+			'lessonId' : services.db.id(lessonId)
+		}, callback);
+	});
 };
 
+exports.deleteById = function(id, callback) {
+	models.LessonInvitation.connect(function(db, collection) {
+		collection.remove({
+			'_id' : services.db.id(id)
+		}, function(err) {
+			if (!!err) {
+				logger.error('unable to delete report [%s]', err.message);
+			}
+			callback(err);
+		});
+	});
+};
+
+exports.complexSearch = function(queryObj, callback) {
+	if (!!queryObj.filter) {
+		if (!!queryObj.filter['data.finished']) {
+			queryObj.filter.finished = queryObj.filter['data.finished'].$exists;
+			delete queryObj.filter['data.finished'];
+		}
+		if (!!queryObj.filter['data.invitee.name']) {
+			queryObj.filter['invitee.name'] = queryObj.filter['data.invitee.name'];
+			delete queryObj.filter['data.invitee.name'];
+		}
+	}
+	models.LessonInvitation.connect(function(db, collection) {
+		services.complexSearch.complexSearch(queryObj, {
+			collection : collection
+		}, callback);
+	});
+};

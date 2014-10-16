@@ -261,8 +261,6 @@ exports.getUsersById = {
 	'action' : controllers.users.findUsersById
 };
 
-
-
 exports.getUserLessons = {
 	'spec' : {
 		'description' : 'Get user lessons',
@@ -515,4 +513,25 @@ exports.getUsernames = {
 	'middlewares' : [ /* public function */
 	],
 	'action' : controllers.users.getUsernames
+};
+
+exports.getUserInvites = {
+	spec : {
+		description : 'Get user invites',
+		name : 'getInvites',
+		path : '/user/me/invites',
+		summary : 'Get  invites',
+		method : 'GET',
+		parameters : [
+
+		],
+		errorResponses : [ {
+			code : 500,
+			reason : 'server error'
+		} ],
+
+		nickname : 'getInvites'
+	},
+	middlewares : [ middlewares.session.isLoggedIn,middlewares.lergo.queryObjParsing ],
+	action : controllers.lessonsInvitations.find
 };
