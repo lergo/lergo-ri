@@ -17,7 +17,7 @@ exports.create = function(req, res) {
 		'language' : req.lesson.language,
 		'age' : req.lesson.age,
 		'name' : req.lesson.name,
-		'finished' : false
+		'lastUpdate' : new Date().getTime()
 	}, invitation);
 
 	// add inviter in case we have details and this is not an anonymous
@@ -101,6 +101,8 @@ exports.update = function(req, res) {
 	logger.info('updating Invite');
 	var invitation = req.body;
 	invitation._id = managers.db.id(invitation._id);
+	invitation.inviter = managers.db.id(invitation.inviter);
+	invitation.lessonId = managers.db.id(invitation.lessonId);
 	new LessonInvitation(invitation).update(function(err) {
 		logger.info('invitation updated');
 		if (!!err) {
