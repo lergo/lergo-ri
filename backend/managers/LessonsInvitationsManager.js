@@ -122,7 +122,7 @@ exports.deleteById = function(id, callback) {
 exports.complexSearch = function(queryObj, callback) {
 	if (!!queryObj.filter) {
 		if (!!queryObj.filter['data.finished']) {
-			queryObj.filter.finished = queryObj.filter['data.finished'].$exists;
+			queryObj.filter.finished = queryObj.filter['data.finished'];
 			delete queryObj.filter['data.finished'];
 		}
 		if (!!queryObj.filter['data.invitee.name']) {
