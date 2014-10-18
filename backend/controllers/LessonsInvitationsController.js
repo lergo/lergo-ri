@@ -90,6 +90,7 @@ exports.build = function(req, res) {
 				res.send(constructed);
 			});
 		} else {
+            managers.lessons.incrementViews( result.lessonId , function(){ /** noop **/ } );
 			res.send(result);
 		}
 
