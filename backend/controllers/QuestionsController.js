@@ -42,11 +42,27 @@ exports.getQuestions = function(req, res) {
 			new managers.error.InternalServerError(err, 'unable to get user questions').send(res);
 			return;
 		} else {
+			var invalidQuestions = _.filter(obj.data, function(q) {
+				return !q.question;
+
+			});
+			deleteInvalidQuestion(invalidQuestions);
+			var validQuestions = _.filter(obj.data, function(q) {
+				return !!q.question;
+
+			});
+			obj.data = validQuestions;
 			res.send(obj);
 		}
 
 	});
 };
+
+function deleteInvalidQuestion(items) {
+	_.each(items, function(q) {
+		managers.questions.deleteQuestion(q._id);
+	});
+}
 exports.getQuestionById = function(req, res) {
 	logger.info('getting question by id');
 	res.send(req.question);
