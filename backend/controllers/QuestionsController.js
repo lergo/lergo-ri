@@ -29,7 +29,11 @@ exports.findUsages = function(req, res) {
 	res.send([]);
 
 };
-
+function deleteInvalidQuestion(items) {
+	_.each(items, function(q) {
+		managers.questions.deleteQuestion(q._id);
+	});
+}
 exports.getQuestions = function(req, res) {
 	if (!req.queryObj || !req.queryObj.filter) {
 		res.status(500).send('query obj should exist with filter');
@@ -58,11 +62,6 @@ exports.getQuestions = function(req, res) {
 	});
 };
 
-function deleteInvalidQuestion(items) {
-	_.each(items, function(q) {
-		managers.questions.deleteQuestion(q._id);
-	});
-}
 exports.getQuestionById = function(req, res) {
 	logger.info('getting question by id');
 	res.send(req.question);
