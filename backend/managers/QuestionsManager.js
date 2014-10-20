@@ -210,7 +210,10 @@ exports.complexSearch = function(queryObj, callback) {
 
 		delete queryObj.filter.searchText;
 	}
-
+	// dont want to show invalid question later we will think on strategy
+	queryObj.filter.question = {
+		$exists : true
+	};
 	Question.connect(function(db, collection) {
 		services.complexSearch.complexSearch(queryObj, {
 			collection : collection
