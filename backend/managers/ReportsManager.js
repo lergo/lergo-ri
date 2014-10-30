@@ -45,6 +45,7 @@ exports.sendReportLink = function (emailResources, report, callback) {
                     logger.info('saving report sent true');
                     report.setSent(true);
                     report.update();
+                    callback();
                 }
             });
         });
