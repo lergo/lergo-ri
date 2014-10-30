@@ -9,8 +9,6 @@ function AbuseReport(data) {
 	// returns the user we send report to
 	this.getReporterAndCreator = function(callback) {
 		var User = require('./User');
-		var Question = require('./Question');
-		var Lesson = require('./Lesson');
 		logger.debug('looking for creator');
 		User.findById(data.userId, {}, function(err, reporter) {
 			logger.debug('found User', reporter);
@@ -18,39 +16,14 @@ function AbuseReport(data) {
 				callback(err);
 				return;
 			}
-			if (data.itemType === AbuseReport.ItemTypes.LESSON) {
-				Lesson.findById(data.itemId, {}, function(err, lesson) {
-					logger.debug('found lesson', lesson);
-					if (!!err) {
-						callback(err);
-						return;
-					}
-					User.findById(lesson.userId, {}, function(err, creator) {
-						logger.debug('found User', creator);
-						if (!!err) {
-							callback(err);
-							return;
-						}
-						callback(null, creator, reporter, lesson.name);
-					});
-				});
-			} else if (data.itemType === AbuseReport.ItemTypes.QUESTION) {
-				Question.findById(data.itemId, {}, function(err, question) {
-					logger.debug('found question', question);
-					if (!!err) {
-						callback(err);
-						return;
-					}
-					User.findById(question.userId, {}, function(err, creator) {
-						logger.debug('found User', creator);
-						if (!!err) {
-							callback(err);
-							return;
-						}
-						callback(null, creator, reporter, question.question);
-					});
-				});
-			}
+			User.findById(data.itemUserId, {}, function(err, creator) {
+				logger.debug('found User', creator);
+				if (!!err) {
+					callback(err);
+					return;
+				}
+				callback(null, creator, reporter);
+			});
 		});
 
 	};
@@ -64,21 +37,30 @@ AbuseReport.ItemTypes = {
 	QUESTION : 'question'
 };
 
-AbuseReport.createNew = function(itemId, userId, obj) {
+AbuseReport.createNew = function(item, userId, obj) {
 	var abuseReport;
 	if (obj === null) {
 		abuseReport = {};
 	} else {
 		abuseReport = obj;
+		if (obj.itemType === AbuseReport.ItemTypes.LESSON) {
+			obj.title = item.name;
+		} else if (obj.itemType === AbuseReport.ItemTypes.QUESTION) {
+			obj.title = item.question;
+		}
 	}
-	abuseReport.itemId = services.db.id(itemId);
+	abuseReport.itemId = services.db.id(item._id);
 	abuseReport.userId = services.db.id(userId);
 	abuseReport.lastUpdated = new Date().getTime();
+	abuseReport.itemUserId = item.userId;
+	abuseReport.subject = item.subject;
+	abuseReport.language = item.language;
+
 	return abuseReport;
 };
 
 AbuseReport.createNewFromRequest = function(req) {
-	return AbuseReport.createNew(req.abuseItem._id, req.sessionUser._id, req.body);
+	return AbuseReport.createNew(req.abuseItem, req.sessionUser._id, req.body);
 };
 
 AbstractModel.enhance(AbuseReport);

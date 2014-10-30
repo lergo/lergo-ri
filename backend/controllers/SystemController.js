@@ -44,6 +44,12 @@ exports.getStatistics = function(req, res) {
 			callback();
 		});
 
+	}, function countAbuseReports(callback) {
+		models.AbuseReport.count({}, function(err, result) {
+			stats.abuseReportsCount = result;
+			callback();
+		});
+
 	},
 	// counts the reports I am the inviter of
 	function countInvitedReports(callback) {

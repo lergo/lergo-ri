@@ -45,3 +45,26 @@ exports.itemExists = function itemExists(req, res, next) {
 	});
 
 };
+
+exports.exists = function exists(req, res, next) {
+	logger.debug('checking if abuseReport exists : ', req.params.abuseReportId);
+	try {
+		AbuseReport.findById(req.params.abuseReportId, function(err, result) {
+			if (!!err) {
+				res.status(500).send(err);
+				return;
+			}
+			if (!result) {
+				res.status(404).send('abuseReport not found');
+				return;
+			}
+
+			logger.debug('putting abuseReport on request', result);
+			req.abuseReport = result;
+			next();
+
+		});
+	} catch (e) {
+		res.status(404).send('abuseReport not found after exception');
+	}
+};
