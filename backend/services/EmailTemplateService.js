@@ -55,3 +55,7 @@ exports.renderLessonInvitation = function( locals, callback ){
 exports.renderUserValidationEmail = function( locals, callback ){
     exports.template('validateUser', locals, callback );
 };
+
+exports.renderAbuseReportEmail = function( locals, callback ){
+    exports.template('reportAbuse', locals, callback );
+};
