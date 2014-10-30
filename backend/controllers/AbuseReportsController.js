@@ -19,10 +19,11 @@ function sendAbuseReportAlert(emailResources, report, callback) {
 		_.merge(emailVars, {
 			creatorName : creator.username,
 			reporterName : reporter.username,
+			reporterEmail : reporter.email,
 			title : title,
-			itemType : report.itemType,
-			reason : report.reason,
-			comment : report.comment
+			itemType : report.data.itemType,
+			reason : report.data.reason,
+			comment : report.data.comment
 		});
 
 		services.emailTemplates.renderAbuseReportEmail(emailVars, function(err, html, text) {
