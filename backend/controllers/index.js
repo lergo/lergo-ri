@@ -6,4 +6,5 @@ exports.system = require('./SystemController');
 exports.tags = require('./TagsController');
 exports.likes = require('./LikesController');
 exports.reports = require('./ReportsController');
-exports.helperContents=require('./HelperContentsController');
+exports.helperContents = require('./HelperContentsController');
+exports.abuseReports = require('./AbuseReportsController');
