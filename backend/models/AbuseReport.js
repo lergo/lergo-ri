@@ -27,6 +27,10 @@ function AbuseReport(data) {
 		});
 
 	};
+
+    this.setSent = function( isSent ){
+        this.sent = isSent;
+    };
 }
 
 AbuseReport.collectionName = 'abuseReports';

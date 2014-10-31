@@ -5,7 +5,7 @@ var logger = require('log4js').getLogger('AbuseReportsController');
 var services = require('../services');
 var _ = require('lodash');
 
-function sendAbuseReportAlert(emailResources, report, callback) {
+function sendAbuseReportAlert(emailResources, report /* models.AbuseReport */ , callback) {
 	logger.info('send abuseReport alert  is ready email');
 	report.getReporterAndCreator(function(err, creator, reporter) {
 		if (!!err) {
@@ -40,6 +40,7 @@ function sendAbuseReportAlert(emailResources, report, callback) {
 					logger.info('saving report sent true');
 					report.setSent(true);
 					report.update();
+                    callback();
 				}
 			});
 		});
@@ -48,15 +49,26 @@ function sendAbuseReportAlert(emailResources, report, callback) {
 
 }
 exports.abuse = function(req, res) {
+
 	var abuseReport = models.AbuseReport.createNewFromRequest(req);
+    if ( !!abuseReport._id ){
+        res.status(500).send( { 'message' : 'abuse already reported' } );
+        return;
+    }
+
+
 	models.AbuseReport.connect(function(db, collection) {
 		collection.insert(abuseReport, function(err, result) {
 			if (!!err || !result) {
+                logger.error('unable to insert abusreReport to db',err);
 				new managers.error.InternalServerError(err, 'unable to report abuse').send(res);
+                return;
 			}
-			sendAbuseReportAlert(req.emailResources, new models.AbuseReport(abuseReport), function(err, result) {
-				if (!!err || !result) {
+			sendAbuseReportAlert(req.emailResources, new models.AbuseReport(abuseReport), function(err/*, result*/ ) { // guy - todo - understand if there should be a result.
+				if (!!err /*|| !result*/) {
+
 					new managers.error.InternalServerError(err, 'unable to report abuse').send(res);
+                    return;
 				}
 				res.send(abuseReport);
 			});
