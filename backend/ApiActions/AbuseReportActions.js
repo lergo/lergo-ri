@@ -48,7 +48,7 @@ exports.getAllReports = {
 exports.deleteAbuseReports = {
 	spec : {
 		description : 'Delete abuseReport corresponding to the id',
-		name : 'deleteLesson',
+		name : 'deleteAbuseReport',
 		path : '/abuseReports/{abuseReportId}/delete',
 		summary : 'Delete abuseReport corresponding to the id',
 		method : 'POST',
@@ -67,4 +67,34 @@ exports.deleteAbuseReports = {
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.abuseReports.exists ],
 	action : controllers.abuseReports.deleteReport
+};
+
+exports.updateAbuseReport = {
+	spec : {
+		description : 'update AbuseReport',
+		name : 'updateAbuseReport',
+		path : '/abuseReports/{abuseReportId}/update',
+		summary : 'user edits a abuseReport',
+		method : 'POST',
+		parameters : [ {
+			paramType : 'body',
+			name : 'abuseReport',
+			required : true,
+			description : 'The updated abuseReport',
+			type : 'AbuseReport'
+		}, {
+			paramType : 'path',
+			name : 'abuseReportId',
+			required : true,
+			description : 'ID of abuseReport that needs to be fetched',
+			type : 'string'
+		} ],
+		errorResponses : [ {
+			code : 500,
+			reason : 'unable to signup'
+		} ],
+		nickname : 'editAbuseReport'
+	},
+	middlewares : [ middlewares.session.isLoggedIn, middlewares.abuseReports.exists ],
+	action : controllers.abuseReports.update
 };
