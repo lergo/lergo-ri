@@ -22,6 +22,14 @@ exports.complexSearch = function(queryObj, callback) {
 		});
 		delete queryObj.filter.searchText;
 	}
+	if (!!queryObj.filter.userId) {
+		queryObj.filter.itemUserId = queryObj.filter.userId;
+		delete queryObj.filter.userId;
+	}
+	if (!!queryObj.filter.reporterId) {
+		queryObj.filter.userId = services.db.id(queryObj.filter.reporterId);
+		delete queryObj.filter.reporterId;
+	}
 	AbuseReport.connect(function(db, collection) {
 		services.complexSearch.complexSearch(queryObj, {
 			collection : collection

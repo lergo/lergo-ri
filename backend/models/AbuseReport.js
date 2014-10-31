@@ -7,30 +7,24 @@ var logger = require('log4js').getLogger('AbuseReport');
 function AbuseReport(data) {
 	this.data = data;
 	// returns the user we send report to
-	this.getReporterAndCreator = function(callback) {
+	this.getCreator = function(callback) {
 		var User = require('./User');
 		logger.debug('looking for creator');
-		User.findById(data.userId, {}, function(err, reporter) {
-			logger.debug('found User', reporter);
+
+		User.findById(data.itemUserId, {}, function(err, creator) {
+			logger.debug('found User', creator);
 			if (!!err) {
 				callback(err);
 				return;
 			}
-			User.findById(data.itemUserId, {}, function(err, creator) {
-				logger.debug('found User', creator);
-				if (!!err) {
-					callback(err);
-					return;
-				}
-				callback(null, creator, reporter);
-			});
+			callback(null, creator);
 		});
 
 	};
 
-    this.setSent = function( isSent ){
-        this.sent = isSent;
-    };
+	this.setSent = function(isSent) {
+		this.sent = isSent;
+	};
 }
 
 AbuseReport.collectionName = 'abuseReports';
@@ -55,10 +49,11 @@ AbuseReport.createNew = function(item, userId, obj) {
 	}
 	abuseReport.itemId = services.db.id(item._id);
 	abuseReport.userId = services.db.id(userId);
-	abuseReport.lastUpdated = new Date().getTime();
+	abuseReport.lastUpdate = new Date().getTime();
 	abuseReport.itemUserId = item.userId;
 	abuseReport.subject = item.subject;
 	abuseReport.language = item.language;
+	abuseReport.status = 'pending';
 
 	return abuseReport;
 };
