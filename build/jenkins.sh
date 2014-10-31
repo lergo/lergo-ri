@@ -68,6 +68,7 @@ install_dependencies(  ){
 for i in 1 2 3 4 5 6 7 8 9; do install_dependencies $i && break || sleep 1; done
 
 grunt --no-color
+grunt s3:uploadCoverage --no-color
 
 COMMITS_TEMPLATE=dist/views/version/_commits.html
 VERSION_TEMPLATE=dist/views/version/_version.html
