@@ -3,6 +3,7 @@ var models = require('../models');
 var managers = require('../managers');
 var logger = require('log4js').getLogger('AbuseReportsController');
 var services = require('../services');
+var async = require('async');
 var _ = require('lodash');
 
 // enum temporary solution for conversion
@@ -12,47 +13,83 @@ var localization = {
 	infringesRights : 'it infringes on my rights'
 };
 
-function sendAbuseReportAlert(emailResources, report /* models.AbuseReport */, callback) {
+function sendAbuseReportAlert(emailResources, report, callback) {
 	logger.info('send abuseReport alert  is ready email');
-	report.getCreator(function(err, creator) {
-		if (!!err) {
-			callback(err);
-			return;
-		}
+	var creator = null;
+	var reporter = null;
 
+	async.parallel([ function(done) {
+		report.getCreator(function(err, result) {
+			if (!!err) {
+				callback(err);
+				return;
+			}
+			creator = result;
+			done();
+
+		});
+	}, function(done) {
+		report.getReporter(function(err, result) {
+			if (!!err) {
+				callback(err);
+				return;
+			}
+			reporter = result;
+			done();
+		});
+	} ], function() {
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
-
 		_.merge(emailVars, {
 			creatorName : creator.username,
+			reporterName : reporter.username,
 			title : report.data.title,
 			itemType : report.data.itemType,
 			reason : localization[report.data.reason],
 			comment : report.data.comment
 		});
-
-		services.emailTemplates.renderAbuseReportEmail(emailVars, function(err, html, text) {
-			services.email.sendMail({
-				to : creator.email,
-				subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
-				text : text,
-				html : html
-			}, function(err) {
-				if (!!err) {
-					logger.error('error while sending report', err);
-					callback(err);
-				} else {
-					logger.info('saving report sent true');
-					report.setSent(true);
-					report.update();
-					callback();
-				}
+		async.parallel([ function(done) {
+			services.emailTemplates.renderAbuseReportEmail(emailVars, function(err, html, text) {
+				services.email.sendMail({
+					to : creator.email,
+					subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
+					text : text,
+					html : html
+				}, function(err) {
+					if (!!err) {
+						logger.error('error while sending report to craetor', err);
+						callback(err);
+						return;
+					}
+					done();
+				});
 			});
+		}, function(done) {
+			services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, html, text) {
+				services.email.sendMail({
+					to : 'rahul.shukla@synerzip.com',
+					subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
+					text : text,
+					html : html
+				}, function(err) {
+					if (!!err) {
+						logger.error('error while sending report to admin', err);
+						callback(err);
+						return;
+					}
+					done();
+				});
+			});
+		} ], function() {
+			logger.info('saving report sent true');
+			report.setSent(true);
+			report.update();
+			callback();
 		});
 
 	});
-
 }
+
 exports.abuse = function(req, res) {
 
 	var abuseReport = models.AbuseReport.createNewFromRequest(req);
