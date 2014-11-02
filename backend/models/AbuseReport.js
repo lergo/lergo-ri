@@ -10,7 +10,6 @@ function AbuseReport(data) {
 	this.getCreator = function(callback) {
 		var User = require('./User');
 		logger.debug('looking for creator');
-
 		User.findById(data.itemUserId, {}, function(err, creator) {
 			logger.debug('found User', creator);
 			if (!!err) {
@@ -18,6 +17,19 @@ function AbuseReport(data) {
 				return;
 			}
 			callback(null, creator);
+		});
+	};
+
+	this.getReporter = function(callback) {
+		var User = require('./User');
+		logger.debug('looking for reporter');
+		User.findById(data.userId, {}, function(err, reporter) {
+			logger.debug('found User', reporter);
+			if (!!err) {
+				callback(err);
+				return;
+			}
+			callback(null, reporter);
 		});
 
 	};
