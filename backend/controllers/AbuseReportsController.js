@@ -15,29 +15,28 @@ var localization = {
 
 function sendAbuseReportAlert(emailResources, report, callback) {
 	logger.info('send abuseReport alert  is ready email');
-	var creator = null;
-	var reporter = null;
 
 	async.parallel([ function(done) {
 		report.getCreator(function(err, result) {
 			if (!!err) {
-				callback(err);
-				return;
+				done(err);
 			}
-			creator = result;
-			done();
-
+			done(null, result);
 		});
 	}, function(done) {
 		report.getReporter(function(err, result) {
 			if (!!err) {
-				callback(err);
-				return;
+				done(err);
 			}
-			reporter = result;
-			done();
+			done(null, result);
 		});
-	} ], function() {
+	} ], function(err, results) {
+		if (!!err) {
+			callback(err);
+			return;
+		}
+		var creator = results[0];
+		var reporter = results[1];
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
 		_.merge(emailVars, {
@@ -58,29 +57,31 @@ function sendAbuseReportAlert(emailResources, report, callback) {
 				}, function(err) {
 					if (!!err) {
 						logger.error('error while sending report to craetor', err);
-						callback(err);
-						return;
+						done(err);
 					}
 					done();
 				});
 			});
 		}, function(done) {
-			services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, html, text) {
+			services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, htmlAdmin, textAdmin) {
 				services.email.sendMail({
 					to : 'rahul.shukla@synerzip.com',
 					subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
-					text : text,
-					html : html
+					text : textAdmin,
+					html : htmlAdmin
 				}, function(err) {
 					if (!!err) {
 						logger.error('error while sending report to admin', err);
-						callback(err);
-						return;
+						done(err);
 					}
 					done();
 				});
 			});
-		} ], function() {
+		} ], function(err) {
+			if (!!err) {
+				callback(err);
+				return;
+			}
 			logger.info('saving report sent true');
 			report.setSent(true);
 			report.update();
