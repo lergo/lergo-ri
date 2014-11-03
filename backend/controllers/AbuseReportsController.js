@@ -13,9 +13,45 @@ var localization = {
 	infringesRights : 'it infringes on my rights'
 };
 
+function sendMail(emailVars, callback) {
+	async.parallel([ function(done) {
+		services.emailTemplates.renderAbuseReportEmail(emailVars, function(err, html, text) {
+			services.email.sendMail({
+				to : emailVars.creatorEmail,
+				subject : 'Flagged ' + emailVars.itemType + ' report re "' + emailVars.title + '"',
+				text : text,
+				html : html
+			}, function(err) {
+				if (!!err) {
+					logger.error('error while sending report to craetor', err);
+					done(err);
+				}
+				done();
+			});
+		});
+	}, function(done) {
+		services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, htmlAdmin, textAdmin) {
+			services.email.sendMail({
+				to : 'rahul.shukla@synerzip.com',
+				subject : 'Flagged ' + emailVars.itemType + ' report re "' + emailVars.title + '"',
+				text : textAdmin,
+				html : htmlAdmin
+			}, function(err) {
+				if (!!err) {
+					logger.error('error while sending report to admin', err);
+					done(err);
+				}
+				done();
+			});
+		});
+	} ], function(err) {
+		callback(err);
+	});
+
+}
+
 function sendAbuseReportAlert(emailResources, report, callback) {
 	logger.info('send abuseReport alert  is ready email');
-
 	async.parallel([ function(done) {
 		report.getCreator(function(err, result) {
 			if (!!err) {
@@ -41,43 +77,14 @@ function sendAbuseReportAlert(emailResources, report, callback) {
 		_.merge(emailVars, emailResources);
 		_.merge(emailVars, {
 			creatorName : creator.username,
+			creatorEmail : creator.email,
 			reporterName : reporter.username,
 			title : report.data.title,
 			itemType : report.data.itemType,
 			reason : localization[report.data.reason],
 			comment : report.data.comment
 		});
-		async.parallel([ function(done) {
-			services.emailTemplates.renderAbuseReportEmail(emailVars, function(err, html, text) {
-				services.email.sendMail({
-					to : creator.email,
-					subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
-					text : text,
-					html : html
-				}, function(err) {
-					if (!!err) {
-						logger.error('error while sending report to craetor', err);
-						done(err);
-					}
-					done();
-				});
-			});
-		}, function(done) {
-			services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, htmlAdmin, textAdmin) {
-				services.email.sendMail({
-					to : 'rahul.shukla@synerzip.com',
-					subject : 'Flagged ' + report.itemType + ' report re "' + report.data.title + '"',
-					text : textAdmin,
-					html : htmlAdmin
-				}, function(err) {
-					if (!!err) {
-						logger.error('error while sending report to admin', err);
-						done(err);
-					}
-					done();
-				});
-			});
-		} ], function(err) {
+		sendMail(emailVars, function(err) {
 			if (!!err) {
 				callback(err);
 				return;
