@@ -27,7 +27,7 @@ server {
     set \$test "";
 
     if ( \$http_user_agent ~* "Google" ) {
-      set $test  A;
+      set \$test  A;
     }
 
     if ( \$args !~ "_escaped_fragment_" ){
