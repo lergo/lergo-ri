@@ -214,11 +214,11 @@ exports.isLoggedIn = {
 	'action' : controllers.users.isLoggedIn
 };
 
-exports.getQuestions = {
+exports.getUserQuestions = {
 	'spec' : {
 		'description' : 'Get questions',
 		'name' : 'getQuestions',
-		'path' : '/user/questions',
+		'path' : '/user/me/questions',
 		'summary' : 'Get all questions',
 		'method' : 'GET',
 		'parameters' : [],
@@ -228,7 +228,7 @@ exports.getQuestions = {
 		} ],
 		'nickname' : 'getQuestions'
 	},
-	'middlewares' : [ middlewares.lergo.queryObjParsing ],
+	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing ],
 	'action' : controllers.questions.getQuestions
 };
 
@@ -532,6 +532,41 @@ exports.getUserInvites = {
 
 		nickname : 'getInvites'
 	},
-	middlewares : [ middlewares.session.isLoggedIn,middlewares.lergo.queryObjParsing ],
+	middlewares : [ middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing ],
 	action : controllers.lessonsInvitations.find
+};
+
+exports.getUserLikedLessons = {
+	'spec' : {
+		'description' : 'Get user Liked lessons',
+		'name' : 'getLikedLessons',
+		'path' : '/user/me/liked/lessons',
+		'summary' : 'Get user liked lessons',
+		'method' : 'GET',
+		'parameters' : [],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to get lesson'
+		} ],
+		'nickname' : 'getLessons'
+	},
+	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing ],
+	'action' : controllers.lessons.getUserLikedLessons
+};
+exports.getUserLikedQuestions = {
+	'spec' : {
+		'description' : 'Get user Liked questions',
+		'name' : 'getLikedQuestions',
+		'path' : '/user/me/liked/questions',
+		'summary' : 'Get user liked questions',
+		'method' : 'GET',
+		'parameters' : [],
+		'errorResponses' : [ {
+			'code' : 500,
+			'reason' : 'unable to get question'
+		} ],
+		'nickname' : 'getQuestions'
+	},
+	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing ],
+	'action' : controllers.questions.getUserLikedQuestions
 };

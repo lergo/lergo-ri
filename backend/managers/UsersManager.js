@@ -205,8 +205,7 @@ exports.sendValidationEmail = function(emailResources, user, callback) {
 	logger.info('sending validation email', user);
 	var emailVars = {};
 	_.merge(emailVars, emailResources);
-	var validationLink = emailResources.lergoBaseUrl + '/#!/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac='
-			+ encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+	var validationLink = emailResources.lergoBaseUrl + '/#!/public/user/validate?_id=' + encodeURIComponent(user._id) + '&hmac='+ encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
 	_.merge(emailVars, {
 		'link' : validationLink,
@@ -326,8 +325,7 @@ exports.sendResetPasswordMail = function(emailResources, resetDetails, callback)
 
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
-		var changePasswordLink = emailResources.lergoBaseUrl + '/#!/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac='
-				+ encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+		var changePasswordLink = emailResources.lergoBaseUrl + '/#!/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac='+ encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
 
 		_.merge(emailVars, {
 			'link' : changePasswordLink,
@@ -446,11 +444,13 @@ exports.getUserByUsername = function(username, callback) {
 exports.getAllAdminEmails = function(callback) {
 	exports.find({
 		'isAdmin' : true
-	}, {}, function(err, result) {
+	}, {
+		email : 1,
+		_id : 0
+	}, function(err, result) {
 		if (!!err) {
 			callback(err);
 		}
-		var adminEmails = _.map(result, 'email');
-		callback(null, adminEmails);
+		callback(null, _.map(result, 'email'));
 	});
 };
