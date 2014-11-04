@@ -2,6 +2,7 @@
     "cookieSessionSecret" : "cookieSessionSecret",
     "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
+    "adminEmail":"info@lergo.org",
     "log4js" : {
         "appenders" : [
             { "type" : "console" }
