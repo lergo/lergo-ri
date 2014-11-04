@@ -10,6 +10,7 @@ var AbuseReport = require('../models/AbuseReport');
 var async = require('async');
 var logger = require('log4js').getLogger('AbuseReportsManager');
 var _ = require('lodash');
+var usersManager = require('./UsersManager');
 
 exports.complexSearch = function(queryObj, callback) {
 
@@ -66,7 +67,7 @@ function sendMail(emailVars, callback) {
 	}, function(done) {
 		services.emailTemplates.renderAbuseReportAdminEmail(emailVars, function(err, htmlAdmin, textAdmin) {
 			services.email.sendMail({
-				to : services.conf.adminEmail,
+				to : emailVars.adminEmails,
 				subject : 'Flagged ' + emailVars.itemType + ' report re "' + emailVars.title + '"',
 				text : textAdmin,
 				html : htmlAdmin
@@ -100,6 +101,14 @@ exports.sendAbuseReportAlert = function(emailResources, report, callback) {
 			}
 			done(null, result);
 		});
+	}, function(done) {
+		usersManager.getAllAdminEmails(function(err, result) {
+			if (!!err) {
+				done(err);
+			}
+			done(null, result);
+		});
+
 	} ], function(err, results) {
 		if (!!err) {
 			callback(err);
@@ -107,6 +116,7 @@ exports.sendAbuseReportAlert = function(emailResources, report, callback) {
 		}
 		var creator = results[0];
 		var reporter = results[1];
+		var adminEmails = results[2];
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
 		_.merge(emailVars, {
@@ -116,7 +126,8 @@ exports.sendAbuseReportAlert = function(emailResources, report, callback) {
 			title : report.data.title,
 			itemType : report.data.itemType,
 			reason : localization[report.data.reason],
-			comment : report.data.comment
+			comment : report.data.comment,
+			adminEmails : adminEmails
 		});
 		sendMail(emailVars, function(err) {
 			if (!!err) {
