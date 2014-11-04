@@ -4,6 +4,7 @@ var services = require('../services');
 var models = require('../models');
 var logger = require('log4js').getLogger('QuestionsController');
 var _ = require('lodash');
+var Like = require('../models/Like');
 
 exports.create = function(req, res) {
 	var question = req.body;
@@ -214,6 +215,32 @@ exports.getPublicLessonQuestions = function(req, res) {
 				}
 				res.send(result);
 			});
+		});
+	});
+};
+
+exports.getUserLikedQuestions = function(req, res) {
+	var queryObj = req.queryObj;
+	Like.find({
+		userId : req.sessionUser._id,
+		itemType : 'question'
+	}, {
+		itemId : 1,
+		_id : 0
+	}, function(err, result) {
+		if (!!err) {
+			err.send(res);
+			return;
+		}
+		queryObj.filter._id = {
+			$in : _.map(result, 'itemId')
+		};
+		managers.questions.complexSearch(req.queryObj, function(err, result) {
+			if (!!err) {
+				err.send(res);
+				return;
+			}
+			res.send(result);
 		});
 	});
 };
