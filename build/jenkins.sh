@@ -67,6 +67,10 @@ install_dependencies(  ){
 
 for i in 1 2 3 4 5 6 7 8 9; do install_dependencies $i && break || sleep 1; done
 
+cd ../lergo-ri
+build/build_decrypt_s3_json.sh
+cd ../lergo-ui
+
 grunt --no-color
 grunt s3:uploadCoverage --no-color
 
@@ -93,7 +97,7 @@ echo "building lergo-ri"
 
 cd lergo-ri
 build/build_decrypt_test_me_json.sh
-build/build_decrypt_s3_json.sh
+
 
 
 build_ri(){
