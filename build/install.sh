@@ -117,6 +117,8 @@ upgrade_main(){
         wget $BACKEND_URL -O $LERGO_RI_LOCATION/lergo-ri.tgz
 
         cd $LERGO_RI_LOCATION
+        tar -tzf my_tar.tar.gz >/dev/null || echo "tar file is incorrect"; exit 1
+
         rm -Rf package
         tar -xzvf lergo-ri.tgz
         ln -Tfs /var/www/lergo/lib/lergo-ri/package /var/www/lergo/lergo-ri
