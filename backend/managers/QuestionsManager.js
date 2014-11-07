@@ -30,7 +30,7 @@ exports.copyQuestion = function(user, question, callback) {
 	logger.info('Copying question');
 
 	var copyOf = [];
-	if (user._id.toString() !== question.userId) {
+	if (user._id.toString() !== question.userId.toString()) {
 		copyOf = copyOf.concat(question._id);
 	}
 
