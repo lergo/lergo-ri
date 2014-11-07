@@ -19,7 +19,7 @@ fi
 if [ "$USE_FOREVER" = "true" ]; then
     echo "using forever" >&2
     mkdir -p /var/log/lergo
-    forever  start --pidFile /var/run/lergo.pid  -l /var/log/lergo/process.log -o /var/log/lergo/process.output -e /var/log/lergo/process.error  --append --minUptime 120000 server.js
+    forever  start --pidFile /var/run/lergo.pid  -l /var/log/lergo/process.log -o /var/log/lergo/process.output -e /var/log/lergo/process.error  --append server.js
     echo "forever started" >&2
 else
     echo 'Starting service...' >&2
