@@ -91,7 +91,8 @@ module.exports = function (grunt) {
                         'Gruntfile.js',
                         'server.js',
                         '*.js',
-                        'backend/**/*.js'
+                        'backend/**/*.js',
+                        '!backend/dataUpgrades/**/*.js'
                     ]
                 }
             },
