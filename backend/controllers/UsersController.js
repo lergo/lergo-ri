@@ -220,5 +220,5 @@ exports.isLoggedIn = function(req, res) {
 
 exports.logout = function(req, res) {
 	req.session.userId = null;
-	res.send(200);
+	res.send(200, {'message': 'ok'});
 };
