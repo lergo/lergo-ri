@@ -2,7 +2,6 @@
 
 var sha1 = require('sha1');
 var logger = require('log4js').getLogger('UsersManager');
-var dbManager = require('./DbManager');
 var services = require('../services');
 var errorManager = require('./ErrorManager');
 var User = require('../models/User');
@@ -89,7 +88,7 @@ exports.createUser = function(emailResources, user, callback) {
 		}
 
 		logger.info('user with email [%s] does not exists. creating', user.username);
-		dbManager.connect('users', function(db, collection, done) {
+		services.db.connect('users', function(db, collection, done) {
 
 			user.password = exports.encryptUserPassword(user.password);
 			delete user.passwordConfirm;
@@ -132,7 +131,7 @@ exports.updateUser = function(user, callback) {
 		return;
 	}
 
-	dbManager.connect('users', function(db, collection, done) {
+	services.db.connect('users', function(db, collection, done) {
 		collection.update({
 			'_id' : user._id
 		}, user, function(err) {
@@ -169,7 +168,7 @@ exports.encryptUserPassword = function(password) {
  */
 exports.loginUser = function(loginCredentials, callback) {
 	logger.info('logging user [%s] in', loginCredentials.username);
-	dbManager.connect('users', function(db, collection, done) {
+	services.db.connect('users', function(db, collection, done) {
 		collection.findOne({
 			'username' : loginCredentials.username,
 			'password' : exports.encryptUserPassword(loginCredentials.password)
@@ -388,7 +387,7 @@ exports.findUser = function(filter, callback) {
 };
 
 exports.find = function(filter, projection, callback) {
-	dbManager.connect('users', function(db, collection) {
+	services.db.connect('users', function(db, collection) {
 		collection.find(filter, projection).toArray(function(err, result) {
 			callback(err, result);
 		});
@@ -397,7 +396,7 @@ exports.find = function(filter, projection, callback) {
 
 exports.getPublicUsersDetailsMapByIds = function(ids, callback) {
 	logger.debug('finding users ', ids);
-	dbManager.connect('users', function(db, collection, done) {
+	services.db.connect('users', function(db, collection, done) {
 		var cursor = collection.find({
 			'_id' : {
 				'$in' : ids
@@ -406,7 +405,7 @@ exports.getPublicUsersDetailsMapByIds = function(ids, callback) {
 			'username' : 1,
 			'_id' : 1
 		});
-		dbManager.toMap(cursor, function(err, map) {
+		services.db.toMap(cursor, function(err, map) {
 			done();
 			callback(err, map);
 		});

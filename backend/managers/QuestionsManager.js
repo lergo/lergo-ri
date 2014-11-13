@@ -1,6 +1,6 @@
 'use strict';
 var logger = require('log4js').getLogger('QuestionsManager');
-var dbManager = require('./DbManager');
+
 var errorManager = require('./ErrorManager');
 var _ = require('lodash');
 var Question = require('../models/Question');
@@ -9,7 +9,7 @@ var services = require('../services');
 exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
 
-	dbManager.connect('questions', function(db, collection, done) {
+	services.db.connect('questions', function(db, collection, done) {
 		collection.insert(question, function(err) {
 			if (!!err) {
 				logger.error('error creating question [%s] : [%s]', question.question, err);
@@ -30,6 +30,8 @@ exports.copyQuestion = function(user, question, callback) {
 	logger.info('Copying question');
 
 	var copyOf = [];
+
+    // LERGO-569 - we decided we DO NOT want to remember if the same user..
 	if (user._id.toString() !== question.userId.toString()) {
 		copyOf = copyOf.concat(question._id);
 	}
@@ -49,7 +51,7 @@ exports.copyQuestion = function(user, question, callback) {
 		question.copyOf = copyOf;
 	}
 
-	dbManager.connect('questions', function(db, collection) {
+	services.db.connect('questions', function(db, collection) {
 		collection.insert(question, function(err) {
 			if (!!err) {
 				logger.error('error copying question [%s] : [%s]', question.question, err);
@@ -73,7 +75,7 @@ exports.copyQuestion = function(user, question, callback) {
 exports.updateQuestion = function(question, callback) {
 	logger.info('Updating question');
 
-	dbManager.connect('questions', function(db, collection, done) {
+	services.db.connect('questions', function(db, collection, done) {
 
 		// prevent malicious users from making a fraud request to update someone
 		// else's question
@@ -116,7 +118,7 @@ exports.getQuestionById = function(id, callback) {
 
 exports.getUserQuestions = function(userId, callback) {
 	logger.info('getting user questions');
-	dbManager.connect('questions', function(db, collection, done) {
+	services.db.connect('questions', function(db, collection, done) {
 		collection.find({
 			'userId' : userId
 		}).toArray(function(err, result) {
@@ -132,7 +134,7 @@ exports.getUserQuestions = function(userId, callback) {
 exports.search = function(filter, projection, callback) {
 	logger.info('finding questions with filter ', filter, projection);
 
-	dbManager.connect('questions', function(db, collection, done) {
+	services.db.connect('questions', function(db, collection, done) {
 		collection.find(filter, projection).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to search for questions', err);
@@ -145,7 +147,7 @@ exports.search = function(filter, projection, callback) {
 
 exports.getQuestions = function(filter, callback) {
 	logger.info('Getting question');
-	dbManager.connect('questions', function(db, collection, done) {
+	services.db.connect('questions', function(db, collection, done) {
 		collection.find(filter).toArray(function(err, result) {
 			if (!!err) {
 				logger.error('unable to query for questions', err);

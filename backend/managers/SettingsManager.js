@@ -1,5 +1,5 @@
 'use strict';
-var dbManager = require('./DbManager');
+var services = require('../services');
 var errorManager = require('./ErrorManager');
 var logger = require('log4js').getLogger('SettingsManager');
 //var path = require('path');
@@ -9,7 +9,7 @@ var settings = null;
 
 
 // initialize settings - try to find one in database. if not found, insert empty.
-dbManager.connect('settings', function( db, collection, done){
+services.db.connect('settings', function( db, collection, done){
     collection.findOne({}, function(err, result){
         if ( !!err ){
             logger.error('unable to load settings : ' + err.message);
@@ -45,7 +45,7 @@ dbManager.connect('settings', function( db, collection, done){
 });
 
 exports.saveSettings = function( settings, callback ){
-    dbManager.connect('settings', function(db, collection,done){
+    services.db.connect('settings', function(db, collection,done){
         collection.update({'_id' : settings._id }, settings, function(err/*, result*/){
             if ( !!err ){
                 logger.error('error while saving ');

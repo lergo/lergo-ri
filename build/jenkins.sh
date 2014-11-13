@@ -107,7 +107,9 @@ build_ri(){
     fi
     npm install || return 1
     grunt testBefore || exit 1
-    grunt build --no-color || exit 1
+    grunt --no-color || exit 1
+    grunt s3:uploadCoverage --no-color
+    grunt s3:uploadBuildStatus --no-color
     grunt testAfter || exit 1
     cd dist
     npm install --production || return 1

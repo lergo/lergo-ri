@@ -24,7 +24,7 @@ function getDbConnection( callback ){
 
 }
 
-logger.info('initializing DbManager :: ' , _dbUrl );
+logger.info('initializing DbService :: ' , _dbUrl );
 
 
 // add an easy way to turn a result to map
