@@ -241,6 +241,11 @@ app.get('/backend/sitemap.xml', function(req, res){
                 sitemap.urls.push(entry);
             }
 
+            // add homepage with languages
+            _.each(['he','en'], function(lang){
+                sitemap.urls.push( { url: '/#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
+            });
+
             sitemap.toXML(function (xml) {
                 res.header('Content-Type', 'application/xml');
                 res.send(xml);
