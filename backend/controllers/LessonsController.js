@@ -1,5 +1,6 @@
 'use strict';
 var managers = require('../managers');
+var services = require('../services');
 var async = require('async');
 var logger = require('log4js').getLogger('LessonsController');
 var Lesson = require('../models/Lesson');
@@ -72,8 +73,8 @@ exports.getAdminLessons = function(req, res) {
 
 exports.adminUpdateLesson = function(req, res) {
 	var lesson = req.body;
-	lesson.userId = managers.db.id(lesson.userId);
-	lesson._id = managers.db.id(lesson._id);
+	lesson.userId = services.db.id(lesson.userId);
+	lesson._id = services.db.id(lesson._id);
 	managers.lessons.updateLesson(lesson, function(err, obj) {
 		if (!!err) {
 			err.send(res);
@@ -211,7 +212,7 @@ exports.update = function(req, res) {
 	var lesson = req.body;
 
 	lesson.userId = req.lesson.userId;
-	lesson._id = managers.db.id(lesson._id);
+	lesson._id = services.db.id(lesson._id);
 	managers.lessons.updateLesson(lesson, function(err, obj) {
 		if (!!err) {
 			err.send(res);
@@ -259,7 +260,7 @@ exports.findLessonsByIds = function(req, res) {
 
 	var objectIds = req.getQueryList('lessonsId');
 	logger.info('this is object ids', objectIds);
-	objectIds = managers.db.id(objectIds);
+	objectIds = services.db.id(objectIds);
 
 	Lesson.find({
 		'_id' : {
