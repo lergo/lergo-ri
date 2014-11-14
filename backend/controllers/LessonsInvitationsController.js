@@ -1,5 +1,6 @@
 'use strict';
 var managers = require('../managers');
+var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 var LessonInvitation = require('../models/LessonInvitation');
@@ -69,7 +70,7 @@ exports.build = function(req, res) {
 
 	logger.info('building the invitation', id, construct, constructForce);
 	managers.lessonsInvitations.find({
-		'_id' : managers.db.id(id)
+		'_id' : services.db.id(id)
 	}, {}, function(err, result) {
 		if (!!err) {
 			err.send(res);
@@ -101,9 +102,9 @@ exports.build = function(req, res) {
 exports.update = function(req, res) {
 	logger.info('updating Invite');
 	var invitation = req.body;
-	invitation._id = managers.db.id(invitation._id);
-	invitation.inviter = managers.db.id(invitation.inviter);
-	invitation.lessonId = managers.db.id(invitation.lessonId);
+	invitation._id = services.db.id(invitation._id);
+	invitation.inviter = services.db.id(invitation.inviter);
+	invitation.lessonId = services.db.id(invitation.lessonId);
 	new LessonInvitation(invitation).update(function(err) {
 		logger.info('invitation updated');
 		if (!!err) {

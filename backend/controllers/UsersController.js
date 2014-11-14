@@ -155,7 +155,7 @@ exports.findUsersById = function (req, res) {
 
     var objectIds = req.getQueryList('usersId');
     logger.info('this is object ids', objectIds);
-    objectIds = managers.db.id(objectIds);
+    objectIds = services.db.id(objectIds);
 
     User.find({ '_id': { '$in': objectIds }}, {}, function (err, result) {
         if (!!err) {

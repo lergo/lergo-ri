@@ -8,7 +8,7 @@ var Like = require('../models/Like');
 
 exports.create = function(req, res) {
 	var question = req.body;
-	question.userId = managers.db.id(req.sessionUser._id);
+	question.userId = services.db.id(req.sessionUser._id);
 	managers.questions.createQuestion(question, function(err, obj) {
 		if (!!err) {
 			err.send(res);
@@ -58,8 +58,8 @@ exports.update = function(req, res) {
 	var question = req.body;
 
 	logger.debug('question from body', question);
-	question._id = managers.db.id(question._id);
-	question.userId = managers.db.id(req.question.userId);
+	question._id = services.db.id(question._id);
+	question.userId = services.db.id(req.question.userId);
 	managers.questions.updateQuestion(question, function(err, obj) {
 		if (!!err) {
 			err.send(res);
