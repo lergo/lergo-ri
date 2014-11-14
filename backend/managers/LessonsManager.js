@@ -55,7 +55,7 @@ exports.copyLesson = function (user, lesson, callback) {
 
     // LERGO-412 - we decided we want to remember even if same user.
     // LERGO-569 - we decided we DO NOT want to remember if the same user..
-    if ( user._id.toString() !== lesson.userId ){
+    if ( !services.db.id(user._id).equals( services.db.id( lesson.userId ) ) ){
         copyOf = copyOf.concat(lesson._id);
     }
 

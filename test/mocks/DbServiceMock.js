@@ -12,8 +12,19 @@ var dbCollection = {
 
 };
 
+function ObjectId( myValue ){
+
+    this.value = myValue;
+
+    this.equals = function( other ){
+        return this.value === other.value;
+    };
+}
+
 services.db = {
-    id: function(value){ return value; },
+    id: function(value){
+        return new ObjectId(value);
+    },
     connect: function(collection, callback){
         logger.info('mock connects',collection);
         callback( {}, dbCollection );

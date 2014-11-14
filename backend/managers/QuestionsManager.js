@@ -32,7 +32,7 @@ exports.copyQuestion = function(user, question, callback) {
 	var copyOf = [];
 
     // LERGO-569 - we decided we DO NOT want to remember if the same user..
-	if (user._id.toString() !== question.userId.toString()) {
+	if ( ! services.db.id(user._id).equals( services.db.id(question.userId) ) ) {
 		copyOf = copyOf.concat(question._id);
 	}
 

@@ -15,12 +15,13 @@ describe('LessonsManager', function(){
         var differentUserCopy = null;
         var sameUserCopy = null;
 
-        LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'someoneElse' }, function( error, copy){
-            differentUserCopy = copy;
-        });
 
         LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'user' }, function( error, copy){
             sameUserCopy = copy;
+        });
+
+        LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'someoneElse' }, function( error, copy){
+            differentUserCopy = copy;
         });
 
         it('should create a copy', function(done){
@@ -35,7 +36,7 @@ describe('LessonsManager', function(){
 
 
         // same user - meaning the user who created the lesson, and the user who copied the lesson.
-        it('should  not put "copy of" property when same user', function(){
+        it('should not put "copy of" property when same user', function(){
             expect(sameUserCopy.copyOf).to.be(undefined);
         });
 
