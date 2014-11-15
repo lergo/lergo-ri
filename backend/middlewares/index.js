@@ -9,3 +9,4 @@ exports.lergo = require('../LergoMiddleware'); // general middlewares
 exports.reports = require('./ReportsMiddleware');
 exports.helperContents = require('./HelperContentsMiddleware');
 exports.abuseReports = require('./AbuseReportsMiddleware');
+exports.faqs = require('./FAQsMiddleware');
