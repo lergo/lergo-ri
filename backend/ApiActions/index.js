@@ -11,6 +11,7 @@ exports.likesActions = require('./LikesActions');
 exports.reportsActions = require('./ReportsActions');
 exports.helperContentsActions= require('./HelperContentsActions');
 exports.abuseReportsActions= require('./AbuseReportActions');
+exports.faqActions= require('./FAQActions');
 var logger = require('log4js').getLogger('apiActions');
 
 
