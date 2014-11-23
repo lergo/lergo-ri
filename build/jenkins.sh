@@ -43,6 +43,7 @@ cd lergo-ri
 set +v
 set +x
 source build/build_decrypt_vagrant_build_config.sh
+source build/build_decrypt_vagrant_pem.sh
 set -v
 set -x
 cd ..
