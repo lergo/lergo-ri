@@ -1,16 +1,27 @@
 set -e
 
 
-wget -O my-vagrant.tgz "https://www.dropbox.com/s/hqs5kkw25qzzjew/my-vagrant.tgz?dl=1"
-tar -xzvf my-vagrant.tgz
+if [ ! -f my-vagrant.tgz ];then
+    wget -O my-vagrant.tgz "https://www.dropbox.com/s/hqs5kkw25qzzjew/my-vagrant.tgz?dl=1"
+    tar -xzvf my-vagrant.tgz
+    SHOULD_INSTALL_PLUGIN=true
+else
+    echo "assuming vagrant already installed on the system"
+    SHOULD_INSTALL_PLUGIN=false
+fi
 
 VAGRANT_CMD="`pwd`/my-vagrant/bin/vagrant"
 $VAGRANT_CMD --version
 
-$VAGRANT_CMD plugin install vagrant-aws
+if [ "$SHOULD_INSTALL_PLUGIN" = "true" ];then
+    $VAGRANT_CMD plugin install vagrant-aws
+else
+    echo "assuming plugin already installed"
+fi
 
 
-echo "cloning vagrant automations"
+echo "cloning vagrant automation machines"
+rm -rf vagrant-automation-machines
 git clone https://github.com/guy-mograbi-at-gigaspaces/vagrant-automation-machines.git
 
 echo "copying vagrant files from lergo-ri under automations project"
@@ -29,7 +40,11 @@ echo "BUILD_TAG=\"$BUILD_TAG\""
 
 echo "decrypting vagrant config json"
 cd lergo-ri
+set +v
+set +x
 source build/build_decrypt_vagrant_build_config.sh
+set -v
+set -x
 cd ..
 
 
