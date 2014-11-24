@@ -31,11 +31,11 @@ echo "populating build_details.sh with information from jenkins"
 
 BUILD_DETAILS="vagrant-automation-machines/synced_folder/build_details.sh"
 echo "" > $BUILD_DETAILS
-echo "BUILDER_NUMBER=\"$BUILD_NUMBER\""
-echo "BUILD_ID=\"$BUILD_ID\""
-echo "BUILD_DISPLAY_NAME=\"$BUILD_DISPLAY_NAME\""
-echo "JOB_NAME=\"$JOB_NAME\""
-echo "BUILD_TAG=\"$BUILD_TAG\""
+echo "export BUILDER_NUMBER=\"$BUILD_NUMBER\""
+echo "export BUILD_ID=\"$BUILD_ID\""
+echo "export BUILD_DISPLAY_NAME=\"$BUILD_DISPLAY_NAME\""
+echo "export JOB_NAME=\"$JOB_NAME\""
+echo "export BUILD_TAG=\"$BUILD_TAG\""
 
 
 echo "decrypting vagrant config json"
@@ -43,9 +43,12 @@ cd lergo-ri
 set +v
 set +x
 source build/build_decrypt_vagrant_build_config.sh
-source build/build_decrypt_vagrant_pem.sh
+
 set -v
 set -x
+
+source build/build_decrypt_vagrant_pem.sh
+
 cd ..
 
 
