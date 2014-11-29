@@ -88,7 +88,7 @@ exports.sendReportReady = function(req, res) {
 			return;
 		}
 
-		res.send(200);
+		res.status(200).send({});  // lergo-577 - this response would cause "illegal token O" in frontend.
 
 	});
 };
