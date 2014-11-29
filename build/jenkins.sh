@@ -31,11 +31,11 @@ echo "populating build_details.sh with information from jenkins"
 
 BUILD_DETAILS="vagrant-automation-machines/synced_folder/build_details.sh"
 echo "" > $BUILD_DETAILS
-echo "export BUILDER_NUMBER=\"$BUILD_NUMBER\""
-echo "export BUILD_ID=\"$BUILD_ID\""
-echo "export BUILD_DISPLAY_NAME=\"$BUILD_DISPLAY_NAME\""
-echo "export JOB_NAME=\"$JOB_NAME\""
-echo "export BUILD_TAG=\"$BUILD_TAG\""
+echo "export BUILD_NUMBER=\"$BUILD_NUMBER\"" >> $BUILD_DETAILS
+echo "export BUILD_ID=\"$BUILD_ID\"" >> $BUILD_DETAILS
+echo "export BUILD_DISPLAY_NAME=\"$BUILD_DISPLAY_NAME\"" >> $BUILD_DETAILS
+echo "export JOB_NAME=\"$JOB_NAME\"" >> $BUILD_DETAILS
+echo "export BUILD_TAG=\"$BUILD_TAG\"" >> $BUILD_DETAILS
 
 
 echo "decrypting vagrant config json"
