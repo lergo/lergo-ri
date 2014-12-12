@@ -21,12 +21,13 @@ function ObjectId( myValue ){
     };
 }
 
-services.db = {
-    id: function(value){
-        return new ObjectId(value);
-    },
-    connect: function(collection, callback){
-        logger.info('mock connects',collection);
-        callback( {}, dbCollection );
-    }
+// we have to override the methods like this
+// because only this way it will support both "require(services).db" and "require(service/db)"
+services.db.id = function(value){
+    return new ObjectId(value);
+};
+
+services.db.connect =  function(collection, callback){
+    logger.info('mock connects',collection);
+    callback( {}, dbCollection );
 };

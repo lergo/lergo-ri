@@ -96,7 +96,7 @@ exports.complexSearch = function (queryObj, builder, callback) {
     // default values;
     var filter = {};
     var sort = {};
-    var projection = {};
+    var projection = !!queryObj.projection && queryObj.projection || {};
     var skip = 0;
     var limit = 100;
     var total = 0;

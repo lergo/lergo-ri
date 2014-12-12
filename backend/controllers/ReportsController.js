@@ -101,6 +101,7 @@ exports.sendReportReady = function(req, res) {
  *
  * this does not include reports I invited someone else to do.
  *
+ * this action removes the "data" field from the reports.
  *
  * @param req - the request
  * @param res - the response

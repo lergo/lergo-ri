@@ -89,6 +89,18 @@ exports.complexSearch = function( queryObj, callback ){
     }
 
     Report.connect( function( db, collection ){
-        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, function( err, result){
+            if ( !!err ){
+                callback(err);
+            }
+
+            if ( !!result ) {
+                _.each(result, function (item) {
+                    item.data = undefined; // remove the data field. it is too big for complex search results.
+                });
+            }
+
+            callback(err, result);
+        } );
     });
 };

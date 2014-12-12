@@ -1,14 +1,19 @@
 'use strict';
 
-require('../../mocks');
 
-var expect = require('expect.js');
-
-var logger = require('log4js').getLogger('testLessonManager');
-
-var LessonsManager = require('../../../backend/managers/LessonsManager');
 
 describe('LessonsManager', function(){
+
+
+    var expect = require('expect.js');
+
+    var logger = require('log4js').getLogger('testLessonManager');
+
+    var LessonsManager = null;
+    before(function(){
+        require('../../mocks');
+        LessonsManager = require('../../../backend/managers/LessonsManager');
+    });
 
     describe('#copyLesson()', function(){
 
@@ -16,13 +21,16 @@ describe('LessonsManager', function(){
         var sameUserCopy = null;
 
 
-        LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'user' }, function( error, copy){
-            sameUserCopy = copy;
+        before(function(){
+            LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'user' }, function( error, copy){
+                sameUserCopy = copy;
+            });
+
+            LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'someoneElse' }, function( error, copy){
+                differentUserCopy = copy;
+            });
         });
 
-        LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'someoneElse' }, function( error, copy){
-            differentUserCopy = copy;
-        });
 
         it('should create a copy', function(done){
             logger.info('this is different user copy', differentUserCopy) ;

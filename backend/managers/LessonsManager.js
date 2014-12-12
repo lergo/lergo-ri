@@ -250,7 +250,7 @@ exports.search = exports.find;
 
 exports.complexSearch = function( queryObj, callback ){
 
-    if ( !!queryObj.filter.searchText ){
+    if ( !!queryObj.filter && !!queryObj.filter.searchText ){
 
         var text =  new RegExp(queryObj.filter.searchText, 'i');
 
