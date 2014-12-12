@@ -32,6 +32,11 @@ if [ "$VERSION_BEFORE" != "$VERSION_AFTER" ]; then
 fi
 
 
+if [ "$POST_UPGRADE_HOOK_URL" != "" ]; then
+    wget -O - "$POST_UPGRADE_HOOK_URL" || echo "running system tests failed"
+fi
+
+
 
 ######
 # use this script to auto update lergo
