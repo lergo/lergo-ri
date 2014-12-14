@@ -29,7 +29,7 @@ build_ri(){
     if [ "$RUN_RI_TESTS" = "true" ];then
         echo "decrypting me.json for tests"
 
-        source /vagrant/build_decrypt_test_me_json.sh
+        source /vagrant/build_decrypt_test_me_json.sh &>2 /dev/null
 
         echo "running test before"
         grunt testBefore || exit 1
@@ -42,7 +42,7 @@ build_ri(){
 
 
     if [ "$UPLOAD_COVERAGE" = "true" ];then
-        source /vagrant/build_decrypt_s3_json.sh
+        source /vagrant/build_decrypt_s3_json.sh &>2 /dev/null
         echo "uploading coverate for ri"
         grunt s3:uploadCoverage --no-color
         grunt s3:uploadBuildStatus --no-color
