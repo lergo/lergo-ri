@@ -13,6 +13,7 @@
     },
     "public" : {
         "googleAnalyticsCode" : null,
+        "facebookAppId":"1505045963101770",
         "disqus" : {
             "enabled" : false,
             "shortname" : "lergo",
