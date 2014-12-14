@@ -42,12 +42,12 @@ echo "decrypting vagrant config json"
 cd lergo-ri
 set +v
 set +x
-source build/build_decrypt_vagrant_build_config.sh
+source build/build_decrypt_vagrant_build_config.sh   &>2 /dev/null
 
 set -v
 set -x
 
-source build/build_decrypt_vagrant_pem.sh
+source build/build_decrypt_vagrant_pem.sh    &>2 /dev/null
 
 cd ..
 

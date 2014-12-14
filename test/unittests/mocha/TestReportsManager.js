@@ -6,6 +6,7 @@ describe('ReportsManager', function( ){
     var ReportsManager;
 
     before(function(){
+        logger.info('initializing test');
         require('../../mocks');
         //services.complexSearch.complexSearch
 //        lets mock ComplexSearch
