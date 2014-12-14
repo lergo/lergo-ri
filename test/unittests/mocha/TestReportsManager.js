@@ -30,7 +30,7 @@ describe('ReportsManager', function( ){
                 done();
             });
         });
-    })
+    });
 
 
 });
