@@ -226,12 +226,17 @@ exports.getUserLikedQuestions = function(req, res) {
 		itemType : 'question'
 	}, {
 		itemId : 1,
-		_id : 0
+		_id : 1
 	}, function(err, result) {
 		if (!!err) {
 			err.send(res);
 			return;
 		}
+
+		var mapResults = {};
+		_.each(result, function(r) {
+			mapResults[r.itemId.toString()] = r._id.getTimestamp();
+		});
 		queryObj.filter._id = {
 			$in : _.map(result, 'itemId')
 		};
@@ -240,6 +245,9 @@ exports.getUserLikedQuestions = function(req, res) {
 				err.send(res);
 				return;
 			}
+			_.each(result.data, function(o) {
+				o.lastUpdate = mapResults[o._id.toString()];
+			});
 			res.send(result);
 		});
 	});
