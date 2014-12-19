@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module ConfManager deprecated
+ * @type {Logger}
+ */
+
 var logger = require('log4js').getLogger('ConfManager');
 var path = require('path'),
     appDir = path.dirname(require.main.filename);

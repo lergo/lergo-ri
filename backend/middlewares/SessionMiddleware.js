@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module SessionMiddleware
+ * @type {exports}
+ */
+
 var managers = require('../managers');
 var logger = require('log4js').getLogger('UsersMiddleware');
 var User = require('../models/User');

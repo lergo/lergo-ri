@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @module DbService
+ * @type {exports}
+ */
+
 var conf = require('./Conf');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;

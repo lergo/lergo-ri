@@ -84,9 +84,6 @@ exports.updateReport = {
 };
 
 
-/**
-
- */
 exports.sendReportReady = {
     'spec': {
         'description': 'send email that report is ready',

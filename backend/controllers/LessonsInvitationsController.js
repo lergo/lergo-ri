@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module LessonsInvitationsController
+ * @type {exports}
+ */
+
 var managers = require('../managers');
 var services = require('../services');
 var _ = require('lodash');

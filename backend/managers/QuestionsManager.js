@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module QuestionsManager
+ * @type {Logger}
+ */
+
 var logger = require('log4js').getLogger('QuestionsManager');
 
 var errorManager = require('./ErrorManager');

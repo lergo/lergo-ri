@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @module UsersManager
+ * @type {api|exports}
+ */
 var sha1 = require('sha1');
 var logger = require('log4js').getLogger('UsersManager');
 var services = require('../services');
@@ -11,8 +15,8 @@ var _ = require('lodash');
  * This function will return true if userName >= 3 character and should only
  * include alphanumeric and under score else return false;
  * 
- * @param userName
- * @returns
+ * @param {string} userName
+ * @returns {boolean} true iff username is valid
  */
 function isValidUserName(userName) {
 	if (userName === null || typeof (userName) === 'undefined' || userName.length < 3) {
@@ -26,8 +30,8 @@ function isValidUserName(userName) {
  * Return true if email is valid else return false This method only checks
  * pattern of email
  * 
- * @param email
- * @returns
+ * @param {string} email
+ * @returns {boolean} true iff email is valid
  */
 function isValidEmail(email) {
 	if (email === null || typeof (email) === 'undefined' || email.length === 0) {

@@ -3,6 +3,9 @@ var logger = require('log4js').getLogger('ComplexSearchService');
 var async = require('async');
 /**
  *
+ * @module ComplexSearchService
+ *
+ * @description
  * This function gets a proprietary filter object and translates it to a mongo query
  *
  * We can handle really difficult queries here.
@@ -15,6 +18,7 @@ var async = require('async');
  *
  *  so it pseudo code is looks like this
  *
+ * <pre>
  *   async.parallel (
  *     [ build functions ],
  *      async.parallel (
@@ -23,23 +27,20 @@ var async = require('async');
  *      )
  *    );
  *
+ * </pre>
+ *
+ * this function uses a builder that contains overrides.
+ * the builder has the following structure:
+ *
+ * <pre>
+ *  {
+ *      collection : the collection to use for count and find functions
+ *  }
+ *  </pre>
  *
  *
- * @param queryObj - describe filter & project & sort & paging
- *
- *
- * {
- *    'filter' : {},
- *    'projection' : {},
- *    'sort' : {},
- *    'paging' : {
- *        'skip' : {}
- *        'limit' : {}
- *    }
- *
- * }
- *
- *
+ * @param {ComplexSearchQuery} queryObj - describe filter & project & sort & paging
+ * *
  * The projection, sort and paging are straight forward.
  *
  * However the filter section can get very complex - we can ask to cross reference data from other collections
@@ -47,32 +48,20 @@ var async = require('async');
  *
  *
  *
- * @param builder - an interface we can pass to this function to add specific logic in case it is needed.
+ * @param {object} builder - an interface we can pass to this function to add specific logic in case it is needed.
  * for example - in tag search for lessons, we should first search for questions with matching tags, extract
  * their IDs and add them to the filter.
  *
  * when you add a method to the builder, you need to document it here.
  *
- * the builder has the following structure:
- *
- *  {
- *      collection : the collection to use for count and find functions
- *  }
- *
- *
- *
- *
- *
  *
  * @param callback
- *
- *
- *
  *
  * @response
  *
  * The response for each complexSearch should contain the pagination information as well.
  *
+ * <pre>
  * {
  *    'data' : [ the data ],
  *    'count' : total filtered object,
@@ -81,6 +70,7 @@ var async = require('async');
  *    'limit' : how many did we bring?
  *
  * }
+ * </pre>
  *
  *
  */

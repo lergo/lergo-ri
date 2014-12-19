@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module LessonsInvitationsManager
+ * @type {exports}
+ */
+
 var services = require('../services');
 var lessonsManager = require('./LessonsManager');
 var errorManager = require('./ErrorManager');
@@ -119,6 +125,15 @@ exports.deleteById = function(id, callback) {
 	});
 };
 
+/**
+ *
+ * @description
+ * returns lesson invitation according to query object. without quizItems.
+
+ *
+ * @param {ComplexSearchQuery} queryObj
+ * @param callback
+ */
 exports.complexSearch = function(queryObj, callback) {
 	if (!!queryObj.filter) {
 		if (!!queryObj.filter['data.finished']) {

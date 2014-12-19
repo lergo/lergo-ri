@@ -1,4 +1,8 @@
 'use strict';
+/**
+ * @module LessonsManager
+ * @type {Logger}
+ */
 // todo user "managers" instead..
 // since this is a manager, we cannot simply require('./index');
 // we need to use setTimeout( function(){ managers = require('./index'); },0);

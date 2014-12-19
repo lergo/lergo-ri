@@ -3,6 +3,8 @@
 
 /**
  *
+ * @module LessonsComplexQuery integration test
+ * @description
  *
  *
  * This tests relies on mongo, and therefore it is an integration test.

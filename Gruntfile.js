@@ -36,7 +36,12 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         yeoman: yeomanConfig,
-
+        watch: {
+            develop: {
+                files: ['backend/**/*', 'test/**/*'],
+                tasks: ['jsdoc','jshint']
+            }
+        },
         s3:{
             uploadCoverage: {
                 options: {
@@ -61,6 +66,15 @@ module.exports = function (grunt) {
                 },
                 cwd: 'buildstatus/',
                 src: '**'
+            }
+        },
+
+        jsdoc : {
+            dist : {
+                src: ['backend/**/*.js', 'test/**/*.js'],
+                options: {
+                    destination: 'doc'
+                }
             }
         },
 

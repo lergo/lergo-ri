@@ -1,4 +1,9 @@
 'use strict';
+
+/**
+ * @module UsersActions
+ * @type {exports}
+ */
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');

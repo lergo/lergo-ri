@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module LesosnsMiddleware
+ * @type {Lesson|exports}
+ */
+
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');

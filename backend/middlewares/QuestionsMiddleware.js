@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module QuestionsMiddleware
+ * @type {Question|exports}
+ */
+
 var Question = require('../models/Question');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');

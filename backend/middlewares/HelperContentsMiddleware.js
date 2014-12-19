@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module HelperContentsMiddleware
+ * @type {HelperContent|exports}
+ */
+
 var HelperContent = require('../models/HelperContent');
 var logger = require('log4js').getLogger('HelperContentsMiddleware');
 var permissions = require('../permissions');

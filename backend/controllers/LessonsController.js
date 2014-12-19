@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module LessonsController
+ * @type {exports}
+ */
+
 var managers = require('../managers');
 var services = require('../services');
 var async = require('async');

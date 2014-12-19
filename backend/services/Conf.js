@@ -1,5 +1,7 @@
 /**
  *
+ * @module Conf Service
+ * @description
  * This will eventually become the configuration service.
  *
  * Currently they will exist side by side.

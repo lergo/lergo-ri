@@ -1,3 +1,6 @@
+/**
+ * @module models User
+ */
 'use strict';
 var AbstractModel = require('./AbstractModel');
 

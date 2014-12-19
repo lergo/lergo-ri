@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module UsersController
+ * @type {exports}
+ */
+
 var managers = require('../managers');
 var permissions = require('../permissions');
 var services = require('../services');

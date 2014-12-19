@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @module LergoMiddleware
+ * @type {Logger}
+ */
 var logger = require('log4js').getLogger('LergoMiddleware');
 var _ = require('lodash');
 var util = require('util');

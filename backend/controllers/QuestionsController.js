@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module QuestionsController
+ * @type {exports}
+ */
+
 var managers = require('../managers');
 var services = require('../services');
 var models = require('../models');

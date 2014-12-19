@@ -1,3 +1,10 @@
+'use strict';
+
+/**
+ * @module LessonsInvitationsActions
+ * @type {exports}
+ */
+
 var middlewares = require('../middlewares');
 var controllers = require('../controllers');
 

@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module EmailTemplateService
+ * @type {Logger}
+ */
+
 var logger = require('log4js').getLogger('EmailTemplateService');
 
 var _templatesDir;
@@ -46,13 +52,11 @@ exports.template = function (name, locals, callback) {
  *
  *
  *
- * @param locals = {
- *     "name" : "__user name",
- *     "link" : "__reset password link",
- *     "lergoLogoAbsoluteUrl" : "absolute url to lergo image",
- *     "lergoLink" : "link to lergo site"
- *
- * }
+ * @param {object} locals
+ * @param {string} locals.name user name
+ * @param {string} locals.link reset password link
+ * @param {string} locals.lergoLogoAbsoluteUrl
+ * @param {string} locals.lergoLink link to lergo site
  * @param callback
  */
 

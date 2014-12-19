@@ -1,4 +1,20 @@
 'use strict';
+
+
+/**
+ * @name ReportsManager
+ * @class
+ *
+ */
+/**
+ * @name managers
+ * @module
+ */
+/**
+ *
+ * @type {exports.Report|*}
+ */
+
 var Report = require('../models').Report;
 var services = require('../services');
 var _ = require('lodash');
@@ -73,6 +89,17 @@ exports.deleteReport = function(id, callback) {
 };
 
 
+/**
+ * @callback ReportsManager~ReportsManagerComplexSearchCallback
+ * @param {error} err
+ * @param {Array<LessonInvitation>} result
+ */
+
+/**
+ *
+ * @param {ComplexSearchQuery} queryObj
+ * @param {ReportsManager~ReportsManagerComplexSearchCallback} callback
+ */
 exports.complexSearch = function( queryObj, callback ){
 
     // change some keys around for report.
@@ -89,18 +116,6 @@ exports.complexSearch = function( queryObj, callback ){
     }
 
     Report.connect( function( db, collection ){
-        services.complexSearch.complexSearch( queryObj, { collection : collection }, function( err, result){
-            if ( !!err ){
-                callback(err);
-            }
-
-            if ( !!result ) {
-                _.each(result, function (item) {
-                    item.data = undefined; // remove the data field. it is too big for complex search results.
-                });
-            }
-
-            callback(err, result);
-        } );
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback);
     });
 };

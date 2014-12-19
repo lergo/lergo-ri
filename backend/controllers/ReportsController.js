@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module ReportsController
+ * @type {exports.Report|*}
+ */
+
 var Report = require('../models').Report;
 var services = require('../services');
 var managers = require('../managers');

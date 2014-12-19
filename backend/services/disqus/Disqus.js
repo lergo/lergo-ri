@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module Disqus
+ * @type {exports}
+ */
+
 var crypto = require('crypto');
 
 
@@ -34,13 +40,10 @@ exports.getTimestamp = function(){
 
 /**
  *
- * @param data
- *
- * = {
- *          id : id,
- *          username : username,
- *          email : email
- * }
+ * @param {object} data
+ * @param {string} data.id disqus account id
+ * @param {string} data.username disqus username
+ * @param {string} data.email disqus.email
  * @returns {{pubKey: (apiKey|*|Document.apiKey), auth: string}}
  */
 exports.ssoObj = function( data ){
