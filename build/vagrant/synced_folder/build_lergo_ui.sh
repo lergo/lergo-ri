@@ -41,7 +41,7 @@ build_ui(){
     if [ "$UPLOAD_COVERAGE" = "true" ]; then
         echo "uploading coverage"
         source /vagrant/build_decrypt_s3_json.sh
-        grunt s3:uploadCoverage --no-color
+        # grunt s3:uploadCoverage --no-color
     else
         echo "upload coverage is switched off. skipping... "
     fi

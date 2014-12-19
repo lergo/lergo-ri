@@ -60,8 +60,13 @@ export CONFIG_FILE="$VAGRANT_BUILD_CONF"
 echo "destroying old machine in case one was left"
 $VAGRANT_CMD destroy -f || echo "machine was not up"
 
-$VAGRANT_CMD up --provider aws
+BUILD_FAILED=0
+$VAGRANT_CMD up --provider aws || ( echo "vagrant up failed" && BUILD_FAILED=1 )
 
 echo "destroying the vagrant machine"
 $VAGRANT_CMD destroy -f
+
+echo "status code $BUILD_FAILED"
+
+exit $BUILD_FAILED
 

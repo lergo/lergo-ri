@@ -56,6 +56,18 @@ module.exports = function (grunt) {
                 dest: 'ri-coverage/'
 
             },
+            uploadDocs:{
+                options: {
+                    accessKeyId: s3Config.accessKey,
+                    secretAccessKey: s3Config.secretAccessKey,
+                    bucket: s3Config.bucket,
+                    enableWeb:true,
+                    gzip:true
+                },
+                cwd: 'doc/',
+                src: '**',
+                dest: 'ri-docs/'
+            },
             uploadBuildStatus: {
                 options: {
                     accessKeyId: s3Config.accessKey,
@@ -194,6 +206,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'jshint',
+        'jsdoc',
         'test',
         'copy'
     ]);

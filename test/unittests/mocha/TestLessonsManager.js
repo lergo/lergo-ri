@@ -10,8 +10,12 @@ describe('LessonsManager', function(){
     var logger = require('log4js').getLogger('testLessonManager');
 
     var LessonsManager = null;
+
     before(function(){
+        this.timeout(10000);
+        logger.info('initializing all');
         require('../../mocks');
+
         LessonsManager = require('../../../backend/managers/LessonsManager');
     });
 
@@ -22,6 +26,7 @@ describe('LessonsManager', function(){
 
 
         before(function(){
+            logger.info('initializing spec');
             LessonsManager.copyLesson( { '_id' : 'user' }, { '_id' : 'originalLesson', 'name' : 'lesson title','userId' : 'user' }, function( error, copy){
                 sameUserCopy = copy;
             });
