@@ -26,6 +26,8 @@ module.exports = function (grunt) {
                     secretAccessKey: s3Config.secretAccessKey,
                     bucket: 'lergo-backups',
                     enableWeb: false,
+                    cacheTTL: 0,
+                    sslEnabled: false,
                     gzip: false
                 },
                 cwd: artifactsHome + '/',
@@ -40,6 +42,8 @@ module.exports = function (grunt) {
                     bucket: 'lergo-backups',
                     enableWeb: false,
                     gzip: false,
+                    cacheTTL: 0,
+                    sslEnabled: false,
                     public: true,
                     overwrite: true
                 },

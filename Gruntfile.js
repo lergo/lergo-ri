@@ -49,6 +49,8 @@ module.exports = function (grunt) {
                     secretAccessKey: s3Config.secretAccessKey,
                     bucket: s3Config.bucket,
                     enableWeb:true,
+                    cacheTTL: 0,
+                    sslEnabled: false,
                     gzip:true
                 },
                 cwd: 'coverage/',
@@ -62,6 +64,8 @@ module.exports = function (grunt) {
                     secretAccessKey: s3Config.secretAccessKey,
                     bucket: s3Config.bucket,
                     enableWeb:true,
+                    cacheTTL: 0,
+                    sslEnabled: false,
                     gzip:true
                 },
                 cwd: 'doc/',
@@ -73,6 +77,8 @@ module.exports = function (grunt) {
                     accessKeyId: s3Config.accessKey,
                     secretAccessKey: s3Config.secretAccessKey,
                     bucket: s3Config.bucket,
+                    cacheTTL: 0,
+                    sslEnabled: false,
                     enableWeb:true,
                     gzip:true
                 },
