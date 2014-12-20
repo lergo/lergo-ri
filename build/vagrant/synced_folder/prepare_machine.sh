@@ -150,6 +150,9 @@ else
     echo "chrome installed. skipping installation..."
 fi
 
+
+( `which java` && echo "java already installed" ) || ( echo "installing java" && sudo apt-get install default-jdk -y )
+
 export CHROME_BIN=google-chrome
 
 
