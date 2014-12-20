@@ -68,5 +68,7 @@ $VAGRANT_CMD destroy -f
 
 echo "status code $BUILD_FAILED"
 
-return $BUILD_FAILED
+if [ "$BUILD_FAILED" = "1" ];then
+    return $BUILD_FAILED
+fi
 
