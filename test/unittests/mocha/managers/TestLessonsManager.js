@@ -14,9 +14,9 @@ describe('LessonsManager', function(){
     before(function(){
         this.timeout(10000);
         logger.info('initializing all');
-        require('../../mocks');
+        require('../../../mocks/index');
 
-        LessonsManager = require('../../../backend/managers/LessonsManager');
+        LessonsManager = require('../../../../backend/managers/LessonsManager');
     });
 
     describe('#copyLesson()', function(){

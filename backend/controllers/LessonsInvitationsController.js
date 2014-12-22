@@ -104,13 +104,48 @@ exports.build = function(req, res) {
 	});
 };
 
+/**
+ *
+ * @description
+ * updates a lesson invite
+ *
+ *
+ * @param {object} req
+ * @param {Invite} req.body - the updated invite
+ * @param {Invite} req.invite - invite from DB
+ * @param {object} res
+ */
 // assume Invite exists in the system, verified by middleware
 exports.update = function(req, res) {
-	logger.info('updating Invite');
-	var invitation = req.body;
-	invitation._id = services.db.id(invitation._id);
-	invitation.inviter = services.db.id(invitation.inviter);
-	invitation.lessonId = services.db.id(invitation.lessonId);
+    logger.info('updating Invite');
+    var invitation = req.body;
+
+    if (!!invitation._id) {
+        invitation._id = services.db.id(invitation._id);
+    }
+
+    if (!!invitation.inviter) {
+        invitation.inviter = services.db.id(invitation.inviter);
+    }
+
+    if ( !!invitation.lessonId ) {
+        invitation.lessonId = services.db.id(invitation.lessonId);
+    }
+
+    // guy - LERGO-589 - lesson breaks after marked undone.
+    // the reason why it happens is that "update" should not allow to modify these fields.
+    // these fields can only be "rebuilt". look at function "exports.build" in this file.
+    try {
+        if (!!req.invite.lesson) {
+            invitation.lesson = req.invite.lesson;
+        }
+
+        if ( !!req.invite.quizItems ) {
+            invitation.quizItems = req.invite.quizItems;
+        }
+    }catch(e){}
+
+
 	new LessonInvitation(invitation).update(function(err) {
 		logger.info('invitation updated');
 		if (!!err) {

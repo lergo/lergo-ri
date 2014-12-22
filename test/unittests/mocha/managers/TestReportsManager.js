@@ -7,10 +7,10 @@ describe('ReportsManager', function( ){
 
     before(function(){
         logger.info('initializing test');
-        require('../../mocks');
+        require('../../../mocks/index');
         //services.complexSearch.complexSearch
 //        lets mock ComplexSearch
-        var ComplexSearch = require('../../../backend/services/ComplexSearchService');
+        var ComplexSearch = require('../../../../backend/services/ComplexSearchService');
         ComplexSearch.complexSearch = function( queryObj, collection, callback ){
             callback( null , [{'data' : 'this is data', 'name' : 'this is name'}]);
 
@@ -18,7 +18,7 @@ describe('ReportsManager', function( ){
         //
 
         //
-        ReportsManager = require('../../../backend/managers/ReportsManager');
+        ReportsManager = require('../../../../backend/managers/ReportsManager');
 //
 
     });

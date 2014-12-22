@@ -141,7 +141,7 @@ module.exports = function (grunt) {
         /*jshint camelcase: false */
         mocha_istanbul: {
             coverage: {
-                'src' : 'test/unittests/mocha'
+                'src' : 'test/unittests/mocha/**/*'
             }
         },
         copy: {

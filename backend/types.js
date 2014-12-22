@@ -32,3 +32,19 @@
  * @property {integer} paging.limit amount of entries to get.
  *
  **/
+
+
+/**
+ *
+ * @typedef {object} Invite
+ * @description An invitation to do a lesson
+ *
+ * @property {object} lesson
+ * @property {object} quizItems
+ * @property {boolean} anonymous
+ * @property {ObjectId} lessonId
+ * @property {ObjectId|null} inviter the inviting user's Id
+ * @property {object} invitee
+ * @property {string} invitee.name
+ *
+ **/

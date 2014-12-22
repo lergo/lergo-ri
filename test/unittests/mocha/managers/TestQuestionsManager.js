@@ -11,8 +11,8 @@ describe('QuestionsManager', function () {
 
     before(function(){
 
-        require('../../mocks');
-        QuestionsManager = require('../../../backend/managers/QuestionsManager');
+        require('../../../mocks/index');
+        QuestionsManager = require('../../../../backend/managers/QuestionsManager');
     });
 
 
