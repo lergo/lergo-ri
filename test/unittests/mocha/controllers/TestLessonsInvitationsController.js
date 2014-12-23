@@ -50,16 +50,16 @@ describe('LessonsInvitationsController', function(){
                     'quizItems' : 'this is modified quizItems'
                 };
 
-                var myRequest = { 'body': updatedInvite, 'invite': inviteFromDB };
+                var myRequest = { 'body': updatedInvite, 'invitation': inviteFromDB };
 
                 LessonsInvitationsController.update(myRequest, {});
-                expect(myRequest.body.lesson).to.be(myRequest.invite.lesson);
-                expect(myRequest.body.quizItems).to.be(myRequest.invite.quizItems);
+                expect(myRequest.body.lesson).to.be(myRequest.invitation.lesson);
+                expect(myRequest.body.quizItems).to.be(myRequest.invitation.quizItems);
 
             });
 
             it('should wrap _id inviter and lessonId with db ID', function(){
-                var myRequest = { 'body' : { '_id' : '_id' , 'inviter' : 'inviter' , 'lessonId' : 'lessonId'}, 'invite' : {} };
+                var myRequest = { 'body' : { '_id' : '_id' , 'inviter' : 'inviter' , 'lessonId' : 'lessonId'}, 'invitation' : {} };
                 var myOriginalRequest = _.merge({}, myRequest);
                 LessonsInvitationsController.update( myRequest, {});
 
@@ -88,7 +88,7 @@ describe('LessonsInvitationsController', function(){
                 ErrorManager.InternalServerError = sinon.spy(ErrorManager,'InternalServerError');
 
 
-                LessonsInvitationsController.update({ 'body' : { '_id' : '_id' , 'inviter' : 'inviter' , 'lessonId' : 'lessonId'}, 'invite' : {} }, response);
+                LessonsInvitationsController.update({ 'body' : { '_id' : '_id' , 'inviter' : 'inviter' , 'lessonId' : 'lessonId'}, 'invitation' : {} }, response);
 
                 expect(ErrorManager.InternalServerError.called).to.be(true);
 
@@ -104,7 +104,7 @@ describe('LessonsInvitationsController', function(){
                 });
                 var response = { 'send' : sinon.spy(function(){ logger.info('send called with ', arguments);}) };
 
-                LessonsInvitationsController.update({ 'body' : {}, 'invite' : {} }, response);
+                LessonsInvitationsController.update({ 'body' : {}, 'invitation' : {} }, response);
 
                 expect(response.send.calledWith({})).to.be(true);
             });

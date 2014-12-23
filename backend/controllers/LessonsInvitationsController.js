@@ -135,15 +135,14 @@ exports.update = function(req, res) {
     // guy - LERGO-589 - lesson breaks after marked undone.
     // the reason why it happens is that "update" should not allow to modify these fields.
     // these fields can only be "rebuilt". look at function "exports.build" in this file.
-    try {
-        if (!!req.invite.lesson) {
-            invitation.lesson = req.invite.lesson;
-        }
+    if (!!req.invitation.lesson) {
+        invitation.lesson = req.invitation.lesson;
+    }
 
-        if ( !!req.invite.quizItems ) {
-            invitation.quizItems = req.invite.quizItems;
-        }
-    }catch(e){}
+    if ( !!req.invitation.quizItems ) {
+        invitation.quizItems = req.invitation.quizItems;
+    }
+
 
 
 	new LessonInvitation(invitation).update(function(err) {
