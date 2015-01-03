@@ -101,9 +101,17 @@ exports.getTranslation = function(req, res) {
 	} else { // method == phraseapp (the default)
 		var locale = req.params.locale;
 		// todo: don't use service phraseapp, use "TranslationManager" instead.
-		services.phraseApp.getTranslation(locale, function(data/* , response */) {
-			logger.debug('got translations');
-			res.send(data);
+		services.phraseApp.getTranslation(locale, function(data , response ) {
+			logger.debug('got translations', JSON.stringify(response.headers));
+            try{
+                res.set('Cache-Control', 'public, max-age=300');
+                res.set('Expires', new Date(Date.now() + 300000).toUTCString());
+                res.send(data);
+            }catch(e){
+                logger.error('unable to fetch translations',e);
+                res.send(data);
+            }
+
 		});
 	}
 
