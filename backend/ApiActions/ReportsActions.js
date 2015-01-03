@@ -186,7 +186,12 @@ exports.findReportLessonsByName = {
         'summary': 'get lessons\' name and _id for user\'s report',
         'method': 'GET',
         'parameters': [
-
+            {
+                'paramType' : 'query',
+                'required' : false,
+                'description' : 'like - filter for lesson name',
+                'type' : 'string'
+            }
         ],
         'errorResponses': [
             {
@@ -197,7 +202,8 @@ exports.findReportLessonsByName = {
         'nickname': 'findReportLessonsInfo'
     },
     'middlewares' : [
-        middlewares.session.isLoggedIn
+        middlewares.session.isLoggedIn,
+        middlewares.lergo.escapeRegExp('like')
     ],
     'action': controllers.reports.findReportLessonsByName
 };

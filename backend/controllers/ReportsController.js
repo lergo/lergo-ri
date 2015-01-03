@@ -222,7 +222,7 @@ exports.findReportLessonsByName = function( req, res ){
     var like = req.param('like');
     like = new RegExp(like, 'i');
     Report.connect( function(db, collection ) {
-        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data._id', 'name' :  { '$first' : '$data.name' }  } } ] , function(err, result){
+        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data.lessonId', 'name' :  { '$first' : '$data.name' }  } } ] , function(err, result){
             if ( !!err ){
                 new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
                 return;

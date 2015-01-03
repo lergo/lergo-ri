@@ -39,8 +39,22 @@ module.exports = function (grunt) {
         watch: {
             develop: {
                 files: ['backend/**/*', 'test/**/*'],
-                tasks: ['jsdoc','jshint']
+                tasks: ['concurrent:develop']
             }
+        },
+        concurrent: {
+            develop: [
+                'jsdoc',
+                'jshint',
+                'mocha_istanbul'
+            ],
+            test: [
+                'compass'
+            ],
+            dist: [
+                'compass:dist',
+                'htmlmin'
+            ]
         },
         s3:{
             uploadCoverage: {
@@ -219,8 +233,7 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask('test', [
-        'mocha_istanbul',
-        'mochaTest:unit'
+        'mocha_istanbul'
     ]);
 
     grunt.registerTask('testBefore', [

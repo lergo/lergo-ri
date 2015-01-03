@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ *
+ * @description
+ * a collection of middlewares for Lergo convenience
+ *
  * @module LergoMiddleware
  * @type {Logger}
  */
@@ -9,6 +13,21 @@ var _ = require('lodash');
 var util = require('util');
 var services = require('./services');
 
+/**
+ *
+ * @description
+ * adds an <code>absoluteUrl</code> function on request
+ *
+ * <pre>
+ *    var absoluteUrl = req.absoluteUrl('/myRelativeUrl'); //==> http://my.domain/myRelativeUrl
+ * </pre>
+ *
+ * and variable <code>origin</code> on request which will be equals to <code>http://my.domain</code>
+ *
+ * @param {object}   req the request
+ * @param {object}   res the response
+ * @param {function} next next middleware to operate
+ */
 exports.origin = function origin( req, res, next){
     var _origin = req.protocol + '://' +req.get('Host')  ;
     req.origin = _origin;
@@ -21,23 +40,46 @@ exports.origin = function origin( req, res, next){
 };
 
 /**
- * puts "emailResources" on the request filled with common emailResources
- * @param req - the request
- * @param res - the response
- * @param next - next in middleware chain
+ * @description
+ *
+ *     puts <code>emailResources</code> on the request filled with common emailResources
+ *
+ * @see EmailResources
+ * @param {object}   req - the request
+ * @param {object}   res - the response
+ * @param {function} next - next in middleware chain
  */
 exports.emailResources = function emailResources( req, res, next ){
-    req.emailResources = {
-        'lergoBaseUrl' : req.absoluteUrl(''),
-        'lergoLink' : req.absoluteUrl('/'),
-        'lergoLogoAbsoluteUrl' : req.absoluteUrl('/emailResources/logo.png')
-    };
-    next();
+    exports.origin(req, res, function () {
+        req.emailResources = {
+            'lergoBaseUrl': req.absoluteUrl(''),
+            'lergoLink': req.absoluteUrl('/'),
+            'lergoLogoAbsoluteUrl': req.absoluteUrl('/emailResources/logo.png')
+        };
+        logger.debug('emailResources calling next');
+        next();
+    });
+
 };
 
 
+/**
+ *
+ * @description
+ * adds a function on request to get values as list while defaulting to an empty list instead of undefined/null.
+ *
+ *
+ * @param {object}   req the request
+ * @param {object}   res the response
+ * @param {function} next next middleware to operate
+ */
 exports.addGetQueryList = function addGetQueryList ( req, res, next ){
 
+    /**
+     *
+     * @param key key to get from query on request
+     * @returns {Array} of values found on request matching the key
+     */
     req.getQueryList = function(key){
         // return a query param as list. using [].concat hack to handle case where the value is not a list
         return req.query.hasOwnProperty(key) ? [].concat(req.query[key]) : [];
@@ -48,26 +90,37 @@ exports.addGetQueryList = function addGetQueryList ( req, res, next ){
 
 
 /**
+ * @description
  * this middleware will make sure the query holds values 'limit','skip' etc.. for queries.
  * if checks if they already exist on the request. if not it will initialize them with defaults.
- * it will also make sure values are not exaggerated.
+ * it will also make sure values are not exaggerated.<br/>
  *
- * @param req
- * @param res
- * @param next
+ *
+ * @param {object}   req the request
+ * @param {object}   res the response
+ * @param {function} next next middleware to operate
  */
 exports.queryParamsDefault = function queryParamsDefault(req, res, next ){
     logger.debug('query params default');
     // will limit the maximum value allowed. not relevant to all parameters
     function limitMax( paramName, defaultValue ){
         var paramValue = req.param(paramName);
-        req.query[paramName] =  Math.min(defaultValue, parseInt(paramValue,10));
+        if ( !isNaN(paramValue) ) {
+            req.query[paramName] = Math.min(defaultValue, parseInt(paramValue, 10));
+        }else{
+            req.query[paramName] = defaultValue;
+        }
     }
 
     // will limit the minimum value allowed.
     function limitMin( paramName, defaultValue ){
         var paramValue = req.param(paramName);
-        req.query[paramName] =  Math.max(defaultValue, parseInt(paramValue,10));
+        if ( !isNaN(paramValue) ){
+            req.query[paramName] =  Math.max(defaultValue, parseInt(paramValue,10));
+        }else{
+            req.query[paramName] =  defaultValue;
+        }
+
     }
 
     // will make sure to initialize with default value
@@ -99,20 +152,57 @@ exports.queryParamsDefault = function queryParamsDefault(req, res, next ){
 
 };
 
+/**
+ *
+ * @description this function returns a middleware to escape regexp special characters and puts the output on request query and requests params arrays.
+ *
+ * @param paramName parameter name to search on request and replace with escaped value
+ * @returns {function} puts escaped strings on req.query and req.params
+ */
+exports.escapeRegExp = function (paramName) {
+    return function escapeRegExp(req, res, next) {
+        var paramValue = req.param(paramName);
+        if (!!paramValue) {
+            req.params[paramName] = require('escape-string-regexp')(paramValue);
+            req.query[paramName] = require('escape-string-regexp')(paramValue);
+            logger.info(paramName, req.param(paramName));
 
-exports.renameKey = function( newObj, oldObj, func ){
-    _.each(oldObj, function( value, key ){
+        }
+        next();
+    };
+};
+
+/**
+ *
+ * @description
+ * a function to deeply iterate over objects, and invoke an operator on the key,
+ * replacing the key with the one from the operator.
+ *
+ * @param newObj object with new keys
+ * @param oldObj object with old keys
+ * @param {function} func an operator
+ */
+exports.renameKey = function (newObj, oldObj, func) {
+    _.each(oldObj, function (value, key) {
         var newKey = func(key);
-        if ( typeof(value) === 'object' && !util.isArray(value)){
+        if (typeof(value) === 'object' && !util.isArray(value)) {
             newObj[newKey] = {};
-            exports.renameKey( newObj[newKey], oldObj[key], func);
-        }else{
+            exports.renameKey(newObj[newKey], oldObj[key], func);
+        } else {
             newObj[newKey] = value;
         }
     });
 
 };
 
+/**
+ *
+ * @description
+ * a function to replace all object's keys from 'dollar_key' to '$key'
+ *
+ * @param obj object containing keys to replace
+ * @returns {object} newObject an object with keys after they were replaced with '$'.
+ */
 exports.replaceDollarPrefix = function( obj ){
     var newObj = {};
 
@@ -129,8 +219,17 @@ exports.replaceDollarPrefix = function( obj ){
     return newObj;
 };
 
-// this middleware handles a stringified query obj for mongo.
-// handles some obvious values (like limit) and makes sure no one is trying to collapse the system
+/**
+ *
+ * @description
+ * this middleware handles a stringified query obj for mongo.
+ * handles some obvious values (like limit) and makes sure no one is trying to collapse the system
+ *
+ * @param {object}   req
+ * @param {object}   res
+ * @param {function} next
+ */
+
 exports.queryObjParsing = function queryObjParsing ( req, res, next ){
     try {
 
@@ -157,12 +256,12 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
 
         if ( !!queryObj.$page ){
             queryObj.skip = queryObj.$page.size * ( queryObj.$page.current - 1) ;
-            queryObj.limit = queryObj.$page.size;
+            queryObj.limit = queryObj.$page.size; // todo: seems like a duplication
             delete queryObj.$page;
         }
 
         // validate limit exists
-        if ( queryObj.filter.limit > 200  ){
+        if ( queryObj.filter.limit > 200  ){   // todo: seems like a duplication
             queryObj.filter.limit = 200;
         }
 
