@@ -10,12 +10,94 @@ var permissions = require('../permissions');
 var services = require('../services');
 var logger = managers.log.getLogger('UsersController');
 var User = require('../models/User');
+var Question = require('../models/Question');
+var Lesson = require('../models/Lesson');
+var async = require('async');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
 
 logger.info('initializing');
 
-exports.getUserPublicDetails = function (req, res ){
-    res.send(User.getUserPublicDetails(req.sessionUser));
+exports.getUserPublicDetails = function(req, res) {
+	res.send(User.getUserPublicDetails(req.sessionUser));
+};
+
+exports.getMyProfile = function(req, res) {
+	User.findOne({
+		'username' : req.sessionUser.username
+	}, {}, function(err, result) {
+		if (!!err) {
+			new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+			return;
+		} else {
+			var user = result;
+			async.parallel([ function countQuestions(callback) {
+				Question.count({
+					userId : user._id
+				}, function(err, result) {
+					user.questionsCount = result;
+					callback();
+				});
+			}, function countLessons(callback) {
+				Lesson.count({
+					userId : user._id
+				}, function(err, result) {
+					user.lessonsCount = result;
+					callback();
+				});
+			} ], function(error) {
+				if (!!error) {
+					new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+					return;
+				}
+				delete user.password;
+				res.send(user);
+				return;
+			});
+		}
+	});
+};
+
+exports.getPublicProfile = function(req, res) {
+	User.findOne({
+		'username' : req.params.username
+	}, {}, function(err, result) {
+		if (!!err) {
+			new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+			return;
+		} else {
+			var user = result;
+			async.parallel([ function countQuestions(callback) {
+				Question.count({
+					userId : user._id,
+					'public' : {
+						'$exists' : true
+					}
+				}, function(err, result) {
+					user.questionsCount = result;
+					callback();
+				});
+			}, function countLessons(callback) {
+				Lesson.count({
+					userId : user._id,
+					'public' : {
+						'$exists' : true
+					}
+				}, function(err, result) {
+					user.lessonsCount = result;
+					callback();
+				});
+			} ], function(error) {
+				if (!!error) {
+					new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+					return;
+				}
+				delete user.email;
+				delete user.password;
+				res.send(user);
+				return;
+			});
+		}
+	});
 };
 
 exports.signup = function(req, res) {
@@ -46,39 +128,39 @@ exports.disqusLogin = function(req, res) {
 
 // the validation email is sent after signup or after login. user must provide
 // username and password.
-exports.resendValidationEmail = function (req, res) {
+exports.resendValidationEmail = function(req, res) {
 
-    var loginCredentials = req.body;
-    managers.users.loginUser(loginCredentials, function (err, loggedInUser) {
-        if (!!err) {
-            err.send(res);
-            return;
-        }
-        if (!loggedInUser) {
-            new managers.error.WrongLogin().send(res);
-            return;
-        }
+	var loginCredentials = req.body;
+	managers.users.loginUser(loginCredentials, function(err, loggedInUser) {
+		if (!!err) {
+			err.send(res);
+			return;
+		}
+		if (!loggedInUser) {
+			new managers.error.WrongLogin().send(res);
+			return;
+		}
 
-        if (!!loggedInUser.validated) {
-            new managers.error.UserAlreadyValidated().send(res);
-            return;
-        }
+		if (!!loggedInUser.validated) {
+			new managers.error.UserAlreadyValidated().send(res);
+			return;
+		}
 
-        managers.users.sendValidationEmail(req.emailResources, loggedInUser, function (err, user) {
-            if (!!err) {
-                err.send(res);
-                return;
-            }
+		managers.users.sendValidationEmail(req.emailResources, loggedInUser, function(err, user) {
+			if (!!err) {
+				err.send(res);
+				return;
+			}
 
-            if (!user) {
-                new managers.error.InternalServerError(null, 'did not get a user after sending validation email').send(res);
-                return;
-            }
+			if (!user) {
+				new managers.error.InternalServerError(null, 'did not get a user after sending validation email').send(res);
+				return;
+			}
 
-            res.send(User.getUserPublicDetails(user));
-        });
+			res.send(User.getUserPublicDetails(user));
+		});
 
-    });
+	});
 };
 
 exports.getAll = function(req, res) {
@@ -146,59 +228,65 @@ exports.requestPasswordReset = function(req, res) {
 	});
 };
 
-
 /**
  * gets a list of ids and returns the corresponding users.
- *
+ * 
  * how to pass a list of ids over req query?
- *
+ * 
  * ?idsList[]=1&idsList[]=2&idsList[]=3
- *
+ * 
  * @param req
  * @param res
  */
-exports.findUsersById = function (req, res) {
+exports.findUsersById = function(req, res) {
 
-    var objectIds = req.getQueryList('usersId');
-    logger.info('this is object ids', objectIds);
-    objectIds = services.db.id(objectIds);
+	var objectIds = req.getQueryList('usersId');
+	logger.info('this is object ids', objectIds);
+	objectIds = services.db.id(objectIds);
 
-    User.find({ '_id': { '$in': objectIds }}, {}, function (err, result) {
-        if (!!err) {
-            new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
-            return;
-        } else {
+	User.find({
+		'_id' : {
+			'$in' : objectIds
+		}
+	}, {}, function(err, result) {
+		if (!!err) {
+			new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
+			return;
+		} else {
 
-            // hide private info if logged in user does not have permissions
-            if ( !permissions.users.canSeePrivateUserDetails(req.sessionUser, null ) ){
-                result = User.getUserPublicDetails( result );
-            }
+			// hide private info if logged in user does not have permissions
+			if (!permissions.users.canSeePrivateUserDetails(req.sessionUser, null)) {
+				result = User.getUserPublicDetails(result);
+			}
 
-            res.send(result);
-            return;
-        }
-    });
+			res.send(result);
+			return;
+		}
+	});
 };
 
+exports.getUsernames = function(req, res) {
+	var like = req.param('like');
+	like = new RegExp(like, 'i');
 
-exports.getUsernames = function( req, res ){
-    var like = req.param('like');
-    like = new RegExp(like, 'i');
-
-    User.connect(function(db, collection){
-        collection.aggregate([
-            { '$project' : { 'username' : '$username'}},
-            {'$match' : { 'username' : like || '' } }
-        ], function(err, result){
-            if ( !!err ){
-                new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
-                return;
-            }
-            res.send(result);
-        });
-    });
+	User.connect(function(db, collection) {
+		collection.aggregate([ {
+			'$project' : {
+				'username' : '$username'
+			}
+		}, {
+			'$match' : {
+				'username' : like || ''
+			}
+		} ], function(err, result) {
+			if (!!err) {
+				new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
+				return;
+			}
+			res.send(result);
+		});
+	});
 };
-
 
 exports.changePassword = function(req, res) {
 
@@ -226,5 +314,35 @@ exports.isLoggedIn = function(req, res) {
 
 exports.logout = function(req, res) {
 	req.session.userId = null;
-	res.send(200, {'message': 'ok'});
+	res.send(200, {
+		'message' : 'ok'
+	});
+};
+
+exports.update = function(req, res) {
+	logger.info('updating user');
+	var user = req.body;
+
+	User.findById(services.db.id(user._id), {}, function(err, result) {
+		if (!!err) {
+			new managers.error.InternalServerError(err, 'unable to update user profile').send(res);
+			return;
+		} else {
+			var existingUser = result;
+			// Only below fiels are allowed to update
+			existingUser.shortIntro = user.shortIntro;
+			existingUser.externalLink = user.externalLink;
+			existingUser.details = user.details;
+			new User(existingUser).update(function(err) {
+				logger.info('user profile updated');
+				if (!!err) {
+					new managers.error.InternalServerError(err, 'unable to update user profile').send(res);
+					return;
+				} else {
+					res.send(user);
+					return;
+				}
+			});
+		}
+	});
 };
