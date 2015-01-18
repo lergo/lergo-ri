@@ -575,3 +575,39 @@ exports.getUserLikedQuestions = {
 	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing ],
 	'action' : controllers.questions.getUserLikedQuestions
 };
+
+exports.getMyProfile = {
+	spec : {
+		description : 'Get profile',
+		name : 'get profiled',
+		path : '/users/me/profile',
+		summary : 'Get logged in user profile',
+		method : 'GET',
+		parameters : [],
+		errorResponses : [ {
+			code : 500,
+			reason : 'unable to get profile'
+		} ],
+		nickname : 'getMyProfile'
+	},
+	middlewares : [ middlewares.session.isLoggedIn ],
+	action : controllers.users.getMyProfile
+};
+
+exports.updateProfile = {
+	spec : {
+		description : 'Update profile',
+		name : 'updateProfile',
+		path : '/users/me/profile/update',
+		summary : 'Update user profile',
+		method : 'POST',
+		parameters : [],
+		errorResponses : [ {
+			code : 500,
+			reason : 'unable to update profile'
+		} ],
+		nickname : 'updateProfile'
+	},
+	middlewares : [ middlewares.session.isLoggedIn ],
+	action : controllers.users.update
+};
