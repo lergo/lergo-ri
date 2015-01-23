@@ -91,7 +91,6 @@ exports.getPublicProfile = function(req, res) {
 					new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
 					return;
 				}
-				delete user.email;
 				delete user.password;
 				res.send(user);
 				return;
