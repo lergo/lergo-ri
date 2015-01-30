@@ -16,7 +16,8 @@ function toPublicDetails ( user ){
     return {
         'username' : user.username,
         'isAdmin' : user.isAdmin, /** todo: replace this with permissions mechansim **/
-        '_id' : user._id
+        '_id' : user._id,
+        'email':user.email /** email is required for gravatar pic */
     };
 }
 

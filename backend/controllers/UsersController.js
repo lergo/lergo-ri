@@ -13,6 +13,7 @@ var User = require('../models/User');
 var Question = require('../models/Question');
 var Lesson = require('../models/Lesson');
 var async = require('async');
+var _ = require('lodash');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
 
 logger.info('initializing');
@@ -77,16 +78,20 @@ exports.getPublicProfile = function (req, res) {
                     return;
                 }
                 user.lessonsCount = result.length;
-                Lesson.getAllQuestionsIdsForLessons(result, function (error, qusetionsIds) {
+                Lesson.getAllQuestionsIdsForLessons(_.pluck(result,'_id'),function (error, qIds) {
                     if (!!error) {
                         new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
                         return;
                     }
-                    user.questionsCount = qusetionsIds.length;
+                    if (qIds === undefined) {
+                        qIds = [];
+                    }
+                    user.questionsCount = qIds.length;
+                    delete user.password;
+                    res.send(user);
+                    return;
                 });
-                delete user.password;
-                res.send(user);
-                return;
+
             });
         }
     });
