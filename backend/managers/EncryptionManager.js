@@ -1,4 +1,9 @@
 'use strict';
+
+/**
+ * @module EncryptionManager
+ * @type {exports}
+ */
 var crypto = require('crypto');
 var sha1 = require('sha1');
 var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL

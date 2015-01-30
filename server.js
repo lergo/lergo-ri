@@ -6,6 +6,7 @@
 var port = 3000;
 
 var express = require('express');
+var _ = require('lodash');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
@@ -23,6 +24,7 @@ logger.info('loading services');
 var services = require('./backend/services');
 logger.info('services loaded');
 var path = require('path');
+var sm = require('sitemap');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
 
@@ -71,8 +73,8 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
-app.use('/backend/user', middlewares.users.loggedInMiddleware);
-app.use('/backend/admin', middlewares.users.isAdminMiddleware);
+app.use('/backend/user', middlewares.session.isLoggedIn);
+app.use('/backend/admin', middlewares.session.isAdmin);
 
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
@@ -212,6 +214,86 @@ app.use('/swagger', function () {
 });
 
 
+app.get('/backend/sitemap.xml', function(req, res){
+    var Lesson = require('./backend/models/Lesson');
+    var dateFormat = require('dateformat');
+
+    Lesson.connect(function(db, collection){
+
+        collection.find({ 'public' : { '$exists' : true }},{ '_id' : 1, 'lastUpdate':1 }).sort( { 'lastUpdate' : -1 }).limit(10000).toArray(function(err, result) {
+
+            var sitemap = sm.createSitemap({
+                hostname: req.origin,
+                cacheTime: 6000000,        // 600 sec - cache purge period
+                urls: [ ]
+            });
+
+            for (var i = 0; i < result.length; i++) {
+                var lesson = result[i];
+                var entry = { url: '/#!/public/lessons/' + lesson._id + '/intro', changefreq: 'hourly', priority: 0.5 };
+
+                if (!!lesson.lastUpdate) {
+                    console.log('last update exists');
+                    entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'yyyy-mm-dd');
+                    console.log(entry.lastmod);
+//                entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'YYYY-MM-DDThh:mmTZD');
+                }
+
+                sitemap.urls.push(entry);
+            }
+
+            // add homepage with languages
+            _.each(['he','en'], function(lang){
+                sitemap.urls.push( { url: '/#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
+            });
+
+            sitemap.toXML(function (xml) {
+                res.header('Content-Type', 'application/xml');
+                res.send(xml);
+            });
+        });
+
+    });
+
+//
+}) ;
+
+app.get('/backend/crawler', function(req, res){
+    var url = req.param('_escaped_fragment_');
+    url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
+    logger.info('prerendering url : ' + url ) ;
+
+
+    var phantom = require('phantom');
+    phantom.create(function (ph) {
+
+        setTimeout( function(){
+            try{
+                ph.exit();
+            }catch(e){
+                logger.debug('unable to close phantom',e);
+            }
+        }, 30000);
+
+
+        return ph.createPage(function (page) {
+            page.open(url, function ( status ) {
+                if ( status === 'fail'){
+                    res.send(500,'unable to open url');
+                    ph.exit();
+                }else {
+                    page.evaluate(function () {
+                        return document.documentElement.innerHTML;
+                    }, function (result) {
+                        res.send( result);
+                        ph.exit();
+                    });
+                }
+
+            });
+        });
+    });
+});
 
 
 logger.info('catching all exceptions');

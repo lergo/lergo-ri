@@ -1,4 +1,5 @@
-var logger = require('log4js').getLogger('TestRunningCommandLine');
+'use strict';
+//var logger = require('log4js').getLogger('TestRunningCommandLine');
 
 var exec = require('child_process').exec,
     child;

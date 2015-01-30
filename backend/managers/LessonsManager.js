@@ -1,4 +1,8 @@
 'use strict';
+/**
+ * @module LessonsManager
+ * @type {Logger}
+ */
 // todo user "managers" instead..
 // since this is a manager, we cannot simply require('./index');
 // we need to use setTimeout( function(){ managers = require('./index'); },0);
@@ -9,22 +13,12 @@ var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
 var _ = require('lodash');
-function getQuestionCount(item) {
-	var qCount = 0;
-	if (!item.steps || item.steps.length < 1) {
-		return qCount;
-	}
-	for ( var i = 0; i < item.steps.length; i++) {
-		if (!!item.steps[i].quizItems) {
-			qCount = qCount + item.steps[i].quizItems.length;
-		}
-	}
-	return qCount;
-}
+var Lesson = require('../models/Lesson');
+
 
 exports.createLesson = function(lesson, callback) {
 	logger.info('Creating lesson');
-	lesson.createdAt = new Date();
+	lesson.createdAt = new Date().toISOString();
     if ( !lesson.age) {
         lesson.age = 8;
     }
@@ -51,18 +45,38 @@ exports.createLesson = function(lesson, callback) {
  * This function copies a lesson while picking very specific fields from it.
  *
  *
+ * @param user - the user making the copy
  * @param lesson
  * @param callback
  */
 
-exports.copyLesson = function (lesson, callback) {
+exports.copyLesson = function (user, lesson, callback) {
 
-    // pick only specific fields.
+    // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
+    // copy of is transitive property of a lesson;
+    var copyOf = [];
 
-    lesson = _.pick(lesson, ['age','description','name','steps','userId','language','subject','tags']);
+
+    // LERGO-412 - we decided we want to remember even if same user.
+    // LERGO-569 - we decided we DO NOT want to remember if the same user..
+    if ( !services.db.id(user._id).equals( services.db.id( lesson.userId ) ) ){
+        copyOf = copyOf.concat(lesson._id);
+    }
+
+    // copy of is a transitive property.
+    if ( !!lesson.copyOf ){
+        copyOf = copyOf.concat(lesson.copyOf);
+    }
+
+    lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
     lesson.name = 'Copy of : ' + lesson.name;
-    lesson.createdAt = new Date();
-    lesson.userId = services.db.id(lesson.userId);
+    if ( copyOf.length > 0 ){
+        lesson.copyOf = copyOf;
+    }
+
+    lesson.createdAt = new Date().toISOString();
+    lesson.lastUpdate = new Date().getTime();
+    lesson.userId = services.db.id(user._id);
 
     services.db.connect('lessons', function (db, collection) {
         collection.insert(lesson, function (err) {
@@ -184,7 +198,7 @@ exports.getPublicLessons = function(callback) {
 				'$exists' : true
 			}
 		}, {}).each(function(err, obj) {
-			logger.info('handling lesson');
+			logger.debug('handling lesson');
 			if (obj === null) { // means we found all lessons
 				done();
 				usersManager.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
@@ -192,7 +206,7 @@ exports.getPublicLessons = function(callback) {
 					result.forEach(function(item) {
 						item.user = _.omit(usersById[item.userId.toHexString()], '_id');
 						item.timeStamp = item._id.getTimestamp();
-						item.questionsCount = getQuestionCount(item);
+
 					});
 
 					callback(null, result);
@@ -225,18 +239,39 @@ exports.getLessonIntro = function( lessonId, callback ){
     });
 };
 
-exports.getLessons = function(filter, callback) {
-	logger.info('Getting lessons');
-	services.db.connect('lessons', function(db, collection, done) {
-		collection.find(filter).toArray(function(err, result) {
-			if (!!err) {
-				logger.error('unable to query for lessons', err);
-			}
-			done();
-			callback(err, result);
-		});
-
-	});
+exports.findUsages = function(question, callback) {
+    logger.info('Finding usages of the question');
+    Lesson.find({ 'steps.quizItems' : question._id.toString() }, {}, function(err, result){
+        if (!!err) {
+            logger.error('unable to find usage of questions [%s]', err.message);
+        }
+        callback(err, result);
+    });
 };
 
 exports.search = exports.find;
+
+
+exports.complexSearch = function( queryObj, callback ){
+
+    if ( !!queryObj.filter && !!queryObj.filter.searchText ){
+
+        var text =  new RegExp(queryObj.filter.searchText, 'i');
+
+        if ( !queryObj.filter.$or ){
+            queryObj.filter.$or = [];
+        }
+
+        queryObj.filter.$or.push({ 'name' : text });
+        queryObj.filter.$or.push({ 'description' : text });
+
+        delete queryObj.filter.searchText;
+    }
+
+    Lesson.connect( function( db, collection ){
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
+    });
+};
+
+
+

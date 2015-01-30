@@ -17,8 +17,32 @@ server {
   error_log     /var/log/nginx/$DOMAIN/error.log;
   error_page    404    /404.html;
   error_page    503    /503.html;
+  root /var/www/lergo/lergo-ui;
+  index index.html
+  autoindex off;
+  rewrite ^/$ \$scheme://\$host/index.html break;
 
-  rewrite  ^/$  /index.html  last;
+
+  location ~ /index.html {
+    set \$test "";
+
+    if ( \$http_user_agent ~* "(Google|facebook)" ) {
+      set \$test  A;
+    }
+
+    if ( \$args !~ "_escaped_fragment_" ){
+     set \$test "\${test}B";
+    }
+
+   if ( \$test = AB ){
+      set \$args _escaped_fragment_=/;
+   }
+
+    if ( \$args ~ "_escaped_fragment_") {
+         rewrite ^(.*)$ /backend/crawler;
+    }
+  }
+
 
  location /backend{
       proxy_pass http://lergo-backend;
@@ -26,10 +50,11 @@ server {
       proxy_set_header X-Real-IP \$remote_addr;
  }
 
- location / {
-    autoindex off;
-    root /var/www/lergo/lergo-ui;
-  }
+
+ location ~ \.html$ {
+    expires -1;
+    add_header Cache-Control "no-cache, no-store";
+ }
 
 }
 

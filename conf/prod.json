@@ -13,11 +13,16 @@
     },
     "public" : {
         "googleAnalyticsCode" : null,
+        "facebookAppId":"1505045963101770",
         "disqus" : {
             "enabled" : false,
             "shortname" : "lergo",
             "lessonsCategory" : null
+        },
+        "filtering" : {
+            "defaultPageSize" : 18
         }
+
 
     },
     "translations" : {

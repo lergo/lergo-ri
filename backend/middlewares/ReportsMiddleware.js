@@ -28,5 +28,12 @@ exports.exists = function exists(req, res, next) {
 };
 
 exports.userCanDelete = function userCanDelete(req, res, next) {
-	return permissions.reports.userCanDelete(req.report, req.user) ? next() : res.send(400);
+	if (permissions.reports.userCanDelete(req.report, req.sessionUser)) {
+		return next();
+	} else if (permissions.reports.userCanDeleteItSelf(req.report, req.sessionUser)) {
+		req.deleteUserInfo = true;
+		return next();
+	} else {
+		return res.send(400);
+	}
 };

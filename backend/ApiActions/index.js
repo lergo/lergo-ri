@@ -1,7 +1,6 @@
 'use strict';
 exports.usersActions = require('./UsersActions');
 exports.publicActions = require('./PublicActions');
-exports.adminActions = require('./AdminActions');
 exports.lessonsActions = require('./LessonsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');
@@ -10,6 +9,9 @@ exports.lessonsInvitationsActions = require('./LessonsInvitationsActions');
 exports.tagsActions = require('./TagsActions');
 exports.likesActions = require('./LikesActions');
 exports.reportsActions = require('./ReportsActions');
+exports.helperContentsActions= require('./HelperContentsActions');
+exports.abuseReportsActions= require('./AbuseReportActions');
+exports.faqActions= require('./FAQActions');
 var logger = require('log4js').getLogger('apiActions');
 
 

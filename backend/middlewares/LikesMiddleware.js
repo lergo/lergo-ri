@@ -16,7 +16,7 @@ exports.itemExists = function itemExists(req, res, next) {
     var itemId = req.params.itemId;
     if (!itemType) {
         logger.info('itemType is missing, failing..');
-        res.send(400, 'must specify item details to like');
+        res.status(400).send('must specify item details to like');
         return;
     }
 
@@ -47,7 +47,7 @@ exports.itemExists = function itemExists(req, res, next) {
 
             // guy - we will reach here if itemType does not match anything..
             if (!req.likeItem) {
-                res.send(400, 'item does not exist');
+                res.status(400).send('item does not exist');
                 return;
             }
             next();
@@ -91,7 +91,7 @@ exports.exists = function exists(req, res, next) {
     exports.optionalExists(req, res, function () {
         if (!req.like) {
             logger.debug('like does not exist, failing');
-            res.send(400, 'no such like');
+            res.status(400).send('no such like');
         } else {
             logger.debug('like exist, moving on');
             next();
@@ -99,13 +99,13 @@ exports.exists = function exists(req, res, next) {
     });
 };
 
-// if like itself does not exist
+// if like itself does not exist   Le
 exports.notExists = function notExists(req, res, next) {
     logger.debug('making sure like does not exist');
     exports.optionalExists(req, res, function () {
         logger.debug('looking if like exists on req');
         if (!!req.like) {
-            res.send(400, 'already exists');
+            res.status(400).send('already exists');
         } else {
             next();
         }

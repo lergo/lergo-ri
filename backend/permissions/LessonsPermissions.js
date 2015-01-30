@@ -10,15 +10,19 @@ exports.userCanEdit = function( lesson, user ){
 };
 
 exports.userCanCopy = function( lesson ,user ){
-    return lesson.userId.equals(user._id);
+    return !!user;
 };
 
 exports.userCanDelete = function( lesson ,user ){
-    return !!user.isAdmin || lesson.userId.equals(user._id);
+    return  !!user && ( !!user.isAdmin  || lesson.userId.equals(user._id) );
 };
 
 exports.userCanPublish = function( lesson,user) {
-    return !!user.isAdmin;
+    return !!user && !!user.isAdmin;
+};
+
+exports.userCanPreview = function( lesson, user ){
+    return !!user && !!lesson.userId.equals(user._id);
 };
 
 
@@ -27,6 +31,7 @@ exports.getPermissions = function( lesson, user ){
         'canEdit' : exports.userCanEdit(lesson,user),
         'canCopy' : exports.userCanCopy(lesson,user),
         'canDelete' : exports.userCanDelete(lesson,user),
-        'canPublish' : exports.userCanPublish(lesson,user)
+        'canPublish' : exports.userCanPublish(lesson,user),
+        'canPreview' : exports.userCanPreview( lesson, user )
     };
 };

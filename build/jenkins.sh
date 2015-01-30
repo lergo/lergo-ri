@@ -1,142 +1,74 @@
-# ##################################################### #
-#
-# This script assume the following directory hierarchy  #
-# root                                                  #
-#   +---- lergo-ri                                      #
-#             +------- build                            #
-#                        +------- jekins.sh             #
-#   +---- lergo-ui                                      #
-#                                                       #
-# To run it, you should use the following commands      #
-#       cp lergo-ri/build/jenkins.sh .                  #
-#        chmod +x ./jenkins.sh                          #
-#        source ./jenkins.sh                            #
-#                                                       #
-#                                                       #
-# ##################################################### #
+set -e
 
 
-# prerequisites to install on jenkins before each build
- 
-export DISPLAY=:1
-Xvfb :1 &
- 
-#
-# Fetch node, grunt, bower, npm deps, ruby for compass...
-#
- 
-#cd $1
- 
-curl -s -o ./use-node https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/node/use-node
-NODE_VERSION=0.10.24 . ./use-node
-
-
-install_bower_cli(  ){
-    npm cache clear
-    echo "install bower cli retry ::: $1"
-    npm install -g grunt-cli bower
-}
-
-
-for i in 1 2 3 4 5 6 7 8 9; do install_bower_cli $i && break || sleep 1; done
- 
-curl -s -o ./use-ruby https://repository-cloudbees.forge.cloudbees.com/distributions/ci-addons/ruby/use-ruby
-RUBY_VERSION=2.0.0-p247 \
-source ./use-ruby
- 
-gem install --conservative compass
-
-rm -f build.id
-echo "building lergo-ui"
-cd lergo-ui
-
-install_dependencies(  ){
-    echo "retry ::: $1"
-    npm cache clear
-    if [ ! -e node_modules ]; then
-        rm -Rf node_modules
-    fi
-    npm install
-
-    if [ ! -e app/bower_components ]; then
-       rm -Rf app/bower_components
-    fi
-    bower cache clean
-    bower install
-}
-
-for i in 1 2 3 4 5 6 7 8 9; do install_dependencies $i && break || sleep 1; done
-
-grunt build --no-color
-
-COMMITS_TEMPLATE=dist/views/version/_commits.html
-VERSION_TEMPLATE=dist/views/version/_version.html
-echo "<h1>UI</h1>" > $COMMITS_TEMPLATE
-git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> $COMMITS_TEMPLATE
-echo "<h1>BACKEND</h1>" >> $COMMITS_TEMPLATE
-cd ..
-cd lergo-ri
-git log  --abbrev=30 --pretty=format:"%h|%an|%ar|%s" -10 | column -t -s '|' >> ../lergo-ui/$COMMITS_TEMPLATE
-cd ..
-cd lergo-ui
-echo "Build Number : $BUILD_NUMBER <br/> Build ID : $BUILD_ID <br/> Build Name : $BUILD_DISPLAY_NAME <br/> Job Name : $JOB_NAME <br/> Build Tag : $BUILD_TAG <br/>" > $VERSION_TEMPLATE
-
-
-cd dist 
-npm install --production
-npm pack
-
-cd ../../
-
-echo "building lergo-ri"
-
-cd lergo-ri
-
-
-build_ri(){
-    echo "build_ri try :: $1"
-    if [ ! -d node_modules ]; then
-        rm -Rf node_modules
-    fi
-    npm install
-    grunt testBefore
-    grunt build --no-color
-    grunt testAfter
-    cd dist
-    npm install --production
-
-# echo "running npm install on contextify"
-# MY_DIR=`pwd`
-# cd node_modules/email-templates/node_modules/juice2/node_modules/jsdom/node_modules/contextify/
-# npm install
-# cd $MY_DIR
-# echo "finished running install on contextify"
-
-    npm pack
-
-}
-
-for i in 1 2 3 4 5 6 7 8 9; do build_ri $i && break || sleep 1; done
-
-
-# for future test needs, we have a mongo db for testing for free from cloudbees.
-# please note that it is ok to show user/password as this DB is special just for testing.
-# it has limited options and we clear it on every commit.
-# mongo oceanic.mongohq.com:10078/AvJhGdIv7OYD8AV9va8w -u root -proot  --eval "db.dropDatabase()"
-
-
-cd ..
-cd ..
-echo $BUILD_ID > build.id
-if [ -e artifacts ]; then
-   echo "artifacts folder already exists. deleting it"
-   rm -Rf artifacts
-   mkdir artifacts
+if [ ! -f my-vagrant.tgz ];then
+    wget -O my-vagrant.tgz "https://www.dropbox.com/s/hqs5kkw25qzzjew/my-vagrant.tgz?dl=1"
+    tar -xzvf my-vagrant.tgz
+    SHOULD_INSTALL_PLUGIN=true
 else
-   mkdir artifacts
+    echo "assuming vagrant already installed on the system"
+    SHOULD_INSTALL_PLUGIN=false
 fi
 
-\cp -f lergo-ri/dist/*.tgz artifacts
-\cp -f lergo-ui/dist/*.tgz artifacts
-\cp -f build.id artifacts
-\cp -f lergo-ri/build/install.sh artifacts
+VAGRANT_CMD="`pwd`/my-vagrant/bin/vagrant"
+$VAGRANT_CMD --version
+
+if [ "$SHOULD_INSTALL_PLUGIN" = "true" ];then
+    $VAGRANT_CMD plugin install vagrant-aws
+else
+    echo "assuming plugin already installed"
+fi
+
+
+echo "cloning vagrant automation machines"
+rm -rf vagrant-automation-machines
+git clone https://github.com/guy-mograbi-at-gigaspaces/vagrant-automation-machines.git
+
+echo "copying vagrant files from lergo-ri under automations project"
+cp -rf lergo-ri/build/vagrant/* vagrant-automation-machines
+
+echo "populating build_details.sh with information from jenkins"
+
+BUILD_DETAILS="vagrant-automation-machines/synced_folder/build_details.sh"
+echo "" > $BUILD_DETAILS
+echo "export BUILD_NUMBER=\"$BUILD_NUMBER\"" >> $BUILD_DETAILS
+echo "export BUILD_ID=\"$BUILD_ID\"" >> $BUILD_DETAILS
+echo "export BUILD_DISPLAY_NAME=\"$BUILD_DISPLAY_NAME\"" >> $BUILD_DETAILS
+echo "export JOB_NAME=\"$JOB_NAME\"" >> $BUILD_DETAILS
+echo "export BUILD_TAG=\"$BUILD_TAG\"" >> $BUILD_DETAILS
+
+
+echo "decrypting vagrant config json"
+cd lergo-ri
+set +v
+set +x
+source build/build_decrypt_vagrant_build_config.sh   &>2 /dev/null
+
+set -v
+set -x
+
+source build/build_decrypt_vagrant_pem.sh    &>2 /dev/null
+
+cd ..
+
+
+echo "running vagrant up"
+cd vagrant-automation-machines
+cd aws
+export CONFIG_FILE="$VAGRANT_BUILD_CONF"
+
+echo "destroying old machine in case one was left"
+$VAGRANT_CMD destroy -f || echo "machine was not up"
+
+BUILD_FAILED=0
+$VAGRANT_CMD up --provider aws || ( echo "vagrant up failed" && BUILD_FAILED=1 )
+
+echo "destroying the vagrant machine"
+$VAGRANT_CMD destroy -f
+
+echo "status code $BUILD_FAILED"
+
+if [ "$BUILD_FAILED" = "1" ];then
+    return $BUILD_FAILED
+fi
+

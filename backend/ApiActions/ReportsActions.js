@@ -77,16 +77,13 @@ exports.updateReport = {
         'nickname': 'updateReport'
     },
     'middlewares' : [
-        middlewares.users.optionalUserOnRequest,
+        middlewares.session.optionalUserOnRequest,
         middlewares.reports.exists
     ],
     'action': controllers.reports.updateReport
 };
 
 
-/**
-
- */
 exports.sendReportReady = {
     'spec': {
         'description': 'send email that report is ready',
@@ -142,10 +139,41 @@ exports.deleteReport = {
 	        'nickname': 'deleteReport'
 	    },
 	    'middlewares' : [
-	        middlewares.users.exists,
+	        middlewares.session.isLoggedIn,
 	        middlewares.reports.exists,
 	        middlewares.reports.userCanDelete
 	    ],
 	    'action': controllers.reports.deleteReport
 	};
+
+
+exports.getStudents = {
+    'spec': {
+        'description': 'get all students names',
+        'name': 'getAllStudentsName',
+        'path': '/reports/students',
+        'summary': 'get all students names',
+        'method': 'GET',
+        'parameters': [
+
+            {
+                'paramType': 'query',
+                required: false,
+                'description': 'like - filter for student name',
+                'type': 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unable to find students'
+            }
+        ],
+        'nickname': 'getAllStudentsName'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn
+    ],
+    'action': controllers.reports.getStudents
+};
 

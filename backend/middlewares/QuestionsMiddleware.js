@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module QuestionsMiddleware
+ * @type {Question|exports}
+ */
+
 var Question = require('../models/Question');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
@@ -20,11 +26,11 @@ exports.exists= function exists( req, res, next ){
     logger.info('checking if question exists : ' , req.params.questionId );
     Question.findById( req.params.questionId, function(err, result){
         if ( !!err ){
-            res.send(500,err);
+            res.status(500).send(err);
             return;
         }
         if ( !result ){
-            res.send(404);
+            res.status(404).send('question node found');
             return;
         }
 
@@ -47,7 +53,11 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit');
-    return permissions.questions.userCanEdit( req.question, req.user ) ? next() : res.send(400);
+    return permissions.questions.userCanEdit( req.question, req.sessionUser ) ? next() : res.status(400).send({});
+};
+
+exports.userCanCopy = function userCanCopy( req, res, next ){
+    return permissions.questions.userCanCopy( req.question, req.sessionUser ) ? next() :res.status(400).send({});
 };
 
 /*
@@ -56,9 +66,13 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
  */
 exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res, next){
     logger.debug('checking if user can see');
-    if ( !permissions.app.userCanManage(req.user) ){
-        res.send(400);
+    if ( !permissions.app.userCanManage(req.sessionUser) ){
+        res.status(400).send({});
         return;
     }
     next();
+};
+
+exports.userCanDelete = function userCanDelete(req, res, next){
+    return permissions.questions.userCanDelete( req.question, req.sessionUser ) ? next() : res.status(400).send('');
 };

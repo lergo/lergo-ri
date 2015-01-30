@@ -1,4 +1,10 @@
 'use strict';
+
+/**
+ * @module LergoEmailService
+ * @type {exports}
+ */
+
 var nodemailer = require('nodemailer');
 var emailSettings = require('./Conf').emailSettings;
 var logger = require('log4js').getLogger('LergoEmailService');

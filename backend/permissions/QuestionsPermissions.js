@@ -9,11 +9,11 @@ exports.userCanEdit = function( question, user ){
 
 
 exports.userCanCopy = function( question ,user ){
-    return question.userId.equals(user._id);
+    return  !!user;// all users can copy
 };
 
 exports.userCanDelete = function( question ,user ){
-    return question.userId.equals(user._id);
+    return !!user && question.userId.equals(user._id);
 };
 
 

@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @module DbService
+ * @type {exports}
+ */
+
 var conf = require('./Conf');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
@@ -24,7 +29,7 @@ function getDbConnection( callback ){
 
 }
 
-logger.info('initializing DbManager :: ' , _dbUrl );
+logger.info('initializing DbService :: ' , _dbUrl );
 
 
 // add an easy way to turn a result to map

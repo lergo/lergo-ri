@@ -1,4 +1,20 @@
 'use strict';
+
+
+/**
+ * @name ReportsManager
+ * @class
+ *
+ */
+/**
+ * @name managers
+ * @module
+ */
+/**
+ *
+ * @type {exports.Report|*}
+ */
+
 var Report = require('../models').Report;
 var services = require('../services');
 var _ = require('lodash');
@@ -27,7 +43,7 @@ exports.sendReportLink = function (emailResources, report, callback) {
 
         var emailVars = {};
         _.merge(emailVars, emailResources);
-        var lessonInviteLink = emailResources.lergoBaseUrl + '/#/public/lessons/reports/' + report.data._id + '/display';
+        var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
 
         _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name });
 
@@ -45,6 +61,7 @@ exports.sendReportLink = function (emailResources, report, callback) {
                     logger.info('saving report sent true');
                     report.setSent(true);
                     report.update();
+                    callback();
                 }
             });
         });
@@ -69,4 +86,36 @@ exports.deleteReport = function(id, callback) {
 			callback(err);
 		});
 	});
+};
+
+
+/**
+ * @callback ReportsManager~ReportsManagerComplexSearchCallback
+ * @param {error} err
+ * @param {Array<LessonInvitation>} result
+ */
+
+/**
+ *
+ * @param {ComplexSearchQuery} queryObj
+ * @param {ReportsManager~ReportsManagerComplexSearchCallback} callback
+ */
+exports.complexSearch = function( queryObj, callback ){
+
+    // change some keys around for report.
+    if ( !!queryObj.filter ){
+        if ( !!queryObj.filter.language ){
+            queryObj.filter['data.lesson.language'] = queryObj.filter.language;
+            delete queryObj.filter.language;
+        }
+
+        if ( !!queryObj.filter.subject){
+            queryObj.filter['data.lesson.subject'] = queryObj.filter.subject;
+            delete queryObj.filter.subject;
+        }
+    }
+
+    Report.connect( function( db, collection ){
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback);
+    });
 };

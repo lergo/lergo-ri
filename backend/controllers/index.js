@@ -1,8 +1,11 @@
 exports.users = require('./UsersController');
-exports.questions=require('./QuestionsController');
-exports.lessons=require('./LessonsController');
+exports.questions = require('./QuestionsController');
+exports.lessons = require('./LessonsController');
 exports.lessonsInvitations = require('./LessonsInvitationsController');
-exports.system= require('./SystemController');
-exports.tags= require('./TagsController');
-exports.likes= require('./LikesController');
-exports.reports= require('./ReportsController');
+exports.system = require('./SystemController');
+exports.tags = require('./TagsController');
+exports.likes = require('./LikesController');
+exports.reports = require('./ReportsController');
+exports.helperContents = require('./HelperContentsController');
+exports.abuseReports = require('./AbuseReportsController');
+exports.faqs = require('./FAQsController');

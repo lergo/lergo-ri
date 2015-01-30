@@ -3,11 +3,14 @@
   "description": "a reference implementation to lergo api",
   "private": true,
   "version": "0.0.0",
+  "scripts": {
+    "test": "grunt testBefore default testAfter"
+  },
   "dependencies": {
     "swagger-node-express": "*",
     "passport": "*",
     "passport-openid": "*",
-    "mongodb": "*",
+    "mongodb": "1.4.8",
     "log4js": "*",
     "async": "*",
     "sha1": "*",
@@ -22,32 +25,28 @@
     "cookie-session": "*",
     "errorhandler": "*",
     "email-templates": "0.1.8",
-    "node-rest-client": "~1.0.0"
+    "node-rest-client": "~1.0.0",
+    "phantom": "~0.6.5",
+    "sitemap": "~0.7.3",
+    "dateformat": "~1.0.8-1.2.3",
+    "loggly": "~1.0.5"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-contrib-uglify": "~0.2.0",
-    "grunt-contrib-compass": "~0.3.0",
     "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-cssmin": "~0.6.0",
-    "grunt-contrib-connect": "~0.3.0",
     "grunt-contrib-clean": "~0.4.1",
-    "grunt-contrib-htmlmin": "~0.1.3",
     "grunt-contrib-watch": "~0.4.0",
-    "grunt-usemin": "~0.1.11",
-    "grunt-rev": "~0.1.0",
-    "grunt-open": "~0.2.0",
-    "grunt-concurrent": "~0.3.0",
     "matchdep": "~0.1.2",
-    "connect-livereload": "~0.2.0",
-    "grunt-google-cdn": "~0.2.0",
-    "grunt-ngmin": "~0.0.2",
     "mocha": "*",
     "grunt-mocha-test": "*",
-    "expect.js": "~0.3.1"
+    "expect.js": "~0.3.1",
+    "jshint-stylish": "~1.0.0",
+    "istanbul": "~0.3.2",
+    "grunt-mocha-istanbul": "~2.2.0",
+    "grunt-aws": "~0.4.0",
+    "grunt-jsdoc": "~0.5.7",
+    "sinon": "~1.12.2"
   },
   "bundledDependencies": [
     "lodash",
@@ -68,7 +67,11 @@
     "cookie-session",
     "errorhandler",
     "email-templates",
-    "node-rest-client"
+    "node-rest-client",
+    "phantom",
+    "sitemap",
+    "dateformat",
+    "loggly"
   ],
   "engines": {
     "node": ">=0.8.0"

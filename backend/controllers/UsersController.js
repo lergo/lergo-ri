@@ -1,15 +1,101 @@
 'use strict';
+
+/**
+ * @module UsersController
+ * @type {exports}
+ */
+
 var managers = require('../managers');
+var permissions = require('../permissions');
 var services = require('../services');
 var logger = managers.log.getLogger('UsersController');
-
+var User = require('../models/User');
+var Question = require('../models/Question');
+var Lesson = require('../models/Lesson');
+var async = require('async');
+var _ = require('lodash');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
 
 logger.info('initializing');
 
-function getUserPublicDetails(user) {
-    return { 'username': user.username, 'isAdmin' : user.isAdmin, '_id' : user._id };
-}
+exports.getUserPublicDetails = function (req, res) {
+    res.send(User.getUserPublicDetails(req.sessionUser));
+};
+
+exports.getMyProfile = function (req, res) {
+    User.findOne({
+        'username': req.sessionUser.username
+    }, {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+            return;
+        } else {
+            var user = result;
+            async.parallel([function countQuestions(callback) {
+                Question.count({
+                    userId: user._id
+                }, function (err, result) {
+                    user.questionsCount = result;
+                    callback();
+                });
+            }, function countLessons(callback) {
+                Lesson.count({
+                    userId: user._id
+                }, function (err, result) {
+                    user.lessonsCount = result;
+                    callback();
+                });
+            }], function (error) {
+                if (!!error) {
+                    new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+                    return;
+                }
+                delete user.password;
+                res.send(user);
+                return;
+            });
+        }
+    });
+};
+
+exports.getPublicProfile = function (req, res) {
+    User.findOne({
+        'username': req.params.username
+    }, {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+            return;
+        } else {
+            var user = result;
+            Lesson.find({
+                userId  : user._id,
+                'public': {
+                    '$exists': true
+                }
+            }, {_id: 1}, function (err, result) {
+                if (!!err) {
+                    new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+                    return;
+                }
+                user.lessonsCount = result.length;
+                Lesson.getAllQuestionsIdsForLessons(_.pluck(result,'_id'),function (error, qIds) {
+                    if (!!error) {
+                        new managers.error.InternalServerError(err, 'unable to find user profile').send(res);
+                        return;
+                    }
+                    if (qIds === undefined) {
+                        qIds = [];
+                    }
+                    user.questionsCount = qIds.length;
+                    delete user.password;
+                    res.send(user);
+                    return;
+                });
+
+            });
+        }
+    });
+};
 
 exports.signup = function (req, res) {
     var user = req.body;
@@ -19,19 +105,26 @@ exports.signup = function (req, res) {
 
             return;
         } else {
-            res.send({ 'username': obj.username, 'message': 'created successfully'});
+            res.send({
+                'username': obj.username,
+                'message' : 'created successfully'
+            });
             return;
         }
     });
 };
 
-
 // returns the disqus sso details required
-exports.disqusLogin = function( req, res ){
-    res.send(disqusClient.ssoObj({ 'id' : req.user._id, 'username' : req.user.username, 'email' : req.user.email }));
+exports.disqusLogin = function (req, res) {
+    res.send(disqusClient.ssoObj({
+        'id'      : req.sessionUser._id,
+        'username': req.sessionUser.username,
+        'email'   : req.sessionUser.email
+    }));
 };
 
-// the validation email is sent after signup or after login. user must provide username and password.
+// the validation email is sent after signup or after login. user must provide
+// username and password.
 exports.resendValidationEmail = function (req, res) {
 
     var loginCredentials = req.body;
@@ -61,14 +154,14 @@ exports.resendValidationEmail = function (req, res) {
                 return;
             }
 
-            res.send(getUserPublicDetails(user));
+            res.send(User.getUserPublicDetails(user));
         });
 
     });
 };
 
-exports.getAll = function( req, res ){
-    managers.users.find( {}, {},function(err, users){
+exports.getAll = function (req, res) {
+    managers.users.find({}, {}, function (err, users) {
         res.send(users);
     });
 };
@@ -91,9 +184,8 @@ exports.login = function (req, res) {
             return;
         }
 
-
         req.session.userId = loggedInUser.getId();
-        res.send(getUserPublicDetails(loggedInUser));
+        res.send(User.getUserPublicDetails(loggedInUser));
     });
 };
 
@@ -115,7 +207,7 @@ exports.validateUser = function (req, res) {
         }
 
         req.session.userId = validatedUser.getId();
-        res.send(getUserPublicDetails(validatedUser));
+        res.send(User.getUserPublicDetails(validatedUser));
 
     });
 };
@@ -126,8 +218,70 @@ exports.requestPasswordReset = function (req, res) {
         if (!!err) {
             err.send(res);
         } else {
-            res.send(200, {'message': 'changed password successfully'});
+            res.send(200, {
+                'message': 'changed password successfully'
+            });
         }
+    });
+};
+
+/**
+ * gets a list of ids and returns the corresponding users.
+ *
+ * how to pass a list of ids over req query?
+ *
+ * ?idsList[]=1&idsList[]=2&idsList[]=3
+ *
+ * @param req
+ * @param res
+ */
+exports.findUsersById = function (req, res) {
+
+    var objectIds = req.getQueryList('usersId');
+    logger.info('this is object ids', objectIds);
+    objectIds = services.db.id(objectIds);
+
+    User.find({
+        '_id': {
+            '$in': objectIds
+        }
+    }, {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
+            return;
+        } else {
+
+            // hide private info if logged in user does not have permissions
+            if (!permissions.users.canSeePrivateUserDetails(req.sessionUser, null)) {
+                result = User.getUserPublicDetails(result);
+            }
+
+            res.send(result);
+            return;
+        }
+    });
+};
+
+exports.getUsernames = function (req, res) {
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    User.connect(function (db, collection) {
+        collection.aggregate([{
+            '$project': {
+                'username': '$username'
+            }
+        }, {
+            '$match': {
+                'username': like || ''
+            }
+        }], function (err, result) {
+            if (!!err) {
+                new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
+                return;
+            }
+            res.send(result);
+        });
     });
 };
 
@@ -136,26 +290,56 @@ exports.changePassword = function (req, res) {
     logger.info('changing password for user');
     var changePasswordDetails = req.body;
 
-    managers.users.changePassword(changePasswordDetails, req.user, function (err/*, result*/) {
+    managers.users.changePassword(changePasswordDetails, req.sessionUser, function (err, user) {
         if (!!err) {
             res.send(500, err);
         } else {
-            res.send(200, { 'message': 'password changed successfully'});
+            if (!!user.validated) {
+                req.session.userId = user._id;
+            }
+            res.send(200, {
+                'message': 'password changed successfully'
+            });
         }
     });
-
 
 };
 
 exports.isLoggedIn = function (req, res) {
-    res.send(getUserPublicDetails(req.user));
+    res.send(User.getUserPublicDetails(req.sessionUser));
 };
 
 exports.logout = function (req, res) {
     req.session.userId = null;
-    res.send(200);
+    res.send(200, {
+        'message': 'ok'
+    });
 };
 
+exports.update = function (req, res) {
+    logger.info('updating user');
+    var user = req.body;
 
-
-
+    User.findById(services.db.id(user._id), {}, function (err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to update user profile').send(res);
+            return;
+        } else {
+            var existingUser = result;
+            // Only below fiels are allowed to update
+            existingUser.shortIntro = user.shortIntro;
+            existingUser.externalLink = user.externalLink;
+            existingUser.details = user.details;
+            new User(existingUser).update(function (err) {
+                logger.info('user profile updated');
+                if (!!err) {
+                    new managers.error.InternalServerError(err, 'unable to update user profile').send(res);
+                    return;
+                } else {
+                    res.send(user);
+                    return;
+                }
+            });
+        }
+    });
+};

@@ -23,10 +23,28 @@ install_main(){
         npm install -g bower
     fi
 
+    if [ -h /usr/bin/phantomjs ]; then
+        echo "phantomjs already installed. skipping ... "
+    else
+        npm install -g phantomjs
+        yum install -y freetype
+        yum install -y fontconfig
+        yum install -y gcc-c++
+    fi
+
+
+
+
     if [ -h /usr/bin/grunt ]; then
         echo "grunt-cli is already installed. skipping.. "
     else
         npm install -g grunt-cli
+    fi
+
+    if [ -h /usr/bin/forever ]; then
+        echo "forever is already installed. skipping.. "
+    else
+        npm install -g forever
     fi
 
     install_ruby
@@ -99,9 +117,22 @@ upgrade_main(){
         wget $BACKEND_URL -O $LERGO_RI_LOCATION/lergo-ri.tgz
 
         cd $LERGO_RI_LOCATION
+         tar -tzf lergo-ri.tgz >/dev/null
+        if [ $? != 0 ]; then
+            echo  "tar file is incorrect"; exit 1
+        else
+            echo "tar file is ok"
+        fi
+
         rm -Rf package
         tar -xzvf lergo-ri.tgz
         ln -Tfs /var/www/lergo/lib/lergo-ri/package /var/www/lergo/lergo-ri
+
+        if [ "$SEO_SUPPORT" != "false" ];then
+            echo "installing phantom by default"
+            cd /var/www/lergo/lergo-ri
+            npm install phantom
+        fi
 
        # npm install $BACKEND_URL --verbose -g --prefix /var/www/lergo
        # ln -Tfs /var/www/lergo/lib/node_modules/lergo-ri/ /var/www/lergo/lergo-ri
