@@ -75,7 +75,7 @@ function FillInTheBlanksQuestionHandler(question) {
     this.isCorrect = function () {
         var answers = [];
         var result = {
-            correct   : false,
+            correct   : true,
             expMessage: []
         };
         question.answer.forEach(function (value) {
@@ -83,6 +83,14 @@ function FillInTheBlanksQuestionHandler(question) {
                 answers.push(value);
             }
         });
+
+        var possibleWrongAnswer = {};
+        question.options.forEach(function (value) {
+            if (!value.checked) {
+                possibleWrongAnswer[value.label] = value.textExplanation;
+            }
+        });
+
         if (question.userAnswer.length === undefined) {
             result.correct = false;
             result.expMessage.push(question.explanation);
@@ -93,13 +101,13 @@ function FillInTheBlanksQuestionHandler(question) {
             var values = answers[i].split(';');
             if (values.indexOf(question.userAnswer[i]) === -1) {
                 result.correct = false;
-                result.expMessage.push(question.explanation);
-                return result;
+                if (!!possibleWrongAnswer[question.userAnswer[i]]){
+                    result.expMessage.push(possibleWrongAnswer[question.userAnswer[i]]);
+                }
             }
         }
 
-        result.correct = true;
-        if (!!question.explanation) {
+        if (result.expMessage.length===0 && !!question.explanation) {
             result.expMessage.push(question.explanation);
         }
         return result;
