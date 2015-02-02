@@ -93,7 +93,9 @@ function FillInTheBlanksQuestionHandler(question) {
 
         if (question.userAnswer.length === undefined) {
             result.correct = false;
-            result.expMessage.push(question.explanation);
+            if (!!question.explanation) {
+                result.expMessage.push(question.explanation);
+            }
             return result;
         }
 
@@ -101,13 +103,14 @@ function FillInTheBlanksQuestionHandler(question) {
             var values = answers[i].split(';');
             if (values.indexOf(question.userAnswer[i]) === -1) {
                 result.correct = false;
-                if (!!possibleWrongAnswer[question.userAnswer[i]]){
+                //push specific explanation only for first blank
+                if (i === 0 && !!possibleWrongAnswer[question.userAnswer[i]]) {
                     result.expMessage.push(possibleWrongAnswer[question.userAnswer[i]]);
                 }
             }
         }
 
-        if (result.expMessage.length===0 && !!question.explanation) {
+        if (result.expMessage.length === 0 && !!question.explanation) {
             result.expMessage.push(question.explanation);
         }
         return result;
