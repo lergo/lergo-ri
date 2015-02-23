@@ -1,5 +1,5 @@
 
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          cwpm
 # Required-Start:    $local_fs $network $named $time $syslog
