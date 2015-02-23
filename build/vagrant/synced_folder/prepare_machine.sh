@@ -47,7 +47,7 @@ if [ "$NODE_EXISTS" = "" ];then
 
     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
     source ~/.nvm/nvm.sh
-    nvm install stable && nvm use stable
+    nvm install 0.10.25 && nvm use 0.10.25
 
     NODE_EXISTS=`which node`  || echo "node does not exist yet!"
     if [ "$NODE_EXISTS" = "" ];then
