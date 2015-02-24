@@ -1,3 +1,4 @@
+# tested on ami : ami-7747d01e
 set -e
 source "/etc/ENVIRONMENT_VARIABLES.sh" || echo "no environment variables"
 if [ "$DEBUG_SCRIPT" = "true" ];then
