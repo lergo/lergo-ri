@@ -49,7 +49,7 @@ if [ "$NODE_EXISTS" = "" ];then
     # source ~/.nvm/nvm.sh
     # nvm install 0.10.25 && nvm use 0.10.25
 
-    ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
+    # ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
 
     ( which npm && echo "npm already installed..." ) || ( echo "installing npm ... " && sudo apt-get install -y npm && echo "npm installed successfully..." )
 
