@@ -1,3 +1,5 @@
+# tested on ami : ami-9a380b87
+
 set -e
 
 run_wget(){
@@ -19,7 +21,7 @@ install_main(){
     ( which wget && echo "wget installed..." ) || ( echo "installing wget..." && sudo-apt-get -y install wget && echo "wget installed successfully..." )
 
 
-    ( which mongod && echo "mongo installed..." ) || ( echo "installing mongo..." && install_mongo && echo "mongo installed successfully..." )
+    ( which mongod && echo "mongo installed..." ) || ( echo "installing mongo..." && sudo apt-get install -y mongodb && echo "mongo installed successfully..." )
 
     /etc/init.d/mongod start || echo "mongo start failed. probably already running. moving on... "
 
@@ -150,7 +152,7 @@ upgrade_main(){
     echo "updating nginx conf"
 
      sudo -E bash -c "source ./nginx.conf.template > nginx.conf"
-     sudo ln -s /var/www/lergo/lergo-ri/build/nginx.conf /etc/nginx/sites-enabled/lergo.conf
+     sudo ln -Tfs /var/www/lergo/lergo-ri/build/nginx.conf /etc/nginx/sites-enabled/lergo.conf
 
 
 
@@ -170,7 +172,7 @@ upgrade_main(){
         echo "updating configuration"
         cd /var/www/lergo/lergo-ri
         sudo mkdir -p conf/dev/
-        sudo run_wget -O /tmp/meConf.js "$ME_CONF_URL"
+        run_wget -O /tmp/meConf.js "$ME_CONF_URL"
         sudo mv /tmp/meConf.js conf/dev/meConf.js
 
      fi
