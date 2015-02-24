@@ -23,7 +23,7 @@ install_main(){
 
     ( which mongod && echo "mongo installed..." ) || ( echo "installing mongo..." && sudo apt-get install -y mongodb && echo "mongo installed successfully..." )
 
-    /etc/init.d/mongod start || echo "mongo start failed. probably already running. moving on... "
+    /etc/init.d/mongodb start || echo "mongo start failed. probably already running. moving on... "
 
     ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
 
