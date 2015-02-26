@@ -1,7 +1,9 @@
 # a system level configuration for lergo - which nginx domain should it occupy etc..
 
-DOMAIN=my.domain.com
-MORE_DOMAINS=another.domain.com andmore.domain.com
+## need to export DOMAIN and MORE_DOMAINS so they will be used in nginx configuration template. in ubuntu it won't work otherwise.
+export DOMAIN=my.domain.com
+export MORE_DOMAINS=another.domain.com andmore.domain.com
+
 ME_CONF_URL=location_of_an_online_me_conf
 ME_JSON_URL=location_of_an_online_me_json
 S3_BACKUP_PATH=s3://lergodev-backups/mongo
