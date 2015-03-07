@@ -1,5 +1,6 @@
 'use strict';
-//var logger = require('log4js').getLogger('QuestionService');
+var logger = require('log4js').getLogger('QuestionService');
+var _ = require('lodash');
 
 function ExactMatchQuestionHandler(question) {
 
@@ -71,27 +72,73 @@ function MultiChoiceQuestionHandler(question) {
     };
 }
 
+/**
+ * @typedef {object} FitbQuestionOption
+ * @description Fill In The Blank Question Option
+ * @property {boolean} checked
+ * @property {label} the answer
+ * @property {string} textExplanation a possible explanation to this option
+ */
+
+/**
+ * @typedef {object} Question
+ * @description a question
+ */
+
+/**
+ * @typedef {string} FitbAnswer
+ * @description a string with possible ';' separator to indicate multiple options
+ */
+
+/**
+ * @typedef {Question} FitbQuestion
+ * @description Fill In The Blank Question. Inherits Question.
+ * @property {Array<FitbAnswer>} answer answers for the fill in the blank
+ * @property {string} explanation a text explanation for why the answer is correct
+ * @property {Array<string>} [userAnswer=null] the user's answers
+ */
+
+/**
+ *
+ * @description
+ * defines the Fitb Question Handler
+ *
+ * @param {Question} question - the question in hand
+ * @constructor
+ */
+
 function FillInTheBlanksQuestionHandler(question) {
+    /**
+     * @description
+     * decides if user answe
+     * @returns {{correct: boolean, expMessage: Array<string>}}
+     */
     this.isCorrect = function () {
-        var answers = [];
+        var answers = _.compact(question.answer);
+
         var result = {
             correct   : true,
             expMessage: []
         };
-        question.answer.forEach(function (value) {
-            if (!!value) {
-                answers.push(value);
-            }
-        });
 
-        var possibleWrongAnswer = {};
-        question.options.forEach(function (value) {
-            if (!value.checked) {
-                possibleWrongAnswer[value.label] = value.textExplanation;
+        /**
+         *
+         * iterates through the collection of possible wrong answers and returns the one matching the given answer
+         *
+         * @param answer the answer we have
+         * @returns {FitbQuestionOption|null} the matching incorrect option otherwise null
+         */
+        function getOptionByAnswer( answer ) {
+            try {
+                // find an option that has the given answer
+                return _.find(question.options, function(op){ return op.label === answer; });
+            }catch(e){
+                logger.error('error retrieving option by answer',e);
+                return null;
             }
-        });
+        }
 
-        if (question.userAnswer.length === undefined) {
+        if (question.userAnswer.length === undefined) { // handle corrupted user answer
             result.correct = false;
             if (!!question.explanation) {
                 result.expMessage.push(question.explanation);
@@ -100,12 +147,14 @@ function FillInTheBlanksQuestionHandler(question) {
         }
 
         for (var i = 0; i < answers.length; i++) {
-            var values = answers[i].split(';');
-            if (values.indexOf(question.userAnswer[i]) === -1) {
+            var values = answers[i].split(';'); // support multiple correct answers by adding ';' character between them.
+            var userAnswer = question.userAnswer[i];
+            if (values.indexOf(userAnswer) === -1) {
                 result.correct = false;
-                //push specific explanation only for first blank
-                if (i === 0 && !!possibleWrongAnswer[question.userAnswer[i]]) {
-                    result.expMessage.push(possibleWrongAnswer[question.userAnswer[i]]);
+                //push specific explanation only for first blank, if the wrong option has a defined text explanation
+                var wrongOption = getOptionByAnswer( userAnswer );
+                if (i === 0 && !!wrongOption && !!wrongOption.textExplanation ) {
+                    result.expMessage.push(wrongOption);
                 }
             }
         }

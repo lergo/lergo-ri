@@ -45,8 +45,8 @@
     "istanbul": "~0.3.2",
     "grunt-mocha-istanbul": "~2.2.0",
     "grunt-aws": "~0.4.0",
-    "grunt-jsdoc": "~0.5.7",
-    "sinon": "~1.12.2"
+    "sinon": "~1.12.2",
+    "grunt-jsdoc": "~0.6.3"
   },
   "bundledDependencies": [
     "lodash",

@@ -156,7 +156,8 @@ else
 fi
 
 
-( `which java` && echo "java already installed" ) || ( echo "installing java" && sudo apt-get install default-jdk -y )
+## no need for java since we
+## ( `which java` && echo "java already installed" ) || ( echo "installing java" && sudo apt-get install default-jdk -y )
 
 export CHROME_BIN=google-chrome
 
