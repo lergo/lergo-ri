@@ -154,7 +154,7 @@ function FillInTheBlanksQuestionHandler(question) {
                 //push specific explanation only for first blank, if the wrong option has a defined text explanation
                 var wrongOption = getOptionByAnswer( userAnswer );
                 if (i === 0 && !!wrongOption && !!wrongOption.textExplanation ) {
-                    result.expMessage.push(wrongOption);
+                    result.expMessage.push(wrongOption.textExplanation);
                 }
             }
         }
