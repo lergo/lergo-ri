@@ -57,7 +57,7 @@ exports.updateInvite = {
 		} ],
 		nickname : 'updateInvite'
 	},
-	middlewares : [ middlewares.session.isLoggedIn, middlewares.lessonsInvitations.exists ],
+	middlewares : [ middlewares.session.optionalUserOnRequest, middlewares.lessonsInvitations.exists ],
 	action : controllers.lessonsInvitations.update
 };
 exports.deleteInvitation = {
