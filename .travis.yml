@@ -4,5 +4,6 @@ node_js:
 before_script:
 - npm install -g bower grunt-cli
 before_install:
+- mkdir -p conf/dev
 - openssl aes-256-cbc -K $encrypted_d9eb3cf78e59_key -iv $encrypted_d9eb3cf78e59_iv
   -in test/me.json.enc -out conf/dev/me.json -d
