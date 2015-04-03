@@ -44,8 +44,7 @@ build_ri(){
     if [ "$UPLOAD_COVERAGE" = "true" ];then
         source /vagrant/build_decrypt_s3_json.sh &>2 /dev/null
         echo "uploading coverate for ri"
-        grunt s3:uploadCoverage --no-color
-        grunt s3:uploadBuildStatus --no-color
+        grunt uploadStatus --no-color
 
     fi
 

@@ -249,7 +249,7 @@ module.exports = function (grunt) {
         'mochaTest:afterBuild'
     ]);
 
-    grunt.registerTask('publishCoverage', [
+    grunt.registerTask('uploadStatus', [
         'readS3Credentials',
         's3'
     ]);
