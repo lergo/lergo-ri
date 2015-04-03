@@ -204,7 +204,7 @@ module.exports = function (grunt) {
     });
 
 
-    gurnt.registerTask('readS3Credentials', function(){
+    grunt.registerTask('readS3Credentials', function(){
         try {
             var s3path = process.env.LERGO_S3 || path.resolve('./dev/s3.json');
             logger.info('looking for s3.json at ' , s3path );
