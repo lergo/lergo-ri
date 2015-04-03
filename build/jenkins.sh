@@ -61,7 +61,7 @@ echo "destroying old machine in case one was left"
 $VAGRANT_CMD destroy -f || echo "machine was not up"
 
 BUILD_FAILED=0
-$VAGRANT_CMD up --provider aws || ( echo "vagrant up failed" && BUILD_FAILED=1 )
+$VAGRANT_CMD up --provider aws || BUILD_FAILED=1
 
 echo "destroying the vagrant machine"
 $VAGRANT_CMD destroy -f
@@ -69,6 +69,7 @@ $VAGRANT_CMD destroy -f
 echo "status code $BUILD_FAILED"
 
 if [ "$BUILD_FAILED" = "1" ];then
-    return $BUILD_FAILED
+    echo "build failed"
+    exit 1
 fi
 

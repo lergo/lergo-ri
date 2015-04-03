@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # when pointing cron to this file, omit the extension.
 # /etc/cron.hourly/fetch_translation --> .../lergo-ri/build/fetch_translations.sh
@@ -7,12 +7,16 @@
 # the shebang (! /bin/sh ) is also crucial for cron. don't remove it.
 
 set -e
-eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
-SYSCONFIG_FILE=lergo read_sysconfig
+
+source /etc/sysconfig/lergo
 
 TRANSLATIONS_BASE=/var/www/lergo/lergo-ui/translations
 
-check_exists PHRASEAPP_TOKEN
+if [ "$PHRASEAPP_TOKEN" = "" ]; then
+    echo "PHRASEAPP_TOKEN is missing"
+    exit 1
+fi
+
 
 fetch_location(){
     LOCALE_URL="https://phraseapp.com/api/v1/translations/download?auth_token=$PHRASEAPP_TOKEN&locale_name=$1&format=nested_json"

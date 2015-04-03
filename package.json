@@ -33,22 +33,22 @@
     "escape-string-regexp": "~1.0.2"
   },
   "devDependencies": {
-    "expect.js": "~0.3.1",
     "grunt": "~0.4.1",
-    "grunt-aws": "~0.4.0",
     "grunt-concurrent": "^1.0.0",
-    "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-watch": "~0.4.0",
-    "grunt-jsdoc": "~0.5.7",
-    "grunt-mocha-istanbul": "~2.2.0",
-    "grunt-mocha-test": "*",
-    "istanbul": "~0.3.2",
-    "jshint-stylish": "~1.0.0",
     "matchdep": "~0.1.2",
     "mocha": "*",
-    "sinon": "~1.12.2"
+    "grunt-mocha-test": "*",
+    "expect.js": "~0.3.1",
+    "jshint-stylish": "~1.0.0",
+    "istanbul": "~0.3.2",
+    "grunt-mocha-istanbul": "~2.2.0",
+    "grunt-aws": "~0.4.0",
+    "sinon": "~1.12.2",
+    "grunt-jsdoc": "~0.6.3"
   },
   "bundledDependencies": [
     "lodash",

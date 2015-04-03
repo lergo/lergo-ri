@@ -1,1 +1,1 @@
-./install.sh upgrade
+./install_ubuntu.sh upgrade

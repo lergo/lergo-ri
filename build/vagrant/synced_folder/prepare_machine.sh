@@ -1,3 +1,4 @@
+# tested on ami : ami-7747d01e
 set -e
 source "/etc/ENVIRONMENT_VARIABLES.sh" || echo "no environment variables"
 if [ "$DEBUG_SCRIPT" = "true" ];then
@@ -45,9 +46,13 @@ if [ "$NODE_EXISTS" = "" ];then
 
     rm -rf $NVM_HOME || echo "nvm folder does not exist. lets continue"
 
-    wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
-    source ~/.nvm/nvm.sh
-    nvm install stable && nvm use stable
+     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
+     source ~/.nvm/nvm.sh
+     nvm install 0.10.25 && nvm use 0.10.25
+
+    # ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
+    # ( which npm && echo "npm already installed..." ) || ( echo "installing npm ... " && sudo apt-get install -y npm && echo "npm installed successfully..." )
+
 
     NODE_EXISTS=`which node`  || echo "node does not exist yet!"
     if [ "$NODE_EXISTS" = "" ];then
@@ -151,7 +156,8 @@ else
 fi
 
 
-( `which java` && echo "java already installed" ) || ( echo "installing java" && sudo apt-get install default-jdk -y )
+## no need for java since we
+## ( `which java` && echo "java already installed" ) || ( echo "installing java" && sudo apt-get install default-jdk -y )
 
 export CHROME_BIN=google-chrome
 
