@@ -25,8 +25,6 @@ module.exports = function (grunt) {
     } catch (e) {
     }
 
-    var s3Config = {};
-
 
     grunt.initConfig({
         yeoman: yeomanConfig,
