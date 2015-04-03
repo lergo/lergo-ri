@@ -195,3 +195,39 @@ exports.deleteReport = function(req, res) {
 	}
 
 };
+
+
+/**
+ *
+ * @description
+ * finds lessons' _id and name according with 'like' operator on a string.
+ *
+ * This action will send back on the response an array of objects containing _id and name of lessons.
+ *
+ * <pre>
+ *     [
+ *      { _id : '..' , name : '...'},
+ *      ...
+ *     ]
+ * </pre>
+ *
+ * These _id and name values belong to lessons that user did before
+ *
+ *
+ * @param {object} req - contains 'like' string
+ * @param {object} res
+ */
+
+exports.findReportLessonsByName = function( req, res ){
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+    Report.connect( function(db, collection ) {
+        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data.lessonId', 'name' :  { '$first' : '$data.name' }  } } ] , function(err, result){
+            if ( !!err ){
+                new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+};

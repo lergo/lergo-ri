@@ -29,10 +29,12 @@
     "phantom": "~0.6.5",
     "sitemap": "~0.7.3",
     "dateformat": "~1.0.8-1.2.3",
-    "loggly": "~1.0.5"
+    "loggly": "~1.0.5",
+    "escape-string-regexp": "~1.0.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
+    "grunt-concurrent": "^1.0.0",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-contrib-clean": "~0.4.1",
@@ -71,7 +73,8 @@
     "phantom",
     "sitemap",
     "dateformat",
-    "loggly"
+    "loggly",
+    "escape-string-regexp"
   ],
   "engines": {
     "node": ">=0.8.0"

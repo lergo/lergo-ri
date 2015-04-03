@@ -26,16 +26,18 @@ describe('LessonsInvitationsController', function(){
         describe('changes on data', function(){
 
 
+            var sandbox;
+
             before(function () {
+                sandbox = sinon.sandbox.create();
                 var LessonInvitation = require('../../../../backend/models/LessonInvitation');
-                sinon.stub(LessonInvitation.prototype, 'update', function () {
+                sandbox.stub(LessonInvitation.prototype, 'update', function () {
                     logger.info('updating lesson invitation');
                 });
             });
 
             after(function () {
-                var LessonInvitation = require('../../../../backend/models/LessonInvitation');
-                LessonInvitation.prototype.update.restore();
+                sandbox.restore();
             });
 
             it('should not change lesson and quizItems', function () {
@@ -76,16 +78,25 @@ describe('LessonsInvitationsController', function(){
         describe('handling callback invocations', function(){
 
 
+            var sandbox;
+
+            before(function(){
+                sandbox = sinon.sandbox.create();
+            });
+
+            after(function(){
+                sandbox.restore();
+            });
 
 
             it('should send error on response', function(){
                 var LessonInvitation = require('../../../../backend/models/LessonInvitation');
-                sinon.stub(LessonInvitation.prototype, 'update', function ( _callback ) {
+                sandbox.stub(LessonInvitation.prototype, 'update', function ( _callback ) {
                     _callback('this is error');
                 });
                 var response = { 'status' : sinon.spy(function(){ return this; }), 'send' : sinon.spy() };
                 var ErrorManager = require('../../../../backend/managers/ErrorManager');
-                ErrorManager.InternalServerError = sinon.spy(ErrorManager,'InternalServerError');
+                ErrorManager.InternalServerError = sandbox.spy(ErrorManager,'InternalServerError');
 
 
                 LessonsInvitationsController.update({ 'body' : { '_id' : '_id' , 'inviter' : 'inviter' , 'lessonId' : 'lessonId'}, 'invitation' : {} }, response);
@@ -99,7 +110,7 @@ describe('LessonsInvitationsController', function(){
 
             it('should send the invitation on response', function(){
                 var LessonInvitation = require('../../../../backend/models/LessonInvitation');
-                sinon.stub(LessonInvitation.prototype, 'update', function ( _callback ) {
+                sandbox.stub(LessonInvitation.prototype, 'update', function ( _callback ) {
                     _callback(null);
                 });
                 var response = { 'send' : sinon.spy(function(){ logger.info('send called with ', arguments);}) };

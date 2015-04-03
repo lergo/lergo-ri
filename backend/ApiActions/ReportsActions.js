@@ -177,3 +177,33 @@ exports.getStudents = {
     'action': controllers.reports.getStudents
 };
 
+
+exports.findReportLessonsByName = {
+    'spec': {
+        'description': 'Find user\'s reports lesson name and ID',
+        'name': 'findReportLessonsByName',
+        'path': '/reports/lessons/find',
+        'summary': 'get lessons\' name and _id for user\'s report',
+        'method': 'GET',
+        'parameters': [
+            {
+                'paramType' : 'query',
+                'required' : false,
+                'description' : 'like - filter for lesson name',
+                'type' : 'string'
+            }
+        ],
+        'errorResponses': [
+            {
+                'code': 500,
+                'reason': 'unknown error'
+            }
+        ],
+        'nickname': 'findReportLessonsInfo'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lergo.escapeRegExp('like')
+    ],
+    'action': controllers.reports.findReportLessonsByName
+};

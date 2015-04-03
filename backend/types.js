@@ -35,6 +35,15 @@
 
 
 /**
+ * @typedef {object} EmailResources
+ *
+ * @property {string} lergoBaseUrl e.g. http://www.lergo.org
+ * @property {string} lergoLink e.g. http://www.lergo.org/
+ * @property {string} lergoLogoAbsoluteUrl e.g. http://www.lergo.org/emailResources/logo.png
+ **/
+
+
+/**
  *
  * @typedef {object} Invite
  * @description An invitation to do a lesson

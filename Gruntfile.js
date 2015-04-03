@@ -26,21 +26,29 @@ module.exports = function (grunt) {
     }
 
     var s3Config = {};
-    try {
-        var s3path = process.env.LERGO_S3 || path.resolve('./dev/s3.json');
-        logger.info('looking for s3.json at ' , s3path );
-        s3Config = require( s3path );
-    }catch(e){
-        logger.error('s3 json is undefined, you will not be able to upload to s3',e);
-    }
+
 
     grunt.initConfig({
         yeoman: yeomanConfig,
         watch: {
             develop: {
                 files: ['backend/**/*', 'test/**/*'],
-                tasks: ['jsdoc','jshint']
+                tasks: ['concurrent:develop']
             }
+        },
+        concurrent: {
+            develop: [
+                'jsdoc',
+                'jshint',
+                'mocha_istanbul'
+            ],
+            test: [
+                'compass'
+            ],
+            dist: [
+                'compass:dist',
+                'htmlmin'
+            ]
         },
         s3:{
             uploadCoverage: {
@@ -195,6 +203,17 @@ module.exports = function (grunt) {
         }
     });
 
+
+    grunt.registerTask('readS3Credentials', function(){
+        try {
+            var s3path = process.env.LERGO_S3 || path.resolve('./dev/s3.json');
+            logger.info('looking for s3.json at ' , s3path );
+            s3Config = require( s3path );
+        }catch(e){
+            logger.error('s3 json is undefined, you will not be able to upload to s3',e);
+        }
+    });
+
     grunt.registerTask('server', function (target) {
         if (target === 'dist') {
             return grunt.task.run(['build', 'open', 'connect:dist:keepalive']);
@@ -219,8 +238,7 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask('test', [
-        'mocha_istanbul',
-        'mochaTest:unit'
+        'mocha_istanbul'
     ]);
 
     grunt.registerTask('testBefore', [
@@ -229,6 +247,11 @@ module.exports = function (grunt) {
 
     grunt.registerTask('testAfter', [
         'mochaTest:afterBuild'
+    ]);
+
+    grunt.registerTask('uploadStatus', [
+        'readS3Credentials',
+        's3'
     ]);
 
     grunt.registerTask('default', [
