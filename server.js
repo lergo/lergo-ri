@@ -287,6 +287,7 @@ app.get('/backend/crawler', function(req, res){
                     }, function (result) {
                         res.send( result);
                         ph.exit();
+                        page.close();
                     });
                 }
 
