@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 
 # when pointing cron to this file, omit the extension.
@@ -12,11 +12,15 @@ set -e
 
 cd /tmp
 
-eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
-SYSCONFIG_FILE=lergo read_sysconfig
+# eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
+# SYSCONFIG_FILE=lergo read_sysconfig
 
-check_exists $S3_BACKUP_PATH
+source /etc/sysconfig/lergo
 
+if [ "$S3_BACKUP_PATH" = "" ]; then
+    echo "missing S3_BACKUP_PATH"
+    exit 1
+fi
 
 if [ ! -f /usr/bin/pip ]; then
     echo "installing pip"
