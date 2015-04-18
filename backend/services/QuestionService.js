@@ -55,7 +55,9 @@ function MultiChoiceQuestionHandler(question) {
             var ans = question.userAnswer[i];
             if (answers.indexOf(ans) < 0) {
                 result.correct = false;
-                result.expMessage.push(answerMap[ans].textExplanation);
+                if ( !!answerMap[ans].textExplanation ) { // lergo-600
+                    result.expMessage.push(answerMap[ans].textExplanation);
+                }
             }
         }
         if (question.userAnswer.length === undefined) {
