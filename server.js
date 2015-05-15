@@ -4,7 +4,7 @@
  */
 
 var port = 3000;
-
+process.title='lergo';
 var express = require('express');
 var _ = require('lodash');
 var bodyParser = require('body-parser');
