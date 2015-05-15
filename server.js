@@ -14,8 +14,6 @@ var cookieSession = require('cookie-session');
 var errorHandler = require('errorhandler');
 //var routes = require('./backend/Routes');
 var swagger = require('swagger-node-express');
-var passport = require('passport');
-var OpenIDStrategy = require('passport-openid').Strategy;
 
 var log4js = require('log4js');
 var logger = log4js.getLogger('server');
@@ -158,45 +156,6 @@ app.get('/backend/public/conf', function( req, res ){
 
 swagger.configure('http://localhost:3000', '0.1');
 //app.use('/api-docs', swagger.resourceListing);
-
-
-/**
- * Login code
- */
-
-
-passport.serializeUser(function (user, done) {
-    done(null, user);
-});
-passport.use(new OpenIDStrategy({
-        returnURL: 'http://localhost.lergodev.info:3000/auth/openid/return',
-        realm: 'http://localhost.lergodev.info:3000/',
-        profile: true
-    },
-    function (identifier, profile, done) {
-        logger.info(['done with openid request', identifier, JSON.stringify(profile), done.toString()]);
-        done(null, JSON.stringify('someuserid'), {'info': 'information'});
-    }
-));
-
-// Accept the OpenID identifier and redirect the user to their OpenID
-// provider for authentication.  When complete, the provider will redirect
-// the user back to the application at:
-//     /auth/openid/return
-app.post('/auth/openid', passport.authenticate('openid'));
-
-// The OpenID provider has redirected the user back to the application.
-// Finish the authentication process by verifying the assertion.  If valid,
-// the user will be logged in.  Otherwise, authentication has failed.
-app.get('/auth/openid/return', function (req, res, next) {
-
-    logger.info(req.url);
-
-    passport.authenticate('openid', { session: false}, function (/*err, user, info*/) {
-    })(req, res, next);
-});
-//successRedirect: '/public/success.html#',
-//        failureRedirect: '/public/index.html#' }));
 
 
 logger.info('trying to listen on ' + port);
