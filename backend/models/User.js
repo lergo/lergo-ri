@@ -37,6 +37,14 @@ User.getUserPublicDetails = function getUserPublicDetails(user) {
     }
 };
 
+/**
+ *
+ * @param {LergoActivity} activity
+ */
+User.prototype.isAllowed = function( activity ){
+
+};
+
 AbstractModel.enhance(User);
 
 module.exports = User;

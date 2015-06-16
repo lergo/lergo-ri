@@ -1,16 +1,17 @@
 'use strict';
 
-exports.canSeePrivateUserDetails = function (sessionUser/*, user*/) {
+exports.userCanSeePrivateUserDetails = function (sessionUser/*, user*/) {
     return !!sessionUser && !!sessionUser.isAdmin;
 };
 
-exports.canSeeAllUsers = function( sessionUser ){
+exports.userCanSeeAllUsers = function( sessionUser ){
     return !!sessionUser && !!sessionUser.isAdmin;
 };
 
 
 exports.getPermissions = function (sessionUser, user) {
     return {
-        'canSeePrivateUserDetails': exports.userCanEdit(sessionUser, user)
+        'canSeePrivateUserDetails': exports.userCanSeePrivateUserDetails(sessionUser, user),
+        'canSeeAllUsers': exports.userCanSeeAllUsers(sessionUser, user)
     };
 };

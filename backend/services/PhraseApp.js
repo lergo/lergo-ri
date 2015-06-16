@@ -19,6 +19,7 @@ exports.getTranslation = function( locale, callback  ){
             token: conf.translations.phraseAppToken
         }
     };
-    logger.debug('getting translations', JSON.stringify(args));
-    client.get('https://phraseapp.com/api/v1/translations/download?auth_token=${token}&locale_name=${locale}&format=nested_json', args,  callback);
+    logger.info('getting translations', JSON.stringify(args));
+    logger.info('using url', conf.translations.url);
+    client.get(conf.translations.url, args,  callback);
 };

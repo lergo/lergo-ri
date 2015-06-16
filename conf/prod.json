@@ -27,7 +27,8 @@
     },
     "translations" : {
         "method" : "phraseapp",
-        "phraseAppToken" : null
+        "phraseAppToken" : null,
+        "url" : "https://phraseapp.com/api/v1/translations/download?auth_token=${token}&locale_name=${locale}&format=nested_json"
     },
     "emailSettings" : {
         "type" : "SMTP",

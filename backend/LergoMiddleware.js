@@ -28,7 +28,7 @@ var services = require('./services');
  * @param {object}   res the response
  * @param {function} next next middleware to operate
  */
-exports.origin = function origin( req, res, next){
+exports.origin = function origin( req, res, next){ // todo: need to make absolute url configurable
     var _origin = req.protocol + '://' +req.get('Host')  ;
     req.origin = _origin;
 
@@ -38,6 +38,45 @@ exports.origin = function origin( req, res, next){
     };
     next();
 };
+
+/**
+ *
+ *
+ * GUY - I don't understand why deprecate this method.. So I am readding it using middlewares.
+ *
+ * As long as it is not deprecated I don't see why we should use it.
+ *
+ *
+ * Return the value of param `name` when present or `defaultValue`.
+ *
+ *  - Checks route placeholders, ex: _/user/:id_
+ *  - Checks body params, ex: id=12, {"id":12}
+ *  - Checks query string params, ex: ?id=12
+ *
+ * To utilize request bodies, `req.body`
+ * should be an object. This can be done by using
+ * the `bodyParser()` middleware.
+ *
+ * @param {String} name
+ * @param {Mixed} [defaultValue]
+ * @return {String}
+ * @api public
+ */
+exports.param = function param(req, res, next){
+    req.param = function param(name, defaultValue) {
+        var params = this.params || {};
+        var body = this.body || {};
+        var query = this.query || {};
+
+        if (null != params[name] && params.hasOwnProperty(name)) return params[name];
+        if (null != body[name]) return body[name];
+        if (null != query[name]) return query[name];
+
+        return defaultValue;
+    };
+    next();
+};
+
 
 /**
  * @description

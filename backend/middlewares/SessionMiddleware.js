@@ -13,7 +13,6 @@ var User = require('../models/User');
  * get a user from cookie on request, and calls next request handler
  */
 exports.isLoggedIn = function isLoggedIn(req, res, next) {
-
     exports.optionalUserOnRequest( req, res , function(){
         logger.debug('checking loggedin middleware');
         if ( !req.sessionUser ){
@@ -43,7 +42,6 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
         next();
     });
 };
-
 
 exports.isAdmin = function isAdmin(req, res, next) {
     if (!req.sessionUser.isAdmin) {

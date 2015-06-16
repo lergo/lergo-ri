@@ -198,6 +198,16 @@ module.exports = function (grunt) {
                     ]
                 }
             }
+        },
+        'curl-dir': {
+            'compass': {
+                src: ['https://phraseapp.com/api/v1/translations/download?auth_token=<%= phraseapp.token %>&locale_name={en,ar,he,ru}&format=nested_json'],
+                dest: 'translations',
+                router:function( url ){
+                    console.log(arguments);
+                    return url.match('locale_name=([a-z]{2})&')[1] + '.json';
+                }
+            }
         }
     });
 
@@ -234,6 +244,18 @@ module.exports = function (grunt) {
         'copy'
     ]);
 
+    grunt.registerTask('phraseapp' , 'download translation from phraseapp to make workspace easier as phraseapp is unstable', function( ){
+        var phraseapp = process.env.LERGO_PHRASEAPP || path.resolve('./dev/phraseapp.json');
+        logger.info('looking for phraseapp.json at ' , phraseapp );
+        grunt.config.set('phraseapp', require( phraseapp ));
+        grunt.task.run([
+            'curl-dir:compass'
+
+        ]);
+    });
+
+
+
 
     grunt.registerTask('test', [
         'mocha_istanbul'
@@ -251,6 +273,7 @@ module.exports = function (grunt) {
         'readS3Credentials',
         's3'
     ]);
+
 
     grunt.registerTask('default', [
         'jshint',

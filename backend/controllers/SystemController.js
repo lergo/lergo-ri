@@ -96,10 +96,11 @@ exports.getStatistics = function(req, res) {
 
 exports.getTranslation = function(req, res) {
 
+	var locale = req.query.lang || req.params.locale;
+
 	if (services.conf.translations.method === 'files') {
-		res.redirect(req.absoluteUrl('/translations/' + req.params.locale + '.json'));
+		res.redirect(req.absoluteUrl('/translations/' + locale + '.json'));
 	} else { // method == phraseapp (the default)
-		var locale = req.params.locale;
 		// todo: don't use service phraseapp, use "TranslationManager" instead.
 		services.phraseApp.getTranslation(locale, function(data , response ) {
 			logger.debug('got translations', JSON.stringify(response.headers));
