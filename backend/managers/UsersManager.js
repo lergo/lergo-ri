@@ -350,6 +350,16 @@ exports.sendResetPasswordMail = function(emailResources, resetDetails, callback)
 
 };
 
+
+/**
+ * todo: implement this
+ * will return user permissions TBD
+ * @param callback
+ */
+exports.getUserPermissions = function( userId, callback ){
+	callback();
+};
+
 exports.changePassword = function(changePasswordDetails, user, callback) {
 
 	if (changePasswordDetails.password !== changePasswordDetails.passwordConfirm) {

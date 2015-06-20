@@ -1,6 +1,6 @@
 'use strict';
 
-exports.userCanEdit = function( lesson, user ){
+exports.userCanEdit = function userCanEdit( lesson, user ){
     if ( !user || !lesson ){
         return false;
     }
@@ -9,24 +9,24 @@ exports.userCanEdit = function( lesson, user ){
 
 };
 
-exports.userCanCopy = function( lesson ,user ){
+exports.userCanCopy = function userCanCopy( lesson ,user ){
     return !!user;
 };
 
-exports.userCanDelete = function( lesson ,user ){
+exports.userCanDelete = function userCanDelete( lesson ,user ){
     return  !!user && ( !!user.isAdmin  || lesson.userId.equals(user._id) );
 };
 
-exports.userCanPublish = function( lesson,user) {
+exports.userCanPublish = function userCanPublish( lesson,user) {
     return !!user && !!user.isAdmin;
 };
 
-exports.userCanPreview = function( lesson, user ){
+exports.userCanPreview = function userCanPreview( lesson, user ){
     return !!user && !!lesson.userId.equals(user._id);
 };
 
 
-exports.getPermissions = function( lesson, user ){
+exports.getPermissions = function getPermissions( lesson, user ){
     return {
         'canEdit' : exports.userCanEdit(lesson,user),
         'canCopy' : exports.userCanCopy(lesson,user),
