@@ -12,11 +12,16 @@ echo "testing if xvfb exists"
 XVFB=`which Xvfb` || echo "xvfb does not exist"
 
 if [ "$XVFB" = "" ]; then
+
+    set +e
     echo "updating apt-get repositories"
     sudo apt-get update -y 2> /dev/null
     sudo apt-get install python-software-properties -y 2> /dev/null
     sudo apt-add-repository ppa:brightbox/ruby-ng -y 2> /dev/null
     sudo apt-get update -y 2> /dev/null
+    set -e
+
+    # allow the above to fail, but not the below
 
     echo "installing xvfb"
     sudo apt-get -y install xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps x11-utils
