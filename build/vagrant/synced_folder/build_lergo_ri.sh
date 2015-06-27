@@ -54,7 +54,7 @@ build_ri(){
 
     cd dist
     npm install --production || return 1
-    cd ..
+
 
 # echo "running npm install on contextify"
 # MY_DIR=`pwd`
@@ -64,6 +64,7 @@ build_ri(){
 # echo "finished running install on contextify"
 
     npm pack
+    cd ..
 
     export RI_BUILT_SUCCESSFULLY="true"
 
