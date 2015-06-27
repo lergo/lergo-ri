@@ -21,6 +21,10 @@ else
     echo "xvfb already installed.. skipping installation"
 fi
 
+sudo apt-get install python-software-properties -y
+sudo apt-add-repository ppa:brightbox/ruby-ng -y
+sudo apt-get update -y
+
 export DISPLAY=:1
 FREE=`xdpyinfo -display :1 >/dev/null 2>&1 && echo "In use" || echo "Free"`
 if [ "$FREE" = "Free" ]; then
@@ -106,7 +110,7 @@ fi
 GEM_EXISTS=`which gem`  || echo "gem does not exist"
 if [ "$GEM_EXISTS" = "" ];then
     echo "gem does not exist. installing..."
-    sudo apt-get install rubygems -y
+    sudo apt-get install rubygems1.8 -y
     GEM_EXISTS=`which gem` || echo "gem does not exist yet!"
     if [ "$GEM_EXISTS" = "" ]; then
         echo "gem installation failed!"
