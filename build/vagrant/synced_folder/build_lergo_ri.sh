@@ -73,7 +73,7 @@ for i in 1 2 3 4 5 6 7 8 9; do build_ri $i && break || sleep 1; done
 
 cd ..
 
-if [ "RI_BUILD_SUCCESSFULLY" != "true" ]; then
+if [ "$RI_BUILD_SUCCESSFULLY" != "true" ]; then
     echo "failed building ri"
     exit 1;
 fi
