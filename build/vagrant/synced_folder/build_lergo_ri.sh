@@ -15,7 +15,7 @@ git checkout develop
 
 
 
-
+export RI_BUILT_SUCCESSFULLY="false"
 
 build_ri(){
     echo "build_ri try :: $1"
@@ -54,6 +54,7 @@ build_ri(){
 
     cd dist
     npm install --production || return 1
+    cd ..
 
 # echo "running npm install on contextify"
 # MY_DIR=`pwd`
@@ -64,9 +65,17 @@ build_ri(){
 
     npm pack
 
+    export RI_BUILT_SUCCESSFULLY="true"
+
 }
 
 for i in 1 2 3 4 5 6 7 8 9; do build_ri $i && break || sleep 1; done
 
-cd ../..
+cd ..
+
+if [ "RI_BUILD_SUCCESSFULLY" != "true" ]; then
+    echo "failed building ri"
+    exit 1;
+fi
+
 echo "build ri finished. I am at folder [`pwd`]"
