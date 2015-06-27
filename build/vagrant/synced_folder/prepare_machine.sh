@@ -14,6 +14,9 @@ XVFB=`which Xvfb` || echo "xvfb does not exist"
 if [ "$XVFB" = "" ]; then
     echo "updating apt-get repositories"
     sudo apt-get update -y 2> /dev/null
+    sudo apt-get install python-software-properties -y 2> /dev/null
+    sudo apt-add-repository ppa:brightbox/ruby-ng -y 2> /dev/null
+    sudo apt-get update -y 2> /dev/null
 
     echo "installing xvfb"
     sudo apt-get -y install xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps x11-utils
@@ -21,9 +24,7 @@ else
     echo "xvfb already installed.. skipping installation"
 fi
 
-sudo apt-get install python-software-properties -y
-sudo apt-add-repository ppa:brightbox/ruby-ng -y
-sudo apt-get update -y
+
 
 export DISPLAY=:1
 FREE=`xdpyinfo -display :1 >/dev/null 2>&1 && echo "In use" || echo "Free"`
