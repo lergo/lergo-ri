@@ -83,7 +83,8 @@ exports.build = function(req, res) {
 			return;
 		}
 		if (!result) {
-			res.send(404);
+			new managers.error.NotFound(err, 'unable to find invitation').send(res);
+
 			return;
 		}
 		if ((!!constructForce || !result.lesson) && construct) {
@@ -91,7 +92,7 @@ exports.build = function(req, res) {
 			managers.lessonsInvitations.buildLesson(result, function(err, constructed) {
 				if (!!err) {
 					logger.error('error while constructing lesson', err);
-					res.send(500);
+					new managers.error.InternalServerError(err, 'unable to build invitation').send(res);
 					return;
 				}
 				res.send(constructed);
