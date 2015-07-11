@@ -320,42 +320,6 @@ exports.getStudentsReports = {
     'action'     : controllers.reports.getUserStudentsReports
 };
 
-exports.lessonsInvitationsGetById = {
-    'spec'  : {
-        'description'   : 'Get a lesson invitation by id',
-        'name'          : 'lessonInviteCreate',
-        'path'          : '/lessonsinvitations/{id}/build',
-        'summary'       : 'create a lesson invitation instance and sends an email',
-        'method'        : 'GET',
-        'parameters'    : [{
-            'paramType'  : 'path',
-            'name'       : 'id',
-            required     : true,
-            'description': 'ID of lesson to invite to',
-            'type'       : 'string'
-        }, {
-            'paramType'  : 'query',
-            'name'       : 'construct',
-            'required'   : false,
-            'description': 'if true, the invitation will construct its lesson in case one was not constructed before',
-            'type'       : 'boolean'
-        }, {
-            'paramType'  : 'query',
-            'name'       : 'constructForce',
-            'required'   : false,
-            'description': 'if true, the invitation will construct its lessons. if one was already constructed, it will be reconstructed',
-
-            'type': 'boolean'
-        }],
-        'errorResponses': [{
-            'code'  : 500,
-            'reason': 'unable to get lesson invitation'
-        }],
-        'nickname'      : 'lessonInviteCreate'
-    },
-    'action': controllers.lessonsInvitations.build
-};
-
 exports.checkQuestionAnswer = {
     'spec'  : {
         'description'   : 'Check Question Answer',
