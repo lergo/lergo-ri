@@ -42,7 +42,8 @@ User.getUserPublicDetails = function getUserPublicDetails(user) {
  * @param {LergoActivity} activity
  */
 User.prototype.isAllowed = function( activity ){
-
+    // todo : implement this?
+    throw new Error('unsupported for activity ' + activity);
 };
 
 AbstractModel.enhance(User);

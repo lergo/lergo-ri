@@ -6,3 +6,5 @@ exports.LessonInvitation = require('./LessonInvitation');
 exports.HelperContent = require('./HelperContent');
 exports.AbuseReport = require('./AbuseReport');
 exports.FAQ = require('./FAQ');
+exports.Role = require('./security/Role');
+exports.Group = require('./security/Group');

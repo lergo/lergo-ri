@@ -61,7 +61,7 @@ function enhance( Class ) {
 
 
     Class.prototype.update = function( callback ){
-        logger.info('updating');
+        logger.info('updating ' + this.collectionName );
         var self = this;
         this.data._id = db.id(this.data._id);
         Class.connect(function (db, collection) {
@@ -69,6 +69,16 @@ function enhance( Class ) {
             collection.update({ '_id': self.data._id}, self.data, callback || function(){ logger.info('updated successfully'); });
         });
     };
+
+    Class.prototype.remove = function( callback ){
+        logger.info('removing ' + this.collectionName );
+        var self = this;
+        this.data._id = db.id(this.data._id);
+        Class.connect(function( db, collection){
+            logger.info('connected. removing', self.data._id);
+            collection.remove({ '_id' : self.data._id }, callback || function(){ logger.info('removed successfully')});
+        })
+    }
 }
 
 module.exports.enhance = enhance;

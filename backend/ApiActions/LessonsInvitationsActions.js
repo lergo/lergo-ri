@@ -16,8 +16,6 @@ var controllers = require('../controllers');
  */
 exports.lessonInviteCreate = {
 	'spec' : {
-		'description' : 'Create a lesson invitation',
-		'name' : 'lessonInviteCreate',
 		'path' : '/lessons/{lessonId}/invitations/create',
 		'summary' : 'create a lesson invitation instance ',
 		'method' : 'POST',
@@ -32,12 +30,7 @@ exports.lessonInviteCreate = {
 			required : false,
 			'description' : 'invitation details',
 			'type' : 'InvitationDetails'
-		} ],
-		'errorResponses' : [ {
-			'code' : 500,
-			'reason' : 'unable to create lesson invitation'
-		} ],
-		'nickname' : 'lessonInviteCreate'
+		} ]
 	},
 	'middlewares' : [ middlewares.lessons.exists, middlewares.session.optionalUserOnRequest ],
 	'action' : controllers.lessonsInvitations.create
@@ -45,25 +38,15 @@ exports.lessonInviteCreate = {
 
 exports.updateInvite = {
 	spec : {
-		description : 'update invite',
-		name : 'updateInvite',
 		path : '/invitations/{invitationId}/update',
 		summary : 'update invite',
-		method : 'POST',
-		parameters : [],
-		errorResponses : [ {
-			code : 500,
-			reason : 'server error'
-		} ],
-		nickname : 'updateInvite'
+		method : 'POST'
 	},
 	middlewares : [ middlewares.session.optionalUserOnRequest, middlewares.lessonsInvitations.exists ],
 	action : controllers.lessonsInvitations.update
 };
 exports.deleteInvitation = {
 	spec : {
-		description : 'Delete invite corresponding to the id',
-		name : 'deleteInvitation',
 		path : '/invitations/{invitationId}/delete',
 		summary : 'Delete invitation corresponding to the id',
 		method : 'POST',
@@ -73,12 +56,7 @@ exports.deleteInvitation = {
 			required : true,
 			description : 'ID of invitation that needs to be deleted',
 			type : 'string'
-		} ],
-		errorResponses : [ {
-			code : 500,
-			reason : 'unable to delete invitation'
-		} ],
-		nickname : 'deleteInvitation'
+		} ]
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.lessonsInvitations.exists, middlewares.lessonsInvitations.userCanDelete ],
 	action : controllers.lessonsInvitations.deleteInvitation

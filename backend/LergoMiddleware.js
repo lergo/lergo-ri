@@ -68,9 +68,9 @@ exports.param = function param(req, res, next){
         var body = this.body || {};
         var query = this.query || {};
 
-        if (null != params[name] && params.hasOwnProperty(name)) return params[name];
-        if (null != body[name]) return body[name];
-        if (null != query[name]) return query[name];
+        if (null !== params[name] && params.hasOwnProperty(name)){ return params[name]; }
+        if (null !== body[name]){ return body[name]; }
+        if (null !== query[name]){ return query[name]; }
 
         return defaultValue;
     };
@@ -282,6 +282,11 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
         if ( typeof(queryObj) === 'string' ){
             queryObj = JSON.parse(queryObj);
         }
+
+        if ( !queryObj.filter ) {
+            queryObj.filter = {};
+        }
+
 
         try {
             if (queryObj.filter.hasOwnProperty('userId')){

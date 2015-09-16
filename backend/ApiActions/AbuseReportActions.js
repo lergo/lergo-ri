@@ -3,25 +3,18 @@ var middlewares = require('../middlewares');
 
 exports.abuse = {
 	spec : {
-		description : 'User abuses this item',
-		name : 'reportAbuse',
 		path : '/reportabuse/{itemId}/abuse',
 		summary : 'User abuses this lesson',
 		method : 'POST',
-		parameters : [ {
-			paramType : 'path',
-			name : 'itemId',
-			required : true,
-			description : 'item id',
-			type : 'ObjectIDHash'
-		}
-
-		],
-		errorResponses : [ {
-			code : 500,
-			reason : 'server error'
-		} ],
-		nickname : 'reportAbuse'
+		parameters: [
+			{
+				paramType: 'path',
+				name: 'itemId',
+				required: true,
+				description: 'item id',
+				type: 'ObjectIDHash'
+			}
+		]
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.abuseReports.itemExists ],
 	action : controllers.abuseReports.abuse
@@ -29,17 +22,9 @@ exports.abuse = {
 
 exports.getAllReports = {
 	spec : {
-		description : 'Gets all abuseReports',
-		name : 'getAllAbuseReports',
 		path : '/abuseReports/get/all',
 		summary : 'Get all abuseReports',
-		method : 'GET',
-		parameters : [],
-		errorResponses : [ {
-			code : 500,
-			reason : 'server error'
-		} ],
-		nickname : 'getAllAbuseReports'
+		method : 'GET'
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.lergo.queryObjParsing ],
 	action : controllers.abuseReports.getAll
@@ -47,8 +32,6 @@ exports.getAllReports = {
 
 exports.deleteAbuseReports = {
 	spec : {
-		description : 'Delete abuseReport corresponding to the id',
-		name : 'deleteAbuseReport',
 		path : '/abuseReports/{abuseReportId}/delete',
 		summary : 'Delete abuseReport corresponding to the id',
 		method : 'POST',
@@ -58,12 +41,7 @@ exports.deleteAbuseReports = {
 			required : true,
 			description : 'ID of abuseReport that needs to be deleted',
 			type : 'string'
-		} ],
-		errorResponses : [ {
-			code : 500,
-			reason : 'unable to delete abuseReport'
-		} ],
-		nickname : 'deleteAbuseReport'
+		} ]
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.abuseReports.exists ],
 	action : controllers.abuseReports.deleteReport
@@ -71,8 +49,6 @@ exports.deleteAbuseReports = {
 
 exports.updateAbuseReport = {
 	spec : {
-		description : 'update AbuseReport',
-		name : 'updateAbuseReport',
 		path : '/abuseReports/{abuseReportId}/update',
 		summary : 'user edits a abuseReport',
 		method : 'POST',
@@ -88,12 +64,7 @@ exports.updateAbuseReport = {
 			required : true,
 			description : 'ID of abuseReport that needs to be fetched',
 			type : 'string'
-		} ],
-		errorResponses : [ {
-			code : 500,
-			reason : 'unable to signup'
-		} ],
-		nickname : 'editAbuseReport'
+		} ]
 	},
 	middlewares : [ middlewares.session.isLoggedIn, middlewares.abuseReports.exists ],
 	action : controllers.abuseReports.update

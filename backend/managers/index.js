@@ -1,5 +1,5 @@
-exports.error = require('./ErrorManager');
-exports.log = require('./LogManager');
+exports.error = require('./ErrorManager'); // todo : move to services
+exports.log = require('./LogManager'); // todo : remove this. no need for this
 exports.users = require('./UsersManager');
 exports.questions = require('./QuestionsManager');
 exports.lessons = require('./LessonsManager');

@@ -28,6 +28,8 @@ var sm = require('sitemap');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
 
+
+
 if ( !!services.conf.log4js ){
     log4js.configure(services.conf.log4js);
 }
@@ -40,7 +42,7 @@ services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 
 var app = module.exports = express();
 var backendHandler = express();
-var swaggerAppHandler = backendHandler;
+var swaggerAppHandler = express(); // split the two
 
 /** swagger configuration: start **/
 
@@ -79,6 +81,7 @@ app.use('/backend/admin', middlewares.session.isAdmin);
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.use('/backend', backendHandler);
+app.use('/swagger-docs', swaggerAppHandler);
 // Routes
 
 app.get('/swagger', function (req, res, next) {
@@ -118,7 +121,7 @@ for ( var i in actions ){
         if ( !action.action ){
             throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
         }
-        logger.info('adding [%s] [%s] [%s] [%s]:[%s]', action.spec.name, action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
+        logger.info('adding [%s] [%s] [%s]:[%s]', action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
 
         // add middlewares
         if ( !!action.middlewares ){
@@ -134,16 +137,18 @@ for ( var i in actions ){
                 }
 
                 // switch between swagger syntax {id} to express :id
-                swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
+                //swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
             }
         }
 
         var method = action.spec.method;
-        if ( method === 'POST' ){
-            swagger.addPost( action );
-        }else{
-            swagger.addGet( action );
-        }
+        var lcMethod = method.toLowerCase();
+        swagger.addHandlers( method, [action] );
+        var expressRoute = backendHandler.route(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'));
+        _.each(action.middlewares, function(m){
+            expressRoute[lcMethod](m);
+        });
+        expressRoute[lcMethod](action.action);
     }
 }
 
@@ -156,8 +161,8 @@ app.get('/backend/public/conf', function( req, res ){
     res.send('var ' + (req.params.name || 'conf') + '=' + JSON.stringify(services.conf.public) + ';' );
 });
 
-swagger.configure('http://localhost:3000', '0.1');
-//app.use('/api-docs', swagger.resourceListing);
+swagger.configure('http://localhost:3000/backend', '0.1');
+//app.use('/backend/api/api-docs', swagger.resourceListing);
 
 
 /**

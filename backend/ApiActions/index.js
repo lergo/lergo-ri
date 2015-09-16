@@ -1,6 +1,5 @@
 'use strict';
 exports.usersActions = require('./UsersActions');
-exports.publicActions = require('./PublicActions');
 exports.lessonsActions = require('./LessonsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');
@@ -21,7 +20,13 @@ exports.actions = [];
 function addAllActions ( actions ){
     for ( var i in actions ){
         if ( actions.hasOwnProperty(i) ){
-            exports.actions.push(actions[i]);
+            var action = actions[i];
+            if ( !action.spec.nickname ){
+                console.log('adding nickname',i);
+                action.spec.nickname = i;
+            }
+            action.spec.errorResponses = [].concat(action.spec.errorResponses || [] ).concat([{ 'code': 500, 'reason': 'server error'}]);
+            exports.actions.push(action);
         }
     }
 
