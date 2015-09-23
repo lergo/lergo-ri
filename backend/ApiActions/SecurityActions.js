@@ -81,6 +81,20 @@ exports.updateRole = {
     'action' : controllers.security.updateRole
 };
 
+exports.updateGroup = {
+    'spec' : {
+        'path' : '/security/groups/{groupId}',
+        'summary' : 'Update group',
+        'method' : 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.security.groupExists,
+        middlewares.security.userCanUpdateGroups
+    ],
+    'action' : controllers.security.updateGroup
+};
+
 exports.deleteRole = {
     'spec' : {
         'path' : '/security/roles/{roleId}',
@@ -118,7 +132,8 @@ exports.getGroup = {
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.security.userCanReadGroups
+        middlewares.security.userCanReadGroups,
+        middlewares.security.groupExists
     ],
     'action' : controllers.security.getGroup
 };
@@ -134,5 +149,5 @@ exports.getGroups = {
         middlewares.security.userCanReadGroups,
         middlewares.lergo.queryObjParsing
     ],
-    'action' : controller.security.getGroups
+    'action' : controllers.security.getGroups
 };

@@ -2,6 +2,7 @@
 
 var logger = require('log4js').getLogger('ErrorManager');
 logger.info('initializing ErrorManager');
+var _ = require('lodash');
 
 function createSendFn( err ){
     return function(res){
@@ -13,6 +14,7 @@ function createSendFn( err ){
 function createNewError( code, message, responseCode ){
     return function( e, description ){
 //        debugger;
+        console.log('this is typeof error',this.constructor.name);
         this.code = code;
         this.message = message;
         this.responseCode = responseCode;
@@ -38,6 +40,8 @@ var errorsDefinition = {
     'UsernameAlreadyExists' : createNewError( 13, 'email already exists in the system', 500 ),
     'RoleInUse' : createNewError( 14, 'role is in use' , 400 )
 };
+
+
 
 
 for ( var errDefinition in errorsDefinition ){

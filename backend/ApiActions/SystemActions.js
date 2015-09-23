@@ -1,6 +1,7 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 
+
 exports.getTranslations = {
     'spec': {
         'path': '/system/translations/{locale}.json',
@@ -17,6 +18,15 @@ exports.getTranslations = {
         ]
     },
     'action': controllers.system.getTranslation
+};
+
+exports.getErrorDefinitions = {
+    'spec' : {
+        'path' : '/system/errors',
+        'summary' : 'get all error definitions',
+        'method' : 'GET'
+    },
+    'action' : controllers.system.getErrorDefinitions
 };
 
 exports.getStatistics = {

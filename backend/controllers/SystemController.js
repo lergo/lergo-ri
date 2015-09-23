@@ -3,6 +3,7 @@ var models = require('../models');
 var async = require('async');
 var services = require('../services');
 var logger = require('log4js').getLogger('StatisticsController');
+var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
@@ -115,5 +116,13 @@ exports.getTranslation = function(req, res) {
 
 		});
 	}
+};
 
+exports.getErrorDefinitions = function( req, res ){
+	res.send(_.map(services.error, function(value,key){
+		console.log('this is key', key);
+		return _.merge({
+			key: key
+		}, JSON.parse( JSON.stringify( new value() )));
+	}));
 };

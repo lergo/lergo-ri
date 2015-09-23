@@ -75,9 +75,9 @@ exports.groupExists = function groupExists( req, res, next ){
  * assumes role exists on request
  */
 
-exports.roleCanBeDeleted = function( req, res, next ){
+exports.roleCanBeDeleted = function roleCanBeDeleted( req, res, next ){
     logger.debug('checking if role is used before deleting');
-    models.Group.findByRole(res.role._id, function(err, result){
+    models.Group.findByRole(req.role._id, function(err, result){
         if ( !!result && result.length > 0 ){
             logger.debug('role is used. cannot delete');
             new services.error.RoleInUse(null, { groups : result } ).send(res);
@@ -107,6 +107,14 @@ exports.userCanCreateGroups = function userCanCreateGroups( req, res, next ){
 
 exports.userCanUpdateRoles = function userCanUpdateRoles( req, res, next ){
     if ( permissions.security.userCanUpdateRoles(req.sessionUser)){
+        return next();
+    }else{
+        return res.send(400);
+    }
+};
+
+exports.userCanUpdateGroups = function userCanUpdateGroups( req, res, next ){
+    if ( permissions.security.userCanUpdateGroups(req.sessionUser)){
         return next();
     }else{
         return res.send(400);

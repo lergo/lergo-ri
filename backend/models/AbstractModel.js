@@ -42,7 +42,14 @@ function enhance( Class ) {
             projection = {};
         }
 
+        if ( !callback ){
+            throw new Error('expected signature find(filter,projection,callback)');
+        }
+
         Class.connect( function (db, collection) {
+            console.log('filter',filter);
+            console.log('projection',projection);
+
             collection.find(filter, projection).toArray(callback);
         });
     };

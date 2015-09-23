@@ -34,7 +34,7 @@ Group.findByRole = function( roleId, callback ){
     if ( typeof(roleId) !== 'string' ){
         roleId = roleId.toHexString();
     }
-    Group.find({role : roleId }).toArray(callback);
+    Group.find({roles : roleId },callback);
 };
 
 // todo: move to abstract?

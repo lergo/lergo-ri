@@ -75,7 +75,13 @@ exports.createRole = function (req, res) {
 };
 
 exports.deleteRole = function( req, res ){
-    new models.Role(req.role).remove();
+    new models.Role(req.role).remove(function( err ){
+        if ( !!err ){
+            new services.error.InternalServerError(err, 'unable to delete role').send(res);
+            return;
+        }
+        res.send('success');
+    });
 };
 
 exports.createGroup = function (req, res) {
@@ -99,7 +105,7 @@ exports.updateRole = function(req, res){
 
     var role = _.merge(req.role, _.pick(req.body, ['name','permissions','description']));
     role.lastUpdate = new Date().getTime();
-    new models.Role().update( function(err, result){
+    new models.Role( role ).update( function(err, result){
         if ( !!err || result !== 1){
             new services.error.InternalServerError('unable to save ',err).send(res);
             return;
@@ -111,9 +117,9 @@ exports.updateRole = function(req, res){
 
 exports.updateGroup = function(req, res){
 
-    var group = _.merge(req.group, _.pick(req.body, ['name','permissions','roles']));
+    var group = _.merge(req.group, _.pick(req.body, ['name','description','roles']));
     group.lastUpdate = new Date().getTime();
-    new models.Group().update( function(err, result){
+    new models.Group( group ).update( function(err, result){
         if ( !!err || result !== 1){
             new services.error.InternalServerError('unable to save ',err).send(res);
             return;
