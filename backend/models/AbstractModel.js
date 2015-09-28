@@ -35,11 +35,20 @@ function enhance( Class ) {
         });
     };
 
-    Class.find = function (filter, projection, callback) {
+    Class.find = function (filter, projection, options, callback) {
 
         if ( typeof(projection) === 'function'){
             callback = projection;
             projection = {};
+        }
+
+        if ( !options ){
+            options = {};
+        }
+
+        if ( typeof(options) === 'function' ){
+            callback = options;
+            options = {};
         }
 
         if ( !callback ){
@@ -47,10 +56,7 @@ function enhance( Class ) {
         }
 
         Class.connect( function (db, collection) {
-            console.log('filter',filter);
-            console.log('projection',projection);
-
-            collection.find(filter, projection).toArray(callback);
+            collection.find(filter, projection, options).toArray(callback);
         });
     };
 

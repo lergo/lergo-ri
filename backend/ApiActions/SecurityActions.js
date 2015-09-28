@@ -110,6 +110,21 @@ exports.deleteRole = {
     'action' : controllers.security.deleteRole
 };
 
+exports.deleteGrouop = {
+    'spec' : {
+        'path' : '/security/groups/{groupId}',
+        'summary' : 'Delete group',
+        'method' : 'DELETE'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.security.groupExists,
+        middlewares.security.userCanDeleteGroups,
+        middlewares.security.groupCanBeDeleted
+    ],
+    'action' : controllers.security.deleteRole
+};
+
 
 exports.createGroup = {
     'spec' : {

@@ -120,7 +120,6 @@ exports.getTranslation = function(req, res) {
 
 exports.getErrorDefinitions = function( req, res ){
 	res.send(_.map(services.error, function(value,key){
-		console.log('this is key', key);
 		return _.merge({
 			key: key
 		}, JSON.parse( JSON.stringify( new value() )));

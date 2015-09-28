@@ -14,7 +14,6 @@ function createSendFn( err ){
 function createNewError( code, message, responseCode ){
     return function( e, description ){
 //        debugger;
-        console.log('this is typeof error',this.constructor.name);
         this.code = code;
         this.message = message;
         this.responseCode = responseCode;
@@ -38,7 +37,7 @@ var errorsDefinition = {
     'ErrorSendingValidationEmail' : createNewError(11, 'unable to send validation email', 500),
     'NotFound' : createNewError(12, 'resource not found', 404),
     'UsernameAlreadyExists' : createNewError( 13, 'email already exists in the system', 500 ),
-    'RoleInUse' : createNewError( 14, 'role is in use' , 400 )
+    'ResourceInUse' : createNewError( 14, 'resource is in use' , 400 )
 };
 
 

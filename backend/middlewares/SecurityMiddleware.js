@@ -128,3 +128,27 @@ exports.userCanDeleteRoles = function userCanDeleteRoles( req, res, next ){
         return res.send(400);
     }
 };
+
+exports.userCanDeleteGroups = function userCanDeleteGroups( req, res, next ){
+    if ( permissions.security.userCanDeleteGroups(req.sessionUser)){
+        return next();
+    }else{
+        return res.send(400);
+    }
+};
+
+exports.groupCanBeDeleted = function groupCanBeDeleted( req, res, next ){
+    models.User.findByGroup(req.group._id, function(err, result){
+        if ( !!result && result.length > 0 ){
+            logger.debug('group is used. cannot delete');
+            new services.error.ResourceInUse(null, { users : models.User.getUserPublicDetails(result) } ).send(res);
+            return;
+        }
+        logger.debug('group not used.');
+        next();
+    });
+
+};
+
+
+

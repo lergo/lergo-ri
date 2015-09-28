@@ -221,6 +221,20 @@ exports.lessonsInvitationsGetById = {
     'action': controllers.lessonsInvitations.build
 };
 
+exports.getUser = {
+    'spec' : {
+        'path' : '/users/{userId}',
+        'summary' : 'Gets a user by id',
+        'method' : 'GET'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.users.exists,
+        middlewares.users.canSeeAllUsers
+    ],
+    'action': function getUser(req, res){ res.send(req.user);}
+};
+
 exports.checkQuestionAnswer = {
     'spec': {
         'path': '/questions/checkAnswer',
@@ -243,7 +257,7 @@ exports.getUsers = {
         'method': 'GET'
     },
     'action': controllers.users.getAll,
-    'middlewares': [middlewares.session.isLoggedIn, middlewares.session.isAdmin]
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.lergo.queryObjParsing]
 };
 
 exports.getPermissions = {
@@ -399,4 +413,20 @@ exports.getPublicProfile = {
     },
     middlewares: [],
     action: controllers.users.getPublicProfile
+};
+
+
+
+exports.patchUser = {
+    spec: {
+        path: '/users/{userId}',
+        summary: 'changes the user record',
+        method:'PATCH'
+    },
+    middlewares: [
+        middlewares.session.isLoggedIn,
+        middlewares.users.exists,
+        middlewares.users.canPatchUsers
+    ],
+    action: controllers.users.patchUser
 };

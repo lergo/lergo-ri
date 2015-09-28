@@ -57,3 +57,15 @@
  * @property {string} invitee.name
  *
  **/
+
+
+/**
+ * @url http://williamdurand.fr/2014/02/14/please-do-not-patch-like-an-idiot/
+ * @see http://williamdurand.fr/2014/02/14/please-do-not-patch-like-an-idiot/
+ * @typedef {object} PatchRequestBody
+ * @description Describes a patch change
+ * @property {test|remove|add|replace|move|copy} op
+ * @property {string} path location of property inside record (e.g. 'groups')
+ * @property {string} from used in copy/move. where to find the value we want to move/copy
+ * @property {*} value the new value
+ */

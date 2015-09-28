@@ -37,6 +37,15 @@ User.getUserPublicDetails = function getUserPublicDetails(user) {
     }
 };
 
+
+User.findByGroup = function( groupId, callback ){
+    if ( typeof(groupId) !== 'string' ){
+        groupId = groupId.toHexString();
+    }
+    User.find({groups : groupId }, {}, { limit: 2},callback);
+};
+
+
 /**
  *
  * @param {LergoActivity} activity
@@ -45,6 +54,9 @@ User.prototype.isAllowed = function( activity ){
     // todo : implement this?
     throw new Error('unsupported for activity ' + activity);
 };
+
+
+
 
 AbstractModel.enhance(User);
 

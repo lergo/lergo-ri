@@ -161,9 +161,38 @@ exports.resendValidationEmail = function (req, res) {
 };
 
 exports.getAll = function (req, res) {
-    managers.users.find({}, {}, function (err, users) {
-        res.send(users);
+    managers.users.complexSearch(req.queryObj, function(err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to get all users').send(res);
+            return;
+        }
+        res.send(result);
     });
+};
+
+exports.patchUser = function(req, res ){
+
+    var patchData = req.body;
+
+
+    if ( patchData.op === 'replace'){
+        var updateData = { $set: {} };
+        updateData.$set[patchData.path] = patchData.value;
+        User.connect(function(db,collection){
+
+            collection.update({ '_id' : req.user._id }, updateData, function( err, result){
+                if ( !!err ){
+                    logger.error('error updating user');
+                    res.status(500).send(err);
+                    return;
+                }
+                logger.debug('update result is', result);
+                res.send(200);
+            })
+        });
+    }else{
+        res.status(400).send( { message : 'unsupporte patch operation', info: patchData });
+    }
 };
 
 exports.login = function (req, res) {
@@ -265,7 +294,7 @@ exports.findUsersById = function (req, res) {
         } else {
 
             // hide private info if logged in user does not have permissions
-            if (!permissions.users.canSeePrivateUserDetails(req.sessionUser, null)) {
+            if (!permissions.users.userCanSeePrivateUserDetails(req.sessionUser, null)) {
                 result = User.getUserPublicDetails(result);
             }
 

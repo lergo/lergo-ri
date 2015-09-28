@@ -160,6 +160,7 @@ exports.encryptUserPassword = function(password) {
 	return sha1(password);
 };
 
+
 /**
  * 
  * find a user according to username/ sha1(password) and calls callback. If user
@@ -467,3 +468,27 @@ exports.getAllAdminEmails = function(callback) {
 		callback(null, _.map(result, 'email'));
 	});
 };
+
+exports.complexSearch = function( queryObj, callback ){
+
+	if ( !!queryObj.filter && !!queryObj.filter.searchText ){
+
+		var text =  new RegExp(queryObj.filter.searchText, 'i');
+
+		if ( !queryObj.filter.$or ){
+			queryObj.filter.$or = [];
+		}
+
+		queryObj.filter.$or.push({ 'username' : text });
+		queryObj.filter.$or.push({ 'email' : text });
+
+		delete queryObj.filter.searchText;
+	}
+
+	User.connect( function( db, collection ){
+		services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
+	});
+};
+
+
+

@@ -8,6 +8,9 @@ exports.userCanSeeAllUsers = function( sessionUser ){
     return !!sessionUser && !!sessionUser.isAdmin;
 };
 
+exports.userCanPatchUsers = function( sessionUser ){
+    return !!sessionUser && !!sessionUser.isAdmin;
+};
 
 exports.getPermissions = function (sessionUser, user) {
     return {
