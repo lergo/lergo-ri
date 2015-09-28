@@ -19,3 +19,13 @@ exports.exists = function exists(req, res, next) {
 		next();
 	});
 };
+
+exports.userCanCreate = function userCanCreate( req, res, next ) {
+	logger.debug('checking if user can create faq');
+	return permissions.faqs.userCanCreate( req.sessionUser ) ? next() : res.status(400).send('');
+};
+
+exports.userCanEdit = function userCanEdit( req, res, next ){
+	logger.debug('checking if user can edit faq');
+	return permissions.faqs.userCanEdit( req.sessionUser ) ? next() : res.status(400).send('');
+};

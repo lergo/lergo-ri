@@ -53,26 +53,9 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit');
-    return permissions.questions.userCanEdit( req.question, req.sessionUser ) ? next() : res.status(400).send({});
-};
-
-exports.userCanCopy = function userCanCopy( req, res, next ){
-    return permissions.questions.userCanCopy( req.question, req.sessionUser ) ? next() :res.status(400).send({});
-};
-
-/*
- Whether this user can see private questions
-
- */
-exports.userCanSeeOthersQuestions = function userCanSeeOthersQuestions( req, res, next){
-    logger.debug('checking if user can see');
-    if ( !permissions.app.userCanManage(req.sessionUser) ){
-        res.status(400).send({});
-        return;
-    }
-    next();
+    return permissions.questions.userCanEdit( req.sessionUser, req.question ) ? next() : res.status(400).send({});
 };
 
 exports.userCanDelete = function userCanDelete(req, res, next){
-    return permissions.questions.userCanDelete( req.question, req.sessionUser ) ? next() : res.status(400).send('');
+    return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
 };

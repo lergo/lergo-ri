@@ -10,4 +10,4 @@ exports.reports = require('./ReportsMiddleware');
 exports.helperContents = require('./HelperContentsMiddleware');
 exports.abuseReports = require('./AbuseReportsMiddleware');
 exports.faqs = require('./FAQsMiddleware');
-exports.security = require('./SecurityMiddleware');
+exports.roles = require('./RolesMiddleware');

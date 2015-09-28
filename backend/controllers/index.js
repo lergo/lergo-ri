@@ -9,4 +9,4 @@ exports.reports = require('./ReportsController');
 exports.helperContents = require('./HelperContentsController');
 exports.abuseReports = require('./AbuseReportsController');
 exports.faqs = require('./FAQsController');
-exports.security = require('./SecurityController');
+exports.roles = require('./RolesController');

@@ -5,7 +5,7 @@ var logger = require('log4js').getLogger('AbuseReportsMiddleware');
 var async = require('async');
 var lessonsMiddleware = require('./LessonsMiddleware');
 var questionsMiddleware = require('./QuestionsMiddleware');
-
+var permissions = require('../permissions');
 exports.itemExists = function itemExists(req, res, next) {
 	logger.debug('finding itemId for abuse on request');
 	var itemType = req.body.itemType;
@@ -44,6 +44,16 @@ exports.itemExists = function itemExists(req, res, next) {
 		next();
 	});
 
+};
+
+exports.userCanRead = function userCanRead( req, res, next  ){
+	logger.debug('checking if user can read abuse reports');
+	return permissions.abuseReports.userCanRead( req.sessionUser ) ? next() : res.status(400).send('');
+};
+
+exports.userCanDelete = function userCanDelete( req, res, next ){
+	logger.debug('checking if user can delete abuse report');
+	return permissions.abuseReports.userCanDelete( req.sessionUser ) ? next() : res.status(400).send('');
 };
 
 exports.exists = function exists(req, res, next) {

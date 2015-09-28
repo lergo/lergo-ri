@@ -97,6 +97,11 @@ exports.getPublicProfile = function (req, res) {
     });
 };
 
+exports.getMyPermissions = function( req, res ){
+
+        res.send( { permissions : req.sessionUser.permissions } );
+};
+
 exports.signup = function (req, res) {
     var user = req.body;
     managers.users.createUser(req.emailResources, user, function (err, obj) {
@@ -174,7 +179,6 @@ exports.patchUser = function(req, res ){
 
     var patchData = req.body;
 
-
     if ( patchData.op === 'replace'){
         var updateData = { $set: {} };
         updateData.$set[patchData.path] = patchData.value;
@@ -191,7 +195,7 @@ exports.patchUser = function(req, res ){
             })
         });
     }else{
-        res.status(400).send( { message : 'unsupporte patch operation', info: patchData });
+        res.status(400).send( { message : 'unsupported patch operation', info: patchData });
     }
 };
 
@@ -347,8 +351,18 @@ exports.changePassword = function (req, res) {
 
 };
 
+// do not return error if not logged in.. which is a horrible name for the function btw..
+// should be called - get public details..
+// if user is not logged in, it is a valid scenario..
+// if we return error, we give the website a bad appdex score..
+// return { user : } if user exists, otherwise return {}
 exports.isLoggedIn = function (req, res) {
-    res.send(User.getUserPublicDetails(req.sessionUser));
+
+    if ( !!req.sessionUser ){
+        res.send( { user : User.getUserPublicDetails( req.sessionUser ) } );
+    }else{
+        res.send({});
+    }
 };
 
 exports.logout = function (req, res) {

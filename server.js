@@ -75,9 +75,6 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
-app.use('/backend/user', middlewares.session.isLoggedIn);
-app.use('/backend/admin', middlewares.session.isAdmin);
-
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.use('/backend', backendHandler);

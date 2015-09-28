@@ -57,34 +57,26 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit lesson');
-    return permissions.lessons.userCanEdit( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanEdit( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
 };
 
 
 exports.userCanDelete = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanDelete( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanDelete( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
 };
 
 exports.userCanCopy = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanCopy( req.lesson, req.sessionUser ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanCopy( req.sessionUser. req.lesson ) ? next() : res.status(400).send('');
 };
 
 /*
-    Whether this user can see private lessons
-
+Whether this user can see private lessons
  */
 exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, next){
-
     logger.debug('checking if user can see private lessons');
-    if ( !permissions.app.userCanManage(req.sessionUser) ){
+    if ( !permissions.lessons.userCanSeePrivateLessons(req.sessionUser) ){
         res.status(400).send('');
         return;
     }
     next();
-};
-
-exports.userCanViewLesson = function userCanViewLesson( req, res, next ){
-    //everyone can see any lesson
-    next();
-
 };

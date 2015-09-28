@@ -16,7 +16,7 @@ exports.createFAQ = {
 			'type' : 'Content'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin ],
+	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.faqs.userCanCreate ],
 	'action' : controllers.faqs.create
 };
 
@@ -41,7 +41,7 @@ exports.editFAQ = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin , middlewares.faqs.exists ],
+	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.faqs.userCanEdit , middlewares.faqs.exists ],
 	'action' : controllers.faqs.update
 };
 exports.getFAQs = {

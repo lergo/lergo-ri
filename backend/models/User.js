@@ -3,6 +3,7 @@
  */
 'use strict';
 var AbstractModel = require('./AbstractModel');
+var db = require('../services/DbService');
 
 
 function User(data) {
@@ -38,21 +39,48 @@ User.getUserPublicDetails = function getUserPublicDetails(user) {
 };
 
 
-User.findByGroup = function( groupId, callback ){
-    if ( typeof(groupId) !== 'string' ){
-        groupId = groupId.toHexString();
+User.findByRole = function( roleId, callback ){
+    if ( typeof(roleId) !== 'string' ){
+        roleId = roleId.toHexString();
     }
-    User.find({groups : groupId }, {}, { limit: 2},callback);
+    User.find({roles : roleId }, {}, { limit: 2},callback);
 };
 
 
 /**
- *
- * @param {LergoActivity} activity
+ * returns a user record, adding 'permissions' property on it
  */
-User.prototype.isAllowed = function( activity ){
-    // todo : implement this?
-    throw new Error('unsupported for activity ' + activity);
+User.getUserAndPermissions = function( userId, callback ){
+    function query( _id ){
+        var user = db.users.findOne( { _id: _id });
+        user.roleObjects = [];
+        var rolesObjectIds = [];
+
+        if ( !user.roles ) {
+            user.roles = [];
+        }
+        user.roles.forEach(function (roleId) {
+            rolesObjectIds.push(new ObjectId(roleId));
+            user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray();
+        });
+        // flatten permissions uniquely
+        user.permissions = {};
+        user.roleObjects.forEach(function (roleObject) {
+            if ( !roleObject.permissions ){
+                roleObject.permissions = [];
+            }
+            roleObject.permissions.forEach(function (p) {
+                user.permissions[p] = p;
+            })
+        });
+        user.permissions = Object.keys(user.permissions);
+
+        return user;
+    }
+
+    db.getDbConnection(function(err, dbConnection ){
+        dbConnection.eval( query.toString() , [db.id(userId)], callback );
+    });
 };
 
 

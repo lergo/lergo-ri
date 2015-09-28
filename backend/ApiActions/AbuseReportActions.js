@@ -26,7 +26,10 @@ exports.getAllReports = {
 		summary : 'Get all abuseReports',
 		method : 'GET'
 	},
-	middlewares : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.lergo.queryObjParsing ],
+	middlewares: [
+		middlewares.session.isLoggedIn,
+		middlewares.abuseReports.userCanRead,
+		middlewares.lergo.queryObjParsing],
 	action : controllers.abuseReports.getAll
 };
 
@@ -43,7 +46,11 @@ exports.deleteAbuseReports = {
 			type : 'string'
 		} ]
 	},
-	middlewares : [ middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.abuseReports.exists ],
+	middlewares: [
+		middlewares.session.isLoggedIn,
+		middlewares.abuseReports.userCanDelete,
+		middlewares.abuseReports.exists
+	],
 	action : controllers.abuseReports.deleteReport
 };
 

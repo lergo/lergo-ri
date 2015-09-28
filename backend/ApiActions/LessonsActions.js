@@ -118,8 +118,7 @@ exports.getUserLessonById = {
     },
     'middlewares' : [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanViewLesson
+        middlewares.lessons.exists
     ],
     'action': controllers.lessons.getLessonById
 };
@@ -252,8 +251,7 @@ exports.overrideQuestion = {
         middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanEdit,
-        middlewares.questions.exists,
-        middlewares.questions.userCanCopy
+        middlewares.questions.exists
     ],
     'action': controllers.lessons.overrideQuestion
 };

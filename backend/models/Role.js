@@ -1,7 +1,7 @@
 'use strict';
 var logger = require('log4js').getLogger('Role');
-var AbstractModel = require('../AbstractModel');
-var ComplexSearchService = require('../../services/ComplexSearchService');
+var AbstractModel = require('./AbstractModel');
+var ComplexSearchService = require('../services/ComplexSearchService');
 var _ = require('lodash');
 
 /**
@@ -25,6 +25,15 @@ Role.collectionName = 'roles';
 
 AbstractModel.enhance(Role);
 
+/**
+ *
+ * @param {string} section e.g. lessons
+ * @param {string} field e.g. userCanEdit
+ * @returns {string}
+ */
+Role.getPermissionName = function( section, field ){
+    return section + '.' + field;
+};
 
 Role.complexSearch = function( queryObj, callback ){
     Role.connect( function( db, collection ){

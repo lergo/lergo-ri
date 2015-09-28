@@ -16,7 +16,7 @@ Permission.isPermissionNameValid = function( name ){
 
 exports.Permission = Permission;
 
-var sections = require('../../permissions');
+var sections = require('../permissions');
 exports.all = [];
 _.each(sections, function( permissions, section){
     _.each( permissions,  function( p, name ) {

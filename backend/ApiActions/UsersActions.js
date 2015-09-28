@@ -8,6 +8,26 @@ var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 var permissions = require('../permissions');
 
+
+/**
+ *
+ * IMPORTANT: Has to be before getUser
+ *
+ * Used, among others, for "created by" filter in public homepage and in admin.
+ * so this action should be public.
+ */
+exports.getUsernames = {
+    'spec': {
+        'path': '/users/usernames',
+        'summary': 'gets a like',
+        'method': 'GET'
+    },
+    'middlewares': [/* public function */],
+    'action': controllers.users.getUsernames
+};
+
+
+
 exports.signup = {
     'spec': {
         'path': '/users/signup',
@@ -128,8 +148,20 @@ exports.isLoggedIn = {
         'summary': 'returns user public details iff user is logged in. Otherwise 401.',
         'method': 'GET'
     },
-
+    'middlewares' : [
+        middlewares.session.optionalUserOnRequest
+    ],
     'action': controllers.users.isLoggedIn
+};
+
+exports.getUserPermissions = {
+    'spec' : {
+        'path' : '/user/me/permissions',
+        'summary' : 'gets user permissions',
+        'method' : 'GET'
+    },
+    middlewares: [middlewares.session.isLoggedIn ],
+    'action' : controllers.users.getMyPermissions
 };
 
 exports.getUserQuestions = {
@@ -257,7 +289,11 @@ exports.getUsers = {
         'method': 'GET'
     },
     'action': controllers.users.getAll,
-    'middlewares': [middlewares.session.isLoggedIn, middlewares.session.isAdmin, middlewares.lergo.queryObjParsing]
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.users.canSeeAllUsers,
+        middlewares.lergo.queryObjParsing
+    ]
 };
 
 exports.getPermissions = {
@@ -332,19 +368,6 @@ exports.getUserPublicDetails = {
     'action': controllers.likes.getLike
 };
 
-/**
- * Used, among others, for "created by" filter in public homepage and in admin.
- * so this action should be public.
- */
-exports.getUsernames = {
-    'spec': {
-        'path': '/users/usernames',
-        'summary': 'gets a like',
-        'method': 'GET'
-    },
-    'middlewares': [/* public function */],
-    'action': controllers.users.getUsernames
-};
 
 exports.getUserInvites = {
     spec: {
@@ -414,6 +437,7 @@ exports.getPublicProfile = {
     middlewares: [],
     action: controllers.users.getPublicProfile
 };
+
 
 
 

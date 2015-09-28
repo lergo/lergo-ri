@@ -34,7 +34,7 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
         next();
         return;
     }
-    User.findById(userId, function (err, obj) {
+    User.getUserAndPermissions(userId, function (err, obj) {
         if (!!err) {
             logger.error('unable to find user by id',JSON.stringify(err));
 //            err.send(res);
@@ -44,13 +44,4 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
         logger.debug('placed user on request');
         next();
     });
-};
-
-exports.isAdmin = function isAdmin(req, res, next) {
-    if (!req.sessionUser.isAdmin) {
-        logger.info('user not admin. returning error');
-        new managers.error.NotAdmin().send(res);
-        return;
-    }
-    next();
 };
