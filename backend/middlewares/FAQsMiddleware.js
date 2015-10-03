@@ -1,6 +1,7 @@
 'use strict';
 var FAQ = require('../models/FAQ');
 var logger = require('log4js').getLogger('FAQsMiddleware');
+var permissions = require('../permissions');
 
 exports.exists = function exists(req, res, next) {
 	logger.info('checking if faq exists : ', req.params.faqId);

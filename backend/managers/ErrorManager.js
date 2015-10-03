@@ -2,7 +2,6 @@
 
 var logger = require('log4js').getLogger('ErrorManager');
 logger.info('initializing ErrorManager');
-var _ = require('lodash');
 
 function createSendFn( err ){
     return function(res){

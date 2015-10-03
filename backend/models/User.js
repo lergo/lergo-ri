@@ -51,6 +51,7 @@ User.findByRole = function( roleId, callback ){
  * returns a user record, adding 'permissions' property on it
  */
 User.getUserAndPermissions = function( userId, callback ){
+
     function query( _id ){
         var user = db.users.findOne( { _id: _id });
         user.roleObjects = [];
@@ -60,6 +61,7 @@ User.getUserAndPermissions = function( userId, callback ){
             user.roles = [];
         }
         user.roles.forEach(function (roleId) {
+            /* globals ObjectId */
             rolesObjectIds.push(new ObjectId(roleId));
             user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray();
         });
@@ -71,17 +73,21 @@ User.getUserAndPermissions = function( userId, callback ){
             }
             roleObject.permissions.forEach(function (p) {
                 user.permissions[p] = p;
-            })
+            });
         });
         user.permissions = Object.keys(user.permissions);
 
         return user;
     }
 
+
     db.getDbConnection(function(err, dbConnection ){
+        /*jshint -W061 */ // https://github.com/gruntjs/grunt-contrib-jshint/issues/225
         dbConnection.eval( query.toString() , [db.id(userId)], callback );
     });
+
 };
+
 
 
 

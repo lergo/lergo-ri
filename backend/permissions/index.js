@@ -1,7 +1,6 @@
 'use strict';
 
 var logger = require('log4js').getLogger('index');
-var User = require('../models/User');
 var _ = require('lodash');
 var Role = require('../models/Role');
 

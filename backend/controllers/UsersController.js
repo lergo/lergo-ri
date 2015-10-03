@@ -98,8 +98,7 @@ exports.getPublicProfile = function (req, res) {
 };
 
 exports.getMyPermissions = function( req, res ){
-
-        res.send( { permissions : req.sessionUser.permissions } );
+    res.send( { permissions : req.sessionUser.permissions } );
 };
 
 exports.signup = function (req, res) {
@@ -192,7 +191,7 @@ exports.patchUser = function(req, res ){
                 }
                 logger.debug('update result is', result);
                 res.send(200);
-            })
+            });
         });
     }else{
         res.status(400).send( { message : 'unsupported patch operation', info: patchData });

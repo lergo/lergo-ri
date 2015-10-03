@@ -89,9 +89,9 @@ function enhance( Class ) {
         this.data._id = db.id(this.data._id);
         Class.connect(function( db, collection){
             logger.info('connected. removing', self.data._id);
-            collection.remove({ '_id' : self.data._id }, callback || function(){ logger.info('removed successfully')});
-        })
-    }
+            collection.remove({ '_id' : self.data._id }, callback || function(){ logger.info('removed successfully');});
+        });
+    };
 }
 
 module.exports.enhance = enhance;

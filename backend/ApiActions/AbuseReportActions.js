@@ -29,7 +29,8 @@ exports.getAllReports = {
 	middlewares: [
 		middlewares.session.isLoggedIn,
 		middlewares.abuseReports.userCanRead,
-		middlewares.lergo.queryObjParsing],
+		middlewares.lergo.queryObjParsing
+	],
 	action : controllers.abuseReports.getAll
 };
 

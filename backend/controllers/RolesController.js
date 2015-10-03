@@ -38,8 +38,8 @@ exports.getPermissions = function (req, res) {
 
 
 exports.getRoles = function (req, res) {
-    models.Role.complexSearch( req.queryObj, function( err, result ){
-         res.send(result);
+    models.Role.complexSearch(req.queryObj, function (err, result) {
+        res.send(result);
     });
 };
 
@@ -87,7 +87,7 @@ exports.updateRole = function(req, res){
             return;
         }
 
-        res.send(req.role)
+        res.send(req.role);
     });
 };
 

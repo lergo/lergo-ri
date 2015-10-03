@@ -85,4 +85,4 @@ exports.canPatchUsers = function canPatchUsers( req, res, next ){
     }else{
         res.status(400).send('not allowed to patch users');
     }
-}
+};

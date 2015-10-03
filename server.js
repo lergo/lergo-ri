@@ -34,8 +34,6 @@ if ( !!services.conf.log4js ){
     log4js.configure(services.conf.log4js);
 }
 
-var middlewares = require('./backend/middlewares');
-
 
 services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 //var errorManager = appContext.errorManager;
@@ -111,44 +109,40 @@ var actions = require('./backend/ApiActions').actions;
 
 
 
-for ( var i in actions ){
-    if ( actions.hasOwnProperty(i) ){
-        var action = actions[i];
+_.each(actions,function(action) {
 
-        if ( !action.action ){
-            throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
-        }
-        logger.info('adding [%s] [%s] [%s]:[%s]', action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
-
-        // add middlewares
-        if ( !!action.middlewares ){
-
-            for ( var m = 0; m < action.middlewares.length; m++) {
-
-                var middleware = action.middlewares[m];
-                try {
-                    logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
-                }catch(e){
-                    logger.error('error while adding action on middleware at index [' + m + ']', action.spec.name);
-                    throw e;
-                }
-
-                // switch between swagger syntax {id} to express :id
-                //swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
-            }
-        }
-
-        var method = action.spec.method;
-        var lcMethod = method.toLowerCase();
-        swagger.addHandlers( method, [action] );
-        var expressRoute = backendHandler.route(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'));
-        _.each(action.middlewares, function(m){
-            expressRoute[lcMethod](m);
-        });
-        expressRoute[lcMethod](action.action);
+    if (!action.action) {
+        throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
     }
-}
+    logger.info('adding [%s] [%s] [%s]:[%s]', action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
 
+    // add middlewares
+    if (!!action.middlewares) {
+
+        for (var m = 0; m < action.middlewares.length; m++) {
+
+            var middleware = action.middlewares[m];
+            try {
+                logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
+            } catch (e) {
+                logger.error('error while adding action on middleware at index [' + m + ']', action.spec.name);
+                throw e;
+            }
+
+            // switch between swagger syntax {id} to express :id
+            //swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
+        }
+    }
+
+    var method = action.spec.method;
+    var lcMethod = method.toLowerCase();
+    swagger.addHandlers(method, [action]);
+    var expressRoute = backendHandler.route(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g, ':$1'));
+    _.each(action.middlewares, function (m) {
+        expressRoute[lcMethod](m);
+    });
+    expressRoute[lcMethod](action.action);
+});
 
 /**
  * send front-end the public configuration.

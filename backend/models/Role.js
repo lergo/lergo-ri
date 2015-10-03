@@ -1,8 +1,6 @@
 'use strict';
-var logger = require('log4js').getLogger('Role');
 var AbstractModel = require('./AbstractModel');
 var ComplexSearchService = require('../services/ComplexSearchService');
-var _ = require('lodash');
 
 /**
  * @typedef Role

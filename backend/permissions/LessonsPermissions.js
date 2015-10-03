@@ -7,7 +7,7 @@ exports.userCanEdit = function userCanEdit( user, lesson){
     return  !!user.isAdmin || lesson.userId.equals(user._id) ;
 };
 
-exports.userCanCopy = function userCanCopy( user, lesson  ){
+exports.userCanCopy = function userCanCopy( user/*, lesson*/  ){
     return !!user;
 };
 
@@ -15,11 +15,11 @@ exports.userCanDelete = function userCanDelete( user, lesson ){
     return  !!user && ( !!user.isAdmin  || lesson.userId.equals(user._id) );
 };
 
-exports.userCanPublish = function userCanPublish( user, lesson ) {
+exports.userCanPublish = function userCanPublish( /*user, lesson*/ ) {
     // can publish if has permission. instrumented
 };
 
-exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( user ){
+exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( /*user*/ ){
     // can see if has permissions, instrumented
 };
 

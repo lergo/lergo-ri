@@ -119,9 +119,9 @@ exports.getTranslation = function(req, res) {
 };
 
 exports.getErrorDefinitions = function( req, res ){
-	res.send(_.map(services.error, function(value,key){
+	res.send(_.map(services.error, function(Value,key){
 		return _.merge({
 			key: key
-		}, JSON.parse( JSON.stringify( new value() )));
+		}, JSON.parse( JSON.stringify( new Value() )));
 	}));
 };
