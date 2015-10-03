@@ -39,7 +39,11 @@ exports.editHelperContent = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.helperContents.exists, middlewares.helperContents.userCanEdit ],
+	'middlewares' : [
+		middlewares.session.isLoggedIn,
+		middlewares.helperContents.exists,
+		middlewares.helperContents.userCanEdit
+	],
 	'action' : controllers.helperContents.update
 };
 exports.getHelperContent = {

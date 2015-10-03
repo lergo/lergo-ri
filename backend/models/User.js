@@ -77,6 +77,10 @@ User.getUserAndPermissions = function( userId, callback ){
         });
         user.permissions = Object.keys(user.permissions);
 
+        if ( !user.permissions ){
+            user.permissions = [];
+        }
+
         return user;
     }
 

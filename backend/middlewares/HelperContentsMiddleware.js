@@ -38,6 +38,5 @@ exports.exists = function exists(req, res, next) {
  * editting
  */
 exports.userCanEdit = function userCanEdit(req, res, next) {
-	logger.debug('checking if user can edit');
-	return permissions.helperContents.userCanEdit(req.helperContent, req.sessionUser) ? next() : res.status(400).send({});
+	return permissions.helperContents.userCanEdit( req.sessionUser, req.helperContent ) ? next() : res.status(400).send({});
 };

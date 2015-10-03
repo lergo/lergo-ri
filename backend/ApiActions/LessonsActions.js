@@ -143,7 +143,7 @@ exports.getUserPermissions = {
         middlewares.session.optionalUserOnRequest,
         middlewares.lessons.exists
     ],
-    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.lesson,req.sessionUser)); }
+    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.sessionUser, req.lesson)); }
 };
 
 

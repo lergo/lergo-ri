@@ -91,9 +91,11 @@ exports.getUserPermissions = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.optionalUserOnRequest, middlewares.questions.exists ],
+	'middlewares' : [
+		middlewares.session.optionalUserOnRequest,
+		middlewares.questions.exists ],
 	'action' : function(req, res) {
-		res.send(permissions.questions.getPermissions(req.question, req.sessionUser));
+		res.send(permissions.questions.getPermissions(req.sessionUser, req.question));
 	}
 };
 
