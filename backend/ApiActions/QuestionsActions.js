@@ -83,17 +83,20 @@ exports.getUserPermissions = {
 		'path' : '/questions/{questionId}/permissions',
 		'summary' : 'get user permissions for question',
 		'method' : 'GET',
-		'parameters' : [ {
-			'paramType' : 'path',
-			'name' : 'questionId',
-			required : true,
-			'description' : 'ID of question',
-			'type' : 'string'
-		} ]
+		'parameters': [
+			{
+				'paramType': 'path',
+				'name': 'questionId',
+				required: true,
+				'description': 'ID of question',
+				'type': 'string'
+			}
+		]
 	},
 	'middlewares' : [
 		middlewares.session.optionalUserOnRequest,
-		middlewares.questions.exists ],
+		middlewares.questions.exists
+	],
 	'action' : function(req, res) {
 		res.send(permissions.questions.getPermissions(req.sessionUser, req.question));
 	}
