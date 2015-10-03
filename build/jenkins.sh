@@ -1,23 +1,27 @@
 set -e
 
 
-if [ ! -f my-vagrant.tgz ];then
+VAGRANT_CMD="`pwd`/my-vagrant/bin/vagrant"
+SHOULD_INSTALL_VAGRANT=false
+
+if [ ! -f "$VAGRANT_CMD" ]; then
+    SHOULD_INSTALL_VAGRANT=true
+fi
+
+if [ "$SHOULD_INSTALL_VAGRANT" = "true" ];then
+    rm -rf my-vagrant my-vagrant.tgz || echo "nothing to delete"
     wget -O my-vagrant.tgz "https://www.dropbox.com/s/hqs5kkw25qzzjew/my-vagrant.tgz?dl=1"
     tar -xzvf my-vagrant.tgz
-    SHOULD_INSTALL_PLUGIN=true
+    $VAGRANT_CMD --version
+
 else
     echo "assuming vagrant already installed on the system"
-    SHOULD_INSTALL_PLUGIN=false
 fi
 
-VAGRANT_CMD="`pwd`/my-vagrant/bin/vagrant"
-$VAGRANT_CMD --version
 
-if [ "$SHOULD_INSTALL_PLUGIN" = "true" ];then
-    $VAGRANT_CMD plugin install vagrant-aws
-else
-    echo "assuming plugin already installed"
-fi
+$VAGRANT_CMD plugin uninstall vagrant-aws || echo "plugin was not installed"
+$VAGRANT_CMD plugin install vagrant-aws
+
 
 
 echo "cloning vagrant automation machines"

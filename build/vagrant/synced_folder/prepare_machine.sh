@@ -12,14 +12,24 @@ echo "testing if xvfb exists"
 XVFB=`which Xvfb` || echo "xvfb does not exist"
 
 if [ "$XVFB" = "" ]; then
+
+    set +e
     echo "updating apt-get repositories"
     sudo apt-get update -y 2> /dev/null
+    sudo apt-get install python-software-properties -y 2> /dev/null
+    sudo apt-add-repository ppa:brightbox/ruby-ng -y 2> /dev/null
+    sudo apt-get update -y 2> /dev/null
+    set -e
+
+    # allow the above to fail, but not the below
 
     echo "installing xvfb"
     sudo apt-get -y install xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps x11-utils
 else
     echo "xvfb already installed.. skipping installation"
 fi
+
+
 
 export DISPLAY=:1
 FREE=`xdpyinfo -display :1 >/dev/null 2>&1 && echo "In use" || echo "Free"`
@@ -106,7 +116,7 @@ fi
 GEM_EXISTS=`which gem`  || echo "gem does not exist"
 if [ "$GEM_EXISTS" = "" ];then
     echo "gem does not exist. installing..."
-    sudo apt-get install rubygems -y
+    sudo apt-get install rubygems1.8 -y
     GEM_EXISTS=`which gem` || echo "gem does not exist yet!"
     if [ "$GEM_EXISTS" = "" ]; then
         echo "gem installation failed!"
