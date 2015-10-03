@@ -10,8 +10,6 @@ var permissions = require('../permissions');
 // where lesson.userId != question.userId
 exports.findLessonsUsingQuestion = {
     'spec': {
-        'description': 'find question usages',
-        'name': 'findQuestionUsages',
         'path': '/lessons/using/question/{questionId}',
         'summary': 'find question usages',
         'method': 'GET',
@@ -23,14 +21,7 @@ exports.findLessonsUsingQuestion = {
                 'description': 'ID of question that usages to be find',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to find Usages'
-            }
-        ],
-        'nickname': 'findLessonsByQuestionUsage'
+        ]
     },
     'middlewares' : [
         middlewares.questions.exists
@@ -40,23 +31,9 @@ exports.findLessonsUsingQuestion = {
 
 exports.getAdminLessons = {
     'spec': {
-        'description': 'Gets all lessons',
-        'name': 'getAllLessons',
         'path': '/lessons/get/all',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'Get admin lessons',
-        'method': 'GET',
-        'parameters': [
-
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getAdminLessons'
+        'method': 'GET'
     },
     'middlewares': [
         middlewares.session.isLoggedIn,
@@ -69,23 +46,9 @@ exports.getAdminLessons = {
 
 exports.getLessonIntro = {
     'spec': {
-        'description': 'Gets all lessons',
-        'name': 'getLessonIntro',
         'path': '/lessons/{lessonId}/intro',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'Get lesson intro',
-        'method': 'GET',
-        'parameters': [
-
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getLessonIntro'
+        'method': 'GET'
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
@@ -97,11 +60,7 @@ exports.getLessonIntro = {
 
 exports.getLessonsById = {
     'spec': {
-        'description': 'Gets all lessons by id',
-        'name': 'getLessonsById',
         'path': '/lessons/find',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'Find lessons',
         'method': 'GET',
         'parameters': [
@@ -115,14 +74,7 @@ exports.getLessonsById = {
                     'type': 'string'
                 }
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'findLessons'
+        ]
     },
     'action': controllers.lessons.findLessonsByIds
 };
@@ -130,8 +82,6 @@ exports.getLessonsById = {
 
 exports.createLesson = {
     'spec': {
-        'description': 'Create lesson',
-        'name': 'create',
         'path': '/lessons/create',
         'summary': 'Create new lesson',
         'method': 'POST',
@@ -143,14 +93,7 @@ exports.createLesson = {
                 'description': 'Lesson details',
                 'type': 'Lesson'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to create'
-            }
-        ],
-        'nickname': 'createLesson'
+        ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn
@@ -160,8 +103,6 @@ exports.createLesson = {
 
 exports.getUserLessonById = {
     'spec': {
-        'description': 'Get lesson by id',
-        'name': 'getUserLessonsById',
         'path': '/lessons/{lessonId}',
         'summary': 'Get lesson by id',
         'method': 'GET',
@@ -173,20 +114,11 @@ exports.getUserLessonById = {
                 'description': 'ID of lesson that needs to be fetched',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to get lesson'
-            }
-        ],
-
-        'nickname': 'getLessonById'
+        ]
     },
     'middlewares' : [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanViewLesson
+        middlewares.lessons.exists
     ],
     'action': controllers.lessons.getLessonById
 };
@@ -194,11 +126,7 @@ exports.getUserLessonById = {
 
 exports.getUserPermissions = {
     'spec': {
-        'description': 'Get user lesson permission',
-        'name': 'getUserLessonPermissions',
         'path': '/lessons/{lessonId}/permissions',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'get user permissions for lesson',
         'method': 'GET',
         'parameters': [
@@ -209,14 +137,7 @@ exports.getUserPermissions = {
                 'description': 'ID of lesson that needs to be fetched',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to get permissions'
-            }
-        ],
-        'nickname': 'getUserLessonPermissions'
+        ]
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
@@ -228,11 +149,7 @@ exports.getUserPermissions = {
 
 exports.editLesson = {
     'spec': {
-        'description': 'Edit Lesson',
-        'name': 'updateLesson',
         'path': '/lessons/{lessonId}/update',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'user edits a lesson',
         'method': 'POST',
         'parameters': [
@@ -250,14 +167,7 @@ exports.editLesson = {
                 'description': 'ID of lesson that needs to be fetched',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to signup'
-            }
-        ],
-        'nickname': 'editLesson'
+        ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
@@ -269,8 +179,6 @@ exports.editLesson = {
 
 exports.deleteLesson = {
     'spec': {
-        'description': 'Delete lesson corresponding to the id',
-        'name': 'deleteLesson',
         'path': '/lessons/{lessonId}/delete',
         'summary': 'Delete lesson corresponding to the id',
         'method': 'POST',
@@ -282,14 +190,7 @@ exports.deleteLesson = {
                 'description': 'ID of lesson that needs to be deleted',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to delete lesson'
-            }
-        ],
-        'nickname': 'deleteLesson'
+        ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
@@ -302,8 +203,6 @@ exports.deleteLesson = {
 
 exports.likeLesson = {
     'spec': {
-        'description': 'Delete lesson corresponding to the id',
-        'name': 'deleteLesson',
         'path': '/lessons/{lessonId}/delete',
         'summary': 'Delete lesson corresponding to the id',
         'method': 'POST',
@@ -315,14 +214,7 @@ exports.likeLesson = {
                 'description': 'ID of lesson that needs to be deleted',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to delete lesson'
-            }
-        ],
-        'nickname': 'deleteLesson'
+        ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
@@ -335,8 +227,6 @@ exports.likeLesson = {
 
 exports.overrideQuestion = {
     'spec': {
-        'description': 'Copies and replaces question',
-        'name': 'copyAndReplaceQuestion',
         'path': '/lessons/{lessonId}/question/{questionId}/override',
         'summary': 'copies and replaces question',
         'method': 'POST',
@@ -355,42 +245,22 @@ exports.overrideQuestion = {
                 'description': 'ID of question',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to override'
-            }
-        ],
-        'nickname': 'overrideQuestion'
+        ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
         middlewares.lessons.userCanEdit,
-        middlewares.questions.exists,
-        middlewares.questions.userCanCopy
+        middlewares.questions.exists
     ],
     'action': controllers.lessons.overrideQuestion
 };
 
 exports.copyLesson = {
     'spec': {
-        'description': 'Copy lesson',
-        'name': 'copy',
         'path': '/lessons/{lessonId}/copy',
         'summary': 'copy lesson. prefix title with "Copy for" new lesson',
-        'method': 'POST',
-        'parameters': [
-
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'unable to copy'
-            }
-        ],
-        'nickname': 'copyLesson'
+        'method': 'POST'
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
@@ -398,6 +268,17 @@ exports.copyLesson = {
         middlewares.lessons.userCanCopy
     ],
     'action': controllers.lessons.copyLesson
+};
+
+
+exports.getPublicLessons = {
+    'spec'       : {
+        'path'          : '/public/lessons',
+        'summary'       : 'Get public lessons',
+        'method'        : 'GET'
+    },
+    'middlewares': [middlewares.lergo.queryObjParsing],
+    'action'     : controllers.lessons.getPublicLessons
 };
 
 

@@ -27,6 +27,7 @@ exports.exists = function exists(req, res, next) {
 	}
 };
 
+// todo split to several middlewares : 'userCanDelete','optionUserCanDelete', 'userCanUserInfoOnReport'
 exports.userCanDelete = function userCanDelete(req, res, next) {
 	if (permissions.reports.userCanDelete(req.report, req.sessionUser)) {
 		return next();

@@ -1,26 +1,23 @@
 'use strict';
 
-exports.userCanEdit = function( question, user ){
-    if ( !user || !question ){
-        return false;
-    }
-    return  !!user.isAdmin || question.userId.equals(user._id) ;
+exports.userCanEdit = function( user, question ){
+    return question.userId.equals(user._id) ;
 };
 
+exports.userCanCopy = function userCanCopy( user ){
+    return !!user; // all users can copy. used for display
 
-exports.userCanCopy = function( question ,user ){
-    return  !!user;// all users can copy
 };
 
-exports.userCanDelete = function( question ,user ){
+exports.userCanDelete = function( user, question ){
     return !!user && question.userId.equals(user._id);
 };
 
 
-exports.getPermissions = function( question, user ){
+exports.getPermissions = function( user, question ){
     return {
-        'canEdit' : exports.userCanEdit(question,user),
-        'canCopy' : exports.userCanCopy(question,user),
-        'canDelete' : exports.userCanDelete(question,user)
+        'canEdit' : exports.userCanEdit(user, question),
+        'canCopy' : exports.userCanCopy(user, question),
+        'canDelete' : exports.userCanDelete(user, question)
     };
 };

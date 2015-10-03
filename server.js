@@ -28,11 +28,11 @@ var sm = require('sitemap');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
 
+
+
 if ( !!services.conf.log4js ){
     log4js.configure(services.conf.log4js);
 }
-
-var middlewares = require('./backend/middlewares');
 
 
 services.emailTemplates.load( path.resolve(__dirname, 'emails') );
@@ -40,7 +40,7 @@ services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 
 var app = module.exports = express();
 var backendHandler = express();
-var swaggerAppHandler = backendHandler;
+var swaggerAppHandler = express(); // split the two
 
 /** swagger configuration: start **/
 
@@ -73,12 +73,10 @@ app.use(cookieSession( { 'secret' : conf.cookieSessionSecret } ));
 app.use(lergoMiddleware.origin);
 app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
-app.use('/backend/user', middlewares.session.isLoggedIn);
-app.use('/backend/admin', middlewares.session.isAdmin);
-
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.use('/backend', backendHandler);
+app.use('/swagger-docs', swaggerAppHandler);
 // Routes
 
 app.get('/swagger', function (req, res, next) {
@@ -111,42 +109,40 @@ var actions = require('./backend/ApiActions').actions;
 
 
 
-for ( var i in actions ){
-    if ( actions.hasOwnProperty(i) ){
-        var action = actions[i];
+_.each(actions,function(action) {
 
-        if ( !action.action ){
-            throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
-        }
-        logger.info('adding [%s] [%s] [%s] [%s]:[%s]', action.spec.name, action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
+    if (!action.action) {
+        throw 'action ' + action.spec.name + ' - ' + action.spec.nickname + ' is not mapped properly';
+    }
+    logger.info('adding [%s] [%s] [%s]:[%s]', action.spec.nickname, typeof(action.action), action.spec.method, action.spec.path);
 
-        // add middlewares
-        if ( !!action.middlewares ){
+    // add middlewares
+    if (!!action.middlewares) {
 
-            for ( var m = 0; m < action.middlewares.length; m++) {
+        for (var m = 0; m < action.middlewares.length; m++) {
 
-                var middleware = action.middlewares[m];
-                try {
-                    logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
-                }catch(e){
-                    logger.error('error while adding action on middleware at index [' + m + ']', action.spec.name);
-                    throw e;
-                }
-
-                // switch between swagger syntax {id} to express :id
-                swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
+            var middleware = action.middlewares[m];
+            try {
+                logger.info('adding middleware [%s]', lergoUtils.functionName(middleware));
+            } catch (e) {
+                logger.error('error while adding action on middleware at index [' + m + ']', action.spec.name);
+                throw e;
             }
-        }
 
-        var method = action.spec.method;
-        if ( method === 'POST' ){
-            swagger.addPost( action );
-        }else{
-            swagger.addGet( action );
+            // switch between swagger syntax {id} to express :id
+            //swaggerAppHandler.use(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g,':$1'), middleware);
         }
     }
-}
 
+    var method = action.spec.method;
+    var lcMethod = method.toLowerCase();
+    swagger.addHandlers(method, [action]);
+    var expressRoute = backendHandler.route(action.spec.path.replace(/\{([a-z,A-Z]+)\}/g, ':$1'));
+    _.each(action.middlewares, function (m) {
+        expressRoute[lcMethod](m);
+    });
+    expressRoute[lcMethod](action.action);
+});
 
 /**
  * send front-end the public configuration.
@@ -156,8 +152,8 @@ app.get('/backend/public/conf', function( req, res ){
     res.send('var ' + (req.params.name || 'conf') + '=' + JSON.stringify(services.conf.public) + ';' );
 });
 
-swagger.configure('http://localhost:3000', '0.1');
-//app.use('/api-docs', swagger.resourceListing);
+swagger.configure('http://localhost:3000/backend', '0.1');
+//app.use('/backend/api/api-docs', swagger.resourceListing);
 
 
 /**

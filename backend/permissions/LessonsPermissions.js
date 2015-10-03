@@ -1,37 +1,39 @@
 'use strict';
 
-exports.userCanEdit = function( lesson, user ){
+exports.userCanEdit = function userCanEdit( user, lesson){
     if ( !user || !lesson ){
         return false;
     }
     return  !!user.isAdmin || lesson.userId.equals(user._id) ;
-
-
 };
 
-exports.userCanCopy = function( lesson ,user ){
+exports.userCanCopy = function userCanCopy( user/*, lesson*/  ){
     return !!user;
 };
 
-exports.userCanDelete = function( lesson ,user ){
+exports.userCanDelete = function userCanDelete( user, lesson ){
     return  !!user && ( !!user.isAdmin  || lesson.userId.equals(user._id) );
 };
 
-exports.userCanPublish = function( lesson,user) {
-    return !!user && !!user.isAdmin;
+exports.userCanPublish = function userCanPublish( /*user, lesson*/ ) {
+    // can publish if has permission. instrumented
 };
 
-exports.userCanPreview = function( lesson, user ){
+exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( /*user*/ ){
+    // can see if has permissions, instrumented
+};
+
+exports.userCanPreview = function userCanPreview( user, lesson){
     return !!user && !!lesson.userId.equals(user._id);
 };
 
 
-exports.getPermissions = function( lesson, user ){
+exports.getPermissions = function getPermissions( user, lesson ){
     return {
-        'canEdit' : exports.userCanEdit(lesson,user),
-        'canCopy' : exports.userCanCopy(lesson,user),
-        'canDelete' : exports.userCanDelete(lesson,user),
-        'canPublish' : exports.userCanPublish(lesson,user),
-        'canPreview' : exports.userCanPreview( lesson, user )
+        'canEdit' : exports.userCanEdit(user, lesson),
+        'canCopy' : exports.userCanCopy(user, lesson),
+        'canDelete' : exports.userCanDelete(user, lesson),
+        'canPublish' : exports.userCanPublish(user, lesson),
+        'canPreview' : exports.userCanPreview( user, lesson )
     };
 };

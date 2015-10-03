@@ -1,13 +1,10 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 
+
 exports.getTranslations = {
     'spec': {
-        'description': 'Get translation for locale',
-        'name': 'getSystemTranslationByLocale',
         'path': '/system/translations/{locale}.json',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'Get system translation',
         'method': 'GET',
         'parameters': [
@@ -18,37 +15,25 @@ exports.getTranslations = {
                 'description': 'locale to fetch',
                 'type': 'string'
             }
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getTranslation'
+        ]
     },
     'action': controllers.system.getTranslation
 };
 
+exports.getErrorDefinitions = {
+    'spec' : {
+        'path' : '/system/errors',
+        'summary' : 'get all error definitions',
+        'method' : 'GET'
+    },
+    'action' : controllers.system.getErrorDefinitions
+};
+
 exports.getStatistics = {
     'spec': {
-        'description': 'Get system statistics ',
-        'name': 'getPublicLessons',
         'path': '/system/statistics',
-        // 'notes': 'Returns 200 if everything went well, otherwise returns
-        // error response',
         'summary': 'Get system statistics ',
-        'method': 'GET',
-        'parameters': [
-
-        ],
-        'errorResponses': [
-            {
-                'code': 500,
-                'reason': 'server error'
-            }
-        ],
-        'nickname': 'getStatistics'
+        'method': 'GET'
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest

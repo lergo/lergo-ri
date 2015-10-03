@@ -3,6 +3,7 @@ var models = require('../models');
 var async = require('async');
 var services = require('../services');
 var logger = require('log4js').getLogger('StatisticsController');
+var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
@@ -96,10 +97,11 @@ exports.getStatistics = function(req, res) {
 
 exports.getTranslation = function(req, res) {
 
+	var locale = req.query.lang || req.params.locale;
+
 	if (services.conf.translations.method === 'files') {
-		res.redirect(req.absoluteUrl('/translations/' + req.params.locale + '.json'));
+		res.redirect(req.absoluteUrl('/translations/' + locale + '.json'));
 	} else { // method == phraseapp (the default)
-		var locale = req.params.locale;
 		// todo: don't use service phraseapp, use "TranslationManager" instead.
 		services.phraseApp.getTranslation(locale, function(data , response ) {
 			logger.debug('got translations', JSON.stringify(response.headers));
@@ -114,5 +116,12 @@ exports.getTranslation = function(req, res) {
 
 		});
 	}
+};
 
+exports.getErrorDefinitions = function( req, res ){
+	res.send(_.map(services.error, function(Value,key){
+		return _.merge({
+			key: key
+		}, JSON.parse( JSON.stringify( new Value() )));
+	}));
 };

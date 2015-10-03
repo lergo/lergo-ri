@@ -26,8 +26,10 @@ function getDbConnection( callback ){
             callback(err,db);
         });
     }
-
 }
+
+// needed for extreme cases such as usage of 'eval'. See User.getUserAndPermissions
+exports.getDbConnection = getDbConnection;
 
 logger.info('initializing DbService :: ' , _dbUrl );
 
@@ -120,6 +122,7 @@ exports.id = function( id ){
         throw e;
     }
 };
+
 
 
 exports.drop = function () {

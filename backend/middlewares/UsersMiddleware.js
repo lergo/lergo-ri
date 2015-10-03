@@ -73,6 +73,16 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
 };
 
 
+// todo: change this to 'userCanReadUsers'
 exports.canSeeAllUsers = function canSeeAllUsers ( req, res, next ){
-    return permissions.users.canSeeAllUsers( req.sessionUser ) ? next() : res.status(400).send('not allowed to do this request');
+    return permissions.users.userCanSeeAllUsers( req.sessionUser ) ? next() : res.status(400).send('not allowed to do this request');
+};
+
+
+exports.canPatchUsers = function canPatchUsers( req, res, next ){
+    if ( permissions.users.userCanPatchUsers( req.sessionUser ) ){
+        next();
+    }else{
+        res.status(400).send('not allowed to patch users');
+    }
 };
