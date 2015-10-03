@@ -177,7 +177,6 @@ exports.getAll = function (req, res) {
 exports.patchUser = function(req, res ){
 
     var patchData = req.body;
-
     if ( patchData.op === 'replace'){
         var updateData = { $set: {} };
         updateData.$set[patchData.path] = patchData.value;

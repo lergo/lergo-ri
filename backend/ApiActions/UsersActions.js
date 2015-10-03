@@ -6,7 +6,6 @@
  */
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
-var permissions = require('../permissions');
 
 
 /**
@@ -274,10 +273,11 @@ exports.getPermissions = {
         'method': 'GET'
     },
     'action': function (req, res) {
-        res.send(permissions.app.getPermissions(req.sessionUser));
+        var result = req.sessionUser ? req.sessionUser.permissions : [];
+        res.send(result);
     },
-    'middlewares': [middlewares.session.isLoggedIn
-
+    'middlewares': [
+        middlewares.session.optionalUserOnRequest
     ]
 };
 
