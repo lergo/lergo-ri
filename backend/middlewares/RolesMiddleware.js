@@ -6,7 +6,7 @@ var models = require('../models');
 var services = require('../services');
 
 exports.userCanReadRoles = function userCanReadRoles( req, res, next ){
-    if ( permissions.roles.userCanReadRoles(req.sessionUser)){
+    if ( permissions.roles.userCanRead(req.sessionUser)){
         return next();
     }else{
         return new services.error.Forbidden(null, 'read roles').send(res);
@@ -60,8 +60,9 @@ exports.roleCanBeDeleted = function roleCanBeDeleted( req, res, next ){
 };
 
 
+
 exports.userCanCreateRoles = function userCanCreateRoles(req, res, next) {
-    if (permissions.roles.userCanCreateRoles(req.sessionUser)) {
+    if (permissions.roles.userCanCreate(req.sessionUser)) {
         return next();
     } else {
         return res.status(400).send('user cannot create roles');
@@ -70,7 +71,7 @@ exports.userCanCreateRoles = function userCanCreateRoles(req, res, next) {
 
 
 exports.userCanUpdateRoles = function userCanUpdateRoles( req, res, next ){
-    if ( permissions.roles.userCanUpdateRoles(req.sessionUser)){
+    if ( permissions.roles.userCanUpdate(req.sessionUser)){
         return next();
     }else{
         return res.status(400).send('user cannot update roles');
@@ -79,7 +80,7 @@ exports.userCanUpdateRoles = function userCanUpdateRoles( req, res, next ){
 
 
 exports.userCanDeleteRoles = function userCanDeleteRoles( req, res, next ){
-    if ( permissions.roles.userCanDeleteRole(req.sessionUser)){
+    if ( permissions.roles.userCanDelete(req.sessionUser)){
         return next();
     }else{
         return res.status(400).send('user cannot delete roles');

@@ -7,18 +7,16 @@
  **/
 
 
-exports.userCanCreateRoles = function( /*user*/ ){
+exports.userCanCreate= function( /*user*/ ){
 };
 
-exports.userCanReadRoles = function( /*user*/ ){
+exports.userCanRead= function( /*user*/ ){
 };
 
-exports.userCanUpdateRoles = function( /*user*/ ){
+exports.userCanUpdate= function( /*user*/ ){
 };
 
-exports.userCanDeleteRole  = function( /*user*/ ){
+exports.userCanDelete= function( /*user*/ ){
 };
 
-exports.userCanAssignPermissionsToRoles = function( /*user*/ ){
-};
 
