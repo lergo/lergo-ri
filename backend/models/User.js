@@ -54,6 +54,9 @@ User.getUserAndPermissions = function( userId, callback ){
 
     function query( _id ){
         var user = db.users.findOne( { _id: _id });
+        if ( !user ){
+            return null;
+        }
         user.roleObjects = [];
         var rolesObjectIds = [];
 
