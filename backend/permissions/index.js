@@ -37,10 +37,10 @@ exports._instrumentPermissions = function(){
             permissions[name] = _.wrap(permission, function(fn, user ){
                 [].shift.apply(arguments);
 
-                logger.debug('this is used permissions', user.permissions);
+                logger.debug('this is used permissions', (user && user.permissions ) || 'no user found on request');
 
-                return  user.isAdmin ||
-                    user.permissions.indexOf( Role.getPermissionName( section,  name ) ) >= 0 ||
+                return   ( user && ( user.isAdmin ||
+                    user.permissions.indexOf( Role.getPermissionName( section,  name ) ) >= 0 ) ) ||
                     fn.apply(undefined, arguments);
             });
         });
