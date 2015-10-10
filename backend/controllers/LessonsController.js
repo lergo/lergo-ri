@@ -115,6 +115,7 @@ exports.getPublicLessons = function(req, res) {
 	var lessons = [];
 	async.waterfall([ function loadLessons(callback) {
 		managers.lessons.complexSearch(req.queryObj, function(err, result) {
+
 			if (!!err) {
 				callback(new managers.error.InternalServerError(err, 'unable to get all admin lessons'));
 				return;
