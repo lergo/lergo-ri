@@ -66,7 +66,7 @@ exports.userCanDelete = function userCanDelete(req, res, next){
 };
 
 exports.userCanCopy = function userCanDelete(req, res, next){
-    return permissions.lessons.userCanCopy( req.sessionUser. req.lesson ) ? next() : res.status(400).send('');
+    return permissions.lessons.userCanCopy( req.sessionUser, req.lesson ) ? next() : res.status(400).send('');
 };
 
 /*
