@@ -3,7 +3,7 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 
-exports.createFAQ = {
+exports.createFaq = {
 	'spec' : {
 		'path' : '/faqs/create',
 		'summary' : 'Create new faq',
@@ -44,7 +44,7 @@ exports.editFAQ = {
 	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.faqs.userCanEdit , middlewares.faqs.exists ],
 	'action' : controllers.faqs.update
 };
-exports.getFAQs = {
+exports.listFaqs = {
 	'spec' : {
 		'path' : '/faqs',
 		// 'notes': 'Returns 200 if everything went well, otherwise returns
