@@ -1,6 +1,8 @@
 'use strict';
 
 var logger = require('log4js').getLogger('ErrorManager');
+var _ = require('lodash');
+
 logger.info('initializing ErrorManager');
 
 function createSendFn( err ){
@@ -42,8 +44,8 @@ var errorsDefinition = {
 
 
 // this is nicer for translation
-_.each(errorsDefinition, function(ed, key ){
-     ed.error_key = key;
+_.each(errorsDefinition, function (ed, key) {
+    ed.errorKey = key;
 });
 
 for ( var errDefinition in errorsDefinition ){
