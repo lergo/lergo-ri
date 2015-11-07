@@ -388,21 +388,12 @@ exports.updateProfile = {
     middlewares: [middlewares.session.isLoggedIn],
     action: controllers.users.update
 };
-exports.getPublicProfile = {
-    spec: {
-        path: '/users/{username}/profile',
-        summary: 'Get logged in user profile',
-        method: 'GET'
-    },
-    middlewares: [middlewares.session.isLoggedIn],
-    action: controllers.users.getPublicProfile
-};
 
 
-exports.getPublicProfile = {
+exports.getUserPublicProfile = {
     spec: {
         path: '/public/{username}/profile',
-        summary: 'Get logged in user profile',
+        summary: 'Get public user profile',
         method: 'GET'
     },
     middlewares: [],

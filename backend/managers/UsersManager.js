@@ -1,11 +1,13 @@
 'use strict';
 
+
 /**
  * @module UsersManager
  * @type {api|exports}
  */
 var sha1 = require('sha1');
 var logger = require('log4js').getLogger('UsersManager');
+var escapeStringRegexp = require('escape-string-regexp');
 var services = require('../services');
 var errorManager = require('./ErrorManager');
 var User = require('../models/User');
@@ -174,8 +176,9 @@ exports.encryptUserPassword = function(password) {
 exports.loginUser = function(loginCredentials, callback) {
 	logger.info('logging user [%s] in', loginCredentials.username);
 	services.db.connect('users', function(db, collection, done) {
+		var username = escapeStringRegexp(loginCredentials.username);
 		collection.findOne({
-			'username' : loginCredentials.username,
+			'username' : new RegExp(['^',username,'$'].join(''),'i'),
 			'password' : exports.encryptUserPassword(loginCredentials.password)
 		}, function(err, obj) {
 			if (!obj) {
@@ -427,12 +430,14 @@ exports.getPublicUsersDetailsMapByIds = function(ids, callback) {
 	});
 };
 
-exports.isUserExists = function(username, email, callback) {
+exports.isUserExists = function(_username, _email, callback) {
+	var username = escapeStringRegexp(_username);
+	var email = escapeStringRegexp(_email);
 	exports.findUser({
 		'$or' : [ {
-			'username' : username
+			'username' : new RegExp( ['^',username,'$'].join(''),'i')
 		}, {
-			'email' : email
+			'email' : new RegExp( ['^',email,'$'].join(''),'i')
 		} ]
 	}, function(err, result) {
 		if (!!err) {
@@ -441,18 +446,6 @@ exports.isUserExists = function(username, email, callback) {
 			callback(null, !!result);
 		}
 	});
-};
-
-exports.getUserByEmail = function(email, callback) {
-	exports.findUser({
-		'email' : email
-	}, callback);
-};
-
-exports.getUserByUsername = function(username, callback) {
-	exports.findUser({
-		'username' : username
-	}, callback);
 };
 
 exports.getAllAdminEmails = function(callback) {
