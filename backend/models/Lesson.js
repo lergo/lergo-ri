@@ -2,6 +2,7 @@
 var logger = require('log4js').getLogger('Lesson');
 var AbstractModel = require('./AbstractModel');
 var _ = require('lodash');
+var dbService = require('../services/DbService');
 
 function Lesson(data) {
     this.data = data;
@@ -73,6 +74,46 @@ Lesson.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
     });
 };
 
+
+/**
+ *
+ * a wrong and very naive implementation. count number of questions in user's public lesson.
+ *
+ * the actual purpose is to count all public questions by user.
+ * so this function will only work if user used only his/her own questions..
+ *
+ * Flattens all quizItems on all lessons,
+ * and groups all quizItems values into a single set.
+ * http://stackoverflow.com/a/13281819/1068746
+ *
+ * @param userId
+ * @param callback
+ */
+Lesson.countPublicQuestionsByUser = function( userId, callback ){
+    Lesson.connect( function (db, collection) {
+        var aggregation = [
+            {$match: { 'steps.type' : 'quiz', 'userId' : dbService.id(userId) }},
+            { $project: { _id : 0, 'steps.quizItems':1} },
+            {$unwind : '$steps'},
+            {$unwind : '$steps.quizItems'},
+            {'$group' :{_id : 'a', count:{$sum:1}}}
+        ];
+        collection.aggregate( aggregation ,
+            function(err, result){
+                callback(err, result.length > 0 ? result[0].count : undefined);
+            });
+    });
+};
+
+
+Lesson.countPublicLessonsForUser = function(userId, callback ){
+    Lesson.count({
+        userId  : dbService.id(userId),
+        'public': {
+            '$exists': true
+        }
+    }, callback );
+};
 
 AbstractModel.enhance(Lesson);
 

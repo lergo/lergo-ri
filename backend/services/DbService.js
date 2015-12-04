@@ -18,7 +18,7 @@ var dbConnection = null;
 function getDbConnection( callback ){
 
     if ( !!dbConnection && dbConnection !== null ){
-        logger.debug('using cached connection');
+        //logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
         MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){
@@ -66,13 +66,13 @@ exports.connect = function (collection, callback) {
         if (err) {
             throw err;
         }
-        logger.debug('connected to db successfully');
+        //logger.debug('connected to db successfully');
 
         try {
             if (collection) {
-                logger.debug('opening connection on [' + collection + ']');
+                //logger.debug('opening connection on [' + collection + ']');
                 _collection = db.collection(collection);
-                logger.debug('connection open');
+                //logger.debug('connection open');
 
             }else{
                 logger.warn('opening connection without collection');

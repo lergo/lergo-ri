@@ -4,7 +4,10 @@
 'use strict';
 var AbstractModel = require('./AbstractModel');
 var db = require('../services/DbService');
-
+var Question = require('./Question');
+var Lesson = require('./Lesson');
+var async = require('async');
+var logger = require('log4js').getLogger('User');
 
 function User(data) {
     this.data = data;
@@ -14,12 +17,20 @@ User.collectionName = 'users';
 
 
 function toPublicDetails ( user ){
-    return {
-        'username' : user.username,
-        'isAdmin' : user.isAdmin, /** todo: replace this with permissions mechansim **/
-        '_id' : user._id,
-        'email':user.email /** email is required for gravatar pic */
-    };
+    try {
+        return {
+            'gravatarUrl': 'http://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=25&default=mm',
+            'gravatarUrlLarge': 'http://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=150&default=mm',
+            'username': user.username,
+            'shortIntro': user.shortIntro,
+            'externalLink': user.externalLink,
+            'details': user.details,
+            'isAdmin': user.isAdmin, /** todo: replace this with permissions mechansim **/
+            '_id': user._id
+        };
+    }catch(e){
+        logger.error('unable to get public details for user [' + user.email + ']',e);
+    }
 }
 
 /**
@@ -38,12 +49,59 @@ User.getUserPublicDetails = function getUserPublicDetails(user) {
     }
 };
 
+User.findByUsername = function( username, callback ){
+    User.findOne({
+        'username': username
+    }, {} , callback );
+};
+
 
 User.findByRole = function( roleId, callback ){
     if ( typeof(roleId) !== 'string' ){
         roleId = roleId.toHexString();
     }
     User.find({roles : roleId }, {}, { limit: 2},callback);
+};
+
+User.getStats = function( userId, callback ){
+    var result = {};
+    async.parallel([
+            function countQuestions(done) {
+                Question.count({
+                    userId: db.id(userId)
+                }, function (err, count) {
+                    result.allQuestionsCount = count;
+                    done(err);
+                });
+            }, function countLessons(done) {
+                Lesson.count({
+                    userId: db.id(userId)
+                }, function (err, count) {
+                    result.allLessonsCount = count;
+                    done(err);
+                });
+            }, function countPublicLessons(done) { // todo: improve this algorithm to use
+
+                Lesson.countPublicLessonsForUser(userId, function (err, count) {
+                    result.publicLessonsCount = count;
+                    done(err);
+                });
+            },
+            function countPublicQuestions(done) {
+                Lesson.countPublicQuestionsByUser(userId, function (err, count) {
+                    result.publicQuestionsCount = count;
+                    done(err);
+                });
+            }
+
+
+        ],
+        function (error) {
+            logger.debug('got stats', result);
+            callback(error, result);
+
+        }
+    );
 };
 
 
