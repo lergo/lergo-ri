@@ -27,7 +27,7 @@ upload_artifacts(){
     cd /vagrant/tasks
     npm install
     grunt s3:uploadArtifacts
-#    grunt s3:uploadArtifactsLatest
+    grunt s3:uploadArtifactsLatest
 }
 
 get_artifacts
