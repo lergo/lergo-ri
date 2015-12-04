@@ -369,16 +369,6 @@ exports.getUserLikedQuestions = {
     'action': controllers.questions.getUserLikedQuestions
 };
 
-exports.getMyProfile = {
-    spec: {
-        path: '/users/me/profile',
-        summary: 'Get logged in user profile',
-        method: 'GET'
-    },
-    middlewares: [middlewares.session.isLoggedIn],
-    action: controllers.users.getMyProfile
-};
-
 exports.updateProfile = {
     spec: {
         path: '/users/me/profile/update',
@@ -390,14 +380,16 @@ exports.updateProfile = {
 };
 
 
-exports.getUserPublicProfile = {
+exports.getUserProfile = {
     spec: {
-        path: '/public/{username}/profile',
+        path: '/users/{username}/profile',
         summary: 'Get public user profile',
         method: 'GET'
     },
-    middlewares: [],
-    action: controllers.users.getPublicProfile
+    middlewares: [
+        middlewares.session.optionalUserOnRequest
+    ],
+    action: controllers.users.getProfile
 };
 
 
