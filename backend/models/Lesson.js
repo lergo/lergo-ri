@@ -96,6 +96,7 @@ Lesson.countPublicQuestionsByUser = function( userId, callback ){
             { $project: { _id : 0, 'steps.quizItems':1} },
             {$unwind : '$steps'},
             {$unwind : '$steps.quizItems'},
+            {'$group': { _id: '$steps.quizItems' } },
             {'$group' :{_id : 'a', count:{$sum:1}}}
         ];
         collection.aggregate( aggregation ,
