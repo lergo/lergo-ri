@@ -14,6 +14,9 @@ function createSendFn( err ){
 
 function createNewError( code, message, responseCode ){
     return function( e, description ){
+        if ( e instanceof  Error ){
+            e = { message : e.message, stackTrace: e.stackTrace };
+        }
 //        debugger;
         this.code = code;
         this.message = message;

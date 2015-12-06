@@ -3,6 +3,7 @@ var logger = require('log4js').getLogger('Lesson');
 var AbstractModel = require('./AbstractModel');
 var _ = require('lodash');
 var dbService = require('../services/DbService');
+var async = require('async');
 
 function Lesson(data) {
     this.data = data;
@@ -90,20 +91,40 @@ Lesson.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
  * @param callback
  */
 Lesson.countPublicQuestionsByUser = function( userId, callback ){
-    Lesson.connect( function (db, collection) {
-        var aggregation = [
-            {$match: { 'steps.type' : 'quiz', 'userId' : dbService.id(userId) }},
-            { $project: { _id : 0, 'steps.quizItems':1} },
-            {$unwind : '$steps'},
-            {$unwind : '$steps.quizItems'},
-            {'$group': { _id: '$steps.quizItems' } },
-            {'$group' :{_id : 'a', count:{$sum:1}}}
-        ];
-        collection.aggregate( aggregation ,
-            function(err, result){
-                callback(err, result.length > 0 ? result[0].count : undefined);
+    async.waterfall([
+        function getQuestionIdsFromPublicLessons( done ){
+            Lesson.connect( function (db, collection) {
+                var aggregation = [
+                    {$match: { 'steps.type' : 'quiz' , public : { $exists: true }  }},
+                    { $project: { _id : 0, 'steps.quizItems':1} },
+                    {$unwind : '$steps'},
+                    {$unwind : '$steps.quizItems'},
+                    {'$group': { _id: '$steps.quizItems' } },
+                    { '$group': { _id : 'a', items: { $push :  '$_id' } } }
+
+
+                ];
+                collection.aggregate( aggregation , done );
+
             });
-    });
+        },
+        function countQuestionsByUser( idsResult , done ){
+
+            if ( !idsResult || idsResult.length === 0){
+                done(null,0);
+                return;
+            }
+            try{
+                var ids = idsResult[0].items;
+                ids =  dbService.id(ids);
+                logger.info('ids is', ids );
+                require('./Question').count({ _id : { $in : ids }, userId : dbService.id(userId), question : { $exists : true } }, done);
+            }catch(e){
+                done(e);
+            }
+        }
+    ], callback );
+
 };
 
 
