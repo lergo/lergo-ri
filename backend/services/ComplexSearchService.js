@@ -78,7 +78,7 @@ var async = require('async');
 
 exports.complexSearch = function (queryObj, builder, callback) {
 
-    logger.info('performing complex search on ', queryObj);
+    logger.info('performing complex search on ', JSON.stringify(queryObj) );
 
     var collection = builder.collection;
 
