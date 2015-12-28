@@ -128,20 +128,20 @@ else
     echo "gem already installed. skipping... "
 fi
 
-COMPASS_EXISTS=`which compass` || echo "compass does not exist"
-if [ "$COMPASS_EXISTS" = "" ];then
-    echo "compass does not exist. installing..."
-    sudo gem install --no-ri --no-rdoc --conservative compass
-    COMPASS_EXISTS=`which compass` || echo "compass still does not exist!"
-    if [ "$COMPASS_EXISTS" = "" ]; then
-        echo "compass installation failed!"
-        exit 1
-    else
-        echo "compass installation success. lets continue"
-    fi
-else
-    echo "compass already installed. skipping... "
-fi
+#COMPASS_EXISTS=`which compass` || echo "compass does not exist"
+#if [ "$COMPASS_EXISTS" = "" ];then
+#    echo "compass does not exist. installing..."
+#    sudo gem install --no-ri --no-rdoc --conservative compass
+#    COMPASS_EXISTS=`which compass` || echo "compass still does not exist!"
+#    if [ "$COMPASS_EXISTS" = "" ]; then
+#        echo "compass installation failed!"
+#        exit 1
+#    else
+#        echo "compass installation success. lets continue"
+#    fi
+#else
+#    echo "compass already installed. skipping... "
+#fi
 
 
 CHROME_EXISTS=`which google-chrome` || echo "chrome does not exist"

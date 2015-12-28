@@ -47,8 +47,8 @@ install_main(){
         npm install -g forever
     fi
 
-    install_ruby
-    install_compass
+#    install_ruby
+#    install_compass
 
     install_nginx
 
