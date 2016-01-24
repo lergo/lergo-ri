@@ -32,7 +32,7 @@ exports.lessonInviteCreate = {
 			'type' : 'InvitationDetails'
 		} ]
 	},
-	'middlewares' : [ middlewares.lessons.exists, middlewares.session.optionalUserOnRequest ],
+	'middlewares' : [ middlewares.lessons.exists, middlewares.session.optionalUserOnRequest, middlewares.lessonsInvitations.putByOnRequest ],
 	'action' : controllers.lessonsInvitations.create
 };
 

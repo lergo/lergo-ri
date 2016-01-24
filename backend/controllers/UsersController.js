@@ -324,7 +324,7 @@ exports.changePassword = function (req, res) {
 exports.isLoggedIn = function (req, res) {
 
     if ( !!req.sessionUser ){
-        res.send( { user : User.getUserPublicDetails( req.sessionUser ) } );
+        res.send( { user : User.getUserPublicDetails( req.sessionUser ), token: require('sha1')(req.sessionUser.email) } );
     }else{
         res.send({});
     }

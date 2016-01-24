@@ -33,6 +33,10 @@ exports.create = function(req, res) {
 		invitation.inviter = req.sessionUser._id;
 	}
 
+	if ( !!req.inviteBy && !anonymous){
+		invitation.inviter = req.inviteBy._id;
+	}
+
 	// in case user is logged in and there's no invitee details, set logged in
 	// user as invitee
 	if (anonymous && !!req.sessionUser) {
