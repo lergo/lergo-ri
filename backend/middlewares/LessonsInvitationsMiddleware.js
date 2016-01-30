@@ -1,7 +1,5 @@
 'use strict';
 var LessonInvitation = require('../models').LessonInvitation;
-var User = require('../models').User;
-var sha1 = require('sha1');
 var logger = require('log4js').getLogger('LessonsInvitationsMiddleware');
 
 exports.exists = function exists(req, res, next) {
@@ -25,29 +23,6 @@ exports.exists = function exists(req, res, next) {
 		});
 	} catch (e) {
 		res.send(404);
-	}
-};
-
-/**
- * looks for 'by' details in invitation.
- * if exists, puts user on request.
- * @param req
- * @param res
- * @param next
- */
-exports.putByOnRequest = function putByOnRequest( req, res, next ){
-	try{
-		var by = req.body.by;
-		var t = req.body.t;
-		User.findById(by, function(err, result){
-
-			if ( result && sha1(result.email) === t){
-				req.inviteBy = result;
-			}
-			next();
-		});
-	}catch(e){
-		next();
 	}
 };
 

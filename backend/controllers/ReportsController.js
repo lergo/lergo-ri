@@ -11,6 +11,21 @@ var managers = require('../managers');
 var logger = require('log4js').getLogger('ReportsController');
 
 exports.createNewReportForLessonInvitation = function(req, res) {
+
+	var report = {
+		invitationId : services.db.id(req.invitation._id)
+	};
+
+	var overrides =req.body;
+
+	// this is a hack until we sort out the "invite -- build" algorithm.
+	// we should stop building invitation and instead build report..
+	// when we do this, this algorithm should be able to simply put the invitee details and that's it..
+	// for now, it has to wait for 'update' on report for it to actually apply
+	if ( req.body.invitee ){
+		report.inviteeOverride = overrides.invitee;
+	}
+
 	if (!req.invitation) {
 		logger.error('invitation is missing on request');
 	} else {
@@ -20,9 +35,7 @@ exports.createNewReportForLessonInvitation = function(req, res) {
 	Report.connect(function(db, collection) {
 		try {
 			logger.info('connected to collection');
-			var report = {
-				invitationId : services.db.id(req.invitation._id)
-			};
+
 			logger.info('inserting report');
 			collection.insert(report, function() {
 				logger.info('in insert callback', report);
@@ -72,6 +85,17 @@ exports.updateReport = function(req, res) {
 		// if the person who is doing the lesson is logged in, we want to know
 		// that.
 		report.userId = req.sessionUser._id;
+	}
+
+	// this is a temporary fix. to be able for students to register their names.
+	// since we are building the invite instead of the report, on each update, we need to make sure invitee is correct.
+	// the parameters are kept on the side.
+	if ( report.inviteeOverride ){
+		try{
+			report.data.invitee = report.inviteeOverride;
+		}catch(e){
+			// I don't care about errors here since it is a temporary work-around.
+		}
 	}
 	// id.
 	logger.info('creating report to update');

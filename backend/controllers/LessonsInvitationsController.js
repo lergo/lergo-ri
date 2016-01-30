@@ -33,9 +33,6 @@ exports.create = function(req, res) {
 		invitation.inviter = req.sessionUser._id;
 	}
 
-	if ( !!req.inviteBy && !anonymous){
-		invitation.inviter = req.inviteBy._id;
-	}
 
 	// in case user is logged in and there's no invitee details, set logged in
 	// user as invitee
@@ -73,40 +70,27 @@ exports.create = function(req, res) {
  * @param req
  * @param res
  */
-exports.build = function(req, res) {
-	var id = req.params.id;
+exports.build = function (req, res) {
+	var invitation = req.invitation;
 	var construct = req.query.construct;
 	var constructForce = req.query.constructForce;
 
-	logger.info('building the invitation', id, construct, constructForce);
-	managers.lessonsInvitations.find({
-		'_id' : services.db.id(id)
-	}, {}, function(err, result) {
-		if (!!err) {
-			err.send(res);
-			return;
-		}
-		if (!result) {
-			new managers.error.NotFound(err, 'unable to find invitation').send(res);
-
-			return;
-		}
-		if ((!!constructForce || !result.lesson) && construct) {
-			logger.info('constructing invitation');
-			managers.lessonsInvitations.buildLesson(result, function(err, constructed) {
-				if (!!err) {
-					logger.error('error while constructing lesson', err);
-					new managers.error.InternalServerError(err, 'unable to build invitation').send(res);
-					return;
-				}
-				res.send(constructed);
-			});
-		} else {
-            managers.lessons.incrementViews( result.lessonId , function(){ /** noop **/ } );
-			res.send(result);
-		}
-
-	});
+	logger.info('building the invitation', invitation._id, construct, constructForce);
+	if ((!!constructForce || !invitation.lesson) && construct) {
+		logger.info('constructing invitation');
+		managers.lessonsInvitations.buildLesson(invitation, function (err, constructed) {
+			if (!!err) {
+				logger.error('error while constructing lesson', err);
+				new managers.error.InternalServerError(err, 'unable to build invitation').send(res);
+				return;
+			}
+			res.send(constructed);
+		});
+	} else {
+		managers.lessons.incrementViews(invitation.lessonId, function () { /** noop **/
+		});
+		res.send(invitation);
+	}
 };
 
 /**
@@ -160,6 +144,11 @@ exports.update = function(req, res) {
 			return;
 		}
 	});
+};
+
+
+exports.getById = function(req, res){
+	res.send(req.invitation);
 };
 
 exports.find = function(req, res) {

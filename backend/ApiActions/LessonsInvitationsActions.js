@@ -32,7 +32,7 @@ exports.lessonInviteCreate = {
 			'type' : 'InvitationDetails'
 		} ]
 	},
-	'middlewares' : [ middlewares.lessons.exists, middlewares.session.optionalUserOnRequest, middlewares.lessonsInvitations.putByOnRequest ],
+	'middlewares' : [ middlewares.lessons.exists, middlewares.session.optionalUserOnRequest ],
 	'action' : controllers.lessonsInvitations.create
 };
 
@@ -62,12 +62,21 @@ exports.deleteInvitation = {
 	action : controllers.lessonsInvitations.deleteInvitation
 };
 
-
 exports.lessonsInvitationsGetById = {
+	'spec' : {
+		'summary': 'Get a lesson invitation by id',
+		'method': 'GET',
+		'path': '/invitations/{invitationId}/get'
+
+	},
+	'middlewares' : [ middlewares.lessonsInvitations.exists ],
+	'action': controllers.lessonsInvitations.getById
+};
+
+
+exports.lessonsInvitationsBuild = {
 	'spec'  : {
-		'description'   : 'Get a lesson invitation by id',
-		'name'          : 'lessonInviteCreate',
-		'path'          : '/lessonsinvitations/{id}/build',
+		'path'          : '/lessonsinvitations/{invitationId}/build',
 		'summary'       : 'create a lesson invitation instance and sends an email',
 		'method'        : 'GET',
 		'parameters'    : [{
@@ -96,5 +105,6 @@ exports.lessonsInvitationsGetById = {
 		}],
 		'nickname'      : 'lessonInviteCreate'
 	},
+	'middlewares' : [ middlewares.lessonsInvitations.exists ],
 	'action': controllers.lessonsInvitations.build
 };
