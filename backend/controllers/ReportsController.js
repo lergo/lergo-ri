@@ -9,6 +9,7 @@ var Report = require('../models').Report;
 var services = require('../services');
 var managers = require('../managers');
 var logger = require('log4js').getLogger('ReportsController');
+var _ = require('lodash');
 
 exports.createNewReportForLessonInvitation = function(req, res) {
 
@@ -92,8 +93,10 @@ exports.updateReport = function(req, res) {
 	// the parameters are kept on the side.
 	if ( report.inviteeOverride ){
 		try{
-			report.data.invitee = report.inviteeOverride;
+			logger.debug('merging student name with class name');
+			_.merge(report.data.invitee,report.inviteeOverride);
 		}catch(e){
+			logger.warn(e);
 			// I don't care about errors here since it is a temporary work-around.
 		}
 	}
