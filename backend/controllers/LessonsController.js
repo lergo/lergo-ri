@@ -231,10 +231,7 @@ exports.update = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			setTimeout(function(){
-				res.send(obj);
-
-			},5000);
+			res.send(obj);
 			return;
 		}
 	});
