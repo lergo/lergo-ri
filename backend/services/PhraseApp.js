@@ -4,8 +4,7 @@
 var conf = require('./Conf');
 
 var logger = require('log4js').getLogger('PhraseApp');
-var Client = require('node-rest-client').Client;
-var client = new Client();
+var request = require('request');
 
 if ( conf.translations.method === 'phraseapp' && !conf.translations.phraseAppToken){
     throw new Error('need to configure phraseapp token');
@@ -13,13 +12,25 @@ if ( conf.translations.method === 'phraseapp' && !conf.translations.phraseAppTok
 
 
 exports.getTranslation = function( locale, callback  ){
-    var args = {
-        path : {
-            locale: locale,
-            token: conf.translations.phraseAppToken
-        }
+    var path  =  {
+        locale: locale,
+        token: conf.translations.phraseAppToken
     };
-    logger.info('getting translations', JSON.stringify(args));
-    logger.info('using url', conf.translations.url);
-    client.get(conf.translations.url, args,  callback);
+    var url = conf.translations.url.replace('{locale}', path.locale).replace('{token}', path.token);
+    logger.info('using url', url);
+    request(url,callback);
 };
+
+
+
+if ( require.main === module ){
+
+    var prodConf = require(require('path').join(__dirname,'../../conf/prod.json'));
+    conf.translations = {
+        phraseAppToken : process.env.PHRASEAPP_TOKEN,
+        url : prodConf.translations.url
+    };
+    exports.getTranslation( 'ar' , function(err, result){
+        logger.info('got result', result.body);
+    });
+}

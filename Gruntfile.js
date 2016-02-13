@@ -199,6 +199,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+        'bundledDependencies' : {},
         'curl-dir': {
             'compass': {
                 src: ['https://phraseapp.com/api/v1/translations/download?auth_token=<%= phraseapp.token %>&locale_name={en,ar,he,ru}&format=nested_json'],
@@ -241,7 +242,8 @@ module.exports = function (grunt) {
         'jshint',
         'jsdoc',
         'test',
-        'copy'
+        'copy',
+        'bundledDependencies'
     ]);
 
     grunt.registerTask('phraseapp' , 'download translation from phraseapp to make workspace easier as phraseapp is unstable', function( ){
