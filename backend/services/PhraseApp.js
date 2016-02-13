@@ -18,7 +18,7 @@ exports.getTranslation = function( locale, callback  ){
     };
     var url = conf.translations.url.replace('{locale}', path.locale).replace('{token}', path.token);
     logger.info('using url', url);
-    request(url,callback);
+    request(url,function(err, result, body){ callback(body, result); });
 };
 
 
@@ -30,7 +30,7 @@ if ( require.main === module ){
         phraseAppToken : process.env.PHRASEAPP_TOKEN,
         url : prodConf.translations.url
     };
-    exports.getTranslation( 'ar' , function(err, result){
-        logger.info('got result', result.body);
+    exports.getTranslation( 'ar' , function(data, result){
+        logger.info('got result', data,'and this is headers', result.headers);
     });
 }
