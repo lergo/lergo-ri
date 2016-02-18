@@ -16,7 +16,7 @@ var _ = require('lodash');
 /**
  * This function will return true if userName >= 3 character and should only
  * include alphanumeric and under score else return false;
- * 
+ *
  * @param {string} userName
  * @returns {boolean} true iff username is valid
  */
@@ -31,7 +31,7 @@ function isValidUserName(userName) {
 /**
  * Return true if email is valid else return false This method only checks
  * pattern of email
- * 
+ *
  * @param {string} email
  * @returns {boolean} true iff email is valid
  */
@@ -49,7 +49,7 @@ function getUserHmacDetails(user) {
 
 /**
  * returns an error if user details invalid. otherwise null
- * 
+ *
  * @param user -
  *            the user to validate
  */
@@ -98,6 +98,7 @@ exports.createUser = function(emailResources, user, callback) {
 
 			user.password = exports.encryptUserPassword(user.password);
 			delete user.passwordConfirm;
+			delete user.confirmPassword;
 
 			collection.insert(user, function(err) {
 				if (!!err) {
@@ -164,12 +165,12 @@ exports.encryptUserPassword = function(password) {
 
 
 /**
- * 
+ *
  * find a user according to username/ sha1(password) and calls callback. If user
  * not found, calls callback with "undefined" or "null".
- * 
+ *
  * loginCredentials : { username, password }
- * 
+ *
  * @param loginCredentials
  * @param callback
  */
@@ -199,7 +200,7 @@ exports.loginUser = function(loginCredentials, callback) {
 };
 
 /**
- * 
+ *
  * @param linkBase -
  *            e.g. http://www.lergodev.info/views/session/validateUser.html
  * @param user -
