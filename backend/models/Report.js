@@ -41,10 +41,16 @@ function Report(data) {
 }
 
 
+
+
 Report.collectionName = 'reports';
 
 
 AbstractModel.enhance(Report);
+
+Report.findByInvitationId = function(invitationId, callback ){
+    Report.find({ invitationId : Report.id( invitationId )}, {}, callback );
+};
 
 module.exports = Report;
 

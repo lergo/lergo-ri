@@ -4,6 +4,8 @@ exports.userCanDelete = function(user, report) {
 	return !!user.isAdmin || report.data.inviter === user._id.toString();
 };
 
+
+
 exports.userCanDeleteUserInfo = function(user, report) {
 	return report.userId.equals(user._id);
 };

@@ -15,6 +15,10 @@ function enhance( Class ) {
         db.connect(Class.collectionName, callback);
     };
 
+    Class.id = function(id){ // sugaring
+        return db.id(id);
+    };
+
     Class.findById = function (id, projection, callback ) {
         if ( typeof(projection) === 'function'){
             callback = projection;

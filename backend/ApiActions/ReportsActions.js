@@ -3,6 +3,7 @@
 var controllers = require('../controllers');
 var middlewares = require('../middlewares');
 
+
 exports.createNewReportForLessonInvitation = {
     'spec': {
         'path': '/reports/lessoninvitation/{invitationId}',
@@ -107,6 +108,8 @@ exports.getStudents = {
     ],
     'action': controllers.reports.getStudents
 };
+
+
 
 
 exports.findReportLessonsByName = {

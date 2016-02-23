@@ -1,6 +1,18 @@
 'use strict';
 var LessonInvitation = require('../models').LessonInvitation;
 var logger = require('log4js').getLogger('LessonsInvitationsMiddleware');
+var permissions = require('../permissions');
+var services = require('../services');
+
+exports.userCanSeeInvitationDetails = function canSeeInvitationDetails( req, res, next ){
+    var user = req.sessionUser;
+    var invitation = req.invitation;
+    if ( !permissions.invitations.userCanSeeInvitationDetails( user, invitation ) ){
+        new services.error.Forbidden(null, 'cannot see invitation details').send(res);
+        return;
+    }
+    next();
+};
 
 exports.exists = function exists(req, res, next) {
 	logger.debug('checking if invitation exists : ', req.params.invitationId);

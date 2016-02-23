@@ -10,6 +10,8 @@ var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 var LessonInvitation = require('../models/LessonInvitation');
+var Report = require('../models/Report');
+var async = require('async');
 
 exports.create = function(req, res) {
 	logger.debug('creating invitation for lesson', req.lesson);
@@ -54,19 +56,46 @@ exports.create = function(req, res) {
 	});
 };
 
+exports.getDetails = function(req, res){
+
+    var invitation = req.invitation;
+
+    async.waterfall([
+        function( callback ){
+            Report.findByInvitationId( req.invitation._id , function(err, data){
+                if ( err ){
+                    callback(err);
+                    return;
+                }
+                invitation.reports = data;
+                callback();
+            });
+        }
+
+    ], function(err){
+        if ( !!err ){
+            new services.error.InternalServerError(err,'cannot get invitation details').send(res);
+            return;
+        }
+        res.send(invitation)
+    });
+
+
+};
+
 /**
  * <p>
  * When we generate an invite, we simply save invitation details.<br/> To start
  * the lesson from the invitation, we first construct a copy of the lesson <br/>
  * </p>
- * 
+ *
  * <p>
  * We use a copy because otherwise the report might be out of sync.<br/>
  * </p>
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  * @param req
  * @param res
  */

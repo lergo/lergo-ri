@@ -7,12 +7,13 @@
 
 var middlewares = require('../middlewares');
 var controllers = require('../controllers');
+var permissions = require('../permissions');
 
 /**
- * 
+ *
  * An action for logged in user to invite others for a lesson. Since we have the
  * userId on the session, we will want to keep track of it.
- * 
+ *
  */
 exports.lessonInviteCreate = {
 	'spec' : {
@@ -71,6 +72,34 @@ exports.lessonsInvitationsGetById = {
 	},
 	'middlewares' : [ middlewares.lessonsInvitations.exists ],
 	'action': controllers.lessonsInvitations.getById
+};
+
+exports.getDetails = {
+    'spec' : {
+        'summary' : 'Get all data we have on invite',
+        'method' : 'GET',
+        'path' : '/invitations/{invitationId}/details'
+    },
+    'middlewares' : [ middlewares.session.isLoggedIn, middlewares.lessonsInvitations.exists, middlewares.lessonsInvitations.userCanSeeInvitationDetails ],
+    'action' : controllers.lessonsInvitations.getDetails
+
+};
+
+
+exports.getUserPermissions = {
+    spec : {
+        path: '/invitations/{invitationId}/permissions',
+        summary: 'get user permissions for this report',
+        method: 'GET'
+
+    },
+    middlewares: [
+        middlewares.session.isLoggedIn,
+        middlewares.lessonsInvitations.exists
+    ],
+    action : function getPermissions( req, res ){
+        res.send(permissions.invitations.getPermissions(req.sessionUser, req.invitation))
+    }
 };
 
 
