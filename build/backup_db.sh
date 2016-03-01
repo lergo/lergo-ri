@@ -10,7 +10,8 @@
 
 set -e
 
-cd /tmp
+
+cd /dev/lergo_data/backups
 
 # eval "`wget --no-cache --no-check-certificate -O - http://get.gsdev.info/gsat/1.0.0/install_gsat.sh | dos2unix `"
 # SYSCONFIG_FILE=lergo read_sysconfig
