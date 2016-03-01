@@ -13,8 +13,8 @@ server {
 
   listen        80;
   server_name   $DOMAIN $MORE_DOMAINS;
-  access_log    /var/log/nginx/$DOMAIN/access.log;
-  error_log     /var/log/nginx/$DOMAIN/error.log;
+  access_log    /var/log/nginx/lergo_access.log;
+  error_log     /var/log/nginx/lergo_error.log;
   error_page    404    /404.html;
   error_page    503    /503.html;
   root /var/www/lergo/lergo-ui;
