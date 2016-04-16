@@ -16,7 +16,6 @@ install_main(){
 
     init
 
-
     ( which dos2unix && echo "dos2unix installed.." ) || ( echo "installing dos2unix..." && sudo apt-get  -y install dos2unix && echo "dos2unix installed successfully..." )
     ( which wget && echo "wget installed..." ) || ( echo "installing wget..." && sudo-apt-get -y install wget && echo "wget installed successfully..." )
 
@@ -151,7 +150,8 @@ upgrade_main(){
 
     echo "updating nginx conf"
 
-     sudo -E bash -c "source ./nginx.conf.template > nginx.conf"
+
+     sudo -E bash -c "export DOMAIN=\"$DOMAIN\"; export MORE_DOMAINS=\"$MORE_DOMAINS\"; source ./nginx.conf.template > nginx.conf"
      sudo ln -Tfs /var/www/lergo/lergo-ri/build/nginx.conf /etc/nginx/sites-enabled/lergo.conf
 
 
