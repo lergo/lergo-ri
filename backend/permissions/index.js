@@ -14,6 +14,7 @@ exports.roles = require('./RolesPermissions');
 
 exports.abuseReports = require('./AbuseReportsPermissions');
 exports.faqs = require('./FaqsPermissions');
+exports.misc = require('./MiscPermissions');
 
 
 // generically add authorization
