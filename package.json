@@ -17,7 +17,7 @@
         "errorhandler": "1.4.0",
         "escape-string-regexp": "1.0.3",
         "express": "~4.1.0",
-        "lodash": "3.9.3",
+        "lodash": "4.11.1",
         "log4js": "0.6.26",
         "loggly": "~1.0.5",
         "method-override": "2.3.3",
