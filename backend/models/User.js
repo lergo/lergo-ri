@@ -146,6 +146,31 @@ User.getUserAndPermissions = function( userId, callback ){
                 var customizer = require('../services/RoleLimitationMerger').customizer;
                 var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
                 var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
+
+                // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
+                // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
+                /********* cleanup **************/
+                if (_.isEmpty(mergedLimitations.manageSubject)){
+                    delete mergedLimitations.manageSubject;
+                }
+
+                if (_.isEmpty(mergedLimitations.manageLanguages)){
+                    delete mergedLimitations.manageLanguages;
+                }
+
+                if (_.get(mergedLimitations,'manageAge.min') === null ){
+                    _.unset(mergedLimitations,'manageAge.min');
+                }
+
+                if (_.get(mergedLimitations,'manageAge.max') === null ){
+                    _.unset(mergedLimitations,'manageAge.max');
+                }
+
+                if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
+                    _.unset(mergedLimitations,'manageAge');
+                }
+                /************** end of cleanup ***************/
+
                 user.permissionsLimitations = mergedLimitations;
 
 
