@@ -138,7 +138,7 @@ User.getUserAndPermissions = function( userId, callback ){
 
             if ( !err && user ) {
                 // flatten permissions uniquely
-                user.permissions = _.union(_.flatten(_.map(user.roleObjects, 'permissions')));
+                user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
 
                 // merge all limitations. we want a customized merge. not the built in lodash thing..
                 // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
