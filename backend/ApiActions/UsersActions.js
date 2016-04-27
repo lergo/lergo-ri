@@ -274,7 +274,7 @@ exports.getPermissions = {
     },
     'action': function (req, res) {
         var result = req.sessionUser ? req.sessionUser.permissions : [];
-        res.send(result);
+        res.send({ permissions : result, permissionsLimitations : req.sessionUser.permissionsLimitations });
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest

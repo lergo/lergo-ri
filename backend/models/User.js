@@ -8,6 +8,7 @@ var Question = require('./Question');
 var Lesson = require('./Lesson');
 var async = require('async');
 var logger = require('log4js').getLogger('User');
+var _ = require('lodash');
 
 function User(data) {
     this.data = data;
@@ -126,21 +127,6 @@ User.getUserAndPermissions = function( userId, callback ){
             rolesObjectIds.push(new ObjectId(roleId));
             user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray();
         });
-        // flatten permissions uniquely
-        user.permissions = {};
-        user.roleObjects.forEach(function (roleObject) {
-            if ( !roleObject.permissions ){
-                roleObject.permissions = [];
-            }
-            roleObject.permissions.forEach(function (p) {
-                user.permissions[p] = p;
-            });
-        });
-        user.permissions = Object.keys(user.permissions);
-
-        if ( !user.permissions ){
-            user.permissions = [];
-        }
 
         return user;
     }
@@ -148,7 +134,53 @@ User.getUserAndPermissions = function( userId, callback ){
 
     db.getDbConnection(function(err, dbConnection ){
         /*jshint -W061 */ // https://github.com/gruntjs/grunt-contrib-jshint/issues/225
-        dbConnection.eval( query.toString() , [db.id(userId)], callback );
+        dbConnection.eval( query.toString() , [db.id(userId)], function(err, user){
+
+            if ( !err && user ) {
+                // flatten permissions uniquely
+                user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
+
+                // merge all limitations. we want a customized merge. not the built in lodash thing..
+                // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
+                // then we want a limitation on both
+                var customizer = require('../services/RoleLimitationMerger').customizer;
+                var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
+                var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
+
+                // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
+                // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
+                /********* cleanup **************/
+                if (_.isEmpty(mergedLimitations.manageSubject)){
+                    delete mergedLimitations.manageSubject;
+                }
+
+                if (_.isEmpty(mergedLimitations.manageLanguages)){
+                    delete mergedLimitations.manageLanguages;
+                }
+
+                if (_.get(mergedLimitations,'manageAge.min') === null ){
+                    _.unset(mergedLimitations,'manageAge.min');
+                }
+
+                if (_.get(mergedLimitations,'manageAge.max') === null ){
+                    _.unset(mergedLimitations,'manageAge.max');
+                }
+
+                if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
+                    _.unset(mergedLimitations,'manageAge');
+                }
+                /************** end of cleanup ***************/
+
+                user.permissionsLimitations = mergedLimitations;
+
+
+                if (!user.permissions) {
+                    user.permissions = [];
+                }
+            }
+            callback(err,user);
+
+        } );
     });
 
 };

@@ -79,7 +79,7 @@ exports.deleteRole = function( req, res ){
 
 exports.updateRole = function(req, res){
 
-    var role = _.assign(req.role, _.pick(req.body, ['name','permissions','description']));
+    var role = _.assign(req.role, _.pick(req.body, ['name','permissions','description','limitations']));
     role.lastUpdate = new Date().getTime();
     new models.Role( role ).update( function(err, result){
         if ( !!err || result !== 1){

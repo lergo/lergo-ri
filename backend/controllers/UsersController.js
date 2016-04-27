@@ -65,7 +65,7 @@ exports.getProfile = function(req, res){
 
 
 exports.getMyPermissions = function( req, res ){
-    res.send( { permissions : req.sessionUser.permissions } );
+    res.send( { permissions : req.sessionUser.permissions , limitations : req.sessionUser.permissionsLimitations} );
 };
 
 exports.signup = function (req, res) {
@@ -182,21 +182,10 @@ exports.login = function (req, res) {
             return;
         }
 
-        managers.users.getUserPermissions( loggedInUser._id , function( err, result ){
 
-            if ( !! err ){
-                logger.error('unable to read permissions');
-                // not sure we need to send an error back..
-            }
+        req.session.userId = loggedInUser.getId();
+        res.send(User.getUserPublicDetails(loggedInUser));
 
-            if ( !!result ){
-                // todo: save permissions in a different collection
-                // todo: in middleware add permissions on user from db
-                // todo: in user model check the permissions
-            }
-            req.session.userId = loggedInUser.getId();
-            res.send(User.getUserPublicDetails(loggedInUser));
-        });
     });
 };
 
