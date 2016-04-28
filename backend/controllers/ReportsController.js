@@ -246,10 +246,33 @@ exports.deleteReport = function(req, res) {
  */
 
 exports.findReportLessonsByName = function( req, res ){
+
     var like = req.param('like');
+
     like = new RegExp(like, 'i');
+
     Report.connect( function(db, collection ) {
-        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data.lessonId', 'name' :  { '$first' : '$data.name' }  } } ] , function(err, result){
+        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data.lessonId', 'name' :  { '$addToSet' : '$data.name' }  } }, { $unwind: '$name' }, { $limit : 5 } ] , function(err, result){
+            if ( !!err ){
+                new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+};
+
+// todo: there's a lot of copy/paste from findReportLessonsByName.. I am sure we can refactor to reuse.
+exports.findStudentReportLessonsByName = function(req, res){
+    var like = req.param('like');
+    like = new RegExp(like,'i');
+
+    var filter = { 'data.name' : like , 'data.inviter' : req.sessionUser._id.toString() };
+
+    Report.connect(function(db,collection){
+        var agg = [ { $match : filter }, { $group : { _id : '$data.lessonId', 'name' :  { '$addToSet' : '$data.name' }  } }, { $unwind: '$name' }, { $limit : 5 } ];
+        console.log('agg is',agg);
+        collection.aggregate( agg , function(err, result){
             if ( !!err ){
                 new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
                 return;

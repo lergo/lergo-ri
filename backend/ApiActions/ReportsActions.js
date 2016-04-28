@@ -109,6 +109,27 @@ exports.getStudents = {
 };
 
 
+exports.findStudentReportLessonsByName = {
+    'spec' : {
+        'path' : '/reports/studentslessons/find',
+        'summary' : 'get lessons\' name and _id for student\'s report',
+        'method' : 'GET',
+        'parameters' : [
+            {
+                'paramType' : 'query',
+                'required' : false,
+                'description' : 'like - filter for lesson name',
+                'type' : 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lergo.escapeRegExp('like')
+    ],
+    'action' : controllers.reports.findStudentReportLessonsByName
+};
+
 exports.findReportLessonsByName = {
     'spec': {
         'path': '/reports/lessons/find',
