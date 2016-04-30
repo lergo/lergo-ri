@@ -1,6 +1,5 @@
 'use strict';
 
-
 // use external function to override instrumentation and support limitations.
 function _userCanEdit( user, lesson ){
     if ( !user || !lesson ){
@@ -16,7 +15,7 @@ function _userCanEdit( user, lesson ){
     }
 
     // if editor AND ( is not restriced to edit unpublished content OR if lesson is not public )
-    return  user.canEdit && ( !user.permissionsLimitations.editOnlyUnpublishedContent || !lesson.public);
+    return  user.sessionPermissions && user.sessionPermissions.lessons.userCanEdit && ( !user.permissionsLimitations.editOnlyUnpublishedContent || !lesson.public);
 }
 
 exports.userCanEdit = function userCanEdit( user, lesson){

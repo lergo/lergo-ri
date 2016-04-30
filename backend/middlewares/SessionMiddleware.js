@@ -8,6 +8,7 @@
 var managers = require('../managers');
 var logger = require('log4js').getLogger('SessionMiddleware');
 var User = require('../models/User');
+var _ = require('lodash');
 
 /**
  * get a user from cookie on request, and calls next request handler
@@ -42,6 +43,13 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
             return;
         }
         req.sessionUser = obj;
+
+        var permissions = {};
+        // convert permissions to object
+        _.each(req.sessionUser.permissions, function(p){
+            _.set(permissions,p,true);
+        });
+        req.sessionUser.sessionPermissions = permissions;
         logger.debug('placed user on request');
         next();
     });
