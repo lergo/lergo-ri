@@ -265,8 +265,9 @@ exports.complexSearch = function( queryObj, callback ){
         queryObj.filter.$or.push({ 'name' : text });
         queryObj.filter.$or.push({ 'description' : text });
 
-        delete queryObj.filter.searchText;
     }
+    delete queryObj.filter.searchText;
+
 
     Lesson.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
