@@ -42,7 +42,7 @@ fi
 
 echo creating backup
 file_timestamp=`date +%Y%m%d_%H%M%S_%N`
-dump_filename="dump_$file_timestamp.tar.gz"
+dump_filename="dump_${file_timestamp}.tar.gz"
 mongodump
 tar -czvf $dump_filename dump
 rm -Rf dump
@@ -56,10 +56,11 @@ if [ ! -z "$DB_BACKUP_ENCRYPT_KEY" ]; then
     # http://stackoverflow.com/questions/8641109/encrypt-a-file-using-bash-shell-script
 
     rm -rf $dump_filename
-    mv $dump_filename.enc $dump_filename
+    mv ${dump_filename}.enc $dump_filename
 fi
 
 aws s3 cp $dump_filename $S3_BACKUP_PATH --profile lergo
+sleep 20
 rm -Rf $dump_filename
 
 echo "file will be available in s3 as long as the lifecycle defined in amazon allows it"

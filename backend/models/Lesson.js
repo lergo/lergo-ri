@@ -5,11 +5,27 @@ var _ = require('lodash');
 var dbService = require('../services/DbService');
 var async = require('async');
 
+/**
+ *  @typedef {object} Lesson
+ *  @property {number} age
+ *  @property {number} public
+ *  @property {string} subject
+ *  @property {string} language - the language name
+ */
+
 function Lesson(data) {
     this.data = data;
 }
 
 Lesson.collectionName = 'lessons';
+
+
+
+
+/**
+ *
+ * @returns {Array}
+ */
 
 Lesson.prototype.getAllQuestionIds = function () {
     logger.info('getting all questions Ids');

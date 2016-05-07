@@ -1,5 +1,48 @@
 'use strict';
 
+var _ = require('lodash');
+
+/**
+ * @typedef {object} PermissionsLimitations
+ * @property {Array<string>} manageSubject
+ * @property {Array<string>} manageLanguages
+ * @property {object} manageAge
+ * @property {number} manageAge.max
+ * @property {number} manageAge.min
+ * @property {boolean} editOnlyUnpublishedContent
+ */
+
+// return true iff lesson is restricted
+/**
+ *
+ * @param {PermissionsLimitations} limits
+ * @param {Lesson} lesson
+ * @returns {boolean}
+ */
+function isLessonInLimited( limits , lesson ){
+    if ( limits ){
+
+        if (!_.includes(limits.manageSubject, lesson.subject )){
+            return true;
+        }
+
+        if (!_.includes(limits.manageLanguages, lesson.language)){
+            return true;
+        }
+
+        if ( limits.manageAge && lesson.age ){
+            if ( lesson.age > limits.manageAge.max || lesson.age < limits.manageAge.min ){
+                return true;
+            }
+        }
+
+        if ( limits.editOnlyUnpublishedContent && !lesson.public  ){
+            return true;
+        }
+    }
+    return false;
+}
+
 // use external function to override instrumentation and support limitations.
 function _userCanEdit( user, lesson ){
     if ( !user || !lesson ){
@@ -14,8 +57,12 @@ function _userCanEdit( user, lesson ){
         return true;
     }
 
+    if ( isLessonInLimited( user.permissionsLimitations, lesson ) ){
+        return false;
+    }
+
     // if editor AND ( is not restriced to edit unpublished content OR if lesson is not public )
-    return  user.sessionPermissions && user.sessionPermissions.lessons.userCanEdit && ( !user.permissionsLimitations.editOnlyUnpublishedContent || !lesson.public);
+    return  user.sessionPermissions && user.sessionPermissions.lessons.userCanEdit;
 }
 
 exports.userCanEdit = function userCanEdit( user, lesson){
