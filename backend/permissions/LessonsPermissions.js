@@ -36,7 +36,7 @@ function isLessonInLimited( limits , lesson ){
             }
         }
 
-        if ( limits.editOnlyUnpublishedContent && !lesson.public  ){
+        if ( limits.editOnlyUnpublishedContent && lesson.public  ){
             return true;
         }
     }
