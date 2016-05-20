@@ -19,18 +19,21 @@ var _ = require('lodash');
  * @param {Lesson} lesson
  * @returns {boolean}
  */
-function isLessonInLimited( limits , lesson ){
-    if ( limits ){
+exports.limitUserEdit = function(user, lesson){
 
-        if (!_.includes(limits.manageSubject, lesson.subject )){
+    var limits = user.permissionsLimitations;
+
+    if ( limits && lesson ){ // don't limit if lesson not specified
+
+        if (!_.isEmpty(limits.manageSubject) && !_.includes(limits.manageSubject, lesson.subject )){
             return true;
         }
 
-        if (!_.includes(limits.manageLanguages, lesson.language)){
+        if (!_.isEmpty(limits.msnageLanguages) && !_.includes(limits.manageLanguages, lesson.language)){
             return true;
         }
 
-        if ( limits.manageAge && lesson.age ){
+        if ( !_.isEmpty(limits.manageAge) && limits.manageAge && lesson.age ){
             if ( lesson.age > limits.manageAge.max || lesson.age < limits.manageAge.min ){
                 return true;
             }
@@ -41,32 +44,15 @@ function isLessonInLimited( limits , lesson ){
         }
     }
     return false;
-}
+};
 
-// use external function to override instrumentation and support limitations.
-function _userCanEdit( user, lesson ){
+exports.userCanEdit = function userCanEdit( user, lesson){
     if ( !user || !lesson ){
         return false;
     }
 
-    if ( !!user.isAdmin ){ //  if admin
-        return true;
-    }
+    return !!lesson.userId.equals(user._id); // if owner
 
-    if ( !!lesson.userId.equals(user._id)){ // if owner
-        return true;
-    }
-
-    if ( isLessonInLimited( user.permissionsLimitations, lesson ) ){
-        return false;
-    }
-
-    // if editor AND ( is not restriced to edit unpublished content OR if lesson is not public )
-    return  user.sessionPermissions && user.sessionPermissions.lessons.userCanEdit;
-}
-
-exports.userCanEdit = function userCanEdit( user, lesson){
-    return _userCanEdit(user, lesson);
 };
 
 exports.userCanCopy = function userCanCopy( user/*, lesson*/  ){
@@ -101,7 +87,7 @@ exports.userCanPreview = function userCanPreview( user, lesson){
 
 exports.getPermissions = function getPermissions( user, lesson ){
     return {
-        'canEdit' : _userCanEdit(user, lesson),
+        'canEdit' : exports.userCanEdit(user, lesson),
         'canCopy' : exports.userCanCopy(user, lesson),
         'canDelete' : exports.userCanDelete(user, lesson),
         'canPublish' : exports.userCanPublish(user, lesson),

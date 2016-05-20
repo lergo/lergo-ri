@@ -1,6 +1,29 @@
 'use strict';
 
-exports.userCanEdit = function( user, question ){
+exports.limitUserEdit = function(user, question, isUsedByPublicLesson ){
+
+    console.log('is user limited from editing question ? ' , isUsedByPublicLesson);
+
+    if ( !user || !question ){
+        return false;
+    }
+
+    var limits = user.permissionsLimitations;
+
+    if ( limits && question ){ // don't limit if lesson not specified
+
+        if ( limits.editOnlyUnpublishedContent && isUsedByPublicLesson  ){
+            return true;
+        }
+    }
+    return false;
+
+};
+
+exports.userCanEdit = function( user, question/*, isUsedByPublicLesson */){
+    if ( !user || !question ){
+        return false;
+    }
     return question.userId.equals(user._id) ;
 };
 
@@ -14,9 +37,10 @@ exports.userCanDelete = function( user, question ){
 };
 
 
-exports.getPermissions = function( user, question ){
+exports.getPermissions = function( user, question, isUsedByPublicLesson ){
+    console.log('getting permissions ', isUsedByPublicLesson );
     return {
-        'canEdit' : exports.userCanEdit(user, question),
+        'canEdit' : exports.userCanEdit(user, question, isUsedByPublicLesson), // editors might be limited from editing questions used in public lessons..
         'canCopy' : exports.userCanCopy(user, question),
         'canDelete' : exports.userCanDelete(user, question)
     };

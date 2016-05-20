@@ -239,15 +239,7 @@ exports.getLessonIntro = function( lessonId, callback ){
     });
 };
 
-exports.findUsages = function(question, callback) {
-    logger.info('Finding usages of the question');
-    Lesson.find({ 'steps.quizItems' : question._id.toString() }, {}, function(err, result){
-        if (!!err) {
-            logger.error('unable to find usage of questions [%s]', err.message);
-        }
-        callback(err, result);
-    });
-};
+
 
 exports.search = exports.find;
 

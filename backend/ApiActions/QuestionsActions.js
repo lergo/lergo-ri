@@ -95,10 +95,11 @@ exports.getUserPermissions = {
 	},
 	'middlewares' : [
 		middlewares.session.optionalUserOnRequest,
-		middlewares.questions.exists
+		middlewares.questions.exists,
+        middlewares.questions.questionIsUsedByPublicLesson
 	],
 	'action' : function(req, res) {
-		res.send(permissions.questions.getPermissions(req.sessionUser, req.question));
+		res.send(permissions.questions.getPermissions(req.sessionUser, req.question, req.questionUsedByPublicLesson ));
 	}
 };
 

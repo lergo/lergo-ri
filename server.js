@@ -229,9 +229,9 @@ app.get('/backend/sitemap.xml', function(req, res){
                 var entry = { url: '/#!/public/lessons/' + lesson._id + '/intro', changefreq: 'hourly', priority: 0.5 };
 
                 if (!!lesson.lastUpdate) {
-                    console.log('last update exists');
+                    logger.info('last update exists');
                     entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'yyyy-mm-dd');
-                    console.log(entry.lastmod);
+                    logger.info(entry.lastmod);
 //                entry.lastmod = dateFormat(new Date(lesson.lastUpdate), 'YYYY-MM-DDThh:mmTZD');
                 }
 

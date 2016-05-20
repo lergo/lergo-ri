@@ -22,7 +22,7 @@ function addAllActions ( actions ){
         if ( actions.hasOwnProperty(i) ){
             var action = actions[i];
             if ( !action.spec.nickname ){
-                console.log('adding nickname',i);
+                //logger.trace('adding nickname',i);
                 action.spec.nickname = i;
             }
             action.spec.errorResponses = [].concat(action.spec.errorResponses || [] ).concat([{ 'code': 500, 'reason': 'server error'}]);

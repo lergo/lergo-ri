@@ -204,20 +204,20 @@ exports.copyLesson = function(req, res) {
 };
 
 /**
- * 
- * 
+ *
+ *
  * ---- new function format. this format will align to a new API REST format
  * similar to http://api.stackexchange.com/docs/
- * 
+ *
  * it will assume user was authorized to get here, and will NOT assume user own
  * the resource.
- * 
+ *
  * For example - update lesson will not assume the editor is the user on the
  * request, but will assume the user on the request is allowed to edit this
  * lesson;
- * 
- * 
- * 
+ *
+ *
+ *
  */
 
 exports.update = function(req, res) {
@@ -238,9 +238,9 @@ exports.update = function(req, res) {
 };
 
 /**
- * 
+ *
  * Creates a new lesson and assigns it to the logged in user.
- * 
+ *
  * @param req
  * @param res
  */
@@ -261,11 +261,11 @@ exports.create = function(req, res) {
 
 /**
  * gets a list of ids and returns the corresponding lessons.
- * 
+ *
  * how to pass a list of ids over req query?
- * 
+ *
  * ?idsList[]=1&idsList[]=2&idsList[]=3
- * 
+ *
  * @param req
  * @param res
  */
@@ -316,7 +316,7 @@ exports.deleteLesson = function(req, res) {
 };
 
 exports.findUsages = function(req, res) {
-	managers.lessons.findUsages(req.question, function(err, obj) {
+	Lesson.findByQuizItems(req.question, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

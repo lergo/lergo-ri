@@ -1,6 +1,6 @@
 'use strict';
 
-var logger = require('log4js').getLogger('index');
+var logger = require('log4js').getLogger('permissions');
 var _ = require('lodash');
 var Role = require('../models/Role');
 
@@ -33,6 +33,17 @@ exports._instrumentPermissions = function(){
                 return;
             }
 
+            var limitsFunction = null;
+            logger.trace('getting limits functions name');
+            var limitsFunctionName = name.replace('userCan','limitUser');
+            if ( permissions.hasOwnProperty(limitsFunctionName) && typeof(permissions[limitsFunctionName]) === 'function'){
+                logger.trace('found limit function ' + section + '::' + limitsFunctionName);
+                limitsFunction = permissions[limitsFunctionName];
+            }else{
+                logger.trace('did not find a limits function ' + section + '::' + limitsFunctionName );
+                limitsFunction = function(){ return false; }; // by default, not limited..
+            }
+
             logger.trace('instrumenting', section, name);
 
             permissions[name] = _.wrap(permission, function(fn, user ){
@@ -40,8 +51,13 @@ exports._instrumentPermissions = function(){
 
                 logger.debug('this is used permissions', (user && user.permissions ) || 'no user found on request');
 
-                return   ( user && ( user.isAdmin ||
-                    user.permissions.indexOf( Role.getPermissionName( section,  name ) ) >= 0 ) ) ||
+                // a user is allowed to do something in lergo given one of the following
+                // 1 - they are admin
+                // 2 - they have permissions and are not limited
+                // 3 - per subject logic (e.g. owners of the lesson etc..)
+
+                return ( user && ( user.isAdmin ||
+                    ( user.permissions.indexOf(Role.getPermissionName(section, name)) >= 0 && !limitsFunction.apply(undefined, arguments) ) ) ) ||
                     fn.apply(undefined, arguments);
             });
         });

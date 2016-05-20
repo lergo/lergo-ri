@@ -6,6 +6,7 @@
  */
 
 var Question = require('../models/Question');
+var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
 
@@ -34,7 +35,7 @@ exports.exists= function exists( req, res, next ){
             return;
         }
 
-        logger.debug('putting question on request', result);
+        //logger.debug('putting question on request', result);
         req.question = result;
 
         next();
@@ -53,7 +54,18 @@ exports.exists= function exists( req, res, next ){
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
     logger.debug('checking if user can edit');
-    return permissions.questions.userCanEdit( req.sessionUser, req.question ) ? next() : res.status(400).send({});
+    exports.questionIsUsedByPublicLesson( req, res, function(){
+        return permissions.questions.userCanEdit( req.sessionUser, req.question, req.questionUsedByPublicLesson ) ? next() : res.status(400).send({});
+    });
+};
+
+exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( req, res, next ){
+
+    Lesson.existsPublicByQuizItems( req.question, function(err,exists){
+        console.log('testing if question is used by public lesson', exists);
+        req.questionUsedByPublicLesson = !!exists;
+        next();
+    });
 };
 
 exports.userCanDelete = function userCanDelete(req, res, next){
