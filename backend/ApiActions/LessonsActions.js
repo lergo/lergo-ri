@@ -177,6 +177,34 @@ exports.editLesson = {
     'action': controllers.lessons.update
 };
 
+exports.publishLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/publish',
+        'summary': 'user publishes a lesson',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanPublish
+    ],
+    'action': controllers.lessons.publish
+};
+
+exports.unpublishLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/unpublish',
+        'summary': 'user unpublishes a lesson',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanUnpublish
+    ],
+    'action': controllers.lessons.unpublish
+};
+
 exports.deleteLesson = {
     'spec': {
         'path': '/lessons/{lessonId}/delete',

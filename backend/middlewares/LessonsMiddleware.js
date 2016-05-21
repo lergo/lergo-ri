@@ -61,11 +61,22 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 };
 
 
+exports.userCanPublish = function userCanPublish( req, res, next  ){
+    logger.debug('checking if user can publish lesson');
+    return permissions.lessons.userCanPublish( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
+};
+
+
+exports.userCanUnpublish = function userCanUnpublish( req, res, next  ){
+    logger.debug('checking if user can unpublish lesson');
+    return permissions.lessons.userCanUnpublish( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
+};
+
 exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.lessons.userCanDelete( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
 };
 
-exports.userCanCopy = function userCanDelete(req, res, next){
+exports.userCanCopy = function userCanCopy(req, res, next){
     return permissions.lessons.userCanCopy( req.sessionUser, req.lesson ) ? next() : res.status(400).send('');
 };
 

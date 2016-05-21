@@ -29,7 +29,7 @@ exports.limitUserEdit = function(user, lesson){
             return true;
         }
 
-        if (!_.isEmpty(limits.msnageLanguages) && !_.includes(limits.manageLanguages, lesson.language)){
+        if (!_.isEmpty(limits.manageLanguages) && !_.includes(limits.manageLanguages, lesson.language)){
             return true;
         }
 
@@ -44,6 +44,14 @@ exports.limitUserEdit = function(user, lesson){
         }
     }
     return false;
+};
+
+exports.limitUserPublish = function( user, lesson ){
+    return exports.limitUserEdit(user, lesson);
+};
+
+exports.limitUserUnpublish = function( user, lesson ){
+    return exports.limitUserEdit(user, lesson);
 };
 
 exports.userCanEdit = function userCanEdit( user, lesson){

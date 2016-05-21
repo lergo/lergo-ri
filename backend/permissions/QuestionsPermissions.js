@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 exports.limitUserEdit = function(user, question, isUsedByPublicLesson ){
 
     console.log('is user limited from editing question ? ' , isUsedByPublicLesson);
@@ -11,8 +13,15 @@ exports.limitUserEdit = function(user, question, isUsedByPublicLesson ){
     var limits = user.permissionsLimitations;
 
     if ( limits && question ){ // don't limit if lesson not specified
-
         if ( limits.editOnlyUnpublishedContent && isUsedByPublicLesson  ){
+            return true;
+        }
+
+        if (!_.isEmpty(limits.manageSubject) && !_.includes(limits.manageSubject, question.subject )){
+            return true;
+        }
+
+        if (!_.isEmpty(limits.manageLanguages) && !_.includes(limits.manageLanguages, question.language)){
             return true;
         }
     }

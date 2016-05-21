@@ -203,6 +203,18 @@ exports.copyLesson = function(req, res) {
 	});
 };
 
+function _updateLesson( lesson , res ){
+    managers.lessons.updateLesson(lesson, function(err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+}
+
 /**
  *
  *
@@ -226,15 +238,41 @@ exports.update = function(req, res) {
 
 	lesson.userId = req.lesson.userId;
 	lesson._id = services.db.id(lesson._id);
-	managers.lessons.updateLesson(lesson, function(err, obj) {
-		if (!!err) {
-			err.send(res);
-			return;
-		} else {
-			res.send(obj);
-			return;
-		}
-	});
+
+    _updateLesson( lesson, res );
+
+};
+
+
+/**
+ *
+ * This function only publishes a lesson.
+ *
+ * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
+ *
+ * @param req
+ * @param res
+ */
+exports.publish = function(req, res){
+    var lesson = req.lesson;
+    lesson.public = new Date().getTime();
+    _updateLesson( lesson, res );
+};
+
+
+/**
+ *
+ * This function only unpublishes a lesson.
+ *
+ * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
+ *
+ * @param req
+ * @param res
+ */
+exports.unpublish = function(req, res){
+    var lesson = req.lesson;
+    delete lesson.public;
+    _updateLesson( lesson, res );
 };
 
 /**

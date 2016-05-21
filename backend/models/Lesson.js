@@ -101,7 +101,7 @@ Lesson.findByQuizItems = function( question, callback){
 };
 
 Lesson.existsPublicByQuizItems = function(question, callback){
-    Lesson.find({'steps.quizItems': question._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
+    Lesson.findOne({'steps.quizItems': question._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
         if ( !!err ){
             logger.error('unable to decide if question is used by public lesson [%s]', err.message);
         }
