@@ -76,6 +76,29 @@ exports.getStudents = function(req, res ){
 };
 
 
+exports.getClasses = function(req, res ){
+
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    Report.connect(function(db, collection){
+        collection.aggregate([
+            { '$match' : { 'data.inviter' : req.sessionUser._id.toString() } },
+            {'$group' : { _id : '$data.invitee.class' } },
+            { '$match' : { '_id' : { '$ne' : null} } },
+            { '$match' : { '_id' :  like || '' }}
+        ], function(err, result){
+            if ( !! err ){
+                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+
+};
+
+
 // assume report exists in the system, verified by middleware
 exports.updateReport = function(req, res) {
 	logger.info('updating report');

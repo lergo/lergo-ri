@@ -109,6 +109,28 @@ exports.getStudents = {
 };
 
 
+exports.getClasses = {
+    'spec': {
+        'path': '/reports/classes',
+        'summary': 'get all classes names',
+        'method': 'GET',
+        'parameters': [
+
+            {
+                'paramType': 'query',
+                required: false,
+                'description': 'like - filter for student name',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn
+    ],
+    'action': controllers.reports.getClasses
+};
+
+
 exports.findStudentReportLessonsByName = {
     'spec' : {
         'path' : '/reports/studentslessons/find',
