@@ -171,6 +171,25 @@ Lesson.countPublicLessonsForUser = function(userId, callback ){
     }, callback );
 };
 
+Lesson.countPublicLessonsByUser = function (usersId, callback) {
+    Lesson.aggregate(
+        [
+            {
+                $match: {userId: {$in: dbService.id(usersId)}, public: {$exists: true}}
+            },
+            {
+                $group: {_id: '$userId', count: {$sum: 1}}
+            }
+        ],
+        function (err, result) {
+            var map = {};
+            _.each(result, function (r) {
+                map[r._id] = r.count;
+            });
+            callback(err, map);
+        });
+};
+
 AbstractModel.enhance(Lesson);
 
 module.exports = Lesson;

@@ -96,7 +96,7 @@ exports.getTagsByFilter = function (req, res) {
             ],
             function () {
                 logger.debug('finished fetching labels');
-                res.send(_.uniq(result, 'label'));
+                res.send(_.uniqBy(result, 'label'));
             }
         );
     }

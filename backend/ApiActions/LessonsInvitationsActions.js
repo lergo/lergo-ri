@@ -9,10 +9,10 @@ var middlewares = require('../middlewares');
 var controllers = require('../controllers');
 
 /**
- * 
+ *
  * An action for logged in user to invite others for a lesson. Since we have the
  * userId on the session, we will want to keep track of it.
- * 
+ *
  */
 exports.lessonInviteCreate = {
 	'spec' : {
@@ -81,7 +81,7 @@ exports.lessonsInvitationsBuild = {
 		'method'        : 'GET',
 		'parameters'    : [{
 			'paramType'  : 'path',
-			'name'       : 'id',
+			'name'       : 'invitationId',
 			required     : true,
 			'description': 'ID of lesson to invite to',
 			'type'       : 'string'
@@ -107,4 +107,48 @@ exports.lessonsInvitationsBuild = {
 	},
 	'middlewares' : [ middlewares.lessonsInvitations.exists ],
 	'action': controllers.lessonsInvitations.build
+};
+
+
+exports.getStudents = {
+    'spec': {
+        'path': '/lessonsinvitations/students',
+        'summary': 'get all students names',
+        'method': 'GET',
+        'parameters': [
+
+            {
+                'paramType': 'query',
+                required: false,
+                'description': 'like - filter for student name',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn
+    ],
+    'action': controllers.lessonsInvitations.getStudents
+};
+
+
+exports.getClasses = {
+    'spec': {
+        'path': '/lessonsinvitations/classes',
+        'summary': 'get all classes names',
+        'method': 'GET',
+        'parameters': [
+
+            {
+                'paramType': 'query',
+                required: false,
+                'description': 'like - filter for student name',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn
+    ],
+    'action': controllers.lessonsInvitations.getClasses
 };

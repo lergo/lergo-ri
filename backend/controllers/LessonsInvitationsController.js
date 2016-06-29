@@ -59,14 +59,14 @@ exports.create = function(req, res) {
  * When we generate an invite, we simply save invitation details.<br/> To start
  * the lesson from the invitation, we first construct a copy of the lesson <br/>
  * </p>
- * 
+ *
  * <p>
  * We use a copy because otherwise the report might be out of sync.<br/>
  * </p>
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  * @param req
  * @param res
  */
@@ -179,4 +179,52 @@ exports.deleteInvitation = function(req, res) {
 			return;
 		}
 	});
+};
+
+
+
+
+exports.getStudents = function(req, res ){
+
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    LessonInvitation.connect(function(db, collection){
+        collection.aggregate([
+            { '$match' : { 'inviter' : req.sessionUser._id.toString() } },
+            {'$group' : { _id : '$invitee.name' } },
+            { '$match' : { '_id' : { '$ne' : null} } },
+            { '$match' : { '_id' :  like || '' }}
+        ], function(err, result){
+            if ( !! err ){
+                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+
+};
+
+
+exports.getClasses = function(req, res ){
+
+    var like = req.param('like');
+    like = new RegExp(like, 'i');
+
+    LessonInvitation.connect(function(db, collection){
+        collection.aggregate([
+            { '$match' : { 'inviter' : req.sessionUser._id.toString() } },
+            {'$group' : { _id : '$invitee.class' } },
+            { '$match' : { '_id' : { '$ne' : null} } },
+            { '$match' : { '_id' :  like || '' }}
+        ], function(err, result){
+            if ( !! err ){
+                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
+                return;
+            }
+            res.send(result);
+        });
+    });
+
 };

@@ -15,7 +15,7 @@ var async = require('async');
 
 /**
  * Once someone opens an invitation, our first step is to build the lesson
- * 
+ *
  * @param invitation
  * @param callback
  */
@@ -144,6 +144,10 @@ exports.complexSearch = function(queryObj, callback) {
 			queryObj.filter['invitee.name'] = queryObj.filter['data.invitee.name'];
 			delete queryObj.filter['data.invitee.name'];
 		}
+        if ( !!queryObj.filter['data.invitee.class']){
+            queryObj.filter['invitee.class'] = queryObj.filter['data.invitee.class'];
+            delete queryObj.filter['data.invitee.class'];
+        }
 	}
 	models.LessonInvitation.connect(function(db, collection) {
 		services.complexSearch.complexSearch(queryObj, {

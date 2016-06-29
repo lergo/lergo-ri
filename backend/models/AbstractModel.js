@@ -72,6 +72,12 @@ function enhance( Class ) {
         });
     };
 
+    Class.aggregate = function (aggregation, callback) {
+        Class.connect(function (db, collection) {
+            collection.aggregate(aggregation, callback);
+        });
+    };
+
 
     Class.prototype.update = function( callback ){
         logger.info('updating ' + this.collectionName );

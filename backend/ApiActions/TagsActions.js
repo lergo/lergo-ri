@@ -16,7 +16,14 @@ exports.getTagByFilter = {
         // 'notes': 'Returns 200 if everything went well, otherwise returns
         // error response',
         'summary': 'Get tags by filter',
-        'method': 'GET'
+        'method': 'GET',
+        'parameters'    : [{
+            'paramType'  : 'query',
+            'name'       : 'like',
+            required     : true,
+            'description': 'filter value',
+            'type'       : 'string'
+        }]
     },
     'action': controllers.tags.getTagsByFilter
 };

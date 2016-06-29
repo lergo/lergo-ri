@@ -79,7 +79,18 @@ exports.getAdminLessons = function(req, res) {
 			new managers.error.InternalServerError(err, 'unable to get all admin lessons').send(res);
 			return;
 		}
-		res.send(result);
+
+        var usersId = _.map(result.data,'userId');
+        Lesson.countPublicLessonsByUser( usersId , function(err, publicCountByUser ){
+            if ( !!err ){
+                new managers.error.InternalServerError(err, 'unable to add count for public lessons').send(res);
+                return;
+            }
+            _.each(result.data, function(r){
+                r.publicCount = publicCountByUser[r.userId];
+            });
+            res.send(result);
+        });
 	});
 };
 
