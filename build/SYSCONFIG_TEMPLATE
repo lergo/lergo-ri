@@ -7,6 +7,12 @@ export MORE_DOMAINS=another.domain.com andmore.domain.com
 ME_CONF_URL=location_of_an_online_me_conf
 ME_JSON_URL=location_of_an_online_me_json
 S3_BACKUP_PATH=s3://lergodev-backups/mongo
+#S3_BACKUP_PATH="s3:// .............."  
+#S3_BACKUP_PATH_DAILY= "s3: //................"
+#S3_BACKUP_PATH_WEEKLY="s3: //................"
+#S3_BACKUP_PATH_MONTHLY="s3: //................"
+#S3_BACKUP_PATH_YEARLY="s3: //................"
+
 MAILTO=send.me@cron.errors
 
 # for prefetching translations
