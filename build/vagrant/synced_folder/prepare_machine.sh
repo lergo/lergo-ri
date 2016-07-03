@@ -96,37 +96,40 @@ else
 fi
 echo "finished preparing machine"
 
-RUBY_EXISTS=`which irb`   || echo "ruby does not exist"
-if [ "$RUBY_EXISTS" = "" ];then
-    echo "ruby does not exist. installing..."
-    sudo apt-get install ruby1.8 -y
-    RUBY_EXISTS=`which irb` || echo "ruby does not exist yet!"
-    if [ "$RUBY_EXISTS" = "" ];then
-        echo "ruby installation failed."
-        exit 1
-    else
-        echo "ruby installation success. lets continue"
-    fi
-
-else
-    echo "ruby already installed. skipping..."
-fi
 
 
-GEM_EXISTS=`which gem`  || echo "gem does not exist"
-if [ "$GEM_EXISTS" = "" ];then
-    echo "gem does not exist. installing..."
-    sudo apt-get install rubygems1.8 -y
-    GEM_EXISTS=`which gem` || echo "gem does not exist yet!"
-    if [ "$GEM_EXISTS" = "" ]; then
-        echo "gem installation failed!"
-        exit 1
-    else
-        echo "gem installation success. lets continue"
-    fi
-else
-    echo "gem already installed. skipping... "
-fi
+
+#RUBY_EXISTS=`which irb`   || echo "ruby does not exist"
+#if [ "$RUBY_EXISTS" = "" ];then
+#    echo "ruby does not exist. installing..."
+#    sudo apt-get install ruby1.8 -y
+#    RUBY_EXISTS=`which irb` || echo "ruby does not exist yet!"
+#    if [ "$RUBY_EXISTS" = "" ];then
+#       echo "ruby installation failed."
+#        exit 1
+#   else
+#        echo "ruby installation success. lets continue"
+#    fi
+#
+#else
+#    echo "ruby already installed. skipping..."
+#fi
+#
+#
+#GEM_EXISTS=`which gem`  || echo "gem does not exist"
+#if [ "$GEM_EXISTS" = "" ];then
+#   echo "gem does not exist. installing..."
+#   sudo apt-get install rubygems1.8 -y
+#    GEM_EXISTS=`which gem` || echo "gem does not exist yet!"
+#    if [ "$GEM_EXISTS" = "" ]; then
+#       echo "gem installation failed!"
+#        exit 1
+#    else
+#        echo "gem installation success. lets continue"
+#    fi
+#else
+#    echo "gem already installed. skipping... "
+#fi
 
 #COMPASS_EXISTS=`which compass` || echo "compass does not exist"
 #if [ "$COMPASS_EXISTS" = "" ];then
