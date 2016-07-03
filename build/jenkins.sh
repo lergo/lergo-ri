@@ -1,7 +1,5 @@
 set -e
-
-
-VAGRANT_CMD="`pwd`/my-vagrant/bin/vagrant"
+VAGRANT_CMD="`pwd`/my-vagrant/opt/vagrant/bin/vagrant"
 SHOULD_INSTALL_VAGRANT=false
 
 if [ ! -f "$VAGRANT_CMD" ]; then
@@ -10,7 +8,7 @@ fi
 
 if [ "$SHOULD_INSTALL_VAGRANT" = "true" ];then
     rm -rf my-vagrant my-vagrant.tgz || echo "nothing to delete"
-    wget -O my-vagrant.tgz "https://www.dropbox.com/s/hqs5kkw25qzzjew/my-vagrant.tgz?dl=1"
+    wget -O my-vagrant.tgz "https://www.dropbox.com/s/ug875tzvtfg9dlf/my-vagrant.tar.gz?dl=1"
     tar -xzvf my-vagrant.tgz
     $VAGRANT_CMD --version
 
@@ -21,7 +19,6 @@ fi
 
 $VAGRANT_CMD plugin uninstall vagrant-aws || echo "plugin was not installed"
 $VAGRANT_CMD plugin install vagrant-aws
-
 
 
 echo "cloning vagrant automation machines"
@@ -65,7 +62,7 @@ echo "destroying old machine in case one was left"
 $VAGRANT_CMD destroy -f || echo "machine was not up"
 
 BUILD_FAILED=0
-$VAGRANT_CMD up --provider aws || BUILD_FAILED=1
+$VAGRANT_CMD up --provider aws ||  BUILD_FAILED=1
 
 echo "destroying the vagrant machine"
 $VAGRANT_CMD destroy -f
@@ -73,7 +70,8 @@ $VAGRANT_CMD destroy -f
 echo "status code $BUILD_FAILED"
 
 if [ "$BUILD_FAILED" = "1" ];then
-    echo "build failed"
-    exit 1
+   echo "build failed"
+   return 1
 fi
+
 
