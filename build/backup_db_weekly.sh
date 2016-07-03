@@ -18,7 +18,7 @@ cd /dev/lergo_data/backups
 
 source /etc/sysconfig/lergo
 
-if [ "$S3_BACKUP_PATH" = "" ]; then
+if [ "$S3_BACKUP_PATH_WEEKLY" = "" ]; then
     echo "missing S3_BACKUP_PATH"
     exit 1
 fi
@@ -59,7 +59,7 @@ if [ ! -z "$DB_BACKUP_ENCRYPT_KEY" ]; then
     mv ${dump_filename}.enc $dump_filename
 fi
 
-aws s3 cp $dump_filename $S3_BACKUP_PATH --profile lergo
+aws s3 cp $dump_filename $S3_BACKUP_PATH_WEEKLY_WEEKLY --profile lergo
 sleep 20
 rm -Rf $dump_filename
 
