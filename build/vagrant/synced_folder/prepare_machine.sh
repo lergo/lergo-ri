@@ -97,7 +97,8 @@ fi
 echo "finished preparing machine"
 
 
-
+# install make for gyp (email-templates)
+sudo apt-get install build-essential -y
 
 #RUBY_EXISTS=`which irb`   || echo "ruby does not exist"
 #if [ "$RUBY_EXISTS" = "" ];then
