@@ -1,6 +1,8 @@
 #! /bin/bash
-
-
+# special instructions for yearly:
+# yearly backup must be linked to crontab : 2 0 12 7 * /var/www/lergo/lib/lergo-ri/package/build/backup_db_yearly.sh > /tmp/backupdb.log 2>&1
+# #and needs explicit PATH for aws.
+#
 # when pointing cron to this file, omit the extension.
 # /etc/cron.hourly/backup_db --> .../lergo-ri/build/backup_db.sh
 # otherwise cron will silently ignore
@@ -32,7 +34,7 @@ else
 
 fi
 
-if [ ! -f /usr/bin/aws ]; then
+if [ ! -f /usr/local/bin/aws ]; then
     echo "installing aws cli"
     pip install awscli
 else
@@ -59,7 +61,7 @@ if [ ! -z "$DB_BACKUP_ENCRYPT_KEY" ]; then
     mv ${dump_filename}.enc $dump_filename
 fi
 
-aws s3 cp $dump_filename $S3_BACKUP_PATH_YEARLY --profile lergo
+/usr/local/bin/aws s3 cp $dump_filename $S3_BACKUP_PATH_YEARLY --profile lergo
 sleep 20
 rm -Rf $dump_filename
 

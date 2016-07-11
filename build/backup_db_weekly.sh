@@ -59,7 +59,7 @@ if [ ! -z "$DB_BACKUP_ENCRYPT_KEY" ]; then
     mv ${dump_filename}.enc $dump_filename
 fi
 
-aws s3 cp $dump_filename $S3_BACKUP_PATH_WEEKLY_WEEKLY --profile lergo
+aws s3 cp $dump_filename $S3_BACKUP_PATH_WEEKLY --profile lergo
 sleep 20
 rm -Rf $dump_filename
 
