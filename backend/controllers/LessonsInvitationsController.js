@@ -24,7 +24,8 @@ exports.create = function(req, res) {
 		'language' : req.lesson.language,
 		'age' : req.lesson.age,
 		'name' : req.lesson.name,
-		'lastUpdate' : new Date().getTime()
+		'lastUpdate' : new Date().getTime(),
+        'emailNotification' : true // Default Email Notification Should be on 
 	}, invitation);
 
 	// add inviter in case we have details and this is not an anonymous
