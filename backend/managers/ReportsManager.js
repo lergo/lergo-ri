@@ -113,6 +113,14 @@ exports.complexSearch = function( queryObj, callback ){
             queryObj.filter['data.lesson.subject'] = queryObj.filter.subject;
             delete queryObj.filter.subject;
         }
+
+        if (!!queryObj.filter.invitationId) {
+            if(queryObj.filter.invitationId.hasOwnProperty('$in')){
+                queryObj.filter.invitationId.$in=_.map(queryObj.filter.invitationId.$in,services.db.id);
+            }else{
+                queryObj.filter.invitationId = services.db.id(queryObj.filter.invitationId);
+            }
+        }
     }
 
     Report.connect( function( db, collection ){
