@@ -115,8 +115,8 @@ exports.complexSearch = function( queryObj, callback ){
         }
 
         if (!!queryObj.filter.invitationId) {
-            if(queryObj.filter.invitationId.hasOwnProperty("$in")){
-                queryObj.filter.invitationId["$in"]=_.map(queryObj.filter.invitationId["$in"],services.db.id);
+            if(queryObj.filter.invitationId.hasOwnProperty('$in')){
+                queryObj.filter.invitationId.$in=_.map(queryObj.filter.invitationId.$in,services.db.id);
             }else{
                 queryObj.filter.invitationId = services.db.id(queryObj.filter.invitationId);
             }
