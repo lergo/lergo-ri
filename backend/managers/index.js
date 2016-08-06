@@ -6,3 +6,4 @@ exports.lessons = require('./LessonsManager');
 exports.lessonsInvitations = require('./LessonsInvitationsManager');
 exports.reports = require('./ReportsManager');
 exports.abuseReports = require('./AbuseReportsManager');
+exports.classReports = require('./ClassReportsManager');
