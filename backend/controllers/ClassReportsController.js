@@ -5,11 +5,11 @@
  * @type {exports.Report|*}
  */
 
-var Report = require('../models').ClassReports;
-var services = require('../services');
+//var Report = require('../models').ClassReports;
+//var services = require('../services');
 var managers = require('../managers');
-var logger = require('log4js').getLogger('ReportsController');
-var _ = require('lodash');
+//var logger = require('log4js').getLogger('ReportsController');
+//var _ = require('lodash');
 
 
 /**

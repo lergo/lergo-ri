@@ -18,8 +18,8 @@
 var Report = require('../models').Report;
 var ClassReport = require('../models').ClassReport;
 var services = require('../services');
-var _ = require('lodash');
-var logger = require('log4js').getLogger('ClassReportsManager');
+//var _ = require('lodash');
+// var logger = require('log4js').getLogger('ClassReportsManager');
 var CronJob = require('cron').CronJob;
 
 
@@ -35,7 +35,7 @@ var aggregateReportsOnAnswerLevel = function () {
                     invitationId: 1,
                     answers: 1,
                     correct: {
-                        $cond: {if: {$eq: ["$answers.checkAnswer.correct", true]}, then: 1, else: 0}
+                        $cond: {if: {$eq: ['$answers.checkAnswer.correct', true]}, then: 1, else: 0}
                     }
                 }
             }, {
@@ -51,9 +51,9 @@ var aggregateReportsOnAnswerLevel = function () {
                 $project: {
                     _id: 0,
                     invitationId: '$_id.invitationId',
-                    stepIndex: "$_id.step",
-                    quizItemId: "$_id.quizItemId",
-                    correctPer: {$multiply: ["$correctPer", 100]},
+                    stepIndex: '$_id.step',
+                    quizItemId: '$_id.quizItemId',
+                    correctPer: {$multiply: ['$correctPer', 100]},
                     avgDuration: 1,
                     quizItemType: 1,
                     correct: 1,
@@ -107,10 +107,8 @@ var aggregateClassLevelReports = function () {
 
 
 new CronJob('0 0 * * * *', function () {
-    services.db.connect('reports', function (db, reports) {
-        aggregateClassLevelReports();
-        aggregateReportsOnAnswerLevel();
-    });
+    aggregateClassLevelReports();
+    aggregateReportsOnAnswerLevel();
     console.log('Computing class reports');
 }, null, true, 'America/Los_Angeles');
 
