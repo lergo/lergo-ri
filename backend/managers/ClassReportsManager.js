@@ -23,66 +23,93 @@ var logger = require('log4js').getLogger('ClassReportsManager');
 var CronJob = require('cron').CronJob;
 
 
-// map function
-var map = function () {
-    emit(this.invitationId, {
-        count: 1,
-        class: this.data.invitee.class,
-        duration: this.duration,
-        correctPercentage: this.correctPercentage,
-        finished: this.finished,
-        subject:this.data.subject,
-        name:this.data.name,
-        inviter:this.data.inviter
-        // list other fields like above to select them
-    })
+var aggregateReportsOnAnswerLevel = function () {
+    Report.connect(function (db, collection) {
+        collection.aggregate([
+            {
+                $match: {'data.invitee.class': {$exists: true}, 'finished': true}
+            }, {
+                $unwind: '$answers'
+            }, {
+                $project: {
+                    invitationId: 1,
+                    answers: 1,
+                    correct: {
+                        $cond: {if: {$eq: ["$answers.checkAnswer.correct", true]}, then: 1, else: 0}
+                    }
+                }
+            }, {
+                $group: {
+                    _id: {invitationId: '$invitationId', step: '$answers.stepIndex', quizItemId: '$answers.quizItemId'},
+                    correctPer: {$avg: '$correct'},
+                    avgDuration: {$avg: '$answers.duration'},
+                    totalCorrect: {$sum: '$correct'},
+                    total: {$sum: 1},
+                    quizItemType: {$first: '$answers.quizItemType'}
+                }
+            }, {
+                $project: {
+                    _id: 0,
+                    invitationId: '$_id.invitationId',
+                    stepIndex: "$_id.step",
+                    quizItemId: "$_id.quizItemId",
+                    correctPer: {$multiply: ["$correctPer", 100]},
+                    avgDuration: 1,
+                    quizItemType: 1,
+                    correct: 1,
+                    total: 1
+                }
+            }, {
+                $out: 'answerLevelReports'
+            }
+        ], function (err) {
+            if (!!err) {
+                console.error(err);
+            }
+        });
+    });
 };
 
-// reduce function
-var reduce = function (key, values) {
-
-    var reducedVal = {
-        count: values.length,
-        finished: true,
-        class: values[0].class,
-        subject:values[0].subject,
-        name:values[0].name,
-        inviter:values[0].inviter,
-        duration: 0,
-        correctPercentage: 0
-    };
-
-    for (var i = 0; i < values.length; i++) {
-        reducedVal.finished = reducedVal.finished && values[i].finished;
-        reducedVal.duration += values[i].duration;
-        reducedVal.correctPercentage += values[i].correctPercentage;
-    }
-    return reducedVal;
+var aggregateClassLevelReports = function () {
+    Report.connect(function (db, collection) {
+        collection.aggregate(
+            [{
+                $match: {'data.invitee.class': {$exists: true}}
+            }, {
+                $group: {
+                    _id: {invitationId: '$invitationId', finished: '$finished'},
+                    duration: {$avg: '$duration'},
+                    correctPercentage: {$avg: '$correctPercentage'},
+                    count: {$sum: 1},
+                    data: {$first: '$data'},
+                    answers: {$push: '$answers'}
+                }
+            }, {
+                $project: {
+                    _id: 0,
+                    invitationId: '$_id.invitationId',
+                    finished: '$_id.finished',
+                    duration: 1,
+                    correctPercentage: 1,
+                    count: 1,
+                    data: 1
+                }
+            }, {
+                $out: 'classReports'
+            }
+            ], function (err) {
+                if (!!err) {
+                    console.error(err);
+                }
+            });
+    });
 };
 
-var finalizer = function (key, reducedVal) {
-    reducedVal.correctPercentage = reducedVal.correctPercentage/reducedVal.count;
-    reducedVal.duration = reducedVal.duration/reducedVal.count;
-    return reducedVal;
-};
 
-// condition
-var query = {
-    'data.invitee.class': {'$exists': true}
-};
-
-// map-reduce command
-var command = {
-    //map: map , // a function for mapping
-    //reduce: reduce, // a function  for reducing
-    finalize:finalizer,
-    query: query, // filter conditions
-    out:'classReports'
-};
-
-new CronJob('0 0 * * * *', function() {
-    services.db.connect('reports',function(db,reports){
-       reports.mapReduce(map,reduce,command,function(){});
+new CronJob('0 0 * * * *', function () {
+    services.db.connect('reports', function (db, reports) {
+        aggregateClassLevelReports();
+        aggregateReportsOnAnswerLevel();
     });
     console.log('Computing class reports');
 }, null, true, 'America/Los_Angeles');
@@ -99,22 +126,22 @@ new CronJob('0 0 * * * *', function() {
  * @param {ComplexSearchQuery} queryObj
  * @param {ReportsManager~ReportsManagerComplexSearchCallback} callback
  */
-exports.complexSearch = function( queryObj, callback ){
+exports.complexSearch = function (queryObj, callback) {
 
     // change some keys around for report.
-    if ( !!queryObj.filter ){
-        if ( !!queryObj.filter.language ){
+    if (!!queryObj.filter) {
+        if (!!queryObj.filter.language) {
             queryObj.filter['data.lesson.language'] = queryObj.filter.language;
             delete queryObj.filter.language;
         }
 
-        if ( !!queryObj.filter.subject){
+        if (!!queryObj.filter.subject) {
             queryObj.filter['data.lesson.subject'] = queryObj.filter.subject;
             delete queryObj.filter.subject;
         }
     }
 
-    ClassReport.connect( function( db, collection ){
-        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback);
+    ClassReport.connect(function (db, collection) {
+        services.complexSearch.complexSearch(queryObj, {collection: collection}, callback);
     });
 };

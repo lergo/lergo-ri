@@ -8,4 +8,4 @@ exports.AbuseReport = require('./AbuseReport');
 exports.FAQ = require('./FAQ');
 exports.Role = require('./Role');
 exports.User = require('./User');
-exports.ClassReports = require('./ClassReport');
+exports.ClassReport = require('./ClassReport');
