@@ -28,7 +28,7 @@ function createNewError( code, message, responseCode ){
 }
 
 var errorsDefinition = {
-    'InvalidUsername' : createNewError(1,'Wrong username or password, please try again',500),
+    'InvalidUsername' : createNewError(1,'login.invalidUsername',500),
     'InternalServerError' : createNewError(2, 'unknown error', 500),
     'NotLoggedIn' : createNewError(3, 'not logged in', 401),
     'NotAdmin' : createNewError(4, 'requires admin permissions', 401),
