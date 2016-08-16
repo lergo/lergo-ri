@@ -1,16 +1,6 @@
 'use strict';
 
-/**
- * @module ReportsController
- * @type {exports.Report|*}
- */
-
-//var Report = require('../models').ClassReports;
-//var services = require('../services');
 var managers = require('../managers');
-//var logger = require('log4js').getLogger('ReportsController');
-//var _ = require('lodash');
-
 
 /**
  *
@@ -35,10 +25,8 @@ exports.getUserClassReports = function (req, res) {
     managers.classReports.complexSearch(req.queryObj, function (err, obj) {
         if (!!err) {
             err.send(res);
-            return;
         } else {
             res.send(obj);
-            return;
         }
     });
 };
