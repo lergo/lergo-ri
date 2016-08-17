@@ -54,9 +54,8 @@ function updateClassAggReports(invitationId) {
                 var report = result[0];
                 var answers = {};
                 _.forEach(_.flatten(report.answers), function (answer) {
-                    var index = answer.stepIndex;
                     var qId = answer.quizItemId;
-                    var key = index + '-' + qId;
+                    var key = qId;
                     var ansAgg = answers[key];
                     if (!!ansAgg) {
                         ansAgg.duration = ansAgg.duration + answer.duration;

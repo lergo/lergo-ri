@@ -39,9 +39,8 @@ reports.forEach(function (report) {
 
     var answers = {};
     flatAnswers.forEach(function (answer) {
-        var index = answer.stepIndex;
         var qId = answer.quizItemId;
-        var key = index + "-" + qId;
+        var key = qId;
         var ansAgg = answers[key];
         if (!!ansAgg) {
             ansAgg.duration = ansAgg.duration + answer.duration;

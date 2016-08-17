@@ -11,3 +11,4 @@ exports.helperContents = require('./HelperContentsMiddleware');
 exports.abuseReports = require('./AbuseReportsMiddleware');
 exports.faqs = require('./FAQsMiddleware');
 exports.roles = require('./RolesMiddleware');
+exports.classReports = require('./ClassReportsMiddleware');

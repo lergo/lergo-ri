@@ -31,3 +31,7 @@ exports.getUserClassReports = function (req, res) {
     });
 };
 
+exports.readReportById = function (req, res) {
+    res.send(req.report);
+};
+
