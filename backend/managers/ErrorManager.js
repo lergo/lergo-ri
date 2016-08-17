@@ -40,7 +40,7 @@ var errorsDefinition = {
     'UserAlreadyValidated' : createNewError(10, 'user already validated', 500),
     'ErrorSendingValidationEmail' : createNewError(11, 'unable to send validation email', 500),
     'NotFound' : createNewError(12, 'resource not found', 404),
-    'UsernameAlreadyExists' : createNewError( 13, 'username or email already exists in the system', 500 ),
+    'UsernameAlreadyExists' : createNewError( 13, 'login.usernameAlreadyExists', 500 ),
     'ResourceInUse' : createNewError( 14, 'resource is in use' , 400 ),
     'Forbidden' : createNewError( 15, 'user has no permissions to do this', 403)
 };
