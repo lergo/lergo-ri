@@ -223,6 +223,18 @@ exports.getStudentsReports = {
     'action': controllers.reports.getUserStudentsReports
 };
 
+exports.getClassReports = {
+    'spec': {
+        'path': '/user/me/classReports',
+        'summary': 'Get class reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.classReports.getUserClassReports
+};
+
+
+
 exports.getUser = {
     'spec' : {
         'path' : '/users/{userId}',

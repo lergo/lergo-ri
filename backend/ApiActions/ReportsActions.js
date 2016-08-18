@@ -27,6 +27,17 @@ exports.readReportById = {
     'action': controllers.reports.readReportById
 };
 
+exports.readClassReportById = {
+    'spec': {
+        'path': '/reports/class/{reportId}/read',
+        'summary': 'Read class report by id',
+        'method': 'GET'
+    },
+    'middlewares' : [
+        middlewares.classReports.exists
+    ],
+    'action': controllers.classReports.readReportById
+};
 
 exports.updateReport = {
     'spec': {

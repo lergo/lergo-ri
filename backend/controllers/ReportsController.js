@@ -6,66 +6,166 @@
  */
 
 var Report = require('../models').Report;
+var ClassReport = require('../models').ClassReport;
 var services = require('../services');
 var managers = require('../managers');
 var logger = require('log4js').getLogger('ReportsController');
 var _ = require('lodash');
 
-exports.createNewReportForLessonInvitation = function(req, res) {
 
-	var report = {
-		invitationId : services.db.id(req.invitation._id)
-	};
+var timeOutIDMap = {};
+// update class level reports
+/**
+ *  This method will aggregate all reports corresponding to an invitationId if invitation is of class type
+ * @param invitationId : invitation id whose class need to be aggregated
+ */
+function updateClassAggReports(invitationId) {
+    var aggregate = function () {
+        Report.aggregate([{
+            $match: {'data.invitee.class': {$exists: true}, 'invitationId': invitationId, 'finished': true}
+        }, {
+            $group: {
+                _id: '$invitationId',
+                duration: {$avg: '$duration'},
+                correctPercentage: {$avg: '$correctPercentage'},
+                count: {$sum: 1},
+                data: {$first: '$data'},
+                lastUpdate: {$max: '$lastUpdate'},
+                answers: {$push: '$answers'},
+                stepDurations: {$push: '$stepDurations'}
+            }
+        }, {
+            $project: {
+                _id: 0,
+                invitationId: '$_id',
+                duration: 1,
+                correctPercentage: 1,
+                count: 1,
+                lastUpdate: 1,
+                data: 1,
+                answers: 1,
+                stepDurations: 1
+            }
+        }], function (err, result) {
+            if (!!err) {
+                console.error(err);
+            }
+            if (!!result && result.length > 0) {
+                var report = result[0];
+                var answers = {};
+                _.forEach(_.flatten(report.answers), function (answer) {
+                    var key = answer.quizItemId;
+                    var ansAgg = answers[key];
+                    if (!ansAgg) {
+                        ansAgg = {
+                            duration: 0,
+                            count: 0,
+                            correct: 0
+                        };
+                    }
+                    ansAgg.duration = ansAgg.duration + answer.duration;
+                    ansAgg.count = ansAgg.count + 1;
+                    if (!!answer.checkAnswer.correct) {
+                        ansAgg.correct = ansAgg.correct + 1;
+                    }
+                    answers[key] = ansAgg;
+                });
+                report.answers = answers;
+                var steps = {};
+                _.forEach(report.stepDurations, function (stepDurations) {
+                    for (var i = 0; i < stepDurations.length; i++) {
+                        var duration = stepDurations[i].endTime - stepDurations[i].startTime;
+                        if (isNaN(duration)) {
+                            duration = 0;
+                        }
+                        var step = steps[i];
+                        if (!!step) {
+                            step.duration = step.duration + duration;
+                            step.count = step.count + 1;
+                        } else {
+                            step = {
+                                duration: duration,
+                                count: 1
+                            };
+                            steps[i] = step;
+                        }
+                    }
+                });
+                report.stepDurations = steps;
+                ClassReport.connect(function (db, collection) {
+                    try {
+                        logger.info('inserting class report');
+                        collection.update({invitationId: report.invitationId}, report, {upsert: true}, function () {
+                            logger.info('Updating class report for invitation ID :' + invitationId);
+                        });
+                    } catch (e) {
+                        logger.error('unable to save class report', e);
+                    }
+                });
+            }
+        });
+    };
+    clearTimeout(timeOutIDMap[invitationId]);
+    timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
+}
 
-	var overrides =req.body;
 
-	// this is a hack until we sort out the "invite -- build" algorithm.
-	// we should stop building invitation and instead build report..
-	// when we do this, this algorithm should be able to simply put the invitee details and that's it..
-	// for now, it has to wait for 'update' on report for it to actually apply
-	if ( req.body.invitee ){
-		report.inviteeOverride = overrides.invitee;
-	}
+exports.createNewReportForLessonInvitation = function (req, res) {
 
-	if (!req.invitation) {
-		logger.error('invitation is missing on request');
-	} else {
-		logger.debug('found invitation on request');
-	}
-	logger.info('creating new report for lesson invitation');
-	Report.connect(function(db, collection) {
-		try {
-			logger.info('connected to collection');
+    var report = {
+        invitationId: services.db.id(req.invitation._id)
+    };
 
-			logger.info('inserting report');
-			collection.insert(report, function() {
-				logger.info('in insert callback', report);
-				res.send(report);
-			});
-		} catch (e) {
-			logger.error('unable to save report', e);
-		}
-	});
+    var overrides = req.body;
+
+    // this is a hack until we sort out the "invite -- build" algorithm.
+    // we should stop building invitation and instead build report..
+    // when we do this, this algorithm should be able to simply put the invitee details and that's it..
+    // for now, it has to wait for 'update' on report for it to actually apply
+    if (req.body.invitee) {
+        report.inviteeOverride = overrides.invitee;
+    }
+
+    if (!req.invitation) {
+        logger.error('invitation is missing on request');
+    } else {
+        logger.debug('found invitation on request');
+    }
+    logger.info('creating new report for lesson invitation');
+    Report.connect(function (db, collection) {
+        try {
+            logger.info('connected to collection');
+
+            logger.info('inserting report');
+            collection.insert(report, function () {
+                logger.info('in insert callback', report);
+                updateClassAggReports(report.invitationId);
+                res.send(report);
+            });
+        } catch (e) {
+            logger.error('unable to save report', e);
+        }
+    });
 };
 
-exports.readReportById = function(req, res) {
-	res.send(req.report);
+exports.readReportById = function (req, res) {
+    res.send(req.report);
 };
 
 
-exports.getStudents = function(req, res ){
+exports.getStudents = function (req, res) {
 
     var like = req.param('like');
     like = new RegExp(like, 'i');
 
-    Report.connect(function(db, collection){
+    Report.connect(function (db, collection) {
         collection.aggregate([
-            { '$match' : { 'data.inviter' : req.sessionUser._id.toString() } },
-            {'$group' : { _id : '$data.invitee.name' } },
-            { '$match' : { '_id' : { '$ne' : null} } },
-            { '$match' : { '_id' :  like || '' }}
-        ], function(err, result){
-            if ( !! err ){
+            {'$match': {'data.inviter': req.sessionUser._id.toString()}},
+            {'$group': {_id: '$data.invitee.name'}},
+            {'$match': {'_id': {'$ne': null}}},
+            {'$match': {'_id': like || ''}}
+        ], function (err, result) {
+            if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return;
             }
@@ -76,19 +176,19 @@ exports.getStudents = function(req, res ){
 };
 
 
-exports.getClasses = function(req, res ){
+exports.getClasses = function (req, res) {
 
     var like = req.param('like');
     like = new RegExp(like, 'i');
 
-    Report.connect(function(db, collection){
+    Report.connect(function (db, collection) {
         collection.aggregate([
-            { '$match' : { 'data.inviter' : req.sessionUser._id.toString() } },
-            {'$group' : { _id : '$data.invitee.class' } },
-            { '$match' : { '_id' : { '$ne' : null} } },
-            { '$match' : { '_id' :  like || '' }}
-        ], function(err, result){
-            if ( !! err ){
+            {'$match': {'data.inviter': req.sessionUser._id.toString()}},
+            {'$group': {_id: '$data.invitee.class'}},
+            {'$match': {'_id': {'$ne': null}}},
+            {'$match': {'_id': like || ''}}
+        ], function (err, result) {
+            if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return;
             }
@@ -100,53 +200,54 @@ exports.getClasses = function(req, res ){
 
 
 // assume report exists in the system, verified by middleware
-exports.updateReport = function(req, res) {
-	logger.info('updating report');
-	var report = req.body;
-	report._id = services.db.id(report._id);
-	report.invitationId = services.db.id(report.invitationId); // convert to db
-	if (!!req.sessionUser) {
-		// if the person who is doing the lesson is logged in, we want to know
-		// that.
-		report.userId = req.sessionUser._id;
-	}
+exports.updateReport = function (req, res) {
+    logger.info('updating report');
+    var report = req.body;
+    report._id = services.db.id(report._id);
+    report.invitationId = services.db.id(report.invitationId); // convert to db
+    if (!!req.sessionUser) {
+        // if the person who is doing the lesson is logged in, we want to know
+        // that.
+        report.userId = req.sessionUser._id;
+    }
 
-	// this is a temporary fix. to be able for students to register their names.
-	// since we are building the invite instead of the report, on each update, we need to make sure invitee is correct.
-	// the parameters are kept on the side.
-	if ( report.inviteeOverride ){
-		try{
-			logger.debug('merging student name with class name');
-			_.merge(report.data.invitee,report.inviteeOverride);
-		}catch(e){
-			logger.warn(e);
-			// I don't care about errors here since it is a temporary work-around.
-		}
-	}
-	// id.
-	logger.info('creating report to update');
-	new Report(report).update(function(err) {
-		logger.info('report updated');
-		if (!!err) {
-			new managers.error.InternalServerError(err, 'unable to update report').send(res);
-			return;
-		} else {
-			res.send(report);
-			return;
-		}
-	});
+    // this is a temporary fix. to be able for students to register their names.
+    // since we are building the invite instead of the report, on each update, we need to make sure invitee is correct.
+    // the parameters are kept on the side.
+    if (report.inviteeOverride) {
+        try {
+            logger.debug('merging student name with class name');
+            _.merge(report.data.invitee, report.inviteeOverride);
+        } catch (e) {
+            logger.warn(e);
+            // I don't care about errors here since it is a temporary work-around.
+        }
+    }
+    // id.
+    logger.info('creating report to update');
+    new Report(report).update(function (err) {
+        logger.info('report updated');
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to update report').send(res);
+            return;
+        } else {
+            res.send(report);
+            updateClassAggReports(report.invitationId);
+            return;
+        }
+    });
 };
 
-exports.sendReportReady = function(req, res) {
-	managers.reports.sendReportLink(req.emailResources, new Report(req.report), function(err) {
-		if (!!err) {
-			err.send(res);
-			return;
-		}
+exports.sendReportReady = function (req, res) {
+    managers.reports.sendReportLink(req.emailResources, new Report(req.report), function (err) {
+        if (!!err) {
+            err.send(res);
+            return;
+        }
 
-		res.status(200).send({});  // lergo-577 - this response would cause "illegal token O" in frontend.
+        res.status(200).send({});  // lergo-577 - this response would cause "illegal token O" in frontend.
 
-	});
+    });
 };
 
 /**
@@ -162,24 +263,24 @@ exports.sendReportReady = function(req, res) {
  * @param req - the request
  * @param res - the response
  */
-exports.getUserReports = function(req, res) {
+exports.getUserReports = function (req, res) {
 
-    if ( !req.queryObj || !req.queryObj.filter ){
+    if (!req.queryObj || !req.queryObj.filter) {
         res.status(500).send('no filter or query object available');
         return;
     }
 
     req.queryObj.filter.userId = req.sessionUser._id;
 
-	managers.reports.complexSearch(req.queryObj, function(err, obj) {
-		if (!!err) {
-			err.send(res);
-			return;
-		} else {
-			res.send(obj);
-			return;
-		}
-	});
+    managers.reports.complexSearch(req.queryObj, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
 };
 
 /**
@@ -194,15 +295,15 @@ exports.getUserReports = function(req, res) {
  * @param req - the request
  * @param res - the response
  */
-exports.getUserStudentsReports = function(req, res ){
-    if ( !req.queryObj || !req.queryObj.filter ){
+exports.getUserStudentsReports = function (req, res) {
+    if (!req.queryObj || !req.queryObj.filter) {
         res.status(500).send('no filter or query object available');
         return;
     }
 
     req.queryObj.filter['data.inviter'] = req.sessionUser._id.toString();
 
-    managers.reports.complexSearch(req.queryObj, function(err, obj) {
+    managers.reports.complexSearch(req.queryObj, function (err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -213,36 +314,37 @@ exports.getUserStudentsReports = function(req, res ){
     });
 };
 
-exports.deleteReport = function(req, res) {
-	// when an looged in user tries to delete report of the lesson done by him
-	// in order of someone else invite dont delete the report just remove the
-	// userId from the report so that it will be available to inviter but not to
-	// logged in invitee.
-	if (!!req.deleteUserInfo) {
-		var report = req.report;
-		delete report.userId;
-		new Report(report).update(function(err) {
-			logger.info('report updated');
-			if (!!err) {
-				new managers.error.InternalServerError(err, 'unable to update report').send(res);
-				return;
-			} else {
-				res.send(report);
-				return;
-			}
-		});
-	} else {
-		managers.reports.deleteReport(req.report._id, function(err, deletedReport) {
-			if (!!err) {
-				logger.error('error deleting report', err);
-				err.send(res);
-				return;
-			} else {
-				res.send(deletedReport);
-				return;
-			}
-		});
-	}
+exports.deleteReport = function (req, res) {
+    // when an looged in user tries to delete report of the lesson done by him
+    // in order of someone else invite dont delete the report just remove the
+    // userId from the report so that it will be available to inviter but not to
+    // logged in invitee.
+    if (!!req.deleteUserInfo) {
+        var report = req.report;
+        delete report.userId;
+        new Report(report).update(function (err) {
+            logger.info('report updated');
+            if (!!err) {
+                new managers.error.InternalServerError(err, 'unable to update report').send(res);
+                return;
+            } else {
+                res.send(report);
+                return;
+            }
+        });
+    } else {
+        managers.reports.deleteReport(req.report._id, function (err, deletedReport) {
+            if (!!err) {
+                logger.error('error deleting report', err);
+                err.send(res);
+                return;
+            } else {
+                res.send(deletedReport);
+                updateClassAggReports(deletedReport.invitationId);
+                return;
+            }
+        });
+    }
 
 };
 
@@ -268,15 +370,25 @@ exports.deleteReport = function(req, res) {
  * @param {object} res
  */
 
-exports.findReportLessonsByName = function( req, res ){
+exports.findReportLessonsByName = function (req, res) {
 
     var like = req.param('like');
 
     like = new RegExp(like, 'i');
 
-    Report.connect( function(db, collection ) {
-        collection.aggregate( [ { $match : { 'data.name' : like, 'userId' : req.sessionUser._id  } }, { $group : { _id : '$data.lessonId', 'name' :  { '$addToSet' : '$data.name' }  } }, { $unwind: '$name' }, { $limit : 5 } ] , function(err, result){
-            if ( !!err ){
+    Report.connect(function (db, collection) {
+        collection.aggregate([{
+            $match: {
+                'data.name': like,
+                'userId': req.sessionUser._id
+            }
+        }, {
+            $group: {
+                _id: '$data.lessonId',
+                'name': {'$addToSet': '$data.name'}
+            }
+        }, {$unwind: '$name'}, {$limit: 5}], function (err, result) {
+            if (!!err) {
                 new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
                 return;
             }
@@ -286,17 +398,22 @@ exports.findReportLessonsByName = function( req, res ){
 };
 
 // todo: there's a lot of copy/paste from findReportLessonsByName.. I am sure we can refactor to reuse.
-exports.findStudentReportLessonsByName = function(req, res){
+exports.findStudentReportLessonsByName = function (req, res) {
     var like = req.param('like');
-    like = new RegExp(like,'i');
+    like = new RegExp(like, 'i');
 
-    var filter = { 'data.name' : like , 'data.inviter' : req.sessionUser._id.toString() };
+    var filter = {'data.name': like, 'data.inviter': req.sessionUser._id.toString()};
 
-    Report.connect(function(db,collection){
-        var agg = [ { $match : filter }, { $group : { _id : '$data.lessonId', 'name' :  { '$addToSet' : '$data.name' }  } }, { $unwind: '$name' }, { $limit : 5 } ];
-        console.log('agg is',agg);
-        collection.aggregate( agg , function(err, result){
-            if ( !!err ){
+    Report.connect(function (db, collection) {
+        var agg = [{$match: filter}, {
+            $group: {
+                _id: '$data.lessonId',
+                'name': {'$addToSet': '$data.name'}
+            }
+        }, {$unwind: '$name'}, {$limit: 5}];
+        console.log('agg is', agg);
+        collection.aggregate(agg, function (err, result) {
+            if (!!err) {
                 new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
                 return;
             }
@@ -304,3 +421,4 @@ exports.findStudentReportLessonsByName = function(req, res){
         });
     });
 };
+
