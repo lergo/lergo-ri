@@ -54,25 +54,21 @@ function updateClassAggReports(invitationId) {
                 var report = result[0];
                 var answers = {};
                 _.forEach(_.flatten(report.answers), function (answer) {
-                    var qId = answer.quizItemId;
-                    var key = qId;
+                    var key = answer.quizItemId;
                     var ansAgg = answers[key];
-                    if (!!ansAgg) {
-                        ansAgg.duration = ansAgg.duration + answer.duration;
-                        ansAgg.count = ansAgg.count + 1;
-                        if (!!answer.checkAnswer.correct) {
-                            ansAgg.correct = ansAgg.correct + 1;
-                        }
-                    } else {
+                    if (!ansAgg) {
                         ansAgg = {
-                            duration: answer.duration,
-                            count: 1
+                            duration: 0,
+                            count: 0,
+                            correct: 0
                         };
-                        if (!!answer.checkAnswer.correct) {
-                            ansAgg.correct = 1;
-                        }
-                        answers[key] = ansAgg;
                     }
+                    ansAgg.duration = ansAgg.duration + answer.duration;
+                    ansAgg.count = ansAgg.count + 1;
+                    if (!!answer.checkAnswer.correct) {
+                        ansAgg.correct = ansAgg.correct + 1;
+                    }
+                    answers[key] = ansAgg;
                 });
                 report.answers = answers;
                 var steps = {};
