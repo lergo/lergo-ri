@@ -174,6 +174,11 @@ exports.findReportLessonsByName = {
                 'required' : false,
                 'description' : 'like - filter for lesson name',
                 'type' : 'string'
+            },{
+                'paramType' : 'query',
+                'required' : false,
+                'description' : 'report type',
+                'type' : 'string'
             }
         ]
     },
