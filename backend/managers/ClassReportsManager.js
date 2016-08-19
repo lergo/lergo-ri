@@ -16,6 +16,9 @@ exports.complexSearch = function (queryObj, callback) {
             queryObj.filter['data.lesson.subject'] = queryObj.filter.subject;
             delete queryObj.filter.subject;
         }
+        if (!!queryObj.filter.invitationId) {
+            queryObj.filter.invitationId = services.db.id(queryObj.filter.invitationId);
+        }
     }
 
     ClassReport.connect(function (db, collection) {
