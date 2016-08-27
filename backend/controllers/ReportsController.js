@@ -14,6 +14,77 @@ var _ = require('lodash');
 
 
 var timeOutIDMap = {};
+
+
+function getStepDurationAgg(durations) {
+    var steps = {};
+    _.forEach(durations, function (stepDurations) {
+        for (var i = 0; i < stepDurations.length; i++) {
+            var duration = stepDurations[i].endTime - stepDurations[i].startTime;
+            if (isNaN(duration)) {
+                duration = 0;
+            }
+            var step = steps[i];
+            if (!!step) {
+                step.duration = step.duration + duration;
+                step.count = step.count + 1;
+            } else {
+                step = {
+                    duration: duration,
+                    count: 1
+                };
+                steps[i] = step;
+            }
+        }
+    });
+    return steps;
+}
+function getAnswersAgg(answers) {
+    var answersAgg = {};
+    _.forEach(_.flatten(answers), function (answer) {
+        var key = answer.quizItemId;
+        var ansAgg = answersAgg[key];
+        if (!ansAgg) {
+            ansAgg = {
+                duration: 0,
+                count: 0,
+                correct: 0,
+                hintUsed: 0
+            };
+        }
+        ansAgg.duration = ansAgg.duration + answer.duration;
+        ansAgg.count = ansAgg.count + 1;
+        if (!!answer.checkAnswer.correct) {
+            ansAgg.correct = ansAgg.correct + 1;
+        }
+        if (!!answer.isHintUsed) {
+            ansAgg.hintUsed = ansAgg.hintUsed + 1;
+        }
+        ansAgg.stepIndex = answer.stepIndex;
+        ansAgg.quizItemType = answer.quizItemType;
+        answersAgg[key] = ansAgg;
+    });
+    return answersAgg;
+}
+
+function getStepAnswersAgg(answers) {
+    var stepAnsAgg = _.reduce(answers, function (res, val) {
+        if (val.quizItemType !== 'openQuestion') {
+            var key = val.stepIndex;
+            var result = res[key];
+            if (!result) {
+                result = {correctAnswers: 0, totalAnswers: 0};
+            }
+            result.correctAnswers = result.correctAnswers + val.correct;
+            result.totalAnswers = result.totalAnswers + val.count;
+            res[key] = result;
+        }
+        return res;
+    }, {});
+
+    return stepAnsAgg;
+}
+
 // update class level reports
 /**
  *  This method will aggregate all reports corresponding to an invitationId if invitation is of class type
@@ -52,46 +123,10 @@ function updateClassAggReports(invitationId) {
             }
             if (!!result && result.length > 0) {
                 var report = result[0];
-                var answers = {};
-                _.forEach(_.flatten(report.answers), function (answer) {
-                    var key = answer.quizItemId;
-                    var ansAgg = answers[key];
-                    if (!ansAgg) {
-                        ansAgg = {
-                            duration: 0,
-                            count: 0,
-                            correct: 0
-                        };
-                    }
-                    ansAgg.duration = ansAgg.duration + answer.duration;
-                    ansAgg.count = ansAgg.count + 1;
-                    if (!!answer.checkAnswer.correct) {
-                        ansAgg.correct = ansAgg.correct + 1;
-                    }
-                    answers[key] = ansAgg;
-                });
-                report.answers = answers;
-                var steps = {};
-                _.forEach(report.stepDurations, function (stepDurations) {
-                    for (var i = 0; i < stepDurations.length; i++) {
-                        var duration = stepDurations[i].endTime - stepDurations[i].startTime;
-                        if (isNaN(duration)) {
-                            duration = 0;
-                        }
-                        var step = steps[i];
-                        if (!!step) {
-                            step.duration = step.duration + duration;
-                            step.count = step.count + 1;
-                        } else {
-                            step = {
-                                duration: duration,
-                                count: 1
-                            };
-                            steps[i] = step;
-                        }
-                    }
-                });
-                report.stepDurations = steps;
+                report.answers = getAnswersAgg(report.answers);
+                var stepAnswersAgg = getStepAnswersAgg(report.answers);
+                var stepDurationAgg = getStepDurationAgg(report.stepDurations);
+                report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
                 ClassReport.connect(function (db, collection) {
                     try {
                         logger.info('inserting class report');
