@@ -45,7 +45,7 @@ exports.sendReportLink = function (emailResources, report, callback) {
         _.merge(emailVars, emailResources);
         var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
 
-        _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.fullName, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name });
+        _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name });
 
         services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
             services.email.sendMail({
