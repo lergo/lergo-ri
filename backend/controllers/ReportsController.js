@@ -174,7 +174,6 @@ exports.createNewReportForLessonInvitation = function (req, res) {
             logger.info('inserting report');
             collection.insert(report, function () {
                 logger.info('in insert callback', report);
-                updateClassAggReports(report.invitationId);
                 res.send(report);
             });
         } catch (e) {
@@ -267,7 +266,10 @@ exports.updateReport = function (req, res) {
             return;
         } else {
             res.send(report);
-            updateClassAggReports(report.invitationId);
+            // aggregate report only when finished
+            if(!!report.finished){
+                updateClassAggReports(report.invitationId);
+            }
             return;
         }
     });
