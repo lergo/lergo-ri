@@ -144,11 +144,17 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
-
 exports.createNewReportForLessonInvitation = function (req, res) {
 
     var report = {
-        invitationId: services.db.id(req.invitation._id)
+        invitationId: services.db.id(req.invitation._id),
+        data: {
+            lesson: {
+                language: req.invitation.language,
+                subject: req.invitation.subject,
+                name: req.invitation.name
+            }
+        }
     };
 
     var overrides = req.body;
@@ -239,6 +245,10 @@ exports.updateReport = function (req, res) {
     var report = req.body;
     report._id = services.db.id(report._id);
     report.invitationId = services.db.id(report.invitationId); // convert to db
+
+    report.data = req.report.data; // data is overridden sometimes for backward compatibility since october 2016 - we decided to remove as much data from report as possible
+
+
     if (!!req.sessionUser) {
         // if the person who is doing the lesson is logged in, we want to know
         // that.
@@ -259,6 +269,7 @@ exports.updateReport = function (req, res) {
     }
     // id.
     logger.info('creating report to update');
+
     new Report(report).update(function (err) {
         logger.info('report updated');
         if (!!err) {
