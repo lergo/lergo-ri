@@ -22,7 +22,8 @@ exports.readReportById = {
         'method': 'GET'
     },
     'middlewares' : [
-        middlewares.reports.exists
+        middlewares.reports.exists,
+        middlewares.reports.mergeWithInvitationData
     ],
     'action': controllers.reports.readReportById
 };

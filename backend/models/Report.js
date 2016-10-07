@@ -1,8 +1,24 @@
 'use strict';
-//var logger = require('log4js').getLogger('Report');
 var AbstractModel = require('./AbstractModel');
-var logger = require('log4js').getLogger('Report');
 
+
+
+/**
+ * @typedef {object} Report
+ * @property {object} data
+ * @property {LessonInvitee} data.invitee
+ * @property {LessonInviter} data.inviter
+ * @property {object} data.lesson
+ * @property {string} data.lesson.language
+ * @property {string} data.lesson.subject
+ * @property {string} data.lesson.name
+ */
+
+/**
+ *
+ * @param data
+ * @constructor
+ */
 
 function Report(data) {
     this.data = data;
@@ -28,14 +44,19 @@ function Report(data) {
     // returns the user we send report to
     self.getSendTo = function (callback) {
         var User = require('./User');
-        logger.debug('looking for inviter', data.data.inviter) ;
-        return User.findById( data.data.inviter, {}, function (err, result) {
-            logger.debug('found inviter', result);
-            if (!!err) {
+        var LessonInvitation = require('./LessonInvitation');
+        LessonInvitation.findById( data.invitationId , function(err, result){
+            if (!!err){
                 callback(err);
                 return;
             }
-            callback(null, result);
+            return User.findById( result.inviter, {}, function (err, result) {
+                if (!!err) {
+                    callback(err);
+                    return;
+                }
+                callback(null, result);
+            });
         });
     };
 }

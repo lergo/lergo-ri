@@ -2,6 +2,7 @@
 var Report = require('../models').Report;
 var logger = require('log4js').getLogger('ReportsMiddleware');
 var permissions = require('../permissions');
+var _ = require('lodash');
 
 exports.exists = function exists(req, res, next) {
 	logger.debug('checking if report exists : ', req.params.reportId);
@@ -17,14 +18,27 @@ exports.exists = function exists(req, res, next) {
 			}
 
 			logger.debug('putting report on request', result);
-			req.report = result;
-
-			next();
+            req.report = result;
+            next();
 
 		});
 	} catch (e) {
+        console.log('could not find report',e);
 		res.send(404);
 	}
+};
+
+// use this middleware as backward compatibility with change in october 2016.
+// when we decided to remove as much data as possible from Report.
+exports.mergeWithInvitationData = function mergeWithInvitationData(req, res, next){
+    var LessonsInvitationsMiddleware = require('./LessonsInvitationsMiddleware');
+    req.params.invitationId = req.report.invitationId;
+    LessonsInvitationsMiddleware.exists(req, res, function(){
+        // guy mograbi: since october 2016 we decided to remove as much data from reports as possible
+        // so we restore this information in the middleware on each request
+        _.merge(req.report.data, req.invitation);
+        next();
+    });
 };
 
 // todo split to several middlewares : 'userCanDelete','optionUserCanDelete', 'userCanUserInfoOnReport'

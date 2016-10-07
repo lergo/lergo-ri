@@ -1,4 +1,20 @@
 'use strict';
+
+/**
+ * @typedef {object} LessonInvitee
+ * @property {string} name
+ */
+
+/**
+ * @typedef {ObjectId} LessonInviter - the User._id who invited the lesson
+ */
+
+/**
+ * @typedef {object} LessonInvitation
+ * @property {LessonInvitee} invitee
+ * @property {LessonInviter} inviter
+ */
+
 //var logger = require('log4js').getLogger('LessonInvitation');
 var AbstractModel = require('./AbstractModel');
 var services = require('../services');
