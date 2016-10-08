@@ -124,6 +124,24 @@ exports.complexSearch = function( queryObj, callback ){
     }
 
     Report.connect( function( db, collection ){
-        services.complexSearch.complexSearch( queryObj, { collection : collection }, callback);
+        services.complexSearch.complexSearch( queryObj, { collection : collection }, function(err, reports){
+            if (!!err){
+                callback(err);
+            }else{ // merge results with invitation ID
+                var lessonInvitationIds = _.map(reports.data, 'invitationId');
+                var LessonInvitation = require('../models').LessonInvitation;
+                LessonInvitation.find({_id:{$in:lessonInvitationIds}},{},function(err,arrResult){
+                    if(!!err){
+                        callback(err);
+                    }else{
+                        var invitationById = _.keyBy(arrResult,'_id');
+                        _.map(reports.data, function(r){ // first data is from complex search
+                            _.merge(r.data, invitationById[r.invitationId]); // second data is on report.  
+                        });
+                        callback(null, reports);
+                    }
+                });
+            }
+        });
     });
 };
