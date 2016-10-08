@@ -149,6 +149,7 @@ exports.createNewReportForLessonInvitation = function (req, res) {
     var report = {
         invitationId: services.db.id(req.invitation._id),
         data: {
+            name: req.invitation.name, // required for filter by lesson name
             lesson: {
                 language: req.invitation.language,
                 subject: req.invitation.subject,
@@ -156,6 +157,21 @@ exports.createNewReportForLessonInvitation = function (req, res) {
             }
         }
     };
+
+    if ( req.invitation.inviter ){ // required for 'students report'
+        report.data.inviter = req.invitation.inviter.toString();
+    }
+
+    if ( req.invitation.invitee ){ // required for 'student filter'
+        report.data.invitee = req.invitation.invitee;
+    }
+
+    if ( req.invitation.lessonId){ // required for filter by lesson name
+        report.data.lesson._id = req.invitation.lessonId.toString();
+        report.data.lessonId = req.invitation.lessonId.toString();
+    }
+
+    report.data.emailNotification = req.invitation.emailNotification; // required for sending email
 
     var overrides = req.body;
 
@@ -443,6 +459,7 @@ exports.findReportLessonsByName = function (req, res) {
     if (reportType === 'class') {
         Model = ClassReport;
     }
+    console.log('aggregation is', JSON.stringify(agg));
     Model.aggregate(agg, function (err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
