@@ -39,7 +39,7 @@ exports.mergeWithInvitationData = function mergeWithInvitationData(req, res, nex
             // so we restore this information in the middleware on each request
             _.merge(req.report.data, req.invitation);
             next();
-        })
+        });
     } else {
         next();
     }
