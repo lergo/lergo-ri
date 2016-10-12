@@ -35,7 +35,8 @@ exports.readClassReportById = {
         'method': 'GET'
     },
     'middlewares' : [
-        middlewares.classReports.exists
+        middlewares.classReports.exists,
+        middlewares.reports.mergeWithInvitationData
     ],
     'action': controllers.classReports.readReportById
 };

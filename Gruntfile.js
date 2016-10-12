@@ -200,15 +200,38 @@ module.exports = function (grunt) {
             }
         },
         'bundledDependencies' : {},
+        /// guy - NOTE : had to split to different language due to phraseapp rate limit of 2 requests in parallel..
+        // I think we should either contribute a delay feature to curl grunt task (like rate limit on our end), or implement it ourselves..
         'curl-dir': {
-            'compass': {
-                src: ['https://phraseapp.com/api/v1/translations/download?auth_token=<%= phraseapp.token %>&locale_name={en,ar,he,ru}&format=nested_json'],
+            'en': {
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/en/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
                 dest: 'translations',
-                router:function( url ){
-                    console.log(arguments);
-                    return url.match('locale_name=([a-z]{2})&')[1] + '.json';
+                router:function( ){
+                    return 'en.json';
+                }
+            },
+            'he':{
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/he/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
+                dest: 'translations',
+                router:function( ){
+                    return 'he.json';
+                }
+            },
+            'ar':{
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ar/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
+                dest: 'translations',
+                router:function( ){
+                    return 'ar.json';
+                }
+            },
+            'ru' :{
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ru/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
+                dest: 'translations',
+                router:function( ){
+                    return 'ru.json';
                 }
             }
+
         }
     });
 
@@ -251,7 +274,10 @@ module.exports = function (grunt) {
         logger.info('looking for phraseapp.json at ' , phraseapp );
         grunt.config.set('phraseapp', require( phraseapp ));
         grunt.task.run([
-            'curl-dir:compass'
+            'curl-dir:he',
+            'curl-dir:ar',
+            'curl-dir:en',
+            'curl-dir:ru'
 
         ]);
     });
