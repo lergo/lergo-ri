@@ -32,13 +32,17 @@ exports.exists = function exists(req, res, next) {
 // when we decided to remove as much data as possible from Report.
 exports.mergeWithInvitationData = function mergeWithInvitationData(req, res, next){
     var LessonsInvitationsMiddleware = require('./LessonsInvitationsMiddleware');
-    req.params.invitationId = req.report.invitationId;
-    LessonsInvitationsMiddleware.exists(req, res, function(){
-        // guy mograbi: since october 2016 we decided to remove as much data from reports as possible
-        // so we restore this information in the middleware on each request
-        _.merge(req.report.data, req.invitation);
+    if (!new Report(req.report).isBasedOnTemporaryLesson()) { // create data duplication only if not based on temporary lesson. (e.g. practice mistakes)
+        req.params.invitationId = req.report.invitationId;
+        LessonsInvitationsMiddleware.exists(req, res, function () {
+            // guy mograbi: since october 2016 we decided to remove as much data from reports as possible
+            // so we restore this information in the middleware on each request
+            _.merge(req.report.data, req.invitation);
+            next();
+        })
+    } else {
         next();
-    });
+    }
 };
 
 // todo split to several middlewares : 'userCanDelete','optionUserCanDelete', 'userCanUserInfoOnReport'

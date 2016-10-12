@@ -259,11 +259,13 @@ exports.getClasses = function (req, res) {
 exports.updateReport = function (req, res) {
     logger.info('updating report');
     var report = req.body;
+    var reportModel = new Report(report);
     report._id = services.db.id(report._id);
     report.invitationId = services.db.id(report.invitationId); // convert to db
 
-    report.data = req.report.data; // data is overridden sometimes for backward compatibility since october 2016 - we decided to remove as much data from report as possible
-
+    if (!reportModel.isBasedOnTemporaryLesson()) { // we must have data duplication on in case lesson is temporary.. (practice mistakes for example), because once done, the lesson is deleted.
+        report.data = req.report.data; // data is overridden sometimes for backward compatibility since october 2016 - we decided to remove as much data from report as possible
+    }
 
     if (!!req.sessionUser) {
         // if the person who is doing the lesson is logged in, we want to know
@@ -286,7 +288,7 @@ exports.updateReport = function (req, res) {
     // id.
     logger.info('creating report to update');
 
-    new Report(report).update(function (err) {
+    reportModel.update(function (err) {
         logger.info('report updated');
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to update report').send(res);
