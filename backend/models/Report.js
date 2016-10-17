@@ -12,6 +12,7 @@ var AbstractModel = require('./AbstractModel');
  * @property {string} data.lesson.language
  * @property {string} data.lesson.subject
  * @property {string} data.lesson.name
+ * @property {boolean} finished - marks if report is finished
  */
 
 /**
