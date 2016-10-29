@@ -13,6 +13,40 @@ var logger = require('log4js').getLogger('LessonsInvitationsManager');
 var models = require('../models');
 var async = require('async');
 
+
+/**
+ *
+ * @param {object} invitation
+ * @param {ObjectId|string} invitation.lessonId
+ * @param callback
+ */
+exports.dryBuildLesson = function(invitation, callback){
+
+    async.waterfall([ function getLessonById(_callback) {
+        lessonsManager.getLessonIntro(invitation.lessonId, _callback);
+    }, function getAllQuizItems(result, _callback) {
+        invitation.lesson = result;
+        var lessonModel = new models.Lesson(result);
+        var questionsId = lessonModel.getAllQuestionIds();
+        questionsId = services.db.id(questionsId);
+        questionsManager.search({
+            '_id' : {
+                '$in' : questionsId
+            }
+        }, {}, _callback);
+    }, function updateLessonInvitation(result, _callback) {
+            invitation.quizItems = result;
+            _callback();
+
+
+        }
+    ], function invokeCallback(err) {
+            logger.info('done building lesson. sending back to callback');
+            callback(err, invitation);
+        }
+    );
+};
+
 /**
  * Once someone opens an invitation, our first step is to build the lesson
  *
@@ -20,43 +54,38 @@ var async = require('async');
  * @param callback
  */
 exports.buildLesson = function(invitation, callback) {
-	var lessonId = invitation.lessonId;
-	var updatedInvitation = null;
-	async.waterfall([ function getLessonById(_callback) {
-		lessonsManager.getLessonIntro(lessonId, _callback);
-	}, function getAllQuizItems(result, _callback) {
-		invitation.lesson = result;
-		var lessonModel = new models.Lesson(result);
-		var questionsId = lessonModel.getAllQuestionIds();
-		questionsId = services.db.id(questionsId);
-		questionsManager.search({
-			'_id' : {
-				'$in' : questionsId
-			}
-		}, {}, _callback);
-	}, function updateLessonInvitation(result, _callback) {
-		invitation.quizItems = result;
-		updatedInvitation = invitation;
-		exports.updateLessonInvitation(invitation, _callback);
+	exports.dryBuildLesson(invitation, function(err, invitation){
+        var lessonId = null;
+        var updatedInvitation;
+        async.waterfall([
+            function updateInvitation(_callback){
+                lessonId = invitation.lessonId;
+                exports.updateLessonInvitation(invitation, function(err, result){
+                    if ( result ){
+                        logger.debug('result from updating lesson invitation', result);
+                    }
+                    updatedInvitation = invitation;
+                    _callback(err); //
+                });
+            }, function addCounterOnLesson(_callback){
+                lessonsManager.incrementViews(lessonId, function(err) {
+                    /*
+                     * guy - I don't know why simply passing _callback does not work.
+                     * have to write a function to do that
+                     */
+                    if (!!err) {
+                        logger.error('error incrementing views on lesson', err);
+                    }
+                    logger.info('after increment');
+                    _callback();
+                });
+            }
+        ], function invokeCallback(err) {
+            logger.info('done updating db',err, updatedInvitation);
+            callback(err, updatedInvitation);
+        });
 
-	}, function addCounterOnLesson(result, _callback) {
-		lessonsManager.incrementViews(lessonId, function(err) {
-			/*
-			 * guy - I don't know why simply passing _callback does not work.
-			 * have to write a function to do that
-			 */
-			if (!!err) {
-				logger.error('error incrementing views on lesson', err);
-			}
-			logger.info('after increment');
-			_callback();
-		});
-	}, function invokeCallback() {
-		logger.info('done building lesson. sending back to callback');
-		callback(null, updatedInvitation);
-	}
-
-	]);
+    });
 };
 
 exports.search = function(filter, projection, callback) {
@@ -85,7 +114,6 @@ exports.updateLessonInvitation = function(invitation, callback) {
 			_id : invitation._id
 		}, invitation, function(err, result) {
 			logger.info('after update', arguments);
-			done();
 			callback(err, result);
 			return;
 		});
@@ -96,7 +124,6 @@ exports.create = function(invitation, callback) {
 	invitation.lessonId = services.db.id(invitation.lessonId);
 	models.LessonInvitation.connect(function(db, collection, done) {
 		collection.insert(invitation, {}, function(err, result) {
-			done();
 			callback(err, result[0]);
 			return;
 		});

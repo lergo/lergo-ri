@@ -3,27 +3,60 @@ var LessonInvitation = require('../models').LessonInvitation;
 var logger = require('log4js').getLogger('LessonsInvitationsMiddleware');
 
 exports.exists = function exists(req, res, next) {
-	logger.debug('checking if invitation exists : ', req.params.invitationId);
-	try {
-		LessonInvitation.findById(req.params.invitationId, function(err, result) {
-			if (!!err) {
-				res.send(500, err);
-				return;
-			}
-			if (!result) {
-				res.send(404);
-				return;
-			}
+	exports.optionalExists(req, res, function(){
+        if(!req.invitation){
+            res.send(404);
+            return;
+        }
+        next();
+    });
+};
 
-			logger.debug('putting invitation on request', result);
-			req.invitation = result;
+exports.optionalExists = function optionalExists(req, res, next){
+    logger.debug('checking if invitation exists : ', req.params.invitationId);
+    try {
+        LessonInvitation.findById(req.params.invitationId, function(err, result) {
+            if (!!err) {
+                res.send(500, err);
+                return;
+            }
+            logger.debug('putting invitation on request', result);
+            req.invitation = result;
 
-			next();
+            next();
 
-		});
-	} catch (e) {
-		res.send(404);
-	}
+        });
+    } catch (e) {
+        res.send(404);
+    }
+};
+
+exports.constructInvitationFromLesson = function(req, res, next){
+    exports.optionalExists(req, res, function(){
+        if (!req.invitation){
+            // lets construct
+            require('../managers/LessonsInvitationsManager').dryBuildLesson({lessonId: req.params.lessonId}, function(err, result){
+                if (!!err || !result){
+                    res.send(500,'either result is missing or there was an error');
+                }
+                req.invitation = result;
+                next();
+            });
+        }
+    });
+};
+
+exports.existsOrConstruct = function existsOrConstruct(req, res, next){
+    exports.optionalExists(req, res, function(){
+        if ( !req.invitation ){
+            // lets construct
+            exports.constructInvitationFromLesson(req, res, function(){
+                next(); // either invitation was constructed or not (lesson was deleted?) - it is out of our hands now.
+            });
+        }else{ // exists, so lets continue
+            next();
+        }
+    });
 };
 
 exports.userCanDelete = function userCanDelete(req, res, next) {
