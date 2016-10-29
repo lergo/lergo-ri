@@ -109,7 +109,7 @@ exports.search = function(filter, projection, callback) {
 exports.find = exports.search;
 
 exports.updateLessonInvitation = function(invitation, callback) {
-	models.LessonInvitation.connect(function(db, collection, done) {
+	models.LessonInvitation.connect(function(db, collection) {
 		collection.update({
 			_id : invitation._id
 		}, invitation, function(err, result) {
@@ -122,7 +122,7 @@ exports.updateLessonInvitation = function(invitation, callback) {
 
 exports.create = function(invitation, callback) {
 	invitation.lessonId = services.db.id(invitation.lessonId);
-	models.LessonInvitation.connect(function(db, collection, done) {
+	models.LessonInvitation.connect(function(db, collection) {
 		collection.insert(invitation, {}, function(err, result) {
 			callback(err, result[0]);
 			return;
