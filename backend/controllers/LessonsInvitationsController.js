@@ -10,6 +10,7 @@ var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 var LessonInvitation = require('../models/LessonInvitation');
+var shortid = require('shortid32');
 
 exports.create = function(req, res) {
 	logger.debug('creating invitation for lesson', req.lesson);
@@ -25,7 +26,8 @@ exports.create = function(req, res) {
 		'age' : req.lesson.age,
 		'name' : req.lesson.name,
 		'lastUpdate' : new Date().getTime(),
-        'emailNotification' : true // Default Email Notification Should be on 
+        'pin':shortid.generate(),
+        'emailNotification' : true // Default Email Notification Should be on
 	}, invitation);
 
 	// add inviter in case we have details and this is not an anonymous
@@ -150,6 +152,21 @@ exports.update = function(req, res) {
 
 exports.getById = function(req, res){
 	res.send(req.invitation);
+};
+
+exports.getByPin = function(req, res){
+    try {
+        LessonInvitation.findOne({'pin':req.params.pin}, function(err, result) {
+            if (!!err) {
+                res.send(500, err);
+                return;
+            }
+            logger.debug('putting invitation on request', result);
+            res.send(result);
+        });
+    } catch (e) {
+        res.send(404);
+    }
 };
 
 exports.find = function(req, res) {

@@ -73,6 +73,15 @@ exports.lessonsInvitationsGetById = {
 	'action': controllers.lessonsInvitations.getById
 };
 
+exports.lessonsInvitationsGetByPin = {
+    'spec' : {
+        'summary': 'Get a lesson invitation by pin',
+        'method': 'GET',
+        'path': '/invitations/pin/{pin}'
+
+    },
+    'action': controllers.lessonsInvitations.getByPin
+};
 
 exports.lessonsInvitationsBuild = {
 	'spec'  : {
