@@ -11,7 +11,7 @@ git clone "https://github.com/lergo/lergo-ri.git"
 cd lergo-ri
 
 echo "checking out $LERGO_RI_BRANCH branch"
-git checkout develop
+git checkout oct29
 
 
 

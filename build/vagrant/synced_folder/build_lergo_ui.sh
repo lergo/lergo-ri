@@ -14,7 +14,7 @@ pre_build_ui(){
     cd lergo-ui
 
     echo "checking out $LERGO_UI_BRANCH branch"
-    git checkout develop
+    git checkout oct29
 
 
 }
