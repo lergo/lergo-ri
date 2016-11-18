@@ -23,6 +23,7 @@
     "loggly": "~1.0.5",
     "method-override": "2.3.3",
     "mongodb": "1.4.8",
+    "mongoose": "^4.6.8",
     "node-uuid": "1.4.3",
     "nodemailer": "0.7.1",
     "passport": "0.2.2",
