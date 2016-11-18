@@ -1,6 +1,6 @@
 {
     "cookieSessionSecret" : "cookieSessionSecret",
-    "dbUrl" : "mongodb://localhost:27017/test-lergo-data",
+    "dbUrl" : "mongodb://localhost:27017/lergo-test",
     "hmacKey" : null,
     "log4js" : {
         "appenders" : [
