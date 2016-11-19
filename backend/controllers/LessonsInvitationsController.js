@@ -209,7 +209,7 @@ exports.getStudents = function (req, res) {
 
     LessonInvitation.connect(function (db, collection) {
         collection.aggregate([
-            {'$match': {'inviter': req.sessionUser._id.toString()}},
+            {'$match': {'inviter': req.sessionUser._id}},
             {'$group': {_id: '$invitee.name'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
