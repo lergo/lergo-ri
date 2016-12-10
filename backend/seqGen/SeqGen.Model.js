@@ -14,26 +14,23 @@ var Schema = mongoose.Schema;
 mongoose.models = {};
 mongoose.modelSchemas = {};
 
-var counterSchema = new Schema(
+var pinSchema = new Schema(
     {
-        _id: String,
-        next: Number
+        pin: Number
+
     });
 
-counterSchema.statics.getNext = function (counter, callback) {
+pinSchema.statics.getNext = function (callback) {
     var collection = this.collection;
-    collection.findOne({_id: counter}, function (err, doc) {
+    collection.findOneAndUpdate({created: {$exists: false}},{$set: {created: Date.now()}}, function (err, doc) {
         if (!doc) {
-            collection.insert({_id: counter, next: 100000}, function (err, result) {
-                collection.update({_id: counter}, {$inc: {next: 1}});
-                callback(err, result.next);
-            });
+            console.log('No more valid pin');
+            //TODO : Handle this situation
         } else {
-            collection.update({_id: counter}, {$inc: {next: 1}});
-            callback(err, doc.next);
+            callback(err, doc.value.pin);
         }
     });
 };
 
 
-module.exports = mongoose.model('counter', counterSchema);
+module.exports = mongoose.model('pin', pinSchema);

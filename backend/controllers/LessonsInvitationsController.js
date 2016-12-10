@@ -19,7 +19,7 @@ exports.create = function (req, res) {
 
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
-    Counter.getNext('lessonInvitation', function (err, nextCounter) {
+    Counter.getNext(function (err, nextCounter) {
         invitation = _.merge({
             'anonymous': anonymous,
             'lessonId': req.lesson._id,
