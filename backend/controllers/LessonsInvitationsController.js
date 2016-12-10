@@ -19,7 +19,7 @@ exports.create = function (req, res) {
 
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
-    Counter.getNext('lessonInvitation', function (err, nextCounter) {
+    Counter.getNext(function (err, nextCounter) {
         invitation = _.merge({
             'anonymous': anonymous,
             'lessonId': req.lesson._id,
@@ -209,7 +209,7 @@ exports.getStudents = function (req, res) {
 
     LessonInvitation.connect(function (db, collection) {
         collection.aggregate([
-            {'$match': {'inviter': req.sessionUser._id.toString()}},
+            {'$match': {'inviter': req.sessionUser._id}},
             {'$group': {_id: '$invitee.name'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
