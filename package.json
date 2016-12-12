@@ -14,25 +14,22 @@
     "cron": "~1.1.0",
     "crypto": "0.0.3",
     "dateformat": "~1.0.8-1.2.3",
-    "ejs": "^2.5.2",
-    "email-templates": "^2.5.4",
+    "email-templates": "0.1.8",
     "errorhandler": "1.4.0",
     "escape-string-regexp": "1.0.3",
     "express": "~4.1.0",
-    "graceful-fs": "^4.1.10",
     "lodash": "4.11.1",
     "log4js": "0.6.26",
     "loggly": "~1.0.5",
     "method-override": "2.3.3",
-    "minimatch": "^3.0.3",
-    "mocha": "^3.1.2",
     "mongodb": "1.4.8",
     "node-sass": "^3.11.3",
+    "mongoose": "^4.6.8",
     "node-uuid": "1.4.3",
     "nodemailer": "0.7.1",
     "passport": "0.2.2",
     "passport-openid": "0.3.1",
-    "phantom": "^3.0.3",
+    "phantom": "~0.6.5",
     "request": "^2.69.0",
     "sha1": "1.1.1",
     "shortid32": "^0.1.1",
@@ -60,6 +57,6 @@
     "grunt-bundled-dependencies": "0.0.1"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=0.8.0"
   }
 }

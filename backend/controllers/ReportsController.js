@@ -216,7 +216,7 @@ exports.getStudents = function (req, res) {
 
     Report.connect(function (db, collection) {
         collection.aggregate([
-            {'$match': {'data.inviter': req.sessionUser._id.toString()}},
+            {'$match': {'data.inviter': req.sessionUser._id}},
             {'$group': {_id: '$data.invitee.name'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}

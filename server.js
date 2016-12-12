@@ -29,6 +29,10 @@ var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
 
 
+var mongoose = require('mongoose');
+mongoose.connect(conf.dbUrl);
+
+
 
 if ( !!services.conf.log4js ){
     log4js.configure(services.conf.log4js);
@@ -62,7 +66,12 @@ logger.info(typeof(useStatic));
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
-app.use(bodyParser());
+
+
+
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(methodOverride());
 app.use(cookieParser());
 
