@@ -19,7 +19,7 @@ fi
 
 
 fetch_location(){
-    LOCALE_URL="https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/${1}/download?access_token=${PHRASEAPP_TOKEN}&file_format=nested_json&include_empty_translations=true"
+    LOCALE_URL="https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/${1}/download?access_token=${PHRASEAPP_TOKEN}&file_format=nested_json"
     wget -O $TRANSLATIONS_BASE/$1.json "$LOCALE_URL"
 }
 
