@@ -204,28 +204,28 @@ module.exports = function (grunt) {
         // I think we should either contribute a delay feature to curl grunt task (like rate limit on our end), or implement it ourselves..
         'curl-dir': {
             'en': {
-                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/en/download?access_token=<%= phraseapp.token %>&file_format=nested_json&include_empty_translations=true'],
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/en/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
                 dest: 'translations',
                 router:function( ){
                     return 'en.json';
                 }
             },
             'he':{
-                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/he/download?access_token=<%= phraseapp.token %>&file_format=nested_json&include_empty_translations=true'],
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/he/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
                 dest: 'translations',
                 router:function( ){
                     return 'he.json';
                 }
             },
             'ar':{
-                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ar/download?access_token=<%= phraseapp.token %>&file_format=nested_json&include_empty_translations=true'],
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ar/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
                 dest: 'translations',
                 router:function( ){
                     return 'ar.json';
                 }
             },
             'ru' :{
-                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ru/download?access_token=<%= phraseapp.token %>&file_format=nested_json&include_empty_translations=true'],
+                src: ['https://phraseapp.com/api/v2/projects/64675c00c0c4482c9fd203fe3e887d55/locales/ru/download?access_token=<%= phraseapp.token %>&file_format=nested_json'],
                 dest: 'translations',
                 router:function( ){
                     return 'ru.json';
