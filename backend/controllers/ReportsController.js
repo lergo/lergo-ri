@@ -399,14 +399,15 @@ exports.deleteReport = function (req, res) {
             }
         });
     } else {
+
         managers.reports.deleteReport(req.report._id, function (err, deletedReport) {
             if (!!err) {
                 logger.error('error deleting report', err);
                 err.send(res);
                 return;
             } else {
+                updateClassAggReports(req.report.invitationId);
                 res.send(deletedReport);
-                updateClassAggReports(deletedReport.invitationId);
                 return;
             }
         });
