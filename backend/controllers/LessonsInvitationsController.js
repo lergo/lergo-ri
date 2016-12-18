@@ -10,8 +10,7 @@ var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('LessonsInvitationsController');
 var LessonInvitation = require('../models/LessonInvitation');
-var Counter = require('../seqGen/SeqGen.Model');
-
+var Pin = require('../seqGen/SeqGen.Model');
 
 
 exports.create = function (req, res) {
@@ -19,7 +18,7 @@ exports.create = function (req, res) {
 
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
-    Counter.getNext(function (err, nextCounter) {
+    Pin.getNext(function (err, pin) {
         invitation = _.merge({
             'anonymous': anonymous,
             'lessonId': req.lesson._id,
@@ -28,7 +27,7 @@ exports.create = function (req, res) {
             'age': req.lesson.age,
             'name': req.lesson.name,
             'lastUpdate': new Date().getTime(),
-            'pin': nextCounter,
+            'pin': pin,
             'emailNotification': true // Default Email Notification Should be on
         }, invitation);
 
@@ -189,6 +188,7 @@ exports.find = function (req, res) {
 };
 
 exports.deleteInvitation = function (req, res) {
+    Pin.free(req.invitation.pin);
     managers.lessonsInvitations.deleteById(req.invitation._id, function (err, deletedInvitation) {
         if (!!err) {
             logger.error('error deleting report', err);

@@ -399,6 +399,7 @@ exports.deleteReport = function (req, res) {
             }
         });
     } else {
+        updateClassAggReports(req.report.invitationId);
         managers.reports.deleteReport(req.report._id, function (err, deletedReport) {
             if (!!err) {
                 logger.error('error deleting report', err);
@@ -406,7 +407,6 @@ exports.deleteReport = function (req, res) {
                 return;
             } else {
                 res.send(deletedReport);
-                updateClassAggReports(deletedReport.invitationId);
                 return;
             }
         });

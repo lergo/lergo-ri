@@ -20,9 +20,13 @@ var pinSchema = new Schema(
 
     });
 
+pinSchema.statics.free = function (pin, callback) {
+    this.collection.update({pin: pin}, {$unset: {created: 1}},callback);
+};
+
 pinSchema.statics.getNext = function (callback) {
     var collection = this.collection;
-    collection.findOneAndUpdate({created: {$exists: false}},{$set: {created: Date.now()}}, function (err, doc) {
+    collection.findOneAndUpdate({created: {$exists: false}}, {$set: {created: Date.now()}}, function (err, doc) {
         if (!doc.value) {
             console.log('No more valid pin');
             // Send timestamp as id if all no more valid id are thr
