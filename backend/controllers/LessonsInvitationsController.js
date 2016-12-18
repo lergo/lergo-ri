@@ -18,36 +18,34 @@ exports.create = function (req, res) {
 
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
-    Pin.getNext(function (err, pin) {
-        invitation = _.merge({
-            'anonymous': anonymous,
-            'lessonId': req.lesson._id,
-            'subject': req.lesson.subject,
-            'language': req.lesson.language,
-            'age': req.lesson.age,
-            'name': req.lesson.name,
-            'lastUpdate': new Date().getTime(),
-            'pin': pin,
-            'emailNotification': true // Default Email Notification Should be on
-        }, invitation);
+    invitation = _.merge({
+        'anonymous': anonymous,
+        'lessonId': req.lesson._id,
+        'subject': req.lesson.subject,
+        'language': req.lesson.language,
+        'age': req.lesson.age,
+        'name': req.lesson.name,
+        'lastUpdate': new Date().getTime(),
+        'emailNotification': true // Default Email Notification Should be on
+    }, invitation);
 
 
-        // add inviter in case we have details and this is not an anonymous
-        // invitation
-        if (!!req.sessionUser && !anonymous) {
-            invitation.inviter = req.sessionUser._id;
-        }
+    // add inviter in case we have details and this is not an anonymous
+    // invitation
+    if (!!req.sessionUser && !anonymous) {
+        invitation.inviter = req.sessionUser._id;
+    }
 
 
-        // in case user is logged in and there's no invitee details, set logged in
-        // user as invitee
-        if (anonymous && !!req.sessionUser) {
-            logger.debug('setting invitee on invitation');
-            invitation.invitee = {
-                'name': req.sessionUser.username
-            };
-        }
-
+    // in case user is logged in and there's no invitee details, set logged in
+    // user as invitee
+    if (anonymous && !!req.sessionUser) {
+        logger.debug('setting invitee on invitation');
+        invitation.invitee = {
+            'name': req.sessionUser.username
+        };
+    }
+    if (!!anonymous) {
         managers.lessonsInvitations.create(invitation, function (err, result) {
             if (!!err) {
                 logger.error('unable to create lesson invitation', err);
@@ -56,7 +54,20 @@ exports.create = function (req, res) {
                 res.send(result);
             }
         });
-    });
+    } else {
+        Pin.getNext(function (err, pin) {
+            invitation.pin = pin;
+            managers.lessonsInvitations.create(invitation, function (err, result) {
+                if (!!err) {
+                    logger.error('unable to create lesson invitation', err);
+                    err.send(res);
+                } else {
+                    res.send(result);
+                }
+            });
+        });
+    }
+
 };
 
 /**
