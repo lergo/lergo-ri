@@ -270,7 +270,7 @@ app.get('/backend/crawler', function(req, res){
 
 
     var phantom = require('phantom');
-    phantom.create(function (ph) {
+    phantom.create([]).then(function (ph) {
 
         setTimeout( function(){
             try{
@@ -282,7 +282,7 @@ app.get('/backend/crawler', function(req, res){
 
 
         return ph.createPage(function (page) {
-            page.open(url, function ( status ) {
+            page.open(url).then(function ( status ) {
                 if ( status === 'fail'){
                     res.send(500,'unable to open url');
                     ph.exit();
