@@ -56,7 +56,8 @@ if [ "$NODE_EXISTS" = "" ];then
 
     rm -rf $NVM_HOME || echo "nvm folder does not exist. lets continue"
 
-     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
+   # wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
+     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash || echo
      source ~/.nvm/nvm.sh
      nvm install 6.9.1 && nvm use 6.9.1
 
