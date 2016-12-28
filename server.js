@@ -267,38 +267,36 @@ app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     logger.info('prerendering url : ' + url ) ;
-
-
+    var phInstance = null;
     var phantom = require('phantom');
-    phantom.create(function (ph) {
-
-        setTimeout( function(){
-            try{
-                ph.exit();
-            }catch(e){
-                logger.debug('unable to close phantom',e);
-            }
-        }, 30000);
-
-
-        return ph.createPage(function (page) {
-            page.open(url, function ( status ) {
+    phantom.create() //phantom.create
+        .then(instance => {
+            phInstance = instance;  //ph ==> phInstance
+            return instance.createPage(); // createpage
+        })
+        .then(page => {
+            // need to use page.open
+            page.open(url).then(function( status ){ //page.open
                 if ( status === 'fail'){
                     res.send(500,'unable to open url');
-                    ph.exit();
+                    phInstance.exit();
                 }else {
-                    page.evaluate(function () {
+                    page.evaluate(function () { //page.evaluate
                         return document.documentElement.innerHTML;
-                    }, function (result) {
+                    }).then(function (result) {
+                        console.log(result);
                         res.send( result);
-                        ph.exit();
+                        phInstance.exit();
                         page.close();
                     });
                 }
 
             });
+        })
+        .catch(error => {
+            console.log(error);
+            phInstance.exit();
         });
-    });
 });
 
 
