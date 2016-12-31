@@ -288,6 +288,24 @@ exports.unpublish = function(req, res){
 
 /**
  *
+ * This function only Reviewed a lesson.
+ *
+ *
+ * @param req
+ * @param res
+ */
+exports.review = function(req, res){
+    var lesson = req.lesson;
+    lesson.review = true;
+    _updateLesson( lesson, res );
+};
+exports.unreview = function(req, res){
+    var lesson = req.lesson;
+    delete lesson.review;
+    _updateLesson( lesson, res );
+};
+/**
+ *
  * Creates a new lesson and assigns it to the logged in user.
  *
  * @param req

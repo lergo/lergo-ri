@@ -75,6 +75,15 @@ exports.userCanPublish = function userCanPublish( /*user, lesson*/ ) {
     // can publish if has permission. instrumented
 };
 
+exports.userCanReview = function userCanReview( user, lesson ) {
+    return  !!user &&  !!user.isAdmin
+
+};
+
+exports.userCanUnreview = function userCanUnreview( user, lesson ) {
+    return  !!user &&  !!user.isAdmin
+};
+
 exports.userCanUnpublish = function userCanUnpublish(){
     // can unpublish if as permission. instrumented.
 };
@@ -99,6 +108,8 @@ exports.getPermissions = function getPermissions( user, lesson ){
         'canCopy' : exports.userCanCopy(user, lesson),
         'canDelete' : exports.userCanDelete(user, lesson),
         'canPublish' : exports.userCanPublish(user, lesson),
+        'canReview' : exports.userCanReview(user, lesson),
+        'canUnreview' : exports.userCanUnreview(user, lesson),
         'canPreview' : exports.userCanPreview( user, lesson ),
         'canUnpublish' : exports.userCanUnpublish( user, lesson),
         'canSeePrivateLessons' : exports.userCanSeePrivateLessons( user, lesson )

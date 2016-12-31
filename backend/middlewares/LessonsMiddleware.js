@@ -66,6 +66,16 @@ exports.userCanPublish = function userCanPublish( req, res, next  ){
     return permissions.lessons.userCanPublish( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
 };
 
+exports.userCanReview = function userCanReview( req, res, next  ){
+    logger.debug('checking if user can review lesson');
+    return permissions.lessons.userCanReview( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
+};
+exports.userCanUnreview = function userCanUnreview( req, res, next ){
+
+    console.log("unreview is called");
+    return permissions.lessons.userCanUnreview( req.sessionUser , req.lesson ) ? next() : res.status(400).send('');
+};
+
 
 exports.userCanUnpublish = function userCanUnpublish( req, res, next  ){
     logger.debug('checking if user can unpublish lesson');

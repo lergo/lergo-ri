@@ -191,6 +191,33 @@ exports.publishLesson = {
     'action': controllers.lessons.publish
 };
 
+exports.reviewLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/review',
+        'summary': 'user reviews a lesson',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanReview
+    ],
+    'action': controllers.lessons.review
+};
+exports.unreviewLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/unreview',
+        'summary': 'user unreviews a lesson',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanUnreview
+    ],
+    'action': controllers.lessons.unreview
+};
+
 exports.unpublishLesson = {
     'spec': {
         'path': '/lessons/{lessonId}/unpublish',
