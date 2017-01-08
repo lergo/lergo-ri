@@ -112,7 +112,7 @@ upgrade_main(){
         if [ "$SEO_SUPPORT" != "false" ];then
             echo "installing phantom by default"
             cd /var/www/lergo/lergo-ri
-            npm rebuild # generates the .bin folder that is missing from package
+            sudo npm rebuild # generates the .bin folder that is missing from package
             sudo npm install phantom
         fi
 
