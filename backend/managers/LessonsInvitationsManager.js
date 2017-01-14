@@ -56,18 +56,19 @@ exports.dryBuildLesson = function(invitation, callback){
 exports.buildLesson = function(invitation, callback) {
 	exports.dryBuildLesson(invitation, function(err, invitation){
         var lessonId = null;
-        var updatedInvitation;
+        var updatedInvitation=invitation;
         async.waterfall([
-            function updateInvitation(_callback){
-                lessonId = invitation.lessonId;
-                exports.updateLessonInvitation(invitation, function(err, result){
-                    if ( result ){
-                        logger.debug('result from updating lesson invitation', result);
-                    }
-                    updatedInvitation = invitation;
-                    _callback(err); //
-                });
-            }, function addCounterOnLesson(_callback){
+            // function updateInvitation(_callback){
+            //     lessonId = invitation.lessonId;
+            //     exports.updateLessonInvitation(invitation, function(err, result){
+            //         if ( result ){
+            //             logger.debug('result from updating lesson invitation', result);
+            //         }
+            //         updatedInvitation = invitation;
+            //         _callback(err); //
+            //     });
+            // },
+            function addCounterOnLesson(_callback){
                 lessonsManager.incrementViews(lessonId, function(err) {
                     /*
                      * guy - I don't know why simply passing _callback does not work.

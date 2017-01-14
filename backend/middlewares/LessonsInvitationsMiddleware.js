@@ -1,5 +1,6 @@
 'use strict';
 var LessonInvitation = require('../models').LessonInvitation;
+var LessonInvitationManager = require('../managers').lessonsInvitations;
 var logger = require('log4js').getLogger('LessonsInvitationsMiddleware');
 
 exports.exists = function exists(req, res, next) {
@@ -20,11 +21,20 @@ exports.optionalExists = function optionalExists(req, res, next){
                 res.send(500, err);
                 return;
             }
-            logger.debug('putting invitation on request', result);
-            req.invitation = result;
-
-            next();
-
+            if (result) {
+                LessonInvitationManager.dryBuildLesson(result, function (err, invitation) {
+                    if (!!err) {
+                        res.send(500, err);
+                        return;
+                    }
+                    logger.debug('putting invitation on request', result);
+                    req.invitation = result;
+                    next();
+                });
+            }
+            else {
+                next();
+            }
         });
     } catch (e) {
         res.send(404);

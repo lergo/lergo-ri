@@ -123,7 +123,12 @@ exports.build = function (req, res) {
 // assume Invite exists in the system, verified by middleware
 exports.update = function (req, res) {
     logger.info('updating Invite');
+
     var invitation = req.body;
+
+    //We don't want to save lesson and quizItems as it always added on runtime
+    delete invitation.lesson;
+    delete invitation.quizItems;
 
     if (!!invitation._id) {
         invitation._id = services.db.id(invitation._id);
@@ -140,13 +145,13 @@ exports.update = function (req, res) {
     // guy - LERGO-589 - lesson breaks after marked undone.
     // the reason why it happens is that "update" should not allow to modify these fields.
     // these fields can only be "rebuilt". look at function "exports.build" in this file.
-    if (!!req.invitation.lesson) {
-        invitation.lesson = req.invitation.lesson;
-    }
-
-    if (!!req.invitation.quizItems) {
-        invitation.quizItems = req.invitation.quizItems;
-    }
+    // if (!!req.invitation.lesson) {
+    //     invitation.lesson = req.invitation.lesson;
+    // }
+    //
+    // if (!!req.invitation.quizItems) {
+    //     invitation.quizItems = req.invitation.quizItems;
+    // }
 
 
     new LessonInvitation(invitation).update(function (err) {
