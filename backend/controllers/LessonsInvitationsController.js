@@ -18,6 +18,9 @@ exports.create = function (req, res) {
 
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
+    var thirtyYearsMillis = 30 * 365 * 24 * 60 * 60 * 1000;
+    var sixtyHoursMillis = 60 * 60 * 60 * 1000;
+    var expiresAt = anonymous && new Date(Date.now() + sixtyHoursMillis) || new Date(Date.now() + thirtyYearsMillis);
     invitation = _.merge({
         'anonymous': anonymous,
         'lessonId': req.lesson._id,
@@ -26,6 +29,7 @@ exports.create = function (req, res) {
         'age': req.lesson.age,
         'name': req.lesson.name,
         'lastUpdate': new Date().getTime(),
+        'expiresAt': new Date(expiresAt),
         'emailNotification': true // Default Email Notification Should be on
     }, invitation);
 
