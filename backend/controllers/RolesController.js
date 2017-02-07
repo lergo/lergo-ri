@@ -82,7 +82,7 @@ exports.updateRole = function(req, res){
     var role = _.assign(req.role, _.pick(req.body, ['name','permissions','description','limitations']));
     role.lastUpdate = new Date().getTime();
     new models.Role( role ).update( function(err, result){
-        if ( !!err || result.result.ok !== 1){
+        if ( !!err || result !== 1){
             new services.error.InternalServerError('unable to save ',err).send(res);
             return;
         }
