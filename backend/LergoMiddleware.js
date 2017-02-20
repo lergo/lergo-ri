@@ -302,7 +302,7 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
         // the next two if statements are use for mongodb driver 2.x to convert to hexadecimal and back again
 
         if (queryObj.filter.userId) {
-            queryObj.filter.userId = "0x" + queryObj.filter.userId;
+            queryObj.filter.userId = '0x' + queryObj.filter.userId;
         }
 
         queryObj = exports.replaceDollarPrefix(queryObj);
