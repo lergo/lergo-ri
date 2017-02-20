@@ -264,6 +264,9 @@ exports.replaceDollarPrefix = function( obj ){
  * this middleware handles a stringified query obj for mongo.
  * handles some obvious values (like limit) and makes sure no one is trying to collapse the system
  *
+ * @param:  Feb 2017: when moving to mongodb driver 2x. userId breaks code (string ==> object)
+ * define as hexadecimal and then convert back to mongodb ObjectId  (jeff)
+ *
  * @param {object}   req
  * @param {object}   res
  * @param {function} next
@@ -296,7 +299,19 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
             logger.info('unable to convert userId to object',e);
         }
 
+        // the next two if statements are use for mongodb driver 2.x to convert to hexadecimal and back again
+
+        if (queryObj.filter.userId) {
+            queryObj.filter.userId = "0x" + queryObj.filter.userId;
+        }
+
         queryObj = exports.replaceDollarPrefix(queryObj);
+        if (queryObj.filter.userId && typeof(queryObj.filter.userId) === 'string') {
+            queryObj.filter.userId = queryObj.filter.userId.substr(2);
+            queryObj.filter.userId = services.db.id(queryObj.filter.userId);
+        }
+
+        // end of mongodb driver 2.x upgrade
 
         if ( !!queryObj.$page ){
             queryObj.skip = queryObj.$page.size * ( queryObj.$page.current - 1) ;
