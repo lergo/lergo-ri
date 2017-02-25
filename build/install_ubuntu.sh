@@ -149,7 +149,40 @@ upgrade_main(){
 
      cd /var/www/lergo/lergo-ri/build
 
-    echo "updating nginx conf"
+    echo "updating nginx conf... and with ssl certificates..."
+
+     if [ -z $SSL_CERTIFICATE ];then
+        echo "missing ssl certificate"
+        exit 1
+     else
+        echo "updating ssl certificate"
+        sudo mkdir -p /etc/ssl/certs/
+        run_wget -O /etc/ssl/certs/ssl.certificate "$SSL_CERTIFICATE"
+        #cat /etc/ssl/certs/ssl.certificate
+
+     fi
+
+      if [ -z $SSL_CERTIFICATE_KEY ];then
+        echo "missing ssl certificate key"
+        exit 1
+     else
+        echo "updating ssl certificate"
+        sudo mkdir -p /etc/ssl/private/
+        run_wget -O /etc/ssl/private/ssl.certificate.key "$SSL_CERTIFICATE_KEY"
+        #cat /etc/ssl/private/ssl.certificate.key
+
+     fi
+
+        if [ -z $DHPARAM ];then
+        echo "missing dhparam pem file"
+        exit 1
+     else
+        echo "updating dhparam"
+        sudo mkdir -p /etc/nginx/ssl/
+        run_wget -O /etc/nginx/ssl/dhparam.pem  "$DHPARAM"
+        #cat /etc/nginx/ssl/dhparam.pem
+
+     fi
 
 
      sudo -E bash -c "export DOMAIN=\"$DOMAIN\"; export MORE_DOMAINS=\"$MORE_DOMAINS\"; source ./nginx.conf.template > nginx.conf"
