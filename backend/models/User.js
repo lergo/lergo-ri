@@ -20,8 +20,8 @@ User.collectionName = 'users';
 function toPublicDetails ( user ){
     try {
         return {
-            'gravatarUrl': 'http://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=25&default=mm',
-            'gravatarUrlLarge': 'http://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=150&default=mm',
+            'gravatarUrl': 'https://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=25&default=mm',
+            'gravatarUrlLarge': 'https://www.gravatar.com/avatar/' + require('crypto').createHash('md5').update(user.email).digest('hex') + '?size=150&default=mm',
             'username': user.username,
             'shortIntro': user.shortIntro,
             'externalLink': user.externalLink,
