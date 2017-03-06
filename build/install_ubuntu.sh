@@ -6,6 +6,10 @@ run_wget(){
     wget --no-cache --no-check-certificate $*
 }
 
+sudo_wget(){
+    sudo wget --no-cache --no-check-certificate $*
+}
+
 init(){
 
     source /etc/sysconfig/lergo
@@ -158,12 +162,13 @@ upgrade_main(){
      else
         echo "updating ssl certificate"
         sudo mkdir -p /etc/ssl/private/
-        run_wget -O /etc/ssl/private/ssl.certificate.key "$SSL_CERTIFICATE_KEY"
+        sudo_wget -O /etc/ssl/private/ssl.certificate.key "$SSL_CERTIFICATE_KEY"
         echo " certificate key installed "
-        run_wget -O /etc/ssl/private/ssl.certificate "$SSL_CERTIFICATE"
+        sudo_wget -O /etc/ssl/private/ssl.certificate "$SSL_CERTIFICATE"
         echo " ssl certificate installed "
-        run_wget -O /etc/ssl/private/dhparam.pem  "$DHPARAM"
+        sudo_wget -O /etc/ssl/private/dhparam.pem  "$DHPARAM"
         echo " dhparam pem installed ... this should give us A+ "
+        echo ""
 
      fi
 
