@@ -67,6 +67,10 @@ logger.info(typeof(useStatic));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
+// use  for https
+app.set('trust proxy', true);
+logger.info('set trust proxy to true');
+
 
 
 app.use(bodyParser.json({limit: '50mb'}));

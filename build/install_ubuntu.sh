@@ -162,6 +162,7 @@ upgrade_main(){
      else
         echo "updating ssl certificate"
         sudo mkdir -p /etc/ssl/private/
+        sudo chmod 755 /etc/ssl/private/
         sudo_wget -O /etc/ssl/private/ssl.certificate.key "$SSL_CERTIFICATE_KEY"
         echo " certificate key installed "
         sudo_wget -O /etc/ssl/private/ssl.certificate "$SSL_CERTIFICATE"
