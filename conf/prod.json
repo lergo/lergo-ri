@@ -33,11 +33,11 @@
     "emailSettings" : {
         "type" : "SMTP",
         "opts" : {
-            "service" : "Gmail",
-            "auth" : {
-                "user" : "__user",
-                "pass" : "__pass"
-            }
+            "port" : 465,
+            "secureConnection" : true,
+            "accessKeyId" : "__user",
+            "secretAccessKey" : "__pass",
+            "region" : "us-east-1"
         },
         "defaultFrom" : "__default_from_address__",
         "mails" : {

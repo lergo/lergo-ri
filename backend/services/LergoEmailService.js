@@ -8,6 +8,7 @@
 var nodemailer = require('nodemailer');
 var emailSettings = require('./Conf').emailSettings;
 var logger = require('log4js').getLogger('LergoEmailService');
+var ses = require('nodemailer-ses-transport'); // for nodemailer 3.x
 
 /**
  *
@@ -28,11 +29,18 @@ var logger = require('log4js').getLogger('LergoEmailService');
 /**
  * create a transport for sending mails
  */
-function getTransport() {
+// transport for nodemailer 0.7
+
+/*function getTransport() {
     var smtpTransport = nodemailer.createTransport(emailSettings.type, emailSettings.opts);
     return smtpTransport;
-}
+}*/
 
+// transport for nodemailer 3.x
+function getTransport() {
+ var smtpTransport = nodemailer.createTransport(ses(emailSettings.opts));
+ return smtpTransport;
+ }
 
 /**
  * This method sends mail as per the opts give opts structure should look like
