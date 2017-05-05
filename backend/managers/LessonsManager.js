@@ -70,14 +70,14 @@ exports.copyLesson = function (user, lesson, callback) {
 
     lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
 
-    var copyOfName = "Copy of: ";
+    var copyOfName = 'Copy of: ';
 
-    if (lesson.language === "hebrew") {
-        copyOfName = "העתק של: ";
-    } else if (lesson.language === "arabic") {
-        copyOfName = "نسخة من: ";
+    if (lesson.language === 'hebrew') {
+        copyOfName = 'העתק של:';
+    } else if (lesson.language === 'arabic') {
+        copyOfName = 'نسخة من: ';
     } else {
-        copyOfName = "Copy of:  "
+        copyOfName = 'Copy of:  ';
     }
 
     lesson.name = copyOfName  + lesson.name;
