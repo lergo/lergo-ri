@@ -69,7 +69,19 @@ exports.copyLesson = function (user, lesson, callback) {
     }
 
     lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
-    lesson.name = 'Copy of : ' + lesson.name;
+
+    var copyOfName = "Copy of: ";
+
+    if (lesson.language === "hebrew") {
+        copyOfName = "העתק של: ";
+    } else if (lesson.language === "arabic") {
+        copyOfName = "نسخة من: ";
+    } else {
+        copyOfName = "Copy of:  "
+    }
+
+    lesson.name = copyOfName  + lesson.name;
+
     if ( copyOf.length > 0 ){
         lesson.copyOf = copyOf;
     }

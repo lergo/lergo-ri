@@ -50,7 +50,17 @@ exports.copyQuestion = function(user, question, callback) {
 	// use omit and not pick, because there are different types of questions
 	question = _.omit(question, [ '_id', 'lastUpdate', 'views' ]);
 
-	question.question = 'Copy of : ' + question.question;
+     var copyOfName = "Copy of: ";
+
+     if (question.language === "hebrew") {
+     copyOfName = "העתק של: ";
+     } else if (question.language === "arabic") {
+     copyOfName = "نسخة من: ";
+     } else {
+     copyOfName = "Copy of:  "
+     }
+
+	question.question = copyOfName + question.question;
 	question.userId = user._id;
 	question.lastUpdate = new Date().getTime();
 	if (copyOf.length > 0) {
@@ -74,7 +84,7 @@ exports.copyQuestion = function(user, question, callback) {
 
 /**
  * finds question by user and updates the question.
- * 
+ *
  * @param question
  * @param callback
  */
