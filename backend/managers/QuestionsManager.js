@@ -57,7 +57,7 @@ exports.copyQuestion = function(user, question, callback) {
      } else if (question.language === 'arabic') {
      copyOfName = 'نسخة من: ';
      } else {
-     copyOfName = 'Copy of:  ';
+     copyOfName = 'Copy of: ';
      }
 
 	question.question = copyOfName + question.question;
