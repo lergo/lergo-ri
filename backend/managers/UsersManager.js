@@ -303,15 +303,21 @@ exports.sendResetPasswordMail = function(emailResources, resetDetails, callback)
 		return;
 	}
 
-	var filters = {};
+    // regEx to make username / email for password reset case insensitive
 
-	if (!!resetDetails.username) {
-		filters.username = resetDetails.username;
-	}
+    var filters = {};
 
-	if (!!resetDetails.email) {
-		filters.email = resetDetails.email;
-	}
+    if (!!resetDetails.username) {
+        var _username = escapeStringRegexp(resetDetails.username);
+        var username = new RegExp( ['^',_username,'$'].join(''),'i');
+        filters.username = username;
+    }
+
+    if (!!resetDetails.email) {
+        var _email	  = escapeStringRegexp(resetDetails.email);
+        var email     = new RegExp( ['^',_email,'$'].join(''),'i');
+        filters.email = email;
+    }
 
 	exports.findUser(filters, function(err, user) {
 		logger.info(arguments);
