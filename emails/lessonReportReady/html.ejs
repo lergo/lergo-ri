@@ -2,11 +2,14 @@
 <% if (lessonLanguage) { %>
     <% if(lessonLanguage === 'hebrew'){ %>
         <p align="right">
-            <%= name %>  שלום
+            ,<%= name %>  שלום
         </p>
-        <p align="right">
+        <p align="right" dir="auto">
+         <b><%= inviteeName %></b>    כרגע סיימ/ה את השיעור
+            <b><%= lessonTitle %></b>!
 
-          <b><%= inviteeName %></b>    כרגע סיימ/ה את השיעור:   <b><%= lessonTitle %></b>  .     לחצ/י על הקישור כדי לראות את דוח השיעור
+                לחצ/י על הקישור כדי לראות את דוח השיעור.
+        </p>
         <p align="right">
             <a href="<%= link %>"><%= link %></a>
         </p>

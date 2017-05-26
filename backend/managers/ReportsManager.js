@@ -48,12 +48,12 @@ exports.sendReportLink = function (emailResources, report, callback) {
         _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
 
         services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
-            var subject = 'someone finished their lesson';
+            var subject = 'Someone finished their lesson';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
                     subject = 'מישהו סיים את השיעור';
                 } else {
-                    subject = 'someone finished their lesson';
+                    subject = 'Someone finished their lesson';
                 }
             }
             services.email.sendMail({
