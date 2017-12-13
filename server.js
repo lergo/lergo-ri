@@ -288,7 +288,6 @@ app.get('/backend/crawler', function(req, res){
                     page.evaluate(function () { //page.evaluate
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
-                        console.log(result);
                         res.send( result);
                         phInstance.exit();
                         page.close();
@@ -298,7 +297,6 @@ app.get('/backend/crawler', function(req, res){
             });
         })
         .catch(error => {
-            console.log(error);
             phInstance.exit();
         });
 });
