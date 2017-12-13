@@ -297,6 +297,7 @@ app.get('/backend/crawler', function(req, res){
             });
         })
         .catch(error => {
+            console.log(error);
             phInstance.exit();
         });
 });
