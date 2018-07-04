@@ -73,32 +73,33 @@ exports.getLessonsById = {
                 'items': {
                     'type': 'string'
                 }
-            }LessonsActions.js,
+            },
+            LessonsActions.js
         ]
     },
     'action': controllers.lessons.findLessonsByIds
 };
 
 
-exports.createLesson = {
+exports.createPlayList = {
     'spec': {
-        'path': '/lessons/create',
-        'summary': 'Create new lesson',
+        'path': '/playLists/create',
+        'summary': 'Create new playList',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'lesson',
+                'name': 'playList',
                 required: true,
-                'description': 'Lesson details',
-                'type': 'Lesson'
+                'description': 'PlayList details',
+                'type': 'PlayList'
             }
         ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn
     ],
-    'action': controllers.lessons.create
+    'action': controllers.playLists.create
 };
 
 exports.getUserLessonById = {
