@@ -5,6 +5,7 @@ var _ = require('lodash');
 var Role = require('../models/Role');
 
 exports.lessons = require('./LessonsPermissions');
+exports.playLists = require('./PlayListsPermissions');
 exports.questions = require('./QuestionsPermissions');
 exports.users = require('./UsersPermissions');
 exports.reports = require('./ReportsPermissions');
