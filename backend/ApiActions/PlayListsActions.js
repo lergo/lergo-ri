@@ -8,7 +8,7 @@ var permissions = require('../permissions');
 
 // using a question to find playLists.
 // where playList.userId != question.userId
-exports.findLessonsUsingQuestion = {
+exports.findPlayListsUsingQuestion = {
     'spec': {
         'path': '/playLists/using/question/{questionId}',
         'summary': 'find question usages',
@@ -29,7 +29,7 @@ exports.findLessonsUsingQuestion = {
     'action': controllers.playLists.findUsages
 };
 
-exports.getAdminLessons = {
+exports.getAdminPlayLists = {
     'spec': {
         'path': '/playLists/get/all',
         'summary': 'Get admin playLists',
@@ -37,14 +37,14 @@ exports.getAdminLessons = {
     },
     'middlewares': [
         middlewares.session.isLoggedIn,
-        middlewares.playLists.userCanSeePrivateLessons,
+        middlewares.playLists.userCanSeePrivatePlayLists,
         middlewares.lergo.queryObjParsing
     ],
-    'action': controllers.playLists.getAdminLessons
+    'action': controllers.playLists.getAdminPlayLists
 };
 
 
-exports.getLessonIntro = {
+exports.getPlayListIntro = {
     'spec': {
         'path': '/playLists/{playListId}/intro',
         'summary': 'Get playList intro',
@@ -54,11 +54,11 @@ exports.getLessonIntro = {
         middlewares.session.optionalUserOnRequest,
         middlewares.playLists.exists
     ],
-    'action': controllers.playLists.getLessonIntro
+    'action': controllers.playLists.getPlayListIntro
 };
 
 
-exports.getLessonsById = {
+exports.getPlayListsById = {
     'spec': {
         'path': '/playLists/find',
         'summary': 'Find playLists',
@@ -74,10 +74,10 @@ exports.getLessonsById = {
                     'type': 'string'
                 }
             },
-            LessonsActions.js
+            PlayListsActions.js
         ]
     },
-    'action': controllers.playLists.findLessonsByIds
+    'action': controllers.playLists.findPlayListsByIds
 };
 
 
@@ -102,7 +102,7 @@ exports.createPlayList = {
     'action': controllers.playLists.create
 };
 
-exports.getUserLessonById = {
+exports.getUserPlayListById = {
     'spec': {
         'path': '/playLists/{playListId}',
         'summary': 'Get playList by id',
@@ -121,7 +121,7 @@ exports.getUserLessonById = {
         middlewares.session.optionalUserOnRequest,
         middlewares.playLists.exists
     ],
-    'action': controllers.playLists.getLessonById
+    'action': controllers.playLists.getPlayListById
 };
 
 
@@ -148,7 +148,7 @@ exports.getUserPermissions = {
 };
 
 
-exports.editLesson = {
+exports.editPlayList = {
     'spec': {
         'path': '/playLists/{playListId}/update',
         'summary': 'user edits a playList',
@@ -159,7 +159,7 @@ exports.editLesson = {
                 'name': 'playList',
                 required: true,
                 'description': 'The updated playList',
-                'type': 'Lesson'
+                'type': 'PlayList'
             } ,
             {
                 'paramType': 'path',
@@ -178,7 +178,7 @@ exports.editLesson = {
     'action': controllers.playLists.update
 };
 
-exports.publishLesson = {
+exports.publishPlayList = {
     'spec': {
         'path': '/playLists/{playListId}/publish',
         'summary': 'user publishes a playList',
@@ -192,7 +192,7 @@ exports.publishLesson = {
     'action': controllers.playLists.publish
 };
 
-exports.unpublishLesson = {
+exports.unpublishPlayList = {
     'spec': {
         'path': '/playLists/{playListId}/unpublish',
         'summary': 'user unpublishes a playList',
@@ -206,7 +206,7 @@ exports.unpublishLesson = {
     'action': controllers.playLists.unpublish
 };
 
-exports.deleteLesson = {
+exports.deletePlayList = {
     'spec': {
         'path': '/playLists/{playListId}/delete',
         'summary': 'Delete playList corresponding to the id',
@@ -226,11 +226,11 @@ exports.deleteLesson = {
         middlewares.playLists.exists,
         middlewares.playLists.userCanDelete
     ],
-    'action': controllers.playLists.deleteLesson
+    'action': controllers.playLists.deletePlayList
 };
 
 
-exports.likeLesson = {
+exports.likePlayList = {
     'spec': {
         'path': '/playLists/{playListId}/delete',
         'summary': 'Delete playList corresponding to the id',
@@ -250,7 +250,7 @@ exports.likeLesson = {
         middlewares.playLists.exists,
         middlewares.playLists.userCanDelete
     ],
-    'action': controllers.playLists.deleteLesson
+    'action': controllers.playLists.deletePlayList
 };
 
 
@@ -285,7 +285,7 @@ exports.overrideQuestion = {
     'action': controllers.playLists.overrideQuestion
 };
 
-exports.copyLesson = {
+exports.copyPlayList = {
     'spec': {
         'path': '/playLists/{playListId}/copy',
         'summary': 'copy playList. prefix title with "Copy for" new playList',
@@ -296,18 +296,18 @@ exports.copyLesson = {
         middlewares.playLists.exists,
         middlewares.playLists.userCanCopy
     ],
-    'action': controllers.playLists.copyLesson
+    'action': controllers.playLists.copyPlayList
 };
 
 
-exports.getPublicLessons = {
+exports.getPublicPlayLists = {
     'spec'       : {
         'path'          : '/public/playLists',
         'summary'       : 'Get public playLists',
         'method'        : 'GET'
     },
     'middlewares': [middlewares.lergo.queryObjParsing],
-    'action'     : controllers.playLists.getPublicLessons
+    'action'     : controllers.playLists.getPublicPlayLists
 };
 
 
