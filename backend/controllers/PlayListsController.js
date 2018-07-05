@@ -16,7 +16,7 @@ var Like = require('../models/Like');
 exports.getUserLessons = function(req, res) {
 	var queryObj = req.queryObj;
 	queryObj.filter.userId = req.sessionUser._id;
-	managers.lessons.complexSearch(queryObj, function(err, obj) {
+	managers.playLists.complexSearch(queryObj, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -31,7 +31,7 @@ exports.getUserLikedLessons = function(req, res) {
 	var queryObj = req.queryObj;
 	Like.find({
 		userId : req.sessionUser._id,
-		itemType : 'lesson'
+		itemType : 'playList'
 	}, {
 		itemId : 1,
 		_id : 1
@@ -47,7 +47,7 @@ exports.getUserLikedLessons = function(req, res) {
 		queryObj.filter._id = {
 			$in : _.map(result, 'itemId')
 		};
-		managers.lessons.complexSearch(queryObj, function(err, obj) {
+		managers.playLists.complexSearch(queryObj, function(err, obj) {
 			if (!!err) {
 				err.send(res);
 				return;
@@ -62,28 +62,28 @@ exports.getUserLikedLessons = function(req, res) {
 
 };
 
-// assumes user and lesson exists and user can see lesson
-// or lesson is public and then we don't need user
+// assumes user and playList exists and user can see playList
+// or playList is public and then we don't need user
 exports.getLessonById = function(req, res) {
-	if (!req.lesson) {
-		new managers.error.NotFound('could not find lesson').send(res);
+	if (!req.playList) {
+		new managers.error.NotFound('could not find playList').send(res);
 		return;
 	}
-	res.send(req.lesson);
+	res.send(req.playList);
 };
 
 exports.getAdminLessons = function(req, res) {
 
-	managers.lessons.complexSearch(req.queryObj, function(err, result) {
+	managers.playLists.complexSearch(req.queryObj, function(err, result) {
 		if (!!err) {
-			new managers.error.InternalServerError(err, 'unable to get all admin lessons').send(res);
+			new managers.error.InternalServerError(err, 'unable to get all admin playLists').send(res);
 			return;
 		}
 
         var usersId = _.map(result.data,'userId');
         Lesson.countPublicLessonsByUser( usersId , function(err, publicCountByUser ){
             if ( !!err ){
-                new managers.error.InternalServerError(err, 'unable to add count for public lessons').send(res);
+                new managers.error.InternalServerError(err, 'unable to add count for public playLists').send(res);
                 return;
             }
             _.each(result.data, function(r){
@@ -95,10 +95,10 @@ exports.getAdminLessons = function(req, res) {
 };
 
 exports.adminUpdateLesson = function(req, res) {
-	var lesson = req.body;
-	lesson.userId = services.db.id(lesson.userId);
-	lesson._id = services.db.id(lesson._id);
-	managers.lessons.updateLesson(lesson, function(err, obj) {
+	var playList = req.body;
+    playList.userId = services.db.id(playList.userId);
+	playList._id = services.db.id(playList._id);
+	managers.playLists.updateLesson(playList, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -119,31 +119,31 @@ exports.getPublicLessons = function(req, res) {
 			throw new Error('public must be $exists 1');
 		}
 	} catch (e) {
-		res.status(400).send('lessons controller - illegal filter value : ' + e.message);
+		res.status(400).send('playLists controller - illegal filter value : ' + e.message);
 		return;
 	}
 
-	var lessons = [];
+	var playLists = [];
 	async.waterfall([ function loadLessons(callback) {
-		managers.lessons.complexSearch(req.queryObj, function(err, result) {
+		managers.playLists.complexSearch(req.queryObj, function(err, result) {
 
 			if (!!err) {
-				callback(new managers.error.InternalServerError(err, 'unable to get all admin lessons'));
+				callback(new managers.error.InternalServerError(err, 'unable to get all admin playLists'));
 				return;
 			}
-			lessons = result;
+            playLists = result;
 			callback();
 		});
 	}, function loadUsers(callback) {
 
-		var usersId = _.map(lessons.data, 'userId');
+		var usersId = _.map(playLists.data, 'userId');
 		managers.users.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
 
 			if (!!err) {
 				callback(new managers.error.InternalServerError(err, 'unable to load users by id'));
 				return;
 			}
-			_.each(lessons.data, function(l) {
+			_.each(playLists.data, function(l) {
 				l.user = usersById[l.userId];
 			});
 
@@ -154,20 +154,20 @@ exports.getPublicLessons = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			res.send(lessons);
+			res.send(playLists);
 		}
 	});
 
 };
 
 exports.getLessonIntro = function(req, res) {
-	managers.lessons.getLessonIntro(req.params.lessonId, function(err, result) {
+	managers.playListss.getLessonIntro(req.params.playListId, function(err, result) {
 		res.send(result);
 	});
 };
 
 exports.overrideQuestion = function(req, res) {
-	logger.info('overriding question :: ' + req.question._id + ' in lesson ::' + req.lesson._id);
+	logger.info('overriding question :: ' + req.question._id + ' in playList ::' + req.playList._id);
 
 	var newQuestion = null;
 	async.waterfall([ function copyQuestion(callback) {
@@ -178,9 +178,9 @@ exports.overrideQuestion = function(req, res) {
 		try {
 			newQuestion = _newQuestion;
 			var oldQuestion = req.question;
-			var lessonObj = new Lesson(req.lesson);
-			lessonObj.replaceQuestionInLesson(oldQuestion._id.toString(), newQuestion._id.toString());
-			lessonObj.update();
+			var playListObj = new Lesson(req.playList);
+            playListObj.replaceQuestionInLesson(oldQuestion._id.toString(), newQuestion._id.toString());
+			playListObj.update();
 			callback(null);
 			return;
 		} catch (e) {
@@ -188,7 +188,7 @@ exports.overrideQuestion = function(req, res) {
 			callback(e);
 			return;
 		}
-		// wrap lesson object with our model and invoke save.
+		// wrap playList object with our model and invoke save.
 
 	} ], function(err) {
 		logger.info('override async finished');
@@ -201,7 +201,7 @@ exports.overrideQuestion = function(req, res) {
 		} else { // newQuestion != null
 			logger.info('completed successfully');
 			res.status(200).send({
-				'lesson' : req.lesson,
+				'playList' : req.playList,
 				'quizItem' : newQuestion
 			});
 		}
@@ -209,13 +209,13 @@ exports.overrideQuestion = function(req, res) {
 };
 
 exports.copyLesson = function(req, res) {
-	managers.lessons.copyLesson(req.sessionUser, req.lesson, function(err, result) {
+	managers.playLists.copyLesson(req.sessionUser, req.playList, function(err, result) {
 		res.send(result);
 	});
 };
 
-function _updateLesson( lesson , res ){
-    managers.lessons.updateLesson(lesson, function(err, obj) {
+function _updateLesson( playList , res ){
+    managers.playLists.updateLesson(playList, function(err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -235,29 +235,29 @@ function _updateLesson( lesson , res ){
  * it will assume user was authorized to get here, and will NOT assume user own
  * the resource.
  *
- * For example - update lesson will not assume the editor is the user on the
+ * For example - update playList will not assume the editor is the user on the
  * request, but will assume the user on the request is allowed to edit this
- * lesson;
+ * playList;
  *
  *
  *
  */
 
 exports.update = function(req, res) {
-	logger.info('updating lesson');
-	var lesson = req.body;
+	logger.info('updating playList');
+	var playList = req.body;
 
-	lesson.userId = req.lesson.userId;
-	lesson._id = services.db.id(lesson._id);
+	playList.userId = req.playList.userId;
+	playList._id = services.db.id(playList._id);
 
-    _updateLesson( lesson, res );
+    _updateLesson( playList, res );
 
 };
 
 
 /**
  *
- * This function only publishes a lesson.
+ * This function only publishes a playList.
  *
  * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
  *
@@ -265,15 +265,15 @@ exports.update = function(req, res) {
  * @param res
  */
 exports.publish = function(req, res){
-    var lesson = req.lesson;
-    lesson.public = new Date().getTime();
-    _updateLesson( lesson, res );
+    var playList = req.playList;
+    playList.public = new Date().getTime();
+    _updateLesson( playList, res );
 };
 
 
 /**
  *
- * This function only unpublishes a lesson.
+ * This function only unpublishes a playList.
  *
  * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
  *
@@ -281,14 +281,14 @@ exports.publish = function(req, res){
  * @param res
  */
 exports.unpublish = function(req, res){
-    var lesson = req.lesson;
-    delete lesson.public;
-    _updateLesson( lesson, res );
+    var playList = req.playList;
+    delete playList.public;
+    _updateLesson( playList, res );
 };
 
 /**
  *
- * Creates a new lesson and assigns it to the logged in user.
+ * Creates a new playList and assigns it to the logged in user.
  *
  * @param req
  * @param res
@@ -309,7 +309,7 @@ exports.create = function(req, res) {
 };
 
 /**
- * gets a list of ids and returns the corresponding lessons.
+ * gets a list of ids and returns the corresponding playLists.
  *
  * how to pass a list of ids over req query?
  *
@@ -320,7 +320,7 @@ exports.create = function(req, res) {
  */
 exports.findLessonsByIds = function(req, res) {
 
-	var objectIds = req.getQueryList('lessonsId');
+	var objectIds = req.getQueryList('playListsId');
 	logger.info('this is object ids', objectIds);
 	objectIds = services.db.id(objectIds);
 
@@ -330,7 +330,7 @@ exports.findLessonsByIds = function(req, res) {
 		}
 	}, {}, function(err, result) {
 		if (!!err) {
-			new managers.error.InternalServerError(err, 'unable to find lessons by ids').send(res);
+			new managers.error.InternalServerError(err, 'unable to find playLists by ids').send(res);
 			return;
 		} else {
 			res.send(result);
@@ -340,18 +340,18 @@ exports.findLessonsByIds = function(req, res) {
 };
 
 exports.deleteLesson = function(req, res) {
-	managers.lessons.deleteLesson(req.lesson._id, function(err, deletedLesson) {
+	managers.playLists.deleteLesson(req.playList._id, function(err, deletedLesson) {
 		if (!!err) {
-			logger.error('error deleting lesson', err);
+			logger.error('error deleting playList', err);
 			err.send(res);
 			return;
 		} else {
-			managers.lessonsInvitations.deleteByLessonId(req.lesson._id, function(err/*
+			managers.playListsInvitations.deleteByLessonId(req.playList._id, function(err/*
 																						 * ,
 																						 * deletedInvitations
 																						 */) {
 				if (!!err) {
-					logger.error('error deleting lessons invitations', err);
+					logger.error('error deleting playLists invitations', err);
 					err.send(res);
 					return;
 				} else {

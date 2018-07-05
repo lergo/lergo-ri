@@ -68,17 +68,17 @@ PlayList.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestio
 };
 
 /**
- * Flattens all quizItems on all lessons,
+ * Flattens all quizItems on all playLists,
  * and groups all quizItems values into a single set.
  * http://stackoverflow.com/a/13281819/1068746
  *
- * @param lessonsIds
+ * @param playListsIds
  * @param callback
  */
-PlayList.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
+PlayList.getAllQuestionsIdsForLessons = function( playListsIds, callback ){
     Lesson.connect( function (db, collection) {
         var aggregation = [
-            {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : lessonsIds} }},
+            {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : playListsIds} }},
             { $project: { _id : 0, 'steps.quizItems':1} },
             {$unwind : '$steps'},
             {$unwind : '$steps.quizItems'},
@@ -103,7 +103,7 @@ PlayList.findByQuizItems = function( question, callback){
 PlayList.existsPublicByQuizItems = function(question, callback){
     Lesson.findOne({'steps.quizItems': question._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
         if ( !!err ){
-            logger.error('unable to decide if question is used by public lesson [%s]', err.message);
+            logger.error('unable to decide if question is used by public playList [%s]', err.message);
         }
         callback(err, !!result);
     });
@@ -112,12 +112,12 @@ PlayList.existsPublicByQuizItems = function(question, callback){
 
 /**
  *
- * a wrong and very naive implementation. count number of questions in user's public lesson.
+ * a wrong and very naive implementation. count number of questions in user's public playList.
  *
  * the actual purpose is to count all public questions by user.
  * so this function will only work if user used only his/her own questions..
  *
- * Flattens all quizItems on all lessons,
+ * Flattens all quizItems on all playLists,
  * and groups all quizItems values into a single set.
  * http://stackoverflow.com/a/13281819/1068746
  *

@@ -13,7 +13,7 @@ var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
 var _ = require('lodash');
-var PlayList = require('../models/PlayList');  // Jeff to make
+var PlayList = require('../models/PlayList');
 
 
 exports.createPlayList = function(playList, callback) {
