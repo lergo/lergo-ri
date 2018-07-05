@@ -1,19 +1,19 @@
 'use strict';
 
 /**
- * @module LessonsController
+ * @module PlayListsController
  * @type {exports}
  */
 
 var managers = require('../managers');
 var services = require('../services');
 var async = require('async');
-var logger = require('log4js').getLogger('LessonsController');
+var logger = require('log4js').getLogger('PlayListsController');
 var PlayList = require('../models/Lesson');
 var _ = require('lodash');
 var Like = require('../models/Like');
 
-exports.getUserLessons = function(req, res) {
+exports.getUserPlayLists = function(req, res) {
 	var queryObj = req.queryObj;
 	queryObj.filter.userId = req.sessionUser._id;
 	managers.playLists.complexSearch(queryObj, function(err, obj) {
@@ -27,7 +27,7 @@ exports.getUserLessons = function(req, res) {
 	});
 };
 
-exports.getUserLikedLessons = function(req, res) {
+exports.getUserLikedPlayLists = function(req, res) {
 	var queryObj = req.queryObj;
 	Like.find({
 		userId : req.sessionUser._id,
@@ -72,7 +72,7 @@ exports.getLessonById = function(req, res) {
 	res.send(req.playList);
 };
 
-exports.getAdminLessons = function(req, res) {
+exports.getAdminPlayLists = function(req, res) {
 
 	managers.playLists.complexSearch(req.queryObj, function(err, result) {
 		if (!!err) {
@@ -81,7 +81,7 @@ exports.getAdminLessons = function(req, res) {
 		}
 
         var usersId = _.map(result.data,'userId');
-        Lesson.countPublicLessonsByUser( usersId , function(err, publicCountByUser ){
+        Lesson.countPublicPlayListsByUser( usersId , function(err, publicCountByUser ){
             if ( !!err ){
                 new managers.error.InternalServerError(err, 'unable to add count for public playLists').send(res);
                 return;
@@ -109,7 +109,7 @@ exports.adminUpdateLesson = function(req, res) {
 	});
 };
 
-exports.getPublicLessons = function(req, res) {
+exports.getPublicPlayLists = function(req, res) {
 
 	try {
 		var queryObj = req.queryObj;
@@ -124,7 +124,7 @@ exports.getPublicLessons = function(req, res) {
 	}
 
 	var playLists = [];
-	async.waterfall([ function loadLessons(callback) {
+	async.waterfall([ function loadPlayLists(callback) {
 		managers.playLists.complexSearch(req.queryObj, function(err, result) {
 
 			if (!!err) {
@@ -295,6 +295,7 @@ exports.unpublish = function(req, res){
  */
 
 exports.create = function(req, res) {
+    logger.info('creating playList');
 	var playList = {};
 	playList.userId = req.sessionUser._id;
 	managers.playList.createPlayList(playList, function(err, obj) {
@@ -318,7 +319,7 @@ exports.create = function(req, res) {
  * @param req
  * @param res
  */
-exports.findLessonsByIds = function(req, res) {
+exports.findPlayListsByIds = function(req, res) {
 
 	var objectIds = req.getQueryList('playListsId');
 	logger.info('this is object ids', objectIds);
