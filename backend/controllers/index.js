@@ -1,6 +1,7 @@
 exports.users = require('./UsersController');
 exports.questions = require('./QuestionsController');
 exports.lessons = require('./LessonsController');
+exports.playLists = require('./PlayListsController');
 exports.lessonsInvitations = require('./LessonsInvitationsController');
 exports.system = require('./SystemController');
 exports.tags = require('./TagsController');

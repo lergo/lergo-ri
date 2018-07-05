@@ -9,7 +9,7 @@ var managers = require('../managers');
 var services = require('../services');
 var async = require('async');
 var logger = require('log4js').getLogger('PlayListsController');
-var PlayList = require('../models/Lesson');
+var PlayList = require('../models/PlayList');
 var _ = require('lodash');
 var Like = require('../models/Like');
 
@@ -64,7 +64,7 @@ exports.getUserLikedPlayLists = function(req, res) {
 
 // assumes user and playList exists and user can see playList
 // or playList is public and then we don't need user
-exports.getLessonById = function(req, res) {
+exports.getPlayListById = function(req, res) {
 	if (!req.playList) {
 		new managers.error.NotFound('could not find playList').send(res);
 		return;
@@ -81,7 +81,7 @@ exports.getAdminPlayLists = function(req, res) {
 		}
 
         var usersId = _.map(result.data,'userId');
-        Lesson.countPublicPlayListsByUser( usersId , function(err, publicCountByUser ){
+        PlayList.countPublicPlayListsByUser( usersId , function(err, publicCountByUser ){
             if ( !!err ){
                 new managers.error.InternalServerError(err, 'unable to add count for public playLists').send(res);
                 return;
@@ -94,11 +94,11 @@ exports.getAdminPlayLists = function(req, res) {
 	});
 };
 
-exports.adminUpdateLesson = function(req, res) {
+exports.adminUpdatePlayList = function(req, res) {
 	var playList = req.body;
     playList.userId = services.db.id(playList.userId);
 	playList._id = services.db.id(playList._id);
-	managers.playLists.updateLesson(playList, function(err, obj) {
+	managers.playLists.updatePlayList(playList, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -160,8 +160,8 @@ exports.getPublicPlayLists = function(req, res) {
 
 };
 
-exports.getLessonIntro = function(req, res) {
-	managers.playListss.getLessonIntro(req.params.playListId, function(err, result) {
+exports.getPlayListIntro = function(req, res) {
+	managers.playListss.getPlayListIntro(req.params.playListId, function(err, result) {
 		res.send(result);
 	});
 };
@@ -178,8 +178,8 @@ exports.overrideQuestion = function(req, res) {
 		try {
 			newQuestion = _newQuestion;
 			var oldQuestion = req.question;
-			var playListObj = new Lesson(req.playList);
-            playListObj.replaceQuestionInLesson(oldQuestion._id.toString(), newQuestion._id.toString());
+			var playListObj = new PlayList(req.playList);
+            playListObj.replaceQuestionInPlayList(oldQuestion._id.toString(), newQuestion._id.toString());
 			playListObj.update();
 			callback(null);
 			return;
@@ -208,14 +208,14 @@ exports.overrideQuestion = function(req, res) {
 	});
 };
 
-exports.copyLesson = function(req, res) {
-	managers.playLists.copyLesson(req.sessionUser, req.playList, function(err, result) {
+exports.copyPlayList = function(req, res) {
+	managers.playLists.copyPlayList(req.sessionUser, req.playList, function(err, result) {
 		res.send(result);
 	});
 };
 
-function _updateLesson( playList , res ){
-    managers.playLists.updateLesson(playList, function(err, obj) {
+function _updatePlayList( playList , res ){
+    managers.playLists.updatePlayList(playList, function(err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -250,7 +250,7 @@ exports.update = function(req, res) {
 	playList.userId = req.playList.userId;
 	playList._id = services.db.id(playList._id);
 
-    _updateLesson( playList, res );
+    _updatePlayList( playList, res );
 
 };
 
@@ -267,7 +267,7 @@ exports.update = function(req, res) {
 exports.publish = function(req, res){
     var playList = req.playList;
     playList.public = new Date().getTime();
-    _updateLesson( playList, res );
+    _updatePlayList( playList, res );
 };
 
 
@@ -283,7 +283,7 @@ exports.publish = function(req, res){
 exports.unpublish = function(req, res){
     var playList = req.playList;
     delete playList.public;
-    _updateLesson( playList, res );
+    _updatePlayList( playList, res );
 };
 
 /**
@@ -295,7 +295,7 @@ exports.unpublish = function(req, res){
  */
 
 exports.create = function(req, res) {
-    logger.info('creating playList');
+    logger.info('create playList');
 	var playList = {};
 	playList.userId = req.sessionUser._id;
 	managers.playList.createPlayList(playList, function(err, obj) {
@@ -325,7 +325,7 @@ exports.findPlayListsByIds = function(req, res) {
 	logger.info('this is object ids', objectIds);
 	objectIds = services.db.id(objectIds);
 
-	Lesson.find({
+	PlayList.find({
 		'_id' : {
 			'$in' : objectIds
 		}
@@ -340,14 +340,14 @@ exports.findPlayListsByIds = function(req, res) {
 	});
 };
 
-exports.deleteLesson = function(req, res) {
-	managers.playLists.deleteLesson(req.playList._id, function(err, deletedLesson) {
+exports.deletePlayList = function(req, res) {
+	managers.playLists.deletePlayList(req.playList._id, function(err, deletedPlayList) {
 		if (!!err) {
 			logger.error('error deleting playList', err);
 			err.send(res);
 			return;
 		} else {
-			managers.playListsInvitations.deleteByLessonId(req.playList._id, function(err/*
+			managers.playListsInvitations.deleteByPlayListId(req.playList._id, function(err/*
 																						 * ,
 																						 * deletedInvitations
 																						 */) {
@@ -356,7 +356,7 @@ exports.deleteLesson = function(req, res) {
 					err.send(res);
 					return;
 				} else {
-					res.send(deletedLesson);
+					res.send(deletedPlayList);
 					return;
 				}
 			});
@@ -366,7 +366,7 @@ exports.deleteLesson = function(req, res) {
 };
 
 exports.findUsages = function(req, res) {
-	Lesson.findByQuizItems(req.question, function(err, obj) {
+	PlayList.findByQuizItems(req.question, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

@@ -295,6 +295,7 @@ exports.unpublish = function(req, res){
  */
 
 exports.create = function(req, res) {
+    logger.info('exports.create');
 	var lesson = {};
 	lesson.userId = req.sessionUser._id;
 	managers.lessons.createLesson(lesson, function(err, obj) {

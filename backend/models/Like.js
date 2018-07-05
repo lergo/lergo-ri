@@ -14,7 +14,8 @@ Like.collectionName = 'likes';
 //enum
 Like.ItemTypes = {
     LESSON : 'lesson',
-    QUESTION : 'question'
+    QUESTION : 'question',
+    PLAYLIST : 'playlist'
 };
 
 Like.createNew = function( itemType, itemId, userId ){
