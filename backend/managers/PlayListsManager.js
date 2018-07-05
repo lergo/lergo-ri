@@ -25,7 +25,7 @@ exports.createPlayList = function(playList, callback) {
 	services.db.connect('playLists', function(db, collection) {
 		collection.insert(playList, function(err) {
 			if (!!err) {
-				logger.error('error creating playList [%s] : [%s]', lesson.name, err);
+				logger.error('error creating playList [%s] : [%s]', playList.name, err);
 				callback(new errorManager.InternalServerError());
 				return;
 			} else {
@@ -42,63 +42,63 @@ exports.createPlayList = function(playList, callback) {
  *
  *
  *
- * This function copies a lesson while picking very specific fields from it.
+ * This function copies a playList while picking very specific fields from it.
  *
  *
  * @param user - the user making the copy
- * @param lesson
+ * @param playList
  * @param callback
  */
 
-exports.copyLesson = function (user, lesson, callback) {
+exports.copyPlayList = function (user, playList, callback) {
 
     // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
-    // copy of is transitive property of a lesson;
+    // copy of is transitive property of a playList;
     var copyOf = [];
 
 
     // LERGO-412 - we decided we want to remember even if same user.
     // LERGO-569 - we decided we DO NOT want to remember if the same user..
-    if ( !services.db.id(user._id).equals( services.db.id( lesson.userId ) ) ){
-        copyOf = copyOf.concat(lesson._id);
+    if ( !services.db.id(user._id).equals( services.db.id( playList.userId ) ) ){
+        copyOf = copyOf.concat(playList._id);
     }
 
     // copy of is a transitive property.
-    if ( !!lesson.copyOf ){
-        copyOf = copyOf.concat(lesson.copyOf);
+    if ( !!playList.copyOf ){
+        copyOf = copyOf.concat(playList.copyOf);
     }
 
-    lesson = _.pick(lesson, ['age','description','name','steps','language','subject','tags']);
+    playList = _.pick(playList, ['age','description','name','steps','language','subject','tags']);
 
     var copyOfName = 'Copy of: ';
 
-    if (lesson.language === 'hebrew') {
+    if (playList.language === 'hebrew') {
         copyOfName = 'העתק של: ';
-    } else if (lesson.language === 'arabic') {
+    } else if (playList.language === 'arabic') {
         copyOfName = 'نسخة من: ';
     } else {
         copyOfName = 'Copy of: ';
     }
 
-    lesson.name = copyOfName  + lesson.name;
+    playList.name = copyOfName  + playList.name;
 
     if ( copyOf.length > 0 ){
-        lesson.copyOf = copyOf;
+        playList.copyOf = copyOf;
     }
 
-    lesson.createdAt = new Date().toISOString();
-    lesson.lastUpdate = new Date().getTime();
-    lesson.userId = services.db.id(user._id);
+    playList.createdAt = new Date().toISOString();
+    playList.lastUpdate = new Date().getTime();
+    playList.userId = services.db.id(user._id);
 
-    services.db.connect('lessons', function (db, collection) {
-        collection.insert(lesson, function (err) {
+    services.db.connect('playLists', function (db, collection) {
+        collection.insert(playList, function (err) {
             if (!!err) {
-                logger.error('error copying lesson [%s]', lesson.name, err);
+                logger.error('error copying playList [%s]', playList.name, err);
                 callback(new errorManager.InternalServerError());
                 return;
             } else {
-                logger.info('Lesson [%s] copied successfully', lesson.name);
-                callback(null, lesson);
+                logger.info('PlayList [%s] copied successfully', playList.name);
+                callback(null, playList);
                 return;
             }
         });
@@ -117,7 +117,7 @@ exports.updatePlayList = function(playList, callback) {
 				done();
 				return;
 			} else {
-				logger.info('PlayList [%s] updated successfully. invoking callback', lesson.name);
+				logger.info('PlayList [%s] updated successfully. invoking callback', playList.name);
 				callback(null, playList);
 				done();
 				return;
@@ -211,7 +211,7 @@ exports.getPublicPlayLists = function(callback) {
 			}
 		}, {}).each(function(err, obj) {
 			logger.debug('handling playList');
-			if (obj === null) { // means we found all lessons
+			if (obj === null) { // means we found all playLists
 				done();
 				usersManager.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
 					logger.info('got users map', usersById);
@@ -233,7 +233,7 @@ exports.getPublicPlayLists = function(callback) {
 };
 
 // todo : organize this code into "role" based pattern
-exports.getPlayListIntro = function( lessonId, callback ){
+exports.getPlayListIntro = function( playListId, callback ){
     services.db.connect('playLists', function(db, collection/*, done*/){
         collection.findOne({
             '_id' : services.db.id( playListId )
