@@ -6,11 +6,11 @@ var permissions = require('../permissions');
 
 
 
-// using a question to find lessons.
-// where lesson.userId != question.userId
+// using a question to find playLists.
+// where playList.userId != question.userId
 exports.findLessonsUsingQuestion = {
     'spec': {
-        'path': '/lessons/using/question/{questionId}',
+        'path': '/playLists/using/question/{questionId}',
         'summary': 'find question usages',
         'method': 'GET',
         'parameters': [
@@ -26,47 +26,47 @@ exports.findLessonsUsingQuestion = {
     'middlewares' : [
         middlewares.questions.exists
     ],
-    'action': controllers.lessons.findUsages
+    'action': controllers.playLists.findUsages
 };
 
 exports.getAdminLessons = {
     'spec': {
-        'path': '/lessons/get/all',
-        'summary': 'Get admin lessons',
+        'path': '/playLists/get/all',
+        'summary': 'Get admin playLists',
         'method': 'GET'
     },
     'middlewares': [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.userCanSeePrivateLessons,
+        middlewares.playLists.userCanSeePrivateLessons,
         middlewares.lergo.queryObjParsing
     ],
-    'action': controllers.lessons.getAdminLessons
+    'action': controllers.playLists.getAdminLessons
 };
 
 
 exports.getLessonIntro = {
     'spec': {
-        'path': '/lessons/{lessonId}/intro',
-        'summary': 'Get lesson intro',
+        'path': '/playLists/{playListId}/intro',
+        'summary': 'Get playList intro',
         'method': 'GET'
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.playLists.exists
     ],
-    'action': controllers.lessons.getLessonIntro
+    'action': controllers.playLists.getLessonIntro
 };
 
 
 exports.getLessonsById = {
     'spec': {
-        'path': '/lessons/find',
-        'summary': 'Find lessons',
+        'path': '/playLists/find',
+        'summary': 'Find playLists',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'query',
-                'name': 'lessonsId',
+                'name': 'playListsId',
                 'required': false,
                 'description': 'list of ids to find',
                 'type': 'array',
@@ -77,7 +77,7 @@ exports.getLessonsById = {
             LessonsActions.js
         ]
     },
-    'action': controllers.lessons.findLessonsByIds
+    'action': controllers.playLists.findLessonsByIds
 };
 
 
@@ -104,167 +104,167 @@ exports.createPlayList = {
 
 exports.getUserLessonById = {
     'spec': {
-        'path': '/lessons/{lessonId}',
-        'summary': 'Get lesson by id',
+        'path': '/playLists/{playListId}',
+        'summary': 'Get playList by id',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of playList that needs to be fetched',
                 'type': 'string'
             }
         ]
     },
     'middlewares' : [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.playLists.exists
     ],
-    'action': controllers.lessons.getLessonById
+    'action': controllers.playLists.getLessonById
 };
 
 
 exports.getUserPermissions = {
     'spec': {
-        'path': '/lessons/{lessonId}/permissions',
-        'summary': 'get user permissions for lesson',
+        'path': '/playLists/{playListId}/permissions',
+        'summary': 'get user permissions for playList',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of playList that needs to be fetched',
                 'type': 'string'
             }
         ]
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.playLists.exists
     ],
-    'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.sessionUser, req.lesson)); }
+    'action': function( req, res ){ res.send(permissions.playLists.getPermissions(req.sessionUser, req.playList)); }
 };
 
 
 exports.editLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/update',
-        'summary': 'user edits a lesson',
+        'path': '/playLists/{playListId}/update',
+        'summary': 'user edits a playList',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'body',
-                'name': 'lesson',
+                'name': 'playList',
                 required: true,
-                'description': 'The updated lesson',
+                'description': 'The updated playList',
                 'type': 'Lesson'
             } ,
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson that needs to be fetched',
+                'description': 'ID of playList that needs to be fetched',
                 'type': 'string'
             }
         ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanEdit
     ],
-    'action': controllers.lessons.update
+    'action': controllers.playLists.update
 };
 
 exports.publishLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/publish',
-        'summary': 'user publishes a lesson',
+        'path': '/playLists/{playListId}/publish',
+        'summary': 'user publishes a playList',
         'method': 'POST'
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanPublish
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanPublish
     ],
-    'action': controllers.lessons.publish
+    'action': controllers.playLists.publish
 };
 
 exports.unpublishLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/unpublish',
-        'summary': 'user unpublishes a lesson',
+        'path': '/playLists/{playListId}/unpublish',
+        'summary': 'user unpublishes a playList',
         'method': 'POST'
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanUnpublish
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanUnpublish
     ],
-    'action': controllers.lessons.unpublish
+    'action': controllers.playLists.unpublish
 };
 
 exports.deleteLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/delete',
-        'summary': 'Delete lesson corresponding to the id',
+        'path': '/playLists/{playListId}/delete',
+        'summary': 'Delete playList corresponding to the id',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson that needs to be deleted',
+                'description': 'ID of playList that needs to be deleted',
                 'type': 'string'
             }
         ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanDelete
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanDelete
     ],
-    'action': controllers.lessons.deleteLesson
+    'action': controllers.playLists.deleteLesson
 };
 
 
 exports.likeLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/delete',
-        'summary': 'Delete lesson corresponding to the id',
+        'path': '/playLists/{playListId}/delete',
+        'summary': 'Delete playList corresponding to the id',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson that needs to be deleted',
+                'description': 'ID of playList that needs to be deleted',
                 'type': 'string'
             }
         ]
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanDelete
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanDelete
     ],
-    'action': controllers.lessons.deleteLesson
+    'action': controllers.playLists.deleteLesson
 };
 
 
 exports.overrideQuestion = {
     'spec': {
-        'path': '/lessons/{lessonId}/question/{questionId}/override',
+        'path': '/playLists/{playListId}/question/{questionId}/override',
         'summary': 'copies and replaces question',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playListId',
                 required: true,
-                'description': 'ID of lesson',
+                'description': 'ID of playList',
                 'type': 'string'
             },
             {
@@ -278,36 +278,36 @@ exports.overrideQuestion = {
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit,
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanEdit,
         middlewares.questions.exists
     ],
-    'action': controllers.lessons.overrideQuestion
+    'action': controllers.playLists.overrideQuestion
 };
 
 exports.copyLesson = {
     'spec': {
-        'path': '/lessons/{lessonId}/copy',
-        'summary': 'copy lesson. prefix title with "Copy for" new lesson',
+        'path': '/playLists/{playListId}/copy',
+        'summary': 'copy playList. prefix title with "Copy for" new playList',
         'method': 'POST'
     },
     'middlewares' : [
         middlewares.session.isLoggedIn,
-        middlewares.lessons.exists,
-        middlewares.lessons.userCanCopy
+        middlewares.playLists.exists,
+        middlewares.playLists.userCanCopy
     ],
-    'action': controllers.lessons.copyLesson
+    'action': controllers.playLists.copyLesson
 };
 
 
 exports.getPublicLessons = {
     'spec'       : {
-        'path'          : '/public/lessons',
-        'summary'       : 'Get public lessons',
+        'path'          : '/public/playLists',
+        'summary'       : 'Get public playLists',
         'method'        : 'GET'
     },
     'middlewares': [middlewares.lergo.queryObjParsing],
-    'action'     : controllers.lessons.getPublicLessons
+    'action'     : controllers.playLists.getPublicLessons
 };
 
 
