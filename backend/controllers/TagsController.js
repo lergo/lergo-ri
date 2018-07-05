@@ -38,10 +38,14 @@ exports.getTagsByFilter = function (req, res) {
     var lessonsId = req.getQueryList('lessonsId');
     lessonsId = services.db.id(lessonsId);
 
+    var playListsId = req.getQueryList('playListsId');
+    playListsId = services.db.id(playListsId);
+
     var questionsId = req.getQueryList('questionsId');
     questionsId = services.db.id(questionsId);
 
     logger.info('lessonsId',lessonsId);
+    logger.info('playListsId', playListsId);
 
     var result = [];
 
@@ -84,6 +88,10 @@ exports.getTagsByFilter = function (req, res) {
         findTagsOnCollection( 'lessons', like, lessonsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
+    function findTagsOnPlayLists( next ){
+        findTagsOnCollection( 'lessons', like, playListsId, function(err, tags){ findCallback( err, tags, next ); });
+    }
+
     function findTagsOnQuestions( next ){
         findTagsOnCollection('questions', like, questionsId, function(err, tags){ findCallback( err, tags, next ); });
     }
@@ -101,7 +109,7 @@ exports.getTagsByFilter = function (req, res) {
         );
     }
 
-    if ( lessonsId.length > 0 ){
+    if ( lessonsId.length > 0 ){ // Jeff to do
         models.Lesson.getAllQuestionsIdsForLessons( lessonsId, function( err, result ){
             if ( !!err ){
                 new managers.error.InternalServerError(err,'unable to get all lessons questions').send(res);
