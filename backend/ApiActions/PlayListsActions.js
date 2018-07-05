@@ -74,7 +74,6 @@ exports.getPlayListsById = {
                     'type': 'string'
                 }
             },
-            PlayListsActions.js
         ]
     },
     'action': controllers.playLists.findPlayListsByIds

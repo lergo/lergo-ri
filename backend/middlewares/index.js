@@ -1,4 +1,5 @@
 exports.lessons = require('./LessonsMiddleware');
+exports.playLists = require('./PlayListsMiddleware');
 exports.questions = require('./QuestionsMiddleware');
 exports.users = require('./UsersMiddleware');
 exports.likes = require('./LikesMiddleware');
