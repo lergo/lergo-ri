@@ -298,7 +298,7 @@ exports.create = function(req, res) {
     logger.info('create playList');
 	var playList = {};
 	playList.userId = req.sessionUser._id;
-	managers.playList.createPlayList(playList, function(err, obj) {
+	managers.playLists.createPlayList(playList, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
