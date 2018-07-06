@@ -8,7 +8,7 @@
 // we need to use setTimeout( function(){ managers = require('./index'); },0);
 // hopefully this will cause the event loop to execute after index.js is initialized.
 
-var logger = require('log4js').getLogger('LessonsManager');
+var logger = require('log4js').getLogger('PlayListsManager');
 var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
@@ -273,7 +273,7 @@ exports.complexSearch = function( queryObj, callback ){
     delete queryObj.filter.searchText;
 
 
-    Lesson.connect( function( db, collection ){
+    PlayList.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
     });
 };
