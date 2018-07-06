@@ -161,7 +161,7 @@ exports.getPublicPlayLists = function(req, res) {
 };
 
 exports.getPlayListIntro = function(req, res) {
-	managers.playListss.getPlayListIntro(req.params.playListId, function(err, result) {
+	managers.playLists.getPlayListIntro(req.params.playListId, function(err, result) {
 		res.send(result);
 	});
 };
