@@ -203,6 +203,16 @@ exports.getUserLessons = {
     'action': controllers.lessons.getUserLessons
 };
 
+exports.getUserPlayLists = {
+    'spec': {
+        'path': '/user/me/playLists',
+        'summary': 'Get user playLists',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playLists.getUserPlayLists
+};
+
 exports.getUserReports = {
     'spec': {
         'path': '/user/me/reports',
@@ -371,6 +381,16 @@ exports.getUserLikedLessons = {
     },
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.lessons.getUserLikedLessons
+};
+
+exports.getUserLikedPlayLists = {
+    'spec': {
+        'path': '/user/me/liked/playLists',
+        'summary': 'Get user liked playLists',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playLists.getUserLikedPlayLists
 };
 exports.getUserLikedQuestions = {
     'spec': {
