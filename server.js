@@ -256,10 +256,18 @@ app.get('/backend/sitemap.xml', function(req, res){
                 sitemap.urls.push( { url: '/#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
             });
 
-            sitemap.toXML(function (xml) {
+            /*sitemap.toXML(function (xml) {
                 res.header('Content-Type', 'application/xml');
                 res.send(xml);
+            });*/
+            sitemap.toXML( function (err, xml) {
+                if (err) {
+                    return res.status(500).end();
+                }
+                res.header('Content-Type', 'application/xml');
+                res.send( xml );
             });
+
         });
 
     });
