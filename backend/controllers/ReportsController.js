@@ -130,9 +130,13 @@ function updateClassAggReports(invitationId) {
                 ClassReport.connect(function (db, collection) {
                     try {
                         logger.info('inserting class report');
-                        collection.update({invitationId: report.invitationId}, report, {upsert: true}, function () {
+                        collection.update({invitationId: report.invitationId}, report, {upsert: true})
+                            .then(function () {
                             logger.info('Updating class report for invitation ID :' + invitationId);
-                        });
+                        })
+                            .then(function () {
+                               logger.error('2nd then function');
+                            });
                     } catch (e) {
                         logger.error('unable to save class report', e);
                     }
