@@ -131,13 +131,14 @@ function updateClassAggReports(invitationId) {
                     try {
                         logger.info('inserting class report');
                         collection.update({invitationId: report.invitationId}, report, {upsert: true})
-                            .then(function () {
+                            .then(function() {
                             logger.info('Updating class report for invitation ID :' + invitationId);
                             collection.find({invitationId: report.invitationId}).toArray()
                                 .then(function(docs) {
                                     logger.info('getting the class report document');
                                     return docs;
                                 }).then(function (docs) {
+                                    docs.jeff = "my best friend";
                                 logger.error('the class report document :', docs);
                             });
                         });
