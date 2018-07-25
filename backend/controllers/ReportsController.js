@@ -133,10 +133,14 @@ function updateClassAggReports(invitationId) {
                         collection.update({invitationId: report.invitationId}, report, {upsert: true})
                             .then(function () {
                             logger.info('Updating class report for invitation ID :' + invitationId);
-                        })
-                            .then(function () {
-                               logger.error('2nd then function');
+                            collection.find({invitationId: report.invitationId}).toArray()
+                                .then(function(docs) {
+                                    logger.info('getting the class report document');
+                                    return docs;
+                                }).then(function (docs) {
+                                logger.error('the class report document :', docs);
                             });
+                        });
                     } catch (e) {
                         logger.error('unable to save class report', e);
                     }
