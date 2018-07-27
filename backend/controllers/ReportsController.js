@@ -138,17 +138,10 @@ function updateClassAggReports(invitationId) {
                                 .then(function(docs) {
                                     logger.info('getting the class report document');
                                     return docs;
-                                }).then(function (docs) {
-                                    docs.jeff = "my best friend";
-                                logger.info('class report document');
-                                return docs
                             }).then(function() {
                                 logger.info('getting report by id');
                                 var report = exports.findReportByInvitationId(invitationId);
                                 return report;
-
-                            }).then(function(report) {
-                                logger.info('*****report***** :', report);
                             });
                         });
                     } catch (e) {
