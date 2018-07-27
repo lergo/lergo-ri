@@ -123,6 +123,7 @@ function updateClassAggReports(invitationId) {
             }
             if (!!result && result.length > 0) {
                 var emailResources = {};
+                var classreportId = {};
                 var report = result[0];
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
@@ -135,14 +136,15 @@ function updateClassAggReports(invitationId) {
                             .then(function() {
                             logger.info('Updating class report for invitation ID :' + invitationId);
                             collection.find({invitationId: report.invitationId}).toArray()
-                                .then(function(docs) {
+                                .then(function(result) {
                                     logger.info('getting the class report document');
-                                    return docs;
-                            }).then(function() {
-                                logger.info('getting report by id');
-                                var report = exports.findReportByInvitationId(invitationId);
-                                return report;
-                            });
+                                    logger.info('the classReportId is :', result[0]._id);
+                                    classreportId = result[0]._id;
+                                    return classreportId;
+                                }).then(exports.updateReportWithClassReportId(invitationId, classreportId)
+                                ).then(exports.findReportByInvitationId(invitationId)
+                                ).then(logger.info('this is a report by invitationId :',result))
+
                         });
                     } catch (e) {
                         logger.error('unable to save class report', e);
@@ -155,16 +157,35 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
+exports.updateReportWithClassReportId = function(invitationId, classreportId, res) {
+    logger.error('**** classreportId :',classreportId);
+    var emailResources = { lergoBaseUrl: 'http://localhost:9000',
+        lergoLink: 'http://localhost:9000/',
+        lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
+    logger.error('must use code for emailResources!');
+    Report.connect(function (db, collection) {
+        try {
+            logger.info('finding Report from invitationId');
+            collection.update({invitationId: invitationId}, classreportId)
+        } catch (e) {
+            logger.error('unable to find report', e);
+        }
+
+    });
+};
+
+
 exports.findReportByInvitationId = function(invitationId, res) { // starting process for class email - jeff
     var emailResources = { lergoBaseUrl: 'http://localhost:9000',
         lergoLink: 'http://localhost:9000/',
         lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
+        logger.error('must use code for emailResources!');
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');
             collection.findOne({invitationId: invitationId})
                 .then(function (report) {
-                    logger.info('found report by invitaion id');
+                    logger.info('found report by invitaion id',report);
                     return report;
                 }).then(function(report) {
                     var req = {};
