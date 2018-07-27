@@ -122,6 +122,7 @@ function updateClassAggReports(invitationId) {
                 console.error(err);
             }
             if (!!result && result.length > 0) {
+                var emailResources = {};
                 var report = result[0];
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
@@ -139,8 +140,27 @@ function updateClassAggReports(invitationId) {
                                     return docs;
                                 }).then(function (docs) {
                                     docs.jeff = "my best friend";
-                                logger.error('the class report document :', docs);
+                                logger.info('class report document');
+                                return docs
+                            }).then(function() {
+                                logger.error('getting report by id');
+                                var report = findReportByInvitationId(invitationId);
+                                return report;
+
+                            }).then(function(report) {
+                                logger.info('*****report***** :', report);
                             });
+                                /*then(function(report) {
+                                   managers.reports.sendReportReady(emailResources, report, function (err) {
+                                    if (!!err) {
+                                        err.send(res);
+                                        return;
+                                    }
+
+                                    res.status(200).send({});  // lergo-577 - this response would cause "illegal token O" in frontend.
+
+                                });
+                            });*/
                         });
                     } catch (e) {
                         logger.error('unable to save class report', e);
@@ -152,6 +172,23 @@ function updateClassAggReports(invitationId) {
     clearTimeout(timeOutIDMap[invitationId]);
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
+
+function findReportByInvitationId(invitationId) {
+    Report.connect(function (db, collection) {
+        try {
+            logger.info('finding Report from invitationId');
+            collection.findOne({invitationId: invitationId})
+                .then(function (report) {
+                    logger.error('found report by invitaion id', report);
+                    return report;
+                });
+        } catch (e) {
+            logger.error('unable to find report', e);
+        }
+
+    });
+};
+
 
 exports.createNewReportForLessonInvitation = function (req, res) {
 
@@ -486,4 +523,6 @@ exports.findReportLessonsByName = function (req, res) {
 exports.findStudentReportLessonsByName = function (req, res) {
     exports.findReportLessonsByName(req, res);
 };
+
+
 
