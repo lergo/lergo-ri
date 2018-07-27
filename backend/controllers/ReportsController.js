@@ -123,7 +123,6 @@ function updateClassAggReports(invitationId) {
             }
             if (!!result && result.length > 0) {
                 var emailResources = {};
-                var classreportId = {};
                 var report = result[0];
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
@@ -139,10 +138,13 @@ function updateClassAggReports(invitationId) {
                                 .then(function(result) {
                                     logger.info('getting the class report document');
                                     logger.info('the classReportId is :', result[0]._id);
-                                    classreportId = result[0]._id;
+                                    var classreportId = result[0]._id;
                                     return classreportId;
-                                }).then(exports.updateReportWithClassReportId(invitationId, classreportId)
-                                ).then(exports.findReportByInvitationId(invitationId)
+                                }).then(function(classreportId) {
+                                exports.updateReportWithClassReportId(invitationId, {classreportId : classreportId})
+                            })
+                              /*  }).then(exports.updateReportWithClassReportId(invitationId, {"classreportId" : result[0]._id})
+                                )*/.then(exports.findReportByInvitationId(invitationId)
                                 ).then(logger.info('this is a report by invitationId :',result))
 
                         });
@@ -158,7 +160,6 @@ function updateClassAggReports(invitationId) {
 }
 
 exports.updateReportWithClassReportId = function(invitationId, classreportId, res) {
-    logger.error('**** classreportId :',classreportId);
     var emailResources = { lergoBaseUrl: 'http://localhost:9000',
         lergoLink: 'http://localhost:9000/',
         lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
@@ -166,7 +167,7 @@ exports.updateReportWithClassReportId = function(invitationId, classreportId, re
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');
-            collection.update({invitationId: invitationId}, classreportId)
+            collection.update({invitationId: invitationId}, {$set: {classreportId: classreportId }})
         } catch (e) {
             logger.error('unable to find report', e);
         }
@@ -185,7 +186,7 @@ exports.findReportByInvitationId = function(invitationId, res) { // starting pro
             logger.info('finding Report from invitationId');
             collection.findOne({invitationId: invitationId})
                 .then(function (report) {
-                    logger.info('found report by invitaion id',report);
+                    logger.info('found report which should have classreportId',report);
                     return report;
                 }).then(function(report) {
                     var req = {};
