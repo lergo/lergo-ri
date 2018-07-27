@@ -186,7 +186,6 @@ exports.findReportByInvitationId = function(invitationId, res) { // starting pro
             logger.info('finding Report from invitationId');
             collection.findOne({invitationId: invitationId})
                 .then(function (report) {
-                    logger.info('found report which should have classreportId',report);
                     return report;
                 }).then(function(report) {
                     var req = {};
