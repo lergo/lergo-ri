@@ -143,24 +143,13 @@ function updateClassAggReports(invitationId) {
                                 logger.info('class report document');
                                 return docs
                             }).then(function() {
-                                logger.error('getting report by id');
-                                var report = findReportByInvitationId(invitationId);
+                                logger.info('getting report by id');
+                                var report = exports.findReportByInvitationId(invitationId);
                                 return report;
 
                             }).then(function(report) {
                                 logger.info('*****report***** :', report);
                             });
-                                /*then(function(report) {
-                                   managers.reports.sendReportReady(emailResources, report, function (err) {
-                                    if (!!err) {
-                                        err.send(res);
-                                        return;
-                                    }
-
-                                    res.status(200).send({});  // lergo-577 - this response would cause "illegal token O" in frontend.
-
-                                });
-                            });*/
                         });
                     } catch (e) {
                         logger.error('unable to save class report', e);
@@ -173,15 +162,23 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
-function findReportByInvitationId(invitationId) {
+exports.findReportByInvitationId = function(invitationId, res) { // starting process for class email - jeff
+    var emailResources = { lergoBaseUrl: 'http://localhost:9000',
+        lergoLink: 'http://localhost:9000/',
+        lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');
             collection.findOne({invitationId: invitationId})
                 .then(function (report) {
-                    logger.error('found report by invitaion id', report);
+                    logger.info('found report by invitaion id');
                     return report;
-                });
+                }).then(function(report) {
+                    var req = {};
+                    req.emailResources = emailResources;
+                    req.report = report;
+                    exports.sendReportReadyForClass(req, res);
+            });
         } catch (e) {
             logger.error('unable to find report', e);
         }
@@ -347,6 +344,18 @@ exports.updateReport = function (req, res) {
             }
             return;
         }
+    });
+};
+
+exports.sendReportReadyForClass = function (req, res) {
+    managers.reports.sendReportLinkForClass(req.emailResources, new Report(req.report), function (err) {
+        if (!!err) {
+            err.send(res);
+            return;
+        }
+
+        /*res.status(200).send({}); */ // lergo-577 - this response would cause "illegal token O" in frontend.
+
     });
 };
 

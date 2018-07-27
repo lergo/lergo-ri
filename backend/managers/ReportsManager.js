@@ -20,6 +20,62 @@ var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
 
+exports.sendReportLinkForClass = function (emailResources, report, callback) {
+    logger.info('send report for Class is ready email');
+
+
+    if (report.isAnonymous()) {
+        callback();
+        return;
+    }
+
+   /* if (report.isSent()) {
+        callback(null);
+        return;
+    }*/
+
+    report.getSendTo(function (err, inviter) {
+        if (!!err) {
+            callback(err);
+            return;
+        }
+
+        var emailVars = {};
+        _.merge(emailVars, emailResources);
+        var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
+
+        _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
+
+        services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
+            var subject = 'Here is a link to your class report';
+            if (emailVars.lessonLanguage) {
+                if (emailVars.lessonLanguage === 'hebrew') {
+                    subject = 'מישהו סיים את השיעור';
+                } else {
+                    subject = 'Here is a link to your class report';
+                }
+            }
+            services.email.sendMail({
+                'to': inviter.email,
+                'subject': subject,
+                'text': text,
+                'html': html
+            }, function (err) {
+                if (!!err) {
+                    logger.error('error while sending report', err);
+                    callback(err);
+                } else {
+                    logger.info('saving report sent true');
+                    report.setSent(true);
+                    report.update();
+                    callback();
+                }
+            });
+        });
+
+    });
+
+};
 
 exports.sendReportLink = function (emailResources, report, callback) {
     logger.info('send report is ready email');
