@@ -124,6 +124,7 @@ function updateClassAggReports(invitationId) {
             if (!!result && result.length > 0) {
                 var emailResources = {};
                 var report = result[0];
+                logger.error('the report during generating ClassReport is :', report);
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
                 var stepDurationAgg = getStepDurationAgg(report.stepDurations);
@@ -142,10 +143,8 @@ function updateClassAggReports(invitationId) {
                                     return classreportId;
                                 }).then(function(classreportId) {
                                 exports.updateReportWithClassReportId(invitationId, {classreportId : classreportId})
-                            })
-                              /*  }).then(exports.updateReportWithClassReportId(invitationId, {"classreportId" : result[0]._id})
-                                )*/.then(exports.findReportByInvitationId(invitationId)
-                                ).then(logger.info('this is a report by invitationId :',result))
+                            }).then(exports.findReportByInvitationId(invitationId)
+                                ).then(logger.info('report found by invitationId'));
 
                         });
                     } catch (e) {
@@ -252,7 +251,6 @@ exports.createNewReportForLessonInvitation = function (req, res) {
 
             logger.info('inserting report');
             collection.insert(report, function () {
-                logger.info('in insert callback', report);
                 res.send(report);
             });
         } catch (e) {

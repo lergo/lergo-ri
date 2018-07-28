@@ -39,12 +39,12 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             callback(err);
             return;
         }
-
+        logger.error('the report in sendReportLinkforClass: ',report);
         var emailVars = {};
         _.merge(emailVars, emailResources);
         var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
 
-        _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'inviteeName': report.getName(), 'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
+        _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'inviteeName': report.getName(),'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
 
         services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
             var subject = 'Here is a link to your class report';
