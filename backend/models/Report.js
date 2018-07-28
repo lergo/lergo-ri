@@ -22,6 +22,7 @@ var AbstractModel = require('./AbstractModel');
  */
 
 function Report(data) {
+    console.log('this is Report data ready for preparation :', data);
     this.data = data;
 
     var self = this;
@@ -41,7 +42,12 @@ function Report(data) {
     self.getName = function () {
         return data.data.invitee.name;
     };
-    
+
+    self.getId = function () {
+
+        return data._id;
+    }
+
     self.isBasedOnTemporaryLesson = function(){
         return data && data.data && data.data.lesson && data.data.lesson.temporary;
     };

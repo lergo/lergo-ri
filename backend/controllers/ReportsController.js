@@ -142,7 +142,7 @@ function updateClassAggReports(invitationId) {
                                     var classreportId = result[0]._id;
                                     return classreportId;
                                 }).then(function(classreportId) {
-                                exports.updateReportWithClassReportId(invitationId, {classreportId : classreportId})
+                                exports.updateReportWithClassReportId(invitationId, classreportId );
                             }).then(exports.findReportByInvitationId(invitationId)
                                 ).then(logger.info('report found by invitationId'));
 
@@ -165,8 +165,12 @@ exports.updateReportWithClassReportId = function(invitationId, classreportId, re
     logger.error('must use code for emailResources!');
     Report.connect(function (db, collection) {
         try {
-            logger.info('finding Report from invitationId');
-            collection.update({invitationId: invitationId}, {$set: {classreportId: classreportId }})
+            logger.info('the invitationId we are using to update the classreport is :' + invitationId + ' The classreportId is' + classreportId);
+            collection.update({invitationId: invitationId}, {$set: {classreportId: classreportId }}, function (err, res) {
+                if (err) throw err;
+                logger.error("set classreportId :", res.result);
+                return res;
+            });
         } catch (e) {
             logger.error('unable to find report', e);
         }
@@ -190,6 +194,7 @@ exports.findReportByInvitationId = function(invitationId, res) { // starting pro
                     var req = {};
                     req.emailResources = emailResources;
                     req.report = report;
+                    logger.error('the report that is being sent to "sendReportReadyForClass" is : ', req.report);
                     exports.sendReportReadyForClass(req, res);
             });
         } catch (e) {
