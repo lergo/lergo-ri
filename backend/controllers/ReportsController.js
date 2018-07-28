@@ -124,7 +124,6 @@ function updateClassAggReports(invitationId) {
             if (!!result && result.length > 0) {
                 var emailResources = {};
                 var report = result[0];
-                logger.error('the report during generating ClassReport is :', report);
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
                 var stepDurationAgg = getStepDurationAgg(report.stepDurations);
@@ -142,9 +141,8 @@ function updateClassAggReports(invitationId) {
                                     var classreportId = result[0]._id;
                                     return classreportId;
                                 }).then(function(classreportId) {
-                                exports.updateReportWithClassReportId(invitationId, classreportId );
-                            }).then(exports.findReportByInvitationId(invitationId)
-                                ).then(logger.info('report found by invitationId'));
+                                exports.findReportByInvitationId(invitationId, classreportId );
+                            });
 
                         });
                     } catch (e) {
@@ -158,28 +156,7 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
-exports.updateReportWithClassReportId = function(invitationId, classreportId, res) {
-    var emailResources = { lergoBaseUrl: 'http://localhost:9000',
-        lergoLink: 'http://localhost:9000/',
-        lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
-    logger.error('must use code for emailResources!');
-    Report.connect(function (db, collection) {
-        try {
-            logger.info('the invitationId we are using to update the classreport is :' + invitationId + ' The classreportId is' + classreportId);
-            collection.update({invitationId: invitationId}, {$set: {classreportId: classreportId }}, function (err, res) {
-                if (err) throw err;
-                logger.error("set classreportId :", res.result);
-                return res;
-            });
-        } catch (e) {
-            logger.error('unable to find report', e);
-        }
-
-    });
-};
-
-
-exports.findReportByInvitationId = function(invitationId, res) { // starting process for class email - jeff
+exports.findReportByInvitationId = function(invitationId, classreportId, res) { // starting process for class email - jeff
     var emailResources = { lergoBaseUrl: 'http://localhost:9000',
         lergoLink: 'http://localhost:9000/',
         lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
@@ -194,7 +171,7 @@ exports.findReportByInvitationId = function(invitationId, res) { // starting pro
                     var req = {};
                     req.emailResources = emailResources;
                     req.report = report;
-                    logger.error('the report that is being sent to "sendReportReadyForClass" is : ', req.report);
+                    req.report.classreportId = classreportId;
                     exports.sendReportReadyForClass(req, res);
             });
         } catch (e) {

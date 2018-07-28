@@ -21,6 +21,7 @@ var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
 
 exports.sendReportLinkForClass = function (emailResources, report, callback) {
+    logger.error('this is the report in sendReportLinkForClass', report);
     logger.info('send report for Class is ready email');
 
 
@@ -39,7 +40,6 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             callback(err);
             return;
         }
-        logger.error('the report in sendReportLinkforClass: ',report);
         var emailVars = {};
         _.merge(emailVars, emailResources);
         var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
