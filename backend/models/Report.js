@@ -42,10 +42,6 @@ function Report(data) {
         return data.data.invitee.name;
     };
 
-    self.getId = function () {
-        return data._id;
-    }
-
     self.isBasedOnTemporaryLesson = function(){
         return data && data.data && data.data.lesson && data.data.lesson.temporary;
     };
