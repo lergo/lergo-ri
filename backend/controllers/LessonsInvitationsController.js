@@ -29,10 +29,14 @@ exports.create = function (req, res) {
         'age': req.lesson.age,
         'name': req.lesson.name,
         'lastUpdate': new Date().getTime(),
-        'expiresAt': new Date(expiresAt),
-        'emailNotification': true // Default Email Notification Should be on
+        'expiresAt': new Date(expiresAt)
     }, invitation);
 
+    if (invitation.invitee.class) {
+        invitation.emailNotification = false;
+    } else {
+        invitation.emailNotification = true;
+    }
 
     // add inviter in case we have details and this is not an anonymous
     // invitation

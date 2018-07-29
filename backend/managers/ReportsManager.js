@@ -21,7 +21,7 @@ var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
 
 exports.sendReportLinkForClass = function (emailResources, report, callback) {
-    logger.info('send report for Class is ready email');
+    logger.info('send classReport is ready email');
 
 
     if (report.isAnonymous()) {
@@ -29,10 +29,10 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
         return;
     }
 
-   /* if (report.isSent()) {
+    if (report.isSent()) {
         callback(null);
         return;
-    }*/
+    }
 
     report.getSendTo(function (err, inviter) {
         if (!!err) {
@@ -49,7 +49,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
-                    subject = 'מישהו סיים את השיעור';
+                    subject = 'הנה קישור לדוח הכיתה שלך';
                 } else {
                     subject = 'Here is a link to your class report';
                 }
