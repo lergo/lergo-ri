@@ -136,15 +136,19 @@ function updateClassAggReports(invitationId) {
                             logger.info('Updating class report for invitation ID :' + invitationId);
                             collection.find({invitationId: report.invitationId}).toArray()
                                 .then(function(result) {
-                                    logger.info('getting the class report document');
                                     logger.info('the classReportId is :', result[0]._id);
+                                    logger.info('the number of finished reportst is :', result[0].count);
                                     var classreportId = result[0]._id;
-                                    return classreportId;
-                                }).then(function(classreportId) {
-                                exports.findReportByInvitationId(invitationId, classreportId );
+                                    if (result[0].count ==1) {
+                                        logger.info('this is the first report, need to send email');
+                                        logger.info('the class reportId inside if is :',classreportId)
+                                        exports.findReportByInvitationId(invitationId, classreportId);
+                                        } else {
+                                        logger.error('more than 1 report, no need to send email');
+                                        }
+                                    })
                             });
 
-                        });
                     } catch (e) {
                         logger.error('unable to save class report', e);
                     }
