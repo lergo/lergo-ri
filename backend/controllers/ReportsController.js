@@ -122,7 +122,6 @@ function updateClassAggReports(invitationId) {
                 console.error(err);
             }
             if (!!result && result.length > 0) {
-                var emailResources = {};
                 var report = result[0];
                 report.answers = getAnswersAgg(report.answers);
                 var stepAnswersAgg = getStepAnswersAgg(report.answers);
@@ -141,14 +140,14 @@ function updateClassAggReports(invitationId) {
                                     logger.info('the classReport name is :', className);
                                     logger.info('the number of finished reports is :', result[0].count);
                                     var classreportId = result[0]._id;
-                                    if (result[0].count ==1) {
+                                    if (result[0].count ===1) {
                                         logger.info('this is the first report, need to send email');
-                                        logger.info('the class reportId inside if is :',classreportId)
+                                        logger.info('the class reportId inside if is :',classreportId);
                                         exports.findReportByInvitationId(invitationId, classreportId, className);
                                         } else {
                                         logger.error('more than 1 report, no need to send email');
                                         }
-                                    })
+                                    });
                             });
 
                     } catch (e) {

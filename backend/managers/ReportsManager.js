@@ -39,6 +39,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             callback(err);
             return;
         }
+        var markup = ``;
         var emailVars = {};
         _.merge(emailVars, emailResources);
         var lessonInviteLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/agg/' + report.data.classreportId + '/display';
@@ -73,11 +74,11 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
         });
 
         const person = {
-            imageLink: "https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg"
-        }
+            imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
+        };
 
 
-        const markup = `
+        markup = `
         <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black">
 
          <p>
@@ -99,7 +100,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
         </p>
-`
+`;
 
 
     });
