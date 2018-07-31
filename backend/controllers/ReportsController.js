@@ -161,10 +161,10 @@ function updateClassAggReports(invitationId) {
 }
 
 exports.findReportByInvitationId = function(invitationId, classreportId, res) { // starting process for class email - jeff
-    var emailResources = { lergoBaseUrl: 'http://localhost:9000',
+   /* var emailResources = { lergoBaseUrl: 'http://localhost:9000',
         lergoLink: 'http://localhost:9000/',
         lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
-        logger.error('must use code for emailResources!');
+        logger.error('must use code for emailResources!');*/
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');
@@ -173,7 +173,7 @@ exports.findReportByInvitationId = function(invitationId, classreportId, res) { 
                     return report;
                 }).then(function(report) {
                     var req = {};
-                    req.emailResources = emailResources;
+                    req.emailResources = report.emailResources;
                     req.report = report;
                     req.report.classreportId = classreportId;
                     exports.sendReportReadyForClass(req, res);
@@ -312,6 +312,11 @@ exports.updateReport = function (req, res) {
         // if the person who is doing the lesson is logged in, we want to know
         // that.
         report.userId = req.sessionUser._id;
+    }
+
+    if (!!req.emailResources) {
+        // we need this for class report emailResources
+        report.emailResources = req.emailResources;
     }
 
     // this is a temporary fix. to be able for students to register their names.
