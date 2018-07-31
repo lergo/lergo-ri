@@ -58,7 +58,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                 'to': inviter.email,
                 'subject': subject,
                 'text': text,
-                'html': html
+                'html': markup
             }, function (err) {
                 if (!!err) {
                     logger.error('error while sending report', err);
@@ -71,6 +71,46 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                 }
             });
         });
+
+        const person = {
+            name: 'Wes',
+            job: 'Web Developer',
+            city: 'Hamilton',
+            bio: 'Wes is a really cool guy that loves to teach web development!',
+            imageLink: "https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg"
+        }
+
+        const invitee = {
+            inviteeName : 'Peter',
+            inviteeLesson : 'Mulitplying by 9',
+            lessonLink: 'https://www.lergo.org/index.html#!/public/lessons/538f0aa2acaecc42137d792f/intro'
+        }
+
+
+        const markup = `
+        <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black">
+
+         <p>
+            Dear ${emailVars.name},
+        </p>
+        <p>
+
+           <b> ${emailVars.inviteeName}</b> just completed the lesson <b>${emailVars.lessonTitle}!</b> 
+           <br/> Click on the link below to see the class report, which will be updated as more students finish the lesson
+           <br/> This is the only email you will get regarding the lesson or class report.
+        <p>
+            <a href=${emailVars.link}>${emailVars.lessonTitle}</a>
+        </p>
+        <p>
+            Powered by <a href="http://www.lergo.org/">LerGO - Educate Yourself.</a><br/>
+            <a href="https://docs.google.com/forms/d/1wyO39CkCTiNAP1BrJLti0GjA8eMq6rv-QcZu0Lw1-tE/viewform?usp=send_form">Terms of Service</a> -
+            <a href="https://docs.google.com/forms/d/1YQnB8KoouFW2cJHsO_bkdxAD2ekuLYJyvaH6AuIU-Ig/viewform?usp=send_form"> Send Feedback</a> -
+            <a href="https://docs.google.com/forms/d/1t_CtQxTMJlTlLRx-3lSPv8bNfw3nVXpE2B2hGkdeSMg/viewform">Report Abuse</a> -
+            <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
+        </p>
+`
+
 
     });
 
@@ -208,3 +248,4 @@ exports.complexSearch = function( queryObj, callback ){
         });
     });
 };
+
