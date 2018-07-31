@@ -137,12 +137,14 @@ function updateClassAggReports(invitationId) {
                             collection.find({invitationId: report.invitationId}).toArray()
                                 .then(function(result) {
                                     logger.info('the classReportId is :', result[0]._id);
-                                    logger.info('the number of finished reportst is :', result[0].count);
+                                    var className = result[0].data.invitee.class;
+                                    logger.info('the classReport name is :', className);
+                                    logger.info('the number of finished reports is :', result[0].count);
                                     var classreportId = result[0]._id;
                                     if (result[0].count ==1) {
                                         logger.info('this is the first report, need to send email');
                                         logger.info('the class reportId inside if is :',classreportId)
-                                        exports.findReportByInvitationId(invitationId, classreportId);
+                                        exports.findReportByInvitationId(invitationId, classreportId, className);
                                         } else {
                                         logger.error('more than 1 report, no need to send email');
                                         }
@@ -160,7 +162,7 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
-exports.findReportByInvitationId = function(invitationId, classreportId, res) { // starting process for class email - jeff
+exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) { // starting process for class email - jeff
    /* var emailResources = { lergoBaseUrl: 'http://localhost:9000',
         lergoLink: 'http://localhost:9000/',
         lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
@@ -176,6 +178,7 @@ exports.findReportByInvitationId = function(invitationId, classreportId, res) { 
                     req.emailResources = report.emailResources;
                     req.report = report;
                     req.report.classreportId = classreportId;
+                    req.report.className = className;
                     exports.sendReportReadyForClass(req, res);
             });
         } catch (e) {
