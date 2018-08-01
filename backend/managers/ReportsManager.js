@@ -50,8 +50,6 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
         };
 
-
-        services.emailTemplates.renderReportReady(emailVars, function (err, html, text) {
             var markup = services.emailTemplates.classReportMarkup(emailVars, person);
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
@@ -61,10 +59,10 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                     subject = 'Here is a link to your class report';
                 }
             }
+            // removed 'text': text;
             services.email.sendMail({
                 'to': inviter.email,
                 'subject': subject,
-                'text': text,
                 'html': markup
             }, function (err) {
                 if (!!err) {
@@ -77,7 +75,6 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                     callback();
                 }
             });
-        });
 
 
     });

@@ -84,6 +84,12 @@ exports.renderAbuseReportAdminEmail = function( locals, callback ){
     exports.template('reportAbuseAdmin', locals, callback );
 };
 
+/*
+exports.classReportMarkup = function(emailVars, person) {
+    exports.template('classReportEmail, emailVars, person');
+}
+*/
+
 exports.classReportMarkup = function(emailVars, person) {
     if(emailVars.lessonLanguage === 'hebrew') {
         return `
