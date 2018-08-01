@@ -50,7 +50,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
         };
 
-            var markup = services.emailTemplates.classReportMarkup(emailVars, person);
+            var markup = services.emailTemplateStrings.classReportMarkup(emailVars, person);
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
