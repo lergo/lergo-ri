@@ -50,7 +50,8 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
         };
 
-            var markup = services.emailTemplateStrings.classReportMarkup(emailVars, person);
+            var html = services.emailTemplateStrings.classReportMarkup(emailVars, person);
+            var text = services.emailTemplateStrings.classReportText(emailVars, person);
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
@@ -59,11 +60,11 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                     subject = 'Here is a link to your class report';
                 }
             }
-            // removed 'text': text;
             services.email.sendMail({
                 'to': inviter.email,
                 'subject': subject,
-                'html': markup
+                'text': text,
+                'html': html
             }, function (err) {
                 if (!!err) {
                     logger.error('error while sending report', err);

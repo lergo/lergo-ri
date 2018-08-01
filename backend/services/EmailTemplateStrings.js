@@ -27,7 +27,7 @@ exports.classReportMarkup = function(emailVars, person) {
                     `;
     }else{
         return `
-        <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black"> hi from jeff
+        <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black"> 
 
          <p>
             Dear ${emailVars.name},
@@ -50,5 +50,20 @@ exports.classReportMarkup = function(emailVars, person) {
         </p>
 `;
     }
+
+};
+
+exports.classReportText = function(emailVars) {
+
+    return `Dear ${emailVars.name},
+
+Your initial class report, ${emailVars.lessonTitle},  is ready and may be viewed by clicking on the link below;
+
+${emailVars.link}
+
+Thanks,
+The LerGO Team
+`;
+
 
 };
