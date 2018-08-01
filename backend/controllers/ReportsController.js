@@ -155,7 +155,7 @@ function updateClassAggReports(invitationId) {
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
 
-exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) { // starting process for class email - jeff
+exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) {
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');
@@ -163,11 +163,13 @@ exports.findReportByInvitationId = function(invitationId, classreportId, classNa
                 .then(function (report) {
                     return report;
                 }).then(function(report) {
+
                     var req = {};
                     req.emailResources = report.emailResources;
                     req.report = report;
                     req.report.classreportId = classreportId;
                     req.report.className = className;
+
                     exports.sendReportReadyForClass(req, res);
             });
         } catch (e) {
