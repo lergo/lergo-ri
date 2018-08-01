@@ -135,18 +135,12 @@ function updateClassAggReports(invitationId) {
                             logger.info('Updating class report for invitation ID :' + invitationId);
                             collection.find({invitationId: report.invitationId}).toArray()
                                 .then(function(result) {
-                                    logger.info('the classReportId is :', result[0]._id);
+                                    logger.info('classReportId is :', result[0]._id);
+                                    logger.info('classReport name is :', className);
+                                    logger.info('number of finished reports :', result[0].count);
                                     var className = result[0].data.invitee.class;
-                                    logger.info('the classReport name is :', className);
-                                    logger.info('the number of finished reports is :', result[0].count);
                                     var classreportId = result[0]._id;
-                                    if (result[0].count ===1) {
-                                        logger.info('this is the first report, need to send email');
-                                        logger.info('the class reportId inside if is :',classreportId);
-                                        exports.findReportByInvitationId(invitationId, classreportId, className);
-                                        } else {
-                                        logger.error('more than 1 report, no need to send email');
-                                        }
+                                    exports.findReportByInvitationId(invitationId, classreportId, className);
                                     });
                             });
 
@@ -162,10 +156,6 @@ function updateClassAggReports(invitationId) {
 }
 
 exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) { // starting process for class email - jeff
-   /* var emailResources = { lergoBaseUrl: 'http://localhost:9000',
-        lergoLink: 'http://localhost:9000/',
-        lergoLogoAbsoluteUrl: 'http://localhost:9000/emailResources/logo.png' };
-        logger.error('must use code for emailResources!');*/
     Report.connect(function (db, collection) {
         try {
             logger.info('finding Report from invitationId');

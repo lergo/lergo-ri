@@ -86,8 +86,8 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
         </p>
         <p>
 
-           the class report <b>${emailVars.className}!</b> is now available 
-           <br/> Click on the link below to see the  report, which will be updated as more students finish the lesson
+           the class report <b>${emailVars.className}</b> is now available!
+           <br/> Click on the link below to see the  report.The report will be updated as more students finish the lesson
            <br/> This is the only email you will get regarding the lesson or class report.
         <p>
             <a href=${emailVars.link}>${emailVars.lessonTitle}</a>
