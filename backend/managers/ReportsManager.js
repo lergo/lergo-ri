@@ -55,6 +55,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                     subject = 'Here is a link to your class report';
                 }
             }
+            var markup = classReportMarkup();
             services.email.sendMail({
                 'to': inviter.email,
                 'subject': subject,
@@ -77,8 +78,9 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
         };
 
-
-        markup = `
+        function classReportMarkup() {
+            if(emailVars.lessonLanguage === 'hebrew') {
+                return `
         <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black">
 
          <p>
@@ -101,8 +103,11 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
         </p>
 `;
+            }else{
+                return 'this is english'
+            }
 
-
+        };
     });
 
 };
