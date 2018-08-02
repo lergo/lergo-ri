@@ -22,10 +22,7 @@ exports.classReportMarkup = function(emailVars) {
                 <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
                 </p>
-                
-                <p>
-                   /* <a href=${emailVars.Lergolink}><img src=${emailVars.lergoLogoAbsoluteUrl}/></a>*/
-                </p>
+               
                     `;
     }else{
         return `
@@ -49,9 +46,7 @@ exports.classReportMarkup = function(emailVars) {
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
         </p>
         
-        <p>
-              /*<a href=${emailVars.lergoLink}><img src=${emailVars.lergoLogoAbsoluteUrl}/></a>*/
-        </p>
+      
 `;
     }
 
