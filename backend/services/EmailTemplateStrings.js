@@ -1,10 +1,8 @@
 'use strict';
 
-exports.classReportMarkup = function(emailVars, person) {
+exports.classReportMarkup = function(emailVars) {
     if(emailVars.lessonLanguage === 'hebrew') {
         return `
-            <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black">
-
                     <p>
                      ${emailVars.name} שלום 
             </p>
@@ -24,11 +22,13 @@ exports.classReportMarkup = function(emailVars, person) {
                 <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
                 </p>
+                
+                <p>
+                   /* <a href=${emailVars.Lergolink}><img src=${emailVars.lergoLogoAbsoluteUrl}/></a>*/
+                </p>
                     `;
     }else{
         return `
-        <img src=${person.imageLink} style="height: 100px; width: 200px; padding: 20px; border: 2px solid black"> 
-
          <p>
             Dear ${emailVars.name},
         </p>
@@ -47,6 +47,10 @@ exports.classReportMarkup = function(emailVars, person) {
             <a href="https://docs.google.com/forms/d/1t_CtQxTMJlTlLRx-3lSPv8bNfw3nVXpE2B2hGkdeSMg/viewform">Report Abuse</a> -
             <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
+        </p>
+        
+        <p>
+              /*<a href=${emailVars.lergoLink}><img src=${emailVars.lergoLogoAbsoluteUrl}/></a>*/
         </p>
 `;
     }

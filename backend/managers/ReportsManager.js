@@ -45,13 +45,8 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
 
         _.merge(emailVars, { 'link': lessonInviteLink, 'name': inviter.username, 'className': report.data.className, 'inviteeName': report.getName(),'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
 
-
-        const person = {
-            imageLink: 'https://images.freeimages.com/images/large-previews/322/indian-heads-1391201.jpg'
-        };
-
-            var html = services.emailTemplateStrings.classReportMarkup(emailVars, person);
-            var text = services.emailTemplateStrings.classReportText(emailVars, person);
+            var html = services.emailTemplateStrings.classReportMarkup(emailVars);
+            var text = services.emailTemplateStrings.classReportText(emailVars);
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
@@ -67,10 +62,10 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
                 'html': html
             }, function (err) {
                 if (!!err) {
-                    logger.error('error while sending report', err);
+                    logger.error('error while sending classreport', err);
                     callback(err);
                 } else {
-                    logger.info('saving report sent true');
+                    logger.info('saving  report sent true');
                     report.setSent(true);
                     report.update();
                     callback();
