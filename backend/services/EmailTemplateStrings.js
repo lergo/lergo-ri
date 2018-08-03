@@ -9,7 +9,7 @@ exports.classReportMarkup = function(emailVars) {
 <b>${emailVars.inviteeName}</b>
 
 </p>
-<p align="center">
+<p align="right">
 ${emailVars.studentReportLink}
 </p>
 
@@ -17,7 +17,7 @@ ${emailVars.studentReportLink}
 לחצ/י על הקישור הבא כדי לראות את דוח הכיתה המרוכז (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
 
 </p>
-<p align="center">
+<p align="right">
 ${emailVars.classReportLink}
 </p>
 
