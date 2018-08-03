@@ -38,17 +38,25 @@ ${emailVars.classReportLink}
     `;
     }else{
         return `
-         <p>
-            Dear ${emailVars.name},
+        <p>
+            Your student  <b>${emailVars.inviteeName}</b> of class <b>${emailVars.className}</b> just finished the <b>${emailVars.lessonTitle}</b>! Click on the following link to see the <b>student lesson report</b> of <b>${emailVars.inviteeName}</b>:
         </p>
         <p>
-
-           the class report <b>${emailVars.className}</b> is now available!
-           <br/> Click on the link below to see the  report.The report will be updated as more students finish the lesson
-           <br/> This is the only email you will get regarding the lesson or class report.
-        <p>
-            <a href=${emailVars.link}>${emailVars.lessonTitle}</a>
+            ${emailVars.studentReportLink}
         </p>
+        
+        <p>
+            Click on the next link to see the <b>class report</b> (note: the class report is being updated until the last student finishes the lesson):
+        </p>
+       
+        <p>
+            ${emailVars.classReportLink}
+        </p>
+        
+        <p>
+            To reach the list of all students reports click <a href=${emailVars.allStudentReports}><b>here</b></a> (note: the teacher must be registered to the site to be able to see the list).
+        </p>
+        
         <p>
             Powered by <a href="http://www.lergo.org/">LerGO - Educate Yourself.</a><br/>
             <a href="https://docs.google.com/forms/d/1wyO39CkCTiNAP1BrJLti0GjA8eMq6rv-QcZu0Lw1-tE/viewform?usp=send_form">Terms of Service</a> -
@@ -57,8 +65,6 @@ ${emailVars.classReportLink}
             <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
         </p>
-        
-      
 `;
     }
 
@@ -70,7 +76,7 @@ exports.classReportText = function(emailVars) {
 
 Your initial class report, ${emailVars.lessonTitle},  is ready and may be viewed by clicking on the link below;
 
-${emailVars.link}
+${emailVars.studentReportLink}
 
 Thanks,
 The LerGO Team

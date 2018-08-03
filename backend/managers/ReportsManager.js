@@ -56,9 +56,9 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             var subject = 'Here is a link to your class report';
             if (emailVars.lessonLanguage) {
                 if (emailVars.lessonLanguage === 'hebrew') {
-                    subject = 'הנה קישור לדוח הכיתה שלך';
+                    subject = 'מישהו סיים את השיעור + קישור לדוח כיתה ולדוחות תלמיד';
                 } else {
-                    subject = 'Here is a link to your class report';
+                    subject = 'Someone finished a lesson + link to lesson reports';
                 }
             }
             services.email.sendMail({
