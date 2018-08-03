@@ -38,6 +38,7 @@ ${emailVars.classReportLink}
     `;
     }else{
         return `
+    <div style="margin:auto; max-width: 800px">
         <p>
             Your student  <b>${emailVars.inviteeName}</b> of class <b>${emailVars.className}</b> just finished the <b>${emailVars.lessonTitle}</b>! Click on the following link to see the <b>student lesson report</b> of <b>${emailVars.inviteeName}</b>:
         </p>
@@ -65,6 +66,7 @@ ${emailVars.classReportLink}
             <a href="https://docs.google.com/forms/d/1rU6sTKskoTqrd9u1wgiX_zG0QpfWsxizxe8CdDRj4fk/viewform?usp=send_form">Suggest a Lesson</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSeFtpXck4viIM7aTo7GoZST3z2Cojjn0BNsb-o2IAz627fYsw/viewform?usp=sf_link">Why am I getting this email?</a><br>
         </p>
+    </div>
 `;
     }
 
