@@ -6,12 +6,19 @@ exports.classReportMarkup = function(emailVars) {
 <p align="right">
 התלמיד   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
 לחצ/י על הקישור הבא כדי לראות את דוח תלמיד של השיעור של   
-<b>${emailVars.inviteeName}</b> </br>  ${emailVars.studentReportLink}
- </p>
+<b>${emailVars.inviteeName}</b>
+
+</p>
+<p align="center">
+${emailVars.studentReportLink}
+</p>
 
  <p align="right" dir="auto">
 לחצ/י על הקישור הבא כדי לראות את דוח הכיתה המרוכז (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
-</br>${emailVars.classReportLink}
+
+</p>
+<p align="center">
+${emailVars.classReportLink}
 </p>
 
 
