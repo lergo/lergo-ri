@@ -19,10 +19,9 @@ var Report = require('../models').Report;
 var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
+var ObjectId = require('mongodb').ObjectId;
 
 exports.sendReportLinkForClass = function (emailResources, report, callback) {
-    logger.error('report :}', report);
-
     logger.info('send classReport is ready email');
 
 
@@ -43,11 +42,15 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
         }
         var emailVars = {};
         _.merge(emailVars, emailResources);
+        var lergoLanguage = 'he';
+        if (report.data.data.lesson.language !== 'hebrew') {
+            lergoLanguage = 'en';
+        }
+        var _lessonId = new ObjectId(report.data.lessonId);
         var classReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/agg/' + report.data.classreportId + '/display';
         var studentReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
-        var allStudentReportsLink = '';
+        var allStudentReportsLink = emailResources.lergoBaseUrl + '/#!/user/create/reports?reportType=students&lergoFilter.reportClass=' + '"' + report.data.className + '"' + '&lergoFilter.reportLesson={"_id":"' + _lessonId + '"' +',' +  '"name":"' + report.data.data.lesson.name  + '"}&lergoLanguage=' + lergoLanguage + '&lergoFilter.filterLanguage="' + report.data.data.lesson.language + '"';
         _.merge(emailVars, { 'classReportLink': classReportLink, 'studentReportLink': studentReportLink, 'allStudentReports': allStudentReportsLink,  'name': inviter.username, 'className': report.data.className, 'lessonId': report.data.lessonId, 'inviteeName': report.getName(),'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
-        logger.error('emailVars', emailVars);
             var html = services.emailTemplateStrings.classReportMarkup(emailVars);
             var text = services.emailTemplateStrings.classReportText(emailVars);
             var subject = 'Here is a link to your class report';
