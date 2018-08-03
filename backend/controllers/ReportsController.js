@@ -132,14 +132,14 @@ function updateClassAggReports(invitationId) {
                         logger.info('inserting class report');
                         collection.update({invitationId: report.invitationId}, report, {upsert: true})
                             .then(function() {
-                            logger.info('Updating class report for invitation ID :' + invitationId);
                             collection.find({invitationId: report.invitationId}).toArray()
                                 .then(function(result) {
                                     var className = result[0].data.invitee.class;
                                     var classreportId = result[0]._id;
-                                    logger.info('classReportId is :', result[0]._id);
+                                    /*logger.info('classReportId is :', result[0]._id);
                                     logger.info('classReport name is :', className);
-                                    logger.info('number of finished reports :', result[0].count);
+                                    logger.info('number of finished reports :', result[0].count);*/
+                                    logger.info(`number of finished reports for ${className} is ${result[0].count}`);
                                     exports.findReportByInvitationId(invitationId, classreportId, className);
                                     });
                             });
