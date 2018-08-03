@@ -1,40 +1,41 @@
 'use strict';
-
+/*the editors that work for this are Brackets and nano! - jeff*/
 exports.classReportMarkup = function(emailVars) {
     if(emailVars.lessonLanguage === 'hebrew') {
-        return `<div style="margin:auto; max-width: 800px">
-<p align="right" dir="auto">
-התלמיד   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
-לחצ/י על הקישור הבא כדי לראות את דוח תלמיד של השיעור של   
-<b>${emailVars.inviteeName}</b>:
-
-</p>
-<p align="right">
-${emailVars.studentReportLink}
-</p>
-
- <p align="right" dir="auto">
-לחצ/י על הקישור הבא כדי לראות את <b>דוח הכיתה המרוכז</b> (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
-
-</p>
-<p align="right">
-${emailVars.classReportLink}
-</p>
-
-
-<p align="right" dir="auto">
-כדי להגיע לרשימת כל דוחות התלמידים אשר סיימו כבר את השיעור לחצ/י   <a href=${emailVars.allStudentReports}><b>כאן</b></a>  .  לשים לב: כדי לראות את רשימת  דוחות התלמידים המורה צריכ/ה להיות logged in.         
-</p>
- 
-<p align="right">
-            Powered by <a href="http://www.lergo.org.il/">LerGO </a><br/>
+        return `
+    <div style="margin:auto; max-width: 800px">
+            <p align="right" dir="auto">
+            התלמיד   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
+            לחצ/י על הקישור הבא כדי לראות את דוח תלמיד של השיעור של   
+            <b>${emailVars.inviteeName}</b>:
+            
+            </p>
+            <p align="right">
+            ${emailVars.studentReportLink}
+            </p>
+            
+             <p align="right" dir="auto">
+            לחצ/י על הקישור הבא כדי לראות את <b>דוח הכיתה המרוכז</b> (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
+            
+            </p>
+            <p align="right">
+            ${emailVars.classReportLink}
+            </p>
+            
+            
+            <p align="right" dir="auto">
+            כדי להגיע לרשימת כל דוחות התלמידים אשר סיימו כבר את השיעור לחצ/י   <a href=${emailVars.allStudentReports}><b>כאן</b></a>  .  לשים לב: כדי לראות את רשימת  דוחות התלמידים המורה צריכ/ה להיות logged in.         
+            </p>
+             
+            <p align="right">
+                        Powered by <a href="http://www.lergo.org.il/">LerGO </a><br/>
             <a href="https://docs.google.com/forms/d/1wyO39CkCTiNAP1BrJLti0GjA8eMq6rv-QcZu0Lw1-tE/viewform?usp=send_form">תנאי שירות</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLScGg1PjUqlNfCB-uOpk9InyGgMcjEyKD5jj8lMuKb-R3kEVyQ/viewform"> לשלוח משוב</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSfL9ymX6GUbV8dGrvTv4E50525krIQMBdE48AQ0Fn_EGpF9Hg/viewform">לדווח על שימוש לרעה</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSd7GQJ3t5QkyXcc4qCqsacGMRclzEol3WIKRoKOZpgE-ERVWQ/viewform">להציע שיעור</a> -
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdYSkKCd6lSlMWMXojaqdxqkIhK5O0UTKxgCnR90USc1t24YA/viewform?usp=sf_link">למה אני מקבל/ת את האימייל הזה</a><br>
         </p>
-</div>
+    </div>
     `;
     }else{
         return `
