@@ -41,7 +41,7 @@ function Report(data) {
     self.getName = function () {
         return data.data.invitee.name;
     };
-    
+
     self.isBasedOnTemporaryLesson = function(){
         return data && data.data && data.data.lesson && data.data.lesson.temporary;
     };

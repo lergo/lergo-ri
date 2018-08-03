@@ -130,9 +130,20 @@ function updateClassAggReports(invitationId) {
                 ClassReport.connect(function (db, collection) {
                     try {
                         logger.info('inserting class report');
-                        collection.update({invitationId: report.invitationId}, report, {upsert: true}, function () {
-                            logger.info('Updating class report for invitation ID :' + invitationId);
-                        });
+                        collection.update({invitationId: report.invitationId}, report, {upsert: true})
+                            .then(function() {
+                            collection.find({invitationId: report.invitationId}).toArray()
+                                .then(function(result) {
+                                    var className = result[0].data.invitee.class;
+                                    var classreportId = result[0]._id;
+                                    /*logger.info('classReportId is :', result[0]._id);
+                                    logger.info('classReport name is :', className);
+                                    logger.info('number of finished reports :', result[0].count);*/
+                                    logger.info(`number of finished reports for ${className} is ${result[0].count}`);
+                                    exports.findReportByInvitationId(invitationId, classreportId, className);
+                                    });
+                            });
+
                     } catch (e) {
                         logger.error('unable to save class report', e);
                     }
@@ -143,6 +154,31 @@ function updateClassAggReports(invitationId) {
     clearTimeout(timeOutIDMap[invitationId]);
     timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
 }
+
+exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) {
+    Report.connect(function (db, collection) {
+        try {
+            logger.info('finding Report from invitationId');
+            collection.findOne({invitationId: invitationId})
+                .then(function (report) {
+                    return report;
+                }).then(function(report) {
+
+                    var req = {};
+                    req.emailResources = report.emailResources;
+                    req.report = report;
+                    req.report.classreportId = classreportId;
+                    req.report.className = className;
+
+                    exports.sendReportReadyForClass(req, res);
+            });
+        } catch (e) {
+            logger.error('unable to find report', e);
+        }
+
+    });
+};
+
 
 exports.createNewReportForLessonInvitation = function (req, res) {
 
@@ -195,7 +231,6 @@ exports.createNewReportForLessonInvitation = function (req, res) {
 
             logger.info('inserting report');
             collection.insert(report, function () {
-                logger.info('in insert callback', report);
                 res.send(report);
             });
         } catch (e) {
@@ -273,6 +308,11 @@ exports.updateReport = function (req, res) {
         report.userId = req.sessionUser._id;
     }
 
+    if (!!req.emailResources) {
+        // we need this for class report emailResources
+        report.emailResources = req.emailResources;
+    }
+
     // this is a temporary fix. to be able for students to register their names.
     // since we are building the invite instead of the report, on each update, we need to make sure invitee is correct.
     // the parameters are kept on the side.
@@ -301,6 +341,18 @@ exports.updateReport = function (req, res) {
             }
             return;
         }
+    });
+};
+
+exports.sendReportReadyForClass = function (req, res) {
+    managers.reports.sendReportLinkForClass(req.emailResources, new Report(req.report), function (err) {
+        if (!!err) {
+            err.send(res);
+            return;
+        }
+
+        /*res.status(200).send({}); */ // lergo-577 - this response would cause "illegal token O" in frontend.
+
     });
 };
 
@@ -477,4 +529,6 @@ exports.findReportLessonsByName = function (req, res) {
 exports.findStudentReportLessonsByName = function (req, res) {
     exports.findReportLessonsByName(req, res);
 };
+
+
 

@@ -80,7 +80,7 @@ function enhance( Class ) {
 
 
     Class.prototype.update = function( callback ){
-        logger.info('updating ' + this.collectionName );
+        logger.info('updating');
         var self = this;
         this.data._id = db.id(this.data._id);
         Class.connect(function (db, collection) {
