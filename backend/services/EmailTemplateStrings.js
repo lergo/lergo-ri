@@ -3,10 +3,10 @@
 exports.classReportMarkup = function(emailVars) {
     if(emailVars.lessonLanguage === 'hebrew') {
         return `<div style="margin:auto; max-width: 800px">
-<p align="right">
+<p align="right" dir="auto">
 התלמיד   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
 לחצ/י על הקישור הבא כדי לראות את דוח תלמיד של השיעור של   
-<b>${emailVars.inviteeName}</b>
+<b>${emailVars.inviteeName}</b>:
 
 </p>
 <p align="right">
@@ -14,7 +14,7 @@ ${emailVars.studentReportLink}
 </p>
 
  <p align="right" dir="auto">
-לחצ/י על הקישור הבא כדי לראות את דוח הכיתה המרוכז (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
+לחצ/י על הקישור הבא כדי לראות את <b>דוח הכיתה המרוכז</b> (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
 
 </p>
 <p align="right">
