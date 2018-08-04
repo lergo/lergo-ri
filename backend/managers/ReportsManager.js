@@ -47,9 +47,10 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
             lergoLanguage = 'en';
         }
         var _lessonId = new ObjectId(report.data.lessonId);
+        var _className = report.data.className.split(' ').join('%20');
         var classReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/agg/' + report.data.classreportId + '/display';
         var studentReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
-        var allStudentReportsLink = emailResources.lergoBaseUrl + '/#!/user/create/reports?reportType=students&lergoFilter.reportClass=' + '"' + report.data.className + '"' + '&lergoFilter.reportLesson={"_id":"' + _lessonId + '"' +',' +  '"name":"' + report.data.data.lesson.name  + '"}&lergoLanguage=' + lergoLanguage + '&lergoFilter.filterLanguage="' + report.data.data.lesson.language + '"';
+        var allStudentReportsLink = emailResources.lergoBaseUrl + '/#!/user/create/reports?reportType=students&lergoFilter.reportClass=' + '"' + _className + '"' + '&lergoFilter.reportLesson={"_id":"' + _lessonId + '"' +',' +  '"name":"' + report.data.data.lesson.name  + '"}&lergoLanguage=' + lergoLanguage + '&lergoFilter.filterLanguage="' + report.data.data.lesson.language + '"';
         _.merge(emailVars, { 'classReportLink': classReportLink, 'studentReportLink': studentReportLink, 'allStudentReports': allStudentReportsLink,  'name': inviter.username, 'className': report.data.className, 'lessonId': report.data.lessonId, 'inviteeName': report.getName(),'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
             var html = services.emailTemplateStrings.classReportMarkup(emailVars);
             var text = services.emailTemplateStrings.classReportText(emailVars);
