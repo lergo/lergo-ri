@@ -5,27 +5,26 @@ exports.classReportMarkup = function(emailVars) {
         return `
     <div style="margin:auto; max-width: 800px">
             <p align="right" dir="auto">
-            התלמיד   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
+            התלמיד/ה   <b>${emailVars.inviteeName}</b> מ  <b>${emailVars.className}</b> הרגע סיימ/ה את השיעור <b>${emailVars.lessonTitle}</b>!
             לחצ/י על הקישור הבא כדי לראות את דוח תלמיד של השיעור של   
-            <b>${emailVars.inviteeName}</b>:
+            <b>${emailVars.inviteeName}</b>:</br>
             
-            </p>
-            <p align="right">
+        
             ${emailVars.studentReportLink}
             </p>
             
              <p align="right" dir="auto">
-            לחצ/י על הקישור הבא כדי לראות את <b>דוח הכיתה המרוכז</b> (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):
+            לחצ/י על הקישור הבא כדי לראות את <b>דוח הכיתה המרוכז</b> (הדוח מתעדכן עד שאחרון התלמידים מסיים את השיעור):<br>
             
-            </p>
-            <p align="right">
             ${emailVars.classReportLink}
             </p>
             
             
             <p align="right" dir="auto">
-            כדי להגיע לרשימת כל דוחות התלמידים אשר סיימו כבר את השיעור לחצ/י   <a href=${emailVars.allStudentReports}><b>כאן</b></a>  .  לשים לב: כדי לראות את רשימת  דוחות התלמידים המורה צריכ/ה להיות logged in.         
+            כדי להגיע לרשימת <b>כל</b> דוחות התלמידים אשר סיימו כבר את השיעור לחצ/י   <a href=${emailVars.allStudentReports}><b>כאן</b></a>  .  לשים לב: כדי לראות זאת המורה צריכ/ה להיכנס (log in)  לאתר לרגו.         
             </p>
+            <br>
+            
              
             <p align="right">
                         Powered by <a href="http://www.lergo.org.il/">LerGO </a><br/>
