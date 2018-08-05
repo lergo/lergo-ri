@@ -32,7 +32,7 @@ exports.create = function (req, res) {
         'expiresAt': new Date(expiresAt)
     }, invitation);
 
-    if (invitation.invitee.class) {
+    if (invitation.invitee && invitation.invitee.class) {
         invitation.emailNotification = false;
     } else {
         invitation.emailNotification = true;
