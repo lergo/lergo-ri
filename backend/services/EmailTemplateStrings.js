@@ -69,7 +69,6 @@ exports.classReportMarkup = function(emailVars) {
     </div>
 `;
     }
-
 };
 
 exports.classReportText = function(emailVars) {
@@ -84,5 +83,18 @@ Thanks,
 The LerGO Team
 `;
 
+};
+
+exports.languageMarkup = function(emailVars) {
+
+    if (emailVars.lessonLanguage) {
+        if (emailVars.lessonLanguage === 'hebrew') {
+            return'מישהו סיים את השיעור + קישור לדוח כיתה ולדוחות תלמיד';
+        } else {
+            return 'Someone finished a lesson + link to lesson reports';
+        }
+    } else {
+       return 'Someone finished a lesson + link to lesson reports';
+    }
 
 };

@@ -149,7 +149,7 @@ function updateClassAggReports(invitationId) {
         });
     };
     clearTimeout(timeOutIDMap[invitationId]);
-    timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
+    timeOutIDMap[invitationId] = setTimeout(aggregate, 500);
 }
 
 exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) {
@@ -160,12 +160,12 @@ exports.findReportByInvitationId = function(invitationId, classreportId, classNa
                 .then(function (report) {
                     return report;
                 }).then(function(report) {
+                    report.classreportId = classreportId;
+                    report.className = className;
 
                     var req = {};
                     req.emailResources = report.emailResources;
                     req.report = report;
-                    req.report.classreportId = classreportId;
-                    req.report.className = className;
 
                     exports.sendReportReadyForClass(req, res);
             });

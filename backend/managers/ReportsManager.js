@@ -21,6 +21,29 @@ var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
 var ObjectId = require('mongodb').ObjectId;
 
+
+function makeAllStudentReportLink(emailResources, report) {
+    var lergoLanguage = 'he';
+    if (report.data.data.lesson.language !== 'hebrew') {
+        lergoLanguage = 'en';
+    }
+
+    /*var _lessonId = services.db.id(report.data.lessonId);*/
+    var _lessonId = new ObjectId(report.data.data.lessonId);
+
+    var _className = report.data.className.split(' ').join('%20');
+    var _name = report.data.data.lesson.name.split(' ').join('%20');
+    return emailResources.lergoBaseUrl + '/#!/user/create/reports?reportType=students&lergoFilter.reportClass=' + '"' + _className + '"' + '&lergoFilter.reportLesson={"_id":"' + _lessonId + '"' +',' +  '"name":"' + _name  + '"}&lergoLanguage=' + lergoLanguage + '&lergoFilter.filterLanguage="' + report.data.data.lesson.language + '"';
+}
+
+function makeStudentReportLink(emailResources, report) {
+    return emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
+}
+
+function makeClassReportLink(emailResources, report) {
+    return emailResources.lergoBaseUrl + '/#!/public/lessons/reports/agg/' + report.data.classreportId + '/display';
+}
+
 exports.sendReportLinkForClass = function (emailResources, report, callback) {
     logger.info('send classReport is ready email');
 
@@ -42,26 +65,24 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
         }
         var emailVars = {};
         _.merge(emailVars, emailResources);
-        var lergoLanguage = 'he';
-        if (report.data.data.lesson.language !== 'hebrew') {
-            lergoLanguage = 'en';
-        }
-        var _lessonId = new ObjectId(report.data.lessonId);
-        var _className = report.data.className.split(' ').join('%20');
-        var classReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/agg/' + report.data.classreportId + '/display';
-        var studentReportLink = emailResources.lergoBaseUrl + '/#!/public/lessons/reports/' + report.data._id + '/display';
-        var allStudentReportsLink = emailResources.lergoBaseUrl + '/#!/user/create/reports?reportType=students&lergoFilter.reportClass=' + '"' + _className + '"' + '&lergoFilter.reportLesson={"_id":"' + _lessonId + '"' +',' +  '"name":"' + report.data.data.lesson.name  + '"}&lergoLanguage=' + lergoLanguage + '&lergoFilter.filterLanguage="' + report.data.data.lesson.language + '"';
-        _.merge(emailVars, { 'classReportLink': classReportLink, 'studentReportLink': studentReportLink, 'allStudentReports': allStudentReportsLink,  'name': inviter.username, 'className': report.data.className, 'lessonId': report.data.lessonId, 'inviteeName': report.getName(),'lessonTitle': report.data.data.lesson.name, 'lessonLanguage':report.data.data.lesson.language });
+        var classReportLink = makeClassReportLink(emailResources, report);
+        var studentReportLink = makeStudentReportLink(emailResources, report);
+        var allStudentReportsLink = makeAllStudentReportLink (emailResources, report);
+        _.merge(emailVars, {
+                'classReportLink': classReportLink,
+                'studentReportLink': studentReportLink,
+                'allStudentReports': allStudentReportsLink,
+                'name': inviter.username,
+                'className': report.data.className,
+                'lessonId': report.data.data.lessonId,
+                'inviteeName': report.getName(),
+                'lessonTitle': report.data.data.lesson.name,
+                'lessonLanguage':report.data.data.lesson.language
+            });
             var html = services.emailTemplateStrings.classReportMarkup(emailVars);
             var text = services.emailTemplateStrings.classReportText(emailVars);
-            var subject = 'Here is a link to your class report';
-            if (emailVars.lessonLanguage) {
-                if (emailVars.lessonLanguage === 'hebrew') {
-                    subject = 'מישהו סיים את השיעור + קישור לדוח כיתה ולדוחות תלמיד';
-                } else {
-                    subject = 'Someone finished a lesson + link to lesson reports';
-                }
-            }
+            var subject = services.emailTemplateStrings.languageMarkup(emailVars);
+
             services.email.sendMail({
                 'to': inviter.email,
                 'subject': subject,
