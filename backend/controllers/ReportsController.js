@@ -129,16 +129,14 @@ function updateClassAggReports(invitationId) {
                 report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
                 ClassReport.connect(function (db, collection) {
                     try {
-                        logger.info('inserting class report');
                         collection.update({invitationId: report.invitationId}, report, {upsert: true})
-                            .then(function() {
-                            collection.find({invitationId: report.invitationId}).toArray()
-                                .then(function(result) {
-                                    var className = result[0].data.invitee.class;
-                                    var classreportId = result[0]._id;
-                                    logger.info(`number of finished reports for ${className} is ${result[0].count}`);
-                                    exports.findReportByInvitationId(invitationId, classreportId, className);
-                                    });
+                            .then(function(result) {
+                                if (result.result.nModified === 0) {
+                                    logger.info('inserting class report');
+                                    managers.reports.prepareClassReportEmailData(collection,report);
+                                } else {
+                                    logger.info('updating class ceport');
+                                }
                             });
 
                     } catch (e) {
@@ -151,30 +149,6 @@ function updateClassAggReports(invitationId) {
     clearTimeout(timeOutIDMap[invitationId]);
     timeOutIDMap[invitationId] = setTimeout(aggregate, 500);
 }
-
-exports.findReportByInvitationId = function(invitationId, classreportId, className,  res) {
-    Report.connect(function (db, collection) {
-        try {
-            logger.info('finding Report from invitationId');
-            collection.findOne({invitationId: invitationId})
-                .then(function (report) {
-                    return report;
-                }).then(function(report) {
-                    report.classreportId = classreportId;
-                    report.className = className;
-
-                    var req = {};
-                    req.emailResources = report.emailResources;
-                    req.report = report;
-
-                    exports.sendReportReadyForClass(req, res);
-            });
-        } catch (e) {
-            logger.error('unable to find report', e);
-        }
-
-    });
-};
 
 
 exports.createNewReportForLessonInvitation = function (req, res) {
@@ -338,18 +312,6 @@ exports.updateReport = function (req, res) {
             }
             return;
         }
-    });
-};
-
-exports.sendReportReadyForClass = function (req, res) {
-    managers.reports.sendReportLinkForClass(req.emailResources, new Report(req.report), function (err) {
-        if (!!err) {
-            err.send(res);
-            return;
-        }
-
-        /*res.status(200).send({}); */ // lergo-577 - this response would cause "illegal token O" in frontend.
-
     });
 };
 
