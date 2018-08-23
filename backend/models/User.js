@@ -116,6 +116,10 @@ User.getUserAndPermissions = function( userId, callback ){
         if ( !user ){
             return null;
         }
+
+        if ( !user._id ){  // added when moving to mongodb 3.2 otherwise no userId is sent
+            return null;
+        }
         user.roleObjects = [];
         var rolesObjectIds = [];
 
