@@ -74,7 +74,8 @@ function enhance( Class ) {
 
     Class.aggregate = function (aggregation, callback) {
         Class.connect(function (db, collection) {
-            collection.aggregate(aggregation, callback);
+            collection.aggregate(aggregation, {cursor: {}
+            }, callback);
         });
     };
 

@@ -84,8 +84,8 @@ Lesson.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
             {$unwind : '$steps.quizItems'},
             {'$group' :{_id : 'a', res:{$addToSet:'$steps.quizItems'}}}
         ];
-        collection.aggregate( aggregation ,
-        function(err, result){
+        collection.aggregate( aggregation , {cursor: {}
+        }, function(err, result){
             callback(err, result.length > 0 ? result[0].res : undefined);
         });
     });
@@ -138,7 +138,8 @@ Lesson.countPublicQuestionsByUser = function( userId, callback ){
 
 
                 ];
-                collection.aggregate( aggregation , done );
+                collection.aggregate( aggregation , {cursor: {}
+                }, done );
 
             });
         },
@@ -180,7 +181,8 @@ Lesson.countPublicLessonsByUser = function (usersId, callback) {
             {
                 $group: {_id: '$userId', count: {$sum: 1}}
             }
-        ],
+        ], {cursor: {}
+        },
         function (err, result) {
             var map = {};
             _.each(result, function (r) {

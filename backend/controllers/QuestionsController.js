@@ -198,7 +198,8 @@ exports.getPublicLessonQuestions = function (req, res) {
             }
         }
 
-        ], function (err, args) {
+        ], {cursor: {}
+        }, function (err, args) {
             if (!!err) {
                 res.status(500).send(err);
                 return;

@@ -28,7 +28,8 @@ var reports = db.reports.aggregate([{
         answers: 1,
         stepDurations: 1
     }
-}]);
+}], {cursor: {}
+});
 
 
 reports.forEach(function (report) {

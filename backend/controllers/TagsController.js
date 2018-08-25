@@ -20,7 +20,8 @@ exports.getTopTags = function (req, res) {
             {$group: {_id: '$tags.label', number: {$sum: 1}}},
             {$sort: {number: -1}},
             {$limit: limit}
-        ], function (err, result) {
+        ], {cursor: {}
+        }, function (err, result) {
             res.send(result);
         });
     });
@@ -60,8 +61,8 @@ exports.getTagsByFilter = function (req, res) {
                     { $limit : 10 },
                     { $project: { _id : '$_id' , 'label' : '$_id'}}
 
-                ],
-                function (err, tags) {
+                ], {cursor: {}
+                }, function (err, tags) {
                     callback( err, tags );
                 });
         });

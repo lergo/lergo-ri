@@ -117,7 +117,8 @@ function updateClassAggReports(invitationId) {
                 answers: 1,
                 stepDurations: 1
             }
-        }], function (err, result) {
+        }], {cursor: {}
+        }, function (err, result) {
             if (!!err) {
                 console.error(err);
             }
@@ -226,7 +227,8 @@ exports.getStudents = function (req, res) {
             {'$group': {_id: '$data.invitee.name'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
-        ], function (err, result) {
+        ], {cursor: {}
+        }, function (err, result) {
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return;
@@ -249,7 +251,8 @@ exports.getClasses = function (req, res) {
             {'$group': {_id: '$data.invitee.class'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
-        ], function (err, result) {
+        ], {cursor: {}
+        }, function (err, result) {
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return;
@@ -474,7 +477,8 @@ exports.findReportLessonsByName = function (req, res) {
         Model = ClassReport;
     }
     console.log('aggregation is', JSON.stringify(agg));
-    Model.aggregate(agg, function (err, result) {
+    Model.aggregate(agg, {cursor: {}
+    }, function (err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
             return;
