@@ -101,3 +101,12 @@ Enabling such a permissions to someone guarantees that person's ability even if 
  - **abuseReports.userCanDelete** - Whether user can delete abuseReport ( default : nobody )
  - **faqs.userCanCreate** - Whether user can create FAQ ( default : nobody )
  - **faqs.userCanEdit** - Whether user can edit FAQ, currently this also means delete ( default : nobody )
+
+
+# Build With Docker
+
+ - **docker build -t lergo-ri .** - will build just lergo-ri. This is good when developing the Dockerfile.
+ - **docker run -it lergo-ri** - this will run the result from the first step. Good to test the Dockerfile. Will fail if configuration not provided.
+ - **docker run -it lergo-ri bash** - the same as previous step, but will let you into the container. Allows to run bash commands to look around.
+ - **docker-compose build** - builds with mongo link.
+ - **docker-compose up** - will run lergo-ri with mongo instance. test by going to `http://localhost:3000/backend/public/conf`

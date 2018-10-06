@@ -1,0 +1,9 @@
+.git
+.idea
+dev
+node_modules
+Dockerfile
+.dockerignore
+package-lock.json
+.npmrc
+.gitignore

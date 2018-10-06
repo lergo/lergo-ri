@@ -1,3 +1,4 @@
+'use strict';
 /**
  *
  * @module Conf Service
@@ -16,12 +17,17 @@ console.log('loading configuration from cwd', process.cwd());
 var meConf = ( !!process.env.LERGO_ME_CONF && path.resolve(process.env.LERGO_ME_CONF) )||path.resolve(path.join(__dirname, '../../','conf/dev/me.json'));
 var prodConf = path.resolve(path.join(__dirname,'..','..','conf','prod.json'));
 
+if (fs.existsSync(prodConf)) {
+    _.merge(module.exports, require(prodConf));
+}
 
-var data = fs.readFileSync(prodConf, 'utf8');
-if (!!data) {
-    _.merge(module.exports, JSON.parse(data));
+if (fs.existsSync(meConf)) {
+    _.merge(module.exports, require(meConf));
 }
-data = fs.readFileSync(meConf, 'utf8');
-if (!!data) {
-    _.merge(module.exports, JSON.parse(data));
-}
+
+const ENV_PREFIX='LERGO_';
+_.each(process.env, (v, k) => {
+    if (k.startsWith(ENV_PREFIX)) {
+        module.exports[_.camelCase(k.slice(ENV_PREFIX.length))] = v;
+    }
+});
