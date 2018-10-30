@@ -38,14 +38,14 @@ exports.getTagsByFilter = function (req, res) {
     var lessonsId = req.getQueryList('lessonsId');
     lessonsId = services.db.id(lessonsId);
 
-    var playListsId = req.getQueryList('playListsId');
-    playListsId = services.db.id(playListsId);
+    var playlistsId = req.getQueryList('playlistsId');
+    playlistsId = services.db.id(playlistsId);
 
     var questionsId = req.getQueryList('questionsId');
     questionsId = services.db.id(questionsId);
 
     logger.info('lessonsId',lessonsId);
-    logger.info('playListsId', playListsId);
+    logger.info('playlistsId', playlistsId);
 
     var result = [];
 
@@ -88,8 +88,8 @@ exports.getTagsByFilter = function (req, res) {
         findTagsOnCollection( 'lessons', like, lessonsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
-    function findTagsOnPlayLists( next ){
-        findTagsOnCollection( 'lessons', like, playListsId, function(err, tags){ findCallback( err, tags, next ); });
+    function findTagsOnPlaylists( next ){
+        findTagsOnCollection( 'lessons', like, playlistsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
     function findTagsOnQuestions( next ){

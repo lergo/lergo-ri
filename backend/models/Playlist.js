@@ -1,23 +1,23 @@
 'use strict';
-var logger = require('log4js').getLogger('PlayList');
+var logger = require('log4js').getLogger('Playlist');
 var AbstractModel = require('./AbstractModel');
 var _ = require('lodash');
 var dbService = require('../services/DbService');
 var async = require('async');
 
 /**
- *  @typedef {object} PlayList
+ *  @typedef {object} Playlist
  *  @property {number} age
  *  @property {number} public
  *  @property {string} subject
  *  @property {string} language - the language name
  */
 
-function PlayList(data) {
+function Playlist(data) {
     this.data = data;
 }
 
-PlayList.collectionName = 'playLists';
+Playlist.collectionName = 'playlists';
 
 
 
@@ -27,7 +27,7 @@ PlayList.collectionName = 'playLists';
  * @returns {Array}
  */
 
-PlayList.prototype.getAllQuestionIds = function () {
+Playlist.prototype.getAllQuestionIds = function () {
     logger.info('getting all questions Ids');
     var steps = this.data.steps || [];
     var questionIds = [];
@@ -50,7 +50,7 @@ PlayList.prototype.getAllQuestionIds = function () {
  * @param newQuestionId
  */
 
-PlayList.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestionId) {
+Playlist.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestionId) {
 //    logger.info('replacing question');
     // for every step of type quiz
     var quizSteps = _.filter(this.data.steps, {'type': 'quiz'});
@@ -68,17 +68,17 @@ PlayList.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestio
 };
 
 /**
- * Flattens all quizItems on all playLists,
+ * Flattens all quizItems on all playlists,
  * and groups all quizItems values into a single set.
  * http://stackoverflow.com/a/13281819/1068746
  *
- * @param playListsIds
+ * @param playlistsIds
  * @param callback
  */
-PlayList.getAllQuestionsIdsForLessons = function( playListsIds, callback ){
+Playlist.getAllQuestionsIdsForLessons = function(playlistsIds, callback ){
     Lesson.connect( function (db, collection) {
         var aggregation = [
-            {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : playListsIds} }},
+            {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : playlistsIds} }},
             { $project: { _id : 0, 'steps.quizItems':1} },
             {$unwind : '$steps'},
             {$unwind : '$steps.quizItems'},
@@ -91,7 +91,7 @@ PlayList.getAllQuestionsIdsForLessons = function( playListsIds, callback ){
     });
 };
 
-PlayList.findByQuizItems = function( question, callback){
+Playlist.findByQuizItems = function(question, callback){
     Lesson.find({ 'steps.quizItems' : question._id.toString() }, {}, function(err, result) {
         if (!!err) {
             logger.error('unable to find usage of questions [%s]', err.message);
@@ -100,10 +100,10 @@ PlayList.findByQuizItems = function( question, callback){
     });
 };
 
-PlayList.existsPublicByQuizItems = function(question, callback){
+Playlist.existsPublicByQuizItems = function(question, callback){
     Lesson.findOne({'steps.quizItems': question._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
         if ( !!err ){
-            logger.error('unable to decide if question is used by public playList [%s]', err.message);
+            logger.error('unable to decide if question is used by public playlist [%s]', err.message);
         }
         callback(err, !!result);
     });
@@ -112,19 +112,19 @@ PlayList.existsPublicByQuizItems = function(question, callback){
 
 /**
  *
- * a wrong and very naive implementation. count number of questions in user's public playList.
+ * a wrong and very naive implementation. count number of questions in user's public playlist.
  *
  * the actual purpose is to count all public questions by user.
  * so this function will only work if user used only his/her own questions..
  *
- * Flattens all quizItems on all playLists,
+ * Flattens all quizItems on all playlists,
  * and groups all quizItems values into a single set.
  * http://stackoverflow.com/a/13281819/1068746
  *
  * @param userId
  * @param callback
  */
-PlayList.countPublicQuestionsByUser = function( userId, callback ){
+Playlist.countPublicQuestionsByUser = function(userId, callback ){
     async.waterfall([
         function getQuestionIdsFromPublicLessons( done ){
             Lesson.connect( function (db, collection) {
@@ -162,8 +162,8 @@ PlayList.countPublicQuestionsByUser = function( userId, callback ){
 };
 
 
-PlayList.countPublicLessonsForUser = function(userId, callback ){
-    PlayList.count({
+Playlist.countPublicLessonsForUser = function(userId, callback ){
+    Playlist.count({
         userId  : dbService.id(userId),
         'public': {
             '$exists': true
@@ -171,8 +171,8 @@ PlayList.countPublicLessonsForUser = function(userId, callback ){
     }, callback );
 };
 
-PlayList.countPublicPlayListsByUser = function (usersId, callback) {
-    PlayList.aggregate(
+Playlist.countPublicPlaylistsByUser = function (usersId, callback) {
+    Playlist.aggregate(
         [
             {
                 $match: {userId: {$in: dbService.id(usersId)}, public: {$exists: true}}
@@ -190,8 +190,8 @@ PlayList.countPublicPlayListsByUser = function (usersId, callback) {
         });
 };
 
-AbstractModel.enhance(PlayList);
+AbstractModel.enhance(Playlist);
 
-module.exports = PlayList;
+module.exports = Playlist;
 
 

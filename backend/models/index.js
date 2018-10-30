@@ -9,4 +9,4 @@ exports.FAQ = require('./FAQ');
 exports.Role = require('./Role');
 exports.User = require('./User');
 exports.ClassReport = require('./ClassReport');
-exports.PlayList = require('./PlayList');
+exports.Playlist = require('./Playlist');

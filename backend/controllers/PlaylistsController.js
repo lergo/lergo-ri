@@ -1,22 +1,22 @@
 'use strict';
 
 /**
- * @module PlayListsController
+ * @module PlaylistsController
  * @type {exports}
  */
 
 var managers = require('../managers');
 var services = require('../services');
 var async = require('async');
-var logger = require('log4js').getLogger('PlayListsController');
-var PlayList = require('../models/PlayList');
+var logger = require('log4js').getLogger('PlaylistsController');
+var Playlist = require('../models/Playlist');
 var _ = require('lodash');
 var Like = require('../models/Like');
 
-exports.getUserPlayLists = function(req, res) {
+exports.getUserPlaylists = function(req, res) {
 	var queryObj = req.queryObj;
 	queryObj.filter.userId = req.sessionUser._id;
-	managers.playLists.complexSearch(queryObj, function(err, obj) {
+	managers.playlists.complexSearch(queryObj, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -27,11 +27,11 @@ exports.getUserPlayLists = function(req, res) {
 	});
 };
 
-exports.getUserLikedPlayLists = function(req, res) {
+exports.getUserLikedPlaylists = function(req, res) {
 	var queryObj = req.queryObj;
 	Like.find({
 		userId : req.sessionUser._id,
-		itemType : 'playList'
+		itemType : 'playlist'
 	}, {
 		itemId : 1,
 		_id : 1
@@ -47,7 +47,7 @@ exports.getUserLikedPlayLists = function(req, res) {
 		queryObj.filter._id = {
 			$in : _.map(result, 'itemId')
 		};
-		managers.playLists.complexSearch(queryObj, function(err, obj) {
+		managers.playlists.complexSearch(queryObj, function(err, obj) {
 			if (!!err) {
 				err.send(res);
 				return;
@@ -62,28 +62,28 @@ exports.getUserLikedPlayLists = function(req, res) {
 
 };
 
-// assumes user and playList exists and user can see playList
-// or playList is public and then we don't need user
-exports.getPlayListById = function(req, res) {
-	if (!req.playList) {
-		new managers.error.NotFound('could not find playList').send(res);
+// assumes user and playlist exists and user can see playlist
+// or playlist is public and then we don't need user
+exports.getPlaylistById = function(req, res) {
+	if (!req.playlist) {
+		new managers.error.NotFound('could not find playlist').send(res);
 		return;
 	}
-	res.send(req.playList);
+	res.send(req.playlist);
 };
 
-exports.getAdminPlayLists = function(req, res) {
+exports.getAdminPlaylists = function(req, res) {
 
-	managers.playLists.complexSearch(req.queryObj, function(err, result) {
+	managers.playlists.complexSearch(req.queryObj, function(err, result) {
 		if (!!err) {
-			new managers.error.InternalServerError(err, 'unable to get all admin playLists').send(res);
+			new managers.error.InternalServerError(err, 'unable to get all admin playlists').send(res);
 			return;
 		}
 
         var usersId = _.map(result.data,'userId');
-        PlayList.countPublicPlayListsByUser( usersId , function(err, publicCountByUser ){
+        Playlist.countPublicPlaylistsByUser( usersId , function(err, publicCountByUser ){
             if ( !!err ){
-                new managers.error.InternalServerError(err, 'unable to add count for public playLists').send(res);
+                new managers.error.InternalServerError(err, 'unable to add count for public playlists').send(res);
                 return;
             }
             _.each(result.data, function(r){
@@ -94,11 +94,11 @@ exports.getAdminPlayLists = function(req, res) {
 	});
 };
 
-exports.adminUpdatePlayList = function(req, res) {
-	var playList = req.body;
-    playList.userId = services.db.id(playList.userId);
-	playList._id = services.db.id(playList._id);
-	managers.playLists.updatePlayList(playList, function(err, obj) {
+exports.adminUpdatePlaylist = function(req, res) {
+	var playlist = req.body;
+    playlist.userId = services.db.id(playlist.userId);
+	playlist._id = services.db.id(playlist._id);
+	managers.playlists.updatePlaylist(playlist, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -109,7 +109,7 @@ exports.adminUpdatePlayList = function(req, res) {
 	});
 };
 
-exports.getPublicPlayLists = function(req, res) {
+exports.getPublicPlaylists = function(req, res) {
 
 	try {
 		var queryObj = req.queryObj;
@@ -119,31 +119,31 @@ exports.getPublicPlayLists = function(req, res) {
 			throw new Error('public must be $exists 1');
 		}
 	} catch (e) {
-		res.status(400).send('playLists controller - illegal filter value : ' + e.message);
+		res.status(400).send('playlists controller - illegal filter value : ' + e.message);
 		return;
 	}
 
-	var playLists = [];
-	async.waterfall([ function loadPlayLists(callback) {
-		managers.playLists.complexSearch(req.queryObj, function(err, result) {
+	var playlists = [];
+	async.waterfall([ function loadPlaylists(callback) {
+		managers.playlists.complexSearch(req.queryObj, function(err, result) {
 
 			if (!!err) {
-				callback(new managers.error.InternalServerError(err, 'unable to get all admin playLists'));
+				callback(new managers.error.InternalServerError(err, 'unable to get all admin playlists'));
 				return;
 			}
-            playLists = result;
+            playlists = result;
 			callback();
 		});
 	}, function loadUsers(callback) {
 
-		var usersId = _.map(playLists.data, 'userId');
+		var usersId = _.map(playlists.data, 'userId');
 		managers.users.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
 
 			if (!!err) {
 				callback(new managers.error.InternalServerError(err, 'unable to load users by id'));
 				return;
 			}
-			_.each(playLists.data, function(l) {
+			_.each(playlists.data, function(l) {
 				l.user = usersById[l.userId];
 			});
 
@@ -154,20 +154,20 @@ exports.getPublicPlayLists = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			res.send(playLists);
+			res.send(playlists);
 		}
 	});
 
 };
 
-exports.getPlayListIntro = function(req, res) {
-	managers.playLists.getPlayListIntro(req.params.playListId, function(err, result) {
+exports.getPlaylistIntro = function(req, res) {
+	managers.playlists.getPlaylistIntro(req.params.playlistId, function(err, result) {
 		res.send(result);
 	});
 };
 
 exports.overrideQuestion = function(req, res) {
-	logger.info('overriding question :: ' + req.question._id + ' in playList ::' + req.playList._id);
+	logger.info('overriding question :: ' + req.question._id + ' in playlist ::' + req.playlist._id);
 
 	var newQuestion = null;
 	async.waterfall([ function copyQuestion(callback) {
@@ -178,9 +178,9 @@ exports.overrideQuestion = function(req, res) {
 		try {
 			newQuestion = _newQuestion;
 			var oldQuestion = req.question;
-			var playListObj = new PlayList(req.playList);
-            playListObj.replaceQuestionInPlayList(oldQuestion._id.toString(), newQuestion._id.toString());
-			playListObj.update();
+			var playlistObj = new Playlist(req.playlist);
+            playlistObj.replaceQuestionInPlaylist(oldQuestion._id.toString(), newQuestion._id.toString());
+			playlistObj.update();
 			callback(null);
 			return;
 		} catch (e) {
@@ -188,7 +188,7 @@ exports.overrideQuestion = function(req, res) {
 			callback(e);
 			return;
 		}
-		// wrap playList object with our model and invoke save.
+		// wrap playlist object with our model and invoke save.
 
 	} ], function(err) {
 		logger.info('override async finished');
@@ -201,21 +201,21 @@ exports.overrideQuestion = function(req, res) {
 		} else { // newQuestion != null
 			logger.info('completed successfully');
 			res.status(200).send({
-				'playList' : req.playList,
+				'playlist' : req.playlist,
 				'quizItem' : newQuestion
 			});
 		}
 	});
 };
 
-exports.copyPlayList = function(req, res) {
-	managers.playLists.copyPlayList(req.sessionUser, req.playList, function(err, result) {
+exports.copyPlaylist = function(req, res) {
+	managers.playlists.copyPlaylist(req.sessionUser, req.playlist, function(err, result) {
 		res.send(result);
 	});
 };
 
-function _updatePlayList( playList , res ){
-    managers.playLists.updatePlayList(playList, function(err, obj) {
+function _updatePlaylist( playlist , res ){
+    managers.playlists.updatePlaylist(playlist, function(err, obj) {
         if (!!err) {
             err.send(res);
             return;
@@ -235,29 +235,29 @@ function _updatePlayList( playList , res ){
  * it will assume user was authorized to get here, and will NOT assume user own
  * the resource.
  *
- * For example - update playList will not assume the editor is the user on the
+ * For example - update playlist will not assume the editor is the user on the
  * request, but will assume the user on the request is allowed to edit this
- * playList;
+ * playlist;
  *
  *
  *
  */
 
 exports.update = function(req, res) {
-	logger.info('updating playList');
-	var playList = req.body;
+	logger.info('updating playlist');
+	var playlist = req.body;
 
-	playList.userId = req.playList.userId;
-	playList._id = services.db.id(playList._id);
+	playlist.userId = req.playlist.userId;
+	playlist._id = services.db.id(playlist._id);
 
-    _updatePlayList( playList, res );
+    _updatePlaylist( playlist, res );
 
 };
 
 
 /**
  *
- * This function only publishes a playList.
+ * This function only publishes a playlist.
  *
  * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
  *
@@ -265,15 +265,15 @@ exports.update = function(req, res) {
  * @param res
  */
 exports.publish = function(req, res){
-    var playList = req.playList;
-    playList.public = new Date().getTime();
-    _updatePlayList( playList, res );
+    var playlist = req.playlist;
+    playlist.public = new Date().getTime();
+    _updatePlaylist( playlist, res );
 };
 
 
 /**
  *
- * This function only unpublishes a playList.
+ * This function only unpublishes a playlist.
  *
  * We separate this from 'update' to allow the existance of 'publishers' in the system which are not 'editors'.
  *
@@ -281,24 +281,24 @@ exports.publish = function(req, res){
  * @param res
  */
 exports.unpublish = function(req, res){
-    var playList = req.playList;
-    delete playList.public;
-    _updatePlayList( playList, res );
+    var playlist = req.playlist;
+    delete playlist.public;
+    _updatePlaylist( playlist, res );
 };
 
 /**
  *
- * Creates a new playList and assigns it to the logged in user.
+ * Creates a new playlist and assigns it to the logged in user.
  *
  * @param req
  * @param res
  */
 
 exports.create = function(req, res) {
-    logger.info('create playList');
-	var playList = {};
-	playList.userId = req.sessionUser._id;
-	managers.playLists.createPlayList(playList, function(err, obj) {
+    logger.info('create playlist');
+	var playlist = {};
+	playlist.userId = req.sessionUser._id;
+	managers.playlists.createPlaylist(playlist, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;
@@ -310,7 +310,7 @@ exports.create = function(req, res) {
 };
 
 /**
- * gets a list of ids and returns the corresponding playLists.
+ * gets a list of ids and returns the corresponding playlists.
  *
  * how to pass a list of ids over req query?
  *
@@ -319,19 +319,19 @@ exports.create = function(req, res) {
  * @param req
  * @param res
  */
-exports.findPlayListsByIds = function(req, res) {
+exports.findPlaylistsByIds = function(req, res) {
 
-	var objectIds = req.getQueryList('playListsId');
+	var objectIds = req.getQueryList('playlistsId');
 	logger.info('this is object ids', objectIds);
 	objectIds = services.db.id(objectIds);
 
-	PlayList.find({
+	Playlist.find({
 		'_id' : {
 			'$in' : objectIds
 		}
 	}, {}, function(err, result) {
 		if (!!err) {
-			new managers.error.InternalServerError(err, 'unable to find playLists by ids').send(res);
+			new managers.error.InternalServerError(err, 'unable to find playlists by ids').send(res);
 			return;
 		} else {
 			res.send(result);
@@ -340,23 +340,23 @@ exports.findPlayListsByIds = function(req, res) {
 	});
 };
 
-exports.deletePlayList = function(req, res) {
-	managers.playLists.deletePlayList(req.playList._id, function(err, deletedPlayList) {
+exports.deletePlaylist = function(req, res) {
+	managers.playlists.deletePlaylist(req.playlist._id, function(err, deletedPlaylist) {
 		if (!!err) {
-			logger.error('error deleting playList', err);
+			logger.error('error deleting playlist', err);
 			err.send(res);
 			return;
 		} else {
-			managers.playListsInvitations.deleteByPlayListId(req.playList._id, function(err/*
+			managers.playlistsInvitations.deleteByPlaylistId(req.playlist._id, function(err/*
 																						 * ,
 																						 * deletedInvitations
 																						 */) {
 				if (!!err) {
-					logger.error('error deleting playLists invitations', err);
+					logger.error('error deleting playlists invitations', err);
 					err.send(res);
 					return;
 				} else {
-					res.send(deletedPlayList);
+					res.send(deletedPlaylist);
 					return;
 				}
 			});
@@ -366,7 +366,7 @@ exports.deletePlayList = function(req, res) {
 };
 
 exports.findUsages = function(req, res) {
-	PlayList.findByQuizItems(req.question, function(err, obj) {
+	Playlist.findByQuizItems(req.question, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

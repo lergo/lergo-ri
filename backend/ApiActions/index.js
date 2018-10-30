@@ -1,7 +1,7 @@
 'use strict';
 exports.usersActions = require('./UsersActions');
 exports.lessonsActions = require('./LessonsActions');
-exports.playListsActions = require('./PlayListsActions');
+exports.playlistsActions = require('./PlaylistsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');
 exports.lessonsInvitationsActions = require('./LessonsInvitationsActions');

@@ -1,23 +1,23 @@
 'use strict';
 
 /**
- * @module playListsMiddleware
- * @type {PlayList|exports}
+ * @module LesosnsMiddleware
+ * @type {Playlist|exports}
  */
 
-var PlayList = require('../models/PlayList');
-var logger = require('log4js').getLogger('PlayListsMiddleware');
+var Playlist = require('../models/Playlist');
+var logger = require('log4js').getLogger('PlaylistsMiddleware');
 var permissions = require('../permissions');
 
 /**
 
- includes middlewares regarding playLists
+ includes middlewares regarding playlists
 
-**/
+ **/
 
 
 /**
- * checks if playList exists
+ * checks if playlist exists
  * @param req
  * @param res
  * @param next
@@ -25,7 +25,7 @@ var permissions = require('../permissions');
 exports.exists= function exists( req, res, next ){
     logger.debug('checking if playlist exists : ' , req.params.playlistId );
     try {
-        PlayList.findById(req.params.playlistId, function (err, result) {
+        Playlist.findById(req.params.playlistId, function (err, result) {
             if (!!err) {
                 res.status(500).send(err);
                 return;
@@ -83,9 +83,9 @@ exports.userCanCopy = function userCanCopy(req, res, next){
 /*
 Whether this user can see private playlists
  */
-exports.userCanSeePrivateplaylists = function userCanSeePrivateplaylists( req, res, next){
+exports.userCanSeePrivatePlaylists = function userCanSeePrivatePlaylists( req, res, next){
     logger.debug('checking if user can see private playlists');
-    if ( !permissions.playlists.userCanSeePrivateplaylists(req.sessionUser) ){
+    if ( !permissions.playlists.userCanSeePrivatePlaylists(req.sessionUser) ){
         res.status(400).send('');
         return;
     }

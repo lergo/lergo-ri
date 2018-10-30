@@ -1,6 +1,6 @@
 'use strict';
 /**
- * @module PlayListsManager
+ * @module PlaylistsManager
  * @type {Logger}
  */
 // todo user "managers" instead..
@@ -8,29 +8,29 @@
 // we need to use setTimeout( function(){ managers = require('./index'); },0);
 // hopefully this will cause the event loop to execute after index.js is initialized.
 
-var logger = require('log4js').getLogger('PlayListsManager');
+var logger = require('log4js').getLogger('PlaylistsManager');
 var services = require('../services');
 var errorManager = require('./ErrorManager');
 var usersManager = require('./UsersManager');
 var _ = require('lodash');
-var PlayList = require('../models/PlayList');
+var Playlist = require('../models/Playlist');
 
 
-exports.createPlayList = function(playList, callback) {
-	logger.info('Creating PlayList');
-	playList.createdAt = new Date().toISOString();
-    if ( !playList.age) {
-        playList.age = 8;
+exports.createPlaylist = function(playlist, callback) {
+	logger.info('Creating Playlist');
+	playlist.createdAt = new Date().toISOString();
+    if ( !playlist.age) {
+        playlist.age = 8;
     }
-	services.db.connect('playLists', function(db, collection) {
-		collection.insert(playList, function(err) {
+	services.db.connect('playlists', function(db, collection) {
+		collection.insert(playlist, function(err) {
 			if (!!err) {
-				logger.error('error creating playList [%s] : [%s]', playList.name, err);
+				logger.error('error creating playlist [%s] : [%s]', playlist.name, err);
 				callback(new errorManager.InternalServerError());
 				return;
 			} else {
-				logger.info('PlayList [%s] created successfully. invoking callback', playList.name);
-				callback(null, playList);
+				logger.info('Playlist [%s] created successfully. invoking callback', playlist.name);
+				callback(null, playlist);
 				return;
 			}
 		});
@@ -42,83 +42,83 @@ exports.createPlayList = function(playList, callback) {
  *
  *
  *
- * This function copies a playList while picking very specific fields from it.
+ * This function copies a playlist while picking very specific fields from it.
  *
  *
  * @param user - the user making the copy
- * @param playList
+ * @param playlist
  * @param callback
  */
 
-exports.copyPlayList = function (user, playList, callback) {
+exports.copyPlaylist = function (user, playlist, callback) {
 
     // if I copy from a copy of the original, I am also a copy of the original.. ==> transitive
-    // copy of is transitive property of a playList;
+    // copy of is transitive property of a playlist;
     var copyOf = [];
 
 
     // LERGO-412 - we decided we want to remember even if same user.
     // LERGO-569 - we decided we DO NOT want to remember if the same user..
-    if ( !services.db.id(user._id).equals( services.db.id( playList.userId ) ) ){
-        copyOf = copyOf.concat(playList._id);
+    if ( !services.db.id(user._id).equals( services.db.id( playlist.userId ) ) ){
+        copyOf = copyOf.concat(playlist._id);
     }
 
     // copy of is a transitive property.
-    if ( !!playList.copyOf ){
-        copyOf = copyOf.concat(playList.copyOf);
+    if ( !!playlist.copyOf ){
+        copyOf = copyOf.concat(playlist.copyOf);
     }
 
-    playList = _.pick(playList, ['age','description','name','steps','language','subject','tags']);
+    playlist = _.pick(playlist, ['age','description','name','steps','language','subject','tags']);
 
     var copyOfName = 'Copy of: ';
 
-    if (playList.language === 'hebrew') {
+    if (playlist.language === 'hebrew') {
         copyOfName = 'העתק של: ';
-    } else if (playList.language === 'arabic') {
+    } else if (playlist.language === 'arabic') {
         copyOfName = 'نسخة من: ';
     } else {
         copyOfName = 'Copy of: ';
     }
 
-    playList.name = copyOfName  + playList.name;
+    playlist.name = copyOfName  + playlist.name;
 
     if ( copyOf.length > 0 ){
-        playList.copyOf = copyOf;
+        playlist.copyOf = copyOf;
     }
 
-    playList.createdAt = new Date().toISOString();
-    playList.lastUpdate = new Date().getTime();
-    playList.userId = services.db.id(user._id);
+    playlist.createdAt = new Date().toISOString();
+    playlist.lastUpdate = new Date().getTime();
+    playlist.userId = services.db.id(user._id);
 
-    services.db.connect('playLists', function (db, collection) {
-        collection.insert(playList, function (err) {
+    services.db.connect('playlists', function (db, collection) {
+        collection.insert(playlist, function (err) {
             if (!!err) {
-                logger.error('error copying playList [%s]', playList.name, err);
+                logger.error('error copying playlist [%s]', playlist.name, err);
                 callback(new errorManager.InternalServerError());
                 return;
             } else {
-                logger.info('PlayList [%s] copied successfully', playList.name);
-                callback(null, playList);
+                logger.info('Playlist [%s] copied successfully', playlist.name);
+                callback(null, playlist);
                 return;
             }
         });
     });
 };
 
-exports.updatePlayList = function(playList, callback) {
-	logger.info('Updating playList');
-	services.db.connect('playLists', function(db, collection, done) {
+exports.updatePlaylist = function(playlist, callback) {
+	logger.info('Updating playlist');
+	services.db.connect('playlists', function(db, collection, done) {
 		collection.update({
-			'_id' : playList._id
-		}, playList, function(err) {
+			'_id' : playlist._id
+		}, playlist, function(err) {
 			if (!!err) {
-				logger.error('error in updating playList [%s] : [%s]', playList.name, err);
+				logger.error('error in updating playlist [%s] : [%s]', playlist.name, err);
 				callback(new errorManager.InternalServerError());
 				done();
 				return;
 			} else {
-				logger.info('PlayList [%s] updated successfully. invoking callback', playList.name);
-				callback(null, playList);
+				logger.info('Playlist [%s] updated successfully. invoking callback', playlist.name);
+				callback(null, playlist);
 				done();
 				return;
 			}
@@ -126,9 +126,9 @@ exports.updatePlayList = function(playList, callback) {
 	});
 };
 
-exports.deletePlayList = function(id, callback) {
-	logger.info('Deleting playList : ' + id);
-	services.db.connect('playLists', function(db, collection) {
+exports.deletePlaylist = function(id, callback) {
+	logger.info('Deleting playlist : ' + id);
+	services.db.connect('playlists', function(db, collection) {
 		collection.remove({
 			'_id' : services.db.id(id)
 		}, function(err) {
@@ -140,10 +140,10 @@ exports.deletePlayList = function(id, callback) {
 	});
 };
 
-exports.incrementViews = function(playListId, callback) {
-	services.db.connect('playLists', function(db, collection, done) {
+exports.incrementViews = function(playlistId, callback) {
+	services.db.connect('playlists', function(db, collection, done) {
 		collection.update({
-			'_id' : services.db.id(playListId)
+			'_id' : services.db.id(playlistId)
 		}, {
 			'$inc' : {
 				'views' : 1
@@ -157,12 +157,12 @@ exports.incrementViews = function(playListId, callback) {
 	});
 };
 
-exports.getPlayList = function (filter, callback) {
-    logger.info('Fetching playList by ID', JSON.stringify(filter));
-    services.db.connect('playLists', function (db, collection/*, done*/) {
+exports.getPlaylist = function (filter, callback) {
+    logger.info('Fetching playlist by ID', JSON.stringify(filter));
+    services.db.connect('playlists', function (db, collection/*, done*/) {
         collection.findOne(filter, function (err, item) {
                 if (!!err) {
-                    logger.error('unable to query for playList [%s]', err.message);
+                    logger.error('unable to query for playlist [%s]', err.message);
                     callback(null, item);
                 } else {
                     item.timeStamp = item._id.getTimestamp();
@@ -173,14 +173,14 @@ exports.getPlayList = function (filter, callback) {
     });
 };
 
-exports.getUserPlayLists = function(userId, callback) {
-	logger.info('Getting playLists');
-	services.db.connect('playLists', function(db, collection, done) {
+exports.getUserPlaylists = function(userId, callback) {
+	logger.info('Getting playlists');
+	services.db.connect('playlists', function(db, collection, done) {
 		collection.find({
 			'userId' : userId
 		}).toArray(function(err, result) {
 			if (!!err) {
-				logger.error('unable to query for playLists [%s]', err.message);
+				logger.error('unable to query for playlists [%s]', err.message);
 			}
 			done();
 			callback(err, result);
@@ -189,11 +189,11 @@ exports.getUserPlayLists = function(userId, callback) {
 };
 
 exports.find = function(filter, projection, callback) {
-	logger.info('finding playLists');
-	services.db.connect('playLists', function(db, collection, done) {
+	logger.info('finding playlists');
+	services.db.connect('playlists', function(db, collection, done) {
 		collection.find(filter, projection).toArray(function(err, result) {
 			if (!!err) {
-				logger.error('unable to find playLists [%s]', err.message);
+				logger.error('unable to find playlists [%s]', err.message);
 			}
 			done();
 			callback(err, result);
@@ -201,17 +201,17 @@ exports.find = function(filter, projection, callback) {
 	});
 };
 
-exports.getPublicPlayLists = function(callback) {
+exports.getPublicPlaylists = function(callback) {
 	var result = [];
 	var usersId = [];
-	services.db.connect('playLists', function(db, collection, done) {
+	services.db.connect('playlists', function(db, collection, done) {
 		collection.find({
 			'public' : {
 				'$exists' : true
 			}
 		}, {}).each(function(err, obj) {
-			logger.debug('handling playList');
-			if (obj === null) { // means we found all playLists
+			logger.debug('handling playlist');
+			if (obj === null) { // means we found all playlists
 				done();
 				usersManager.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
 					logger.info('got users map', usersById);
@@ -233,10 +233,10 @@ exports.getPublicPlayLists = function(callback) {
 };
 
 // todo : organize this code into "role" based pattern
-exports.getPlayListIntro = function( playListId, callback ){
-    services.db.connect('playLists', function(db, collection/*, done*/){
+exports.getPlaylistIntro = function( playlistId, callback ){
+    services.db.connect('playlists', function(db, collection/*, done*/){
         collection.findOne({
-            '_id' : services.db.id( playListId )
+            '_id' : services.db.id( playlistId )
         }, function( err, result ){
 
             usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
@@ -273,7 +273,7 @@ exports.complexSearch = function( queryObj, callback ){
     delete queryObj.filter.searchText;
 
 
-    PlayList.connect( function( db, collection ){
+    Playlist.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
     });
 };
