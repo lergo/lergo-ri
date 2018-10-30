@@ -23,69 +23,69 @@ var permissions = require('../permissions');
  * @param next
  */
 exports.exists= function exists( req, res, next ){
-    logger.debug('checking if playList exists : ' , req.params.playListId );
+    logger.debug('checking if playlist exists : ' , req.params.playlistId );
     try {
-        PlayList.findById(req.params.playListId, function (err, result) {
+        PlayList.findById(req.params.playlistId, function (err, result) {
             if (!!err) {
                 res.status(500).send(err);
                 return;
             }
             if (!result) {
-                res.status(404).send('playList not found');
+                res.status(404).send('playlist not found');
                 return;
             }
 
-            logger.debug('putting playList on request', result);
-            req.playList = result;
+            logger.debug('putting playlist on request', result);
+            req.playlist = result;
 
             next();
 
         });
     }catch(e){
-        res.status(404).send('playList not found after exception');
+        res.status(404).send('playlist not found after exception');
     }
 };
 
 
 /**
- * Whether user can edit the playList or not
+ * Whether user can edit the playlist or not
  *
  * assumes request contains
  *
  * user - the user on the request
- * playList - the playList we are editting
+ * playlist - the playlist we are editting
  */
 exports.userCanEdit = function userCanEdit( req, res, next  ){
-    logger.debug('checking if user can edit playList');
-    return permissions.playLists.userCanEdit( req.sessionUser , req.playList ) ? next() : res.status(400).send('');
+    logger.debug('checking if user can edit playlist');
+    return permissions.playlists.userCanEdit( req.sessionUser , req.playlist ) ? next() : res.status(400).send('');
 };
 
 
 exports.userCanPublish = function userCanPublish( req, res, next  ){
-    logger.debug('checking if user can publish playList');
-    return permissions.playLists.userCanPublish( req.sessionUser , req.playList ) ? next() : res.status(400).send('');
+    logger.debug('checking if user can publish playlist');
+    return permissions.playlists.userCanPublish( req.sessionUser , req.playlist ) ? next() : res.status(400).send('');
 };
 
 
 exports.userCanUnpublish = function userCanUnpublish( req, res, next  ){
-    logger.debug('checking if user can unpublish playList');
-    return permissions.playLists.userCanUnpublish( req.sessionUser , req.playList ) ? next() : res.status(400).send('');
+    logger.debug('checking if user can unpublish playlist');
+    return permissions.playlists.userCanUnpublish( req.sessionUser , req.playlist ) ? next() : res.status(400).send('');
 };
 
 exports.userCanDelete = function userCanDelete(req, res, next){
-    return permissions.playLists.userCanDelete( req.sessionUser , req.playList ) ? next() : res.status(400).send('');
+    return permissions.playlists.userCanDelete( req.sessionUser , req.playlist ) ? next() : res.status(400).send('');
 };
 
 exports.userCanCopy = function userCanCopy(req, res, next){
-    return permissions.playLists.userCanCopy( req.sessionUser, req.playList ) ? next() : res.status(400).send('');
+    return permissions.playlists.userCanCopy( req.sessionUser, req.playlist ) ? next() : res.status(400).send('');
 };
 
 /*
-Whether this user can see private playLists
+Whether this user can see private playlists
  */
-exports.userCanSeePrivatePlayLists = function userCanSeePrivatePlayLists( req, res, next){
-    logger.debug('checking if user can see private playLists');
-    if ( !permissions.playLists.userCanSeePrivatePlayLists(req.sessionUser) ){
+exports.userCanSeePrivateplaylists = function userCanSeePrivateplaylists( req, res, next){
+    logger.debug('checking if user can see private playlists');
+    if ( !permissions.playlists.userCanSeePrivateplaylists(req.sessionUser) ){
         res.status(400).send('');
         return;
     }
