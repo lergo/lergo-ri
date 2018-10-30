@@ -171,7 +171,7 @@ PlayList.countPublicLessonsForUser = function(userId, callback ){
     }, callback );
 };
 
-PlayList.countPublicLessonsByUser = function (usersId, callback) {
+PlayList.countPublicPlayListsByUser = function (usersId, callback) {
     PlayList.aggregate(
         [
             {
