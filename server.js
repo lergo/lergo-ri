@@ -45,6 +45,7 @@ services.emailTemplates.load( path.resolve(__dirname, 'emails') );
 var app = module.exports = express();
 var backendHandler = express();
 var swaggerAppHandler = express(); // split the two
+var subpath = express();
 
 /** swagger configuration: start **/
 
@@ -55,7 +56,7 @@ swagger.setHeaders = function setHeaders(res) {
     res.header('Content-Type', 'application/json; charset=utf-8');
 };
 swagger.configureSwaggerPaths('', '/api/api-docs', '');
-swagger.setAppHandler(swaggerAppHandler);
+/*swagger.setAppHandler(swaggerAppHandler);*/
 
 /** swagger configuration :end **/
 
@@ -75,6 +76,9 @@ logger.info('set trust proxy to true');
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use('/v1', subpath);
+
+var swagger = require('swagger-node-express').createNew(subpath);
 
 app.use(methodOverride());
 app.use(cookieParser());
@@ -256,10 +260,14 @@ app.get('/backend/sitemap.xml', function(req, res){
                 sitemap.urls.push( { url: '/#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
             });
 
-            sitemap.toXML(function (xml) {
+            sitemap.toXML( function (err, xml) {
+                if (err) {
+                    return res.status(500).end();
+                }
                 res.header('Content-Type', 'application/xml');
-                res.send(xml);
+                res.send( xml );
             });
+
         });
 
     });

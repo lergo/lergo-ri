@@ -129,10 +129,16 @@ function updateClassAggReports(invitationId) {
                 report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
                 ClassReport.connect(function (db, collection) {
                     try {
-                        logger.info('inserting class report');
-                        collection.update({invitationId: report.invitationId}, report, {upsert: true}, function () {
-                            logger.info('Updating class report for invitation ID :' + invitationId);
-                        });
+                        collection.update({invitationId: report.invitationId}, report, {upsert: true})
+                            .then(function(result) {
+                                if (result.result.nModified === 0) {
+                                    logger.info('inserting class report');
+                                    managers.reports.prepareClassReportEmailData(collection,report);
+                                } else {
+                                    logger.info('updating class ceport');
+                                }
+                            });
+
                     } catch (e) {
                         logger.error('unable to save class report', e);
                     }
@@ -141,8 +147,9 @@ function updateClassAggReports(invitationId) {
         });
     };
     clearTimeout(timeOutIDMap[invitationId]);
-    timeOutIDMap[invitationId] = setTimeout(aggregate, 5000);
+    timeOutIDMap[invitationId] = setTimeout(aggregate, 500);
 }
+
 
 exports.createNewReportForLessonInvitation = function (req, res) {
 
@@ -195,7 +202,6 @@ exports.createNewReportForLessonInvitation = function (req, res) {
 
             logger.info('inserting report');
             collection.insert(report, function () {
-                logger.info('in insert callback', report);
                 res.send(report);
             });
         } catch (e) {
@@ -271,6 +277,11 @@ exports.updateReport = function (req, res) {
         // if the person who is doing the lesson is logged in, we want to know
         // that.
         report.userId = req.sessionUser._id;
+    }
+
+    if (!!req.emailResources) {
+        // we need this for class report emailResources
+        report.emailResources = req.emailResources;
     }
 
     // this is a temporary fix. to be able for students to register their names.
@@ -477,4 +488,6 @@ exports.findReportLessonsByName = function (req, res) {
 exports.findStudentReportLessonsByName = function (req, res) {
     exports.findReportLessonsByName(req, res);
 };
+
+
 

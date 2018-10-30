@@ -28,15 +28,9 @@ var ses = require('nodemailer-ses-transport'); // for nodemailer 3.x
 
 /**
  * create a transport for sending mails
+ * transport for nodemailer 3.x
  */
-// transport for nodemailer 0.7
 
-/*function getTransport() {
-    var smtpTransport = nodemailer.createTransport(emailSettings.type, emailSettings.opts);
-    return smtpTransport;
-}*/
-
-// transport for nodemailer 3.x
 function getTransport() {
  var smtpTransport = nodemailer.createTransport(ses(emailSettings.opts));
  return smtpTransport;
@@ -50,16 +44,16 @@ function getTransport() {
 
 exports.sendMail = function (opts, callback) {
     var transport = getTransport();
-    logger.info(opts);
+    logger.info(`sending email to: ${opts.to}`);
     if (!opts.hasOwnProperty('from')) {
         opts.from = emailSettings.defaultFrom;
     }
-    transport.sendMail(opts, function (error, response) {
+    transport.sendMail(opts, function (error) {
         if (!!error) {
             logger.error('error in sending mail   to : [%s]', opts.to, error);
             callback(error);
         } else {
-            logger.info('Message sent: ' + response.message);
+            logger.info('Message sent');
             transport.close();
             callback(null);
         }
