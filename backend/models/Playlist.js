@@ -27,39 +27,39 @@ Playlist.collectionName = 'playlists';
  * @returns {Array}
  */
 
-Playlist.prototype.getAllQuestionIds = function () {
-    logger.info('getting all questions Ids');
+Playlist.prototype.getAllLessonIds = function () {
+    logger.info('getting all lessons Ids');
     var steps = this.data.steps || [];
-    var questionIds = [];
+    var lessonIds = [];
     for (var i = 0; i < steps.length; i++) {
         logger.info('checking ', steps[i].type);
         if (steps[i].type === 'quiz') {
             logger.info('adding the following quiz items', steps[i].quizItems);
-            questionIds = questionIds.concat(steps[i].quizItems);
+            lessonIds = lessonIds.concat(steps[i].quizItems);
         }
     }
-    logger.info('found the following question ids', questionIds);
-    return questionIds;
+    logger.info('found the following lesson ids', lessonIds);
+    return lessonIds;
 };
 
 /**
  *
- * takes 2 question ids and replaces one with another.
+ * takes 2 lesson ids and replaces one with another.
  *
- * @param oldQuestionId
- * @param newQuestionId
+ * @param oldLessonId
+ * @param newLessonId
  */
 
-Playlist.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestionId) {
-//    logger.info('replacing question');
+Playlist.prototype.replaceLessonInPlaylist = function (oldLessonId, newLessonId) {
+//    logger.info('replacing lesson');
     // for every step of type quiz
     var quizSteps = _.filter(this.data.steps, {'type': 'quiz'});
     _.each(quizSteps, function (quiz) {
-        // replace quizItems property with a mapped result that replaces oldQuestionId with newQuestionId
+        // replace quizItems property with a mapped result that replaces oldLessonId with newLessonId
         quiz.quizItems = _.map(quiz.quizItems, function (qi) {
-            if (qi === oldQuestionId) {
+            if (qi === oldLessonId) {
                 logger.info('found matching quiz item. replacing');
-                return newQuestionId;
+                return newLessonId;
             }else{
                 return qi;
             }
@@ -75,8 +75,8 @@ Playlist.prototype.replaceQuestionInLesson = function (oldQuestionId, newQuestio
  * @param playlistsIds
  * @param callback
  */
-Playlist.getAllQuestionsIdsForLessons = function(playlistsIds, callback ){
-    Lesson.connect( function (db, collection) {
+Playlist.getAllLessonsIdsForPlaylists = function(playlistsIds, callback ){
+    Playlist.connect( function (db, collection) {
         var aggregation = [
             {$match: { 'steps.type' : 'quiz', '_id' : {'$in' : playlistsIds} }},
             { $project: { _id : 0, 'steps.quizItems':1} },
@@ -91,19 +91,19 @@ Playlist.getAllQuestionsIdsForLessons = function(playlistsIds, callback ){
     });
 };
 
-Playlist.findByQuizItems = function(question, callback){
-    Lesson.find({ 'steps.quizItems' : question._id.toString() }, {}, function(err, result) {
+Playlist.findByQuizItems = function(lesson, callback){
+    Playlist.find({ 'steps.quizItems' : lesson._id.toString() }, {}, function(err, result) {
         if (!!err) {
-            logger.error('unable to find usage of questions [%s]', err.message);
+            logger.error('unable to find usage of lessons [%s]', err.message);
         }
         callback(err, result);
     });
 };
 
-Playlist.existsPublicByQuizItems = function(question, callback){
-    Lesson.findOne({'steps.quizItems': question._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
+Playlist.existsPublicByQuizItems = function(lesson, callback){
+    Playlist.findOne({'steps.quizItems': lesson._id.toString(), 'public' : { $exists : true }}, {_id:1}, function(err, result){
         if ( !!err ){
-            logger.error('unable to decide if question is used by public playlist [%s]', err.message);
+            logger.error('unable to decide if lesson is used by public playlist [%s]', err.message);
         }
         callback(err, !!result);
     });
@@ -112,10 +112,10 @@ Playlist.existsPublicByQuizItems = function(question, callback){
 
 /**
  *
- * a wrong and very naive implementation. count number of questions in user's public playlist.
+ * a wrong and very naive implementation. count number of lessons in user's public playlist.
  *
- * the actual purpose is to count all public questions by user.
- * so this function will only work if user used only his/her own questions..
+ * the actual purpose is to count all public lessons by user.
+ * so this function will only work if user used only his/her own lessons..
  *
  * Flattens all quizItems on all playlists,
  * and groups all quizItems values into a single set.
@@ -124,10 +124,10 @@ Playlist.existsPublicByQuizItems = function(question, callback){
  * @param userId
  * @param callback
  */
-Playlist.countPublicQuestionsByUser = function(userId, callback ){
+Playlist.countPublicLessonsByUser = function(userId, callback ){
     async.waterfall([
-        function getQuestionIdsFromPublicLessons( done ){
-            Lesson.connect( function (db, collection) {
+        function getLessonIdsFromPublicPlaylists( done ){
+            Playlist.connect( function (db, collection) {
                 var aggregation = [
                     {$match: { 'steps.type' : 'quiz' , public : { $exists: true }  }},
                     { $project: { _id : 0, 'steps.quizItems':1} },
@@ -142,7 +142,7 @@ Playlist.countPublicQuestionsByUser = function(userId, callback ){
 
             });
         },
-        function countQuestionsByUser( idsResult , done ){
+        function countLessonsByUser( idsResult , done ){
 
             if ( !idsResult || idsResult.length === 0){
                 done(null,0);
@@ -152,7 +152,7 @@ Playlist.countPublicQuestionsByUser = function(userId, callback ){
                 var ids = idsResult[0].items;
                 ids =  dbService.id(ids);
                 logger.info('ids is', ids );
-                require('./Question').count({ _id : { $in : ids }, userId : dbService.id(userId), question : { $exists : true } }, done);
+                require('./Lesson').count({ _id : { $in : ids }, userId : dbService.id(userId), lesson : { $exists : true } }, done);
             }catch(e){
                 done(e);
             }
@@ -162,7 +162,7 @@ Playlist.countPublicQuestionsByUser = function(userId, callback ){
 };
 
 
-Playlist.countPublicLessonsForUser = function(userId, callback ){
+Playlist.countPublicPlaylistsForUser = function(userId, callback ){
     Playlist.count({
         userId  : dbService.id(userId),
         'public': {
