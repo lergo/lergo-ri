@@ -88,9 +88,10 @@ exports.getTagsByFilter = function (req, res) {
         findTagsOnCollection( 'lessons', like, lessonsId, function(err, tags){ findCallback( err, tags, next ); });
     }
 
-    function findTagsOnPlaylists( next ){
-        findTagsOnCollection( 'lessons', like, playlistsId, function(err, tags){ findCallback( err, tags, next ); });
-    }
+    // currently not used (jeff - nov 2018)
+    /*function findTagsOnPlaylists( next ){
+        findTagsOnCollection( 'playlists', like, playlistsId, function(err, tags){ findCallback( err, tags, next ); });
+    }*/
 
     function findTagsOnQuestions( next ){
         findTagsOnCollection('questions', like, questionsId, function(err, tags){ findCallback( err, tags, next ); });
