@@ -5,6 +5,7 @@ exports.playlistsActions = require('./PlaylistsActions');
 exports.questionsActions = require('./QuestionsActions');
 exports.systemActions = require('./SystemActions');
 exports.lessonsInvitationsActions = require('./LessonsInvitationsActions');
+exports.playlistsInvitationsActions = require('./PlaylistsInvitationsActions');
 //exports.likes=require('./LikesActions');
 exports.tagsActions = require('./TagsActions');
 exports.likesActions = require('./LikesActions');

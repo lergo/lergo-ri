@@ -3,6 +3,7 @@ exports.questions = require('./QuestionsController');
 exports.lessons = require('./LessonsController');
 exports.playlists = require('./PlaylistsController');
 exports.lessonsInvitations = require('./LessonsInvitationsController');
+exports.playlistsInvitations = require('./PlaylistsInvitationsController');
 exports.system = require('./SystemController');
 exports.tags = require('./TagsController');
 exports.likes = require('./LikesController');
