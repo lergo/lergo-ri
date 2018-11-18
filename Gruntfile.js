@@ -268,6 +268,13 @@ module.exports = function (grunt) {
         'copy',
         'bundledDependencies'
     ]);
+    grunt.registerTask('quick-build', [
+        'clean:dist',
+        'jshint',
+        'jsdoc',
+        'copy',
+        'bundledDependencies'
+    ]);
 
     grunt.registerTask('phraseapp' , 'download translation from phraseapp to make workspace easier as phraseapp is unstable', function( ){
         var phraseapp = process.env.LERGO_PHRASEAPP || path.resolve('./dev/phraseapp.json');
