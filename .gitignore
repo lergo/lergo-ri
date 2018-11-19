@@ -17,3 +17,4 @@ nohup.out
 .idea
 coverage
 build/vagrant/aws
+package-lock.json
