@@ -117,7 +117,7 @@ function updateClassAggReports(invitationId) {
                 answers: 1,
                 stepDurations: 1
             }
-        }], function (err, result) {
+        }], {cursor: {}}, function (err, result) {
             if (!!err) {
                 console.error(err);
             }
