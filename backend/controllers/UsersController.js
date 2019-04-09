@@ -292,12 +292,12 @@ exports.changePassword = function (req, res) {
 
     managers.users.changePassword(changePasswordDetails, req.sessionUser, function (err, user) {
         if (!!err) {
-            res.send(500, err);
+            res.status(500).send(err);
         } else {
             if (!!user.validated) {
                 req.session.userId = user._id;
             }
-            res.send(200, {
+            res.status(200).send({
                 'message': 'password changed successfully'
             });
         }
@@ -321,7 +321,7 @@ exports.isLoggedIn = function (req, res) {
 
 exports.logout = function (req, res) {
     req.session.userId = null;
-    res.send(200, {
+    res.status(200).send({
         'message': 'ok'
     });
 };

@@ -18,13 +18,13 @@ exports.optionalExists = function optionalExists(req, res, next){
     try {
         LessonInvitation.findById(req.params.invitationId, function(err, result) {
             if (!!err) {
-                res.send(500, err);
+                res.status(500).send(err);
                 return;
             }
             if (result) {
                 LessonInvitationManager.dryBuildLesson(result, function (err, invitation) {
                     if (!!err) {
-                        res.send(500, err);
+                        res.status(500).send(err);
                         return;
                     }
                     logger.debug('putting invitation on request', invitation);
@@ -47,7 +47,7 @@ exports.constructInvitationFromLesson = function(req, res, next){
             // lets construct
             require('../managers/LessonsInvitationsManager').dryBuildLesson({lessonId: req.params.lessonId}, function(err, result){
                 if (!!err || !result){
-                    res.send(500,'either result is missing or there was an error');
+                    res.status(500).send('either result is missing or there was an error');
                 }
                 req.invitation = result;
                 next();

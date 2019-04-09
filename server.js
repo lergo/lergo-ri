@@ -292,7 +292,7 @@ app.get('/backend/crawler', function(req, res){
             // need to use page.open
             page.open(url).then(function( status ){ //page.open
                 if ( status === 'fail'){
-                    res.send(500,'unable to open url');
+                    res.status(500).send('unable to open url');
                     phInstance.exit();
                 }else {
                     page.evaluate(function () { //page.evaluate

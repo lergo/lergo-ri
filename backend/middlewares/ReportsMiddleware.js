@@ -9,7 +9,7 @@ exports.exists = function exists(req, res, next) {
 	try {
 		Report.findById(req.params.reportId, function(err, result) {
 			if (!!err) {
-				res.send(500, err);
+				res.stauts(500).send(err);
 				return;
 			}
 			if (!result) {
