@@ -218,9 +218,9 @@ exports.requestPasswordReset = function (req, res) {
         if (!!err) {
             err.send(res);
         } else {
-            res.send(200, {
+            res.status(200).send({
                 'message': 'changed password successfully'
-            });
+            }) ;
         }
     });
 };

@@ -92,6 +92,7 @@ app.use(lergoMiddleware.addGetQueryList);
 app.use(lergoMiddleware.emailResources);
 app.use(errorHandler({ dumpExceptions: true, showStack: true }));
 
+app.use( require('request-param')() );
 app.use('/backend', backendHandler);
 app.use('/swagger-docs', swaggerAppHandler);
 // Routes
@@ -105,7 +106,8 @@ app.get('/swagger', function (req, res, next) {
 });
 
 // Serve up swagger ui at /docs via static route
-var docsHandler = express.static('/swagger', __dirname + '/../../swagger-ui/');
+//https://github.com/swagger-api/swagger-node/issues/189
+var docsHandler = express.static( __dirname + '/../../swagger-ui/');
 app.get(/^\/docs(\/.*)?$/, function (req, res, next) {
     if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
         res.writeHead(302, { 'Location': req.url + '/' });
