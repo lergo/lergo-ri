@@ -1,5 +1,5 @@
-import { createTransport } from 'nodemailer';
-import ses from 'nodemailer-ses-transport';
+var nodemailer = require('nodemailer');
+var ses = require('nodemailer-ses-transport');
 
 var accessKeyId = process.env.accessKeyId;
 var secretAccessKey = process.env.secretAccessKey;
