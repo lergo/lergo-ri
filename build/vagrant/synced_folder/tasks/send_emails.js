@@ -8,7 +8,7 @@ var CI_TIMESTAMP=process.env.CI_TIMESTAMP;
 var BUILD_NUMBER=process.env.BUILD_NUMBER;
 
 // the aws accessKey and secretAccessKey are from lergo.org
-var transporter = createTransport(ses({
+var transporter = nodemailer.createTransport(ses({
     accessKeyId: accessKeyId,
     secretAccessKey: secretAccessKey,
     region : 'us-east-1'
