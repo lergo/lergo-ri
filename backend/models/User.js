@@ -10,6 +10,8 @@ var Lesson = require('./Lesson');
 var async = require('async');
 var logger = require('log4js').getLogger('User');
 var _ = require('lodash');
+var mongo = require('mongodb');
+
 
 function User(data) {
     this.data = data;
@@ -148,7 +150,27 @@ User.getUserAndPermissions = function( userId, callback ){
         }
         
         myNewUser(userId, function(user){
-            console.log('user.roles', user.roles);
+            if ( !user ){
+                return null;
+            }
+    
+            if ( !user._id ){  // added when moving to mongodb 3.2 otherwise no userId is sent
+                return null;
+            }
+            user.roleObjects = [];
+            var rolesObjectIds = [];
+    
+            if ( !user.roles ) {
+                user.roles = [];
+            }
+            user.roles.forEach(function (roleId) {
+                /* globals ObjectId */
+                rolesObjectIds.push(new mongo.ObjectId(roleId));
+                console.log('rolesObjectIds', rolesObjectIds);
+               /*  user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray(); */
+            });
+
+            console.log('user.roleObjects', user.roleObjects);
         });
 
     db.getDbConnection(function(err, dbConnection ){
