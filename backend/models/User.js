@@ -135,19 +135,21 @@ User.getUserAndPermissions = function( userId, callback ){
 
         return user;
     }
-
-        var myObj = {};
-        managers.users.findUserById(db.id(userId), function (err, myObj) {
-            if (!!err) {
-                console.log(err);
-                logger.error('unable to find user by id',JSON.stringify(err));
-                return;
-            }
-            console.log('myObj inside the function is ', myObj);
-            return myObj;
-            
-        }); 
-
+        // testing my capability to get the user document and see it outside the callback - jeff
+        function myNewUser(userId, user) {
+            managers.users.findUserById(db.id(userId), function(err, myObj) {
+                if (!!err) {
+                    console.log(err);
+                    logger.error('unable to find user by id',JSON.stringify(err));
+                    return;
+                }
+                user(myObj);
+            }); 
+        }
+        
+        myNewUser(userId, function(user){
+            console.log('user.roles', user.roles);
+        });
 
     db.getDbConnection(function(err, dbConnection ){
         /*jshint -W061 */ // https://github.com/gruntjs/grunt-contrib-jshint/issues/225
