@@ -2,6 +2,7 @@
  * @module models User
  */
 'use strict';
+var managers = require('../managers');
 var AbstractModel = require('./AbstractModel');
 var db = require('../services/DbService');
 var Question = require('./Question');
@@ -134,6 +135,18 @@ User.getUserAndPermissions = function( userId, callback ){
 
         return user;
     }
+
+        var myObj = {};
+        managers.users.findUserById(db.id(userId), function (err, myObj) {
+            if (!!err) {
+                console.log(err);
+                logger.error('unable to find user by id',JSON.stringify(err));
+                return;
+            }
+            console.log('myObj inside the function is ', myObj);
+            return myObj;
+            
+        }); 
 
 
     db.getDbConnection(function(err, dbConnection ){
