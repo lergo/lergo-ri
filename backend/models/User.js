@@ -165,7 +165,6 @@ User.getUserAndPermissions = function( userId, callback ){
             }
         
             user.roles.forEach(function (roleId) {
-                /* globals ObjectId */
                 rolesObjectIds.push(new mongo.ObjectId(roleId));
                 myRole(roleId, function(role){
                     user.roleObjects.push(role);
