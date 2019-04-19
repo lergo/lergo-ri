@@ -163,10 +163,14 @@ User.getUserAndPermissions = function( userId, callback ){
             if ( !user.roles ) {
                 user.roles = [];
             }
+        
             user.roles.forEach(function (roleId) {
                 /* globals ObjectId */
                 rolesObjectIds.push(new mongo.ObjectId(roleId));
-                console.log('rolesObjectIds', rolesObjectIds);
+                /* console.log('rolesObjectIds', rolesObjectIds); */
+                myRole(roleId, function(role){
+                    console.log('the role is: ', role );
+                });
                /*  user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray(); */
             });
 
@@ -174,7 +178,7 @@ User.getUserAndPermissions = function( userId, callback ){
         });
 
         //starting to extract from Role collection
-       var roleId = '5cab62c77d96426f7ad75401';
+     /*   var roleId = '5cab62c77d96426f7ad75401'; */
        function myRole(roleId, role) {
         managers.roles.getRole(db.id(roleId), function(err, myObj){
             if (!!err) {
@@ -185,9 +189,9 @@ User.getUserAndPermissions = function( userId, callback ){
         });
        };
 
-       myRole(roleId, function(role){
+       /* myRole(roleId, function(role){
            console.log('the role is: ',role );
-       });
+       }); */
        
            
     // end of my stuff    
