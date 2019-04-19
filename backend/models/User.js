@@ -157,7 +157,12 @@ User.getUserAndPermissions = function( userId, callback ){
                 }
                 role(myObj);
             });
-        };           
+        }; 
+        
+        function mythird_function(value, callback) {
+            console.log('in mythird_function', value);
+            callback();
+        };
         
         myNewUser(userId, function(user){
             if ( !user ){
@@ -178,7 +183,11 @@ User.getUserAndPermissions = function( userId, callback ){
                 rolesObjectIds.push(new mongo.ObjectId(roleId));
                 myRole(roleId, function(role){
                     user.roleObjects.push(role);
-                    console.log('user.roleObjects', user.roleObjects);
+                    /* console.log('user.roleObjects', user.roleObjects); */
+                    mythird_function('55', function() {
+                        console.log('finished 3rd function');
+                        console.log('*****************user.roleObjects', user.roleObjects);
+                    });
                 });
             });
             console.log('-------------user.roleObjects', user.roleObjects);
