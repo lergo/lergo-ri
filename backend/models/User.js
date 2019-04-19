@@ -175,7 +175,7 @@ User.getUserAndPermissions = function( userId, callback ){
 
         //starting to extract from Role collection
        var roleId = '5cab62c77d96426f7ad75401';
-       var myResult = managers.roles.getRole(db.id(roleId), callback);
+       var myResult = managers.roles.getRole(db.id(roleId));
            
     // end of my stuff    
 
