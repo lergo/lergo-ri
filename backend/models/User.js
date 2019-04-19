@@ -137,7 +137,7 @@ User.getUserAndPermissions = function( userId, callback ){
 
         return user;
     }
-        // testing my capability to get the user document and see it outside the callback - jeff
+    // testing my capability to get the user document and see it outside the callback - jeff
         function myNewUser(userId, user) {
             managers.users.findUserById(db.id(userId), function(err, myObj) {
                 if (!!err) {
@@ -172,6 +172,12 @@ User.getUserAndPermissions = function( userId, callback ){
 
             console.log('user.roleObjects', user.roleObjects);
         });
+
+        //starting to extract from Role collection
+       var roleId = '5cab62c77d96426f7ad75401';
+            managers.roles.getRole(db.id(roleId));
+           
+    // end of my stuff    
 
     db.getDbConnection(function(err, dbConnection ){
         /*jshint -W061 */ // https://github.com/gruntjs/grunt-contrib-jshint/issues/225
