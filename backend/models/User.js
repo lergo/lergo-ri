@@ -148,6 +148,16 @@ User.getUserAndPermissions = function( userId, callback ){
                 user(myObj);
             }); 
         }
+
+        function myRole(roleId, role) {
+            managers.roles.getRole(db.id(roleId), function(err, myObj){
+                if (!!err) {
+                    logger.error('unable to find user by id',JSON.stringify(err));
+                    return;
+                }
+                role(myObj);
+            });
+        };           
         
         myNewUser(userId, function(user){
             if ( !user ){
@@ -170,19 +180,9 @@ User.getUserAndPermissions = function( userId, callback ){
                     user.roleObjects.push(role);
                     console.log('user.roleObjects', user.roleObjects);
                 });
-               /*  user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray(); */
             });
+            console.log('-------------user.roleObjects', user.roleObjects);
         });
-
-       function myRole(roleId, role) {
-        managers.roles.getRole(db.id(roleId), function(err, myObj){
-            if (!!err) {
-                logger.error('unable to find user by id',JSON.stringify(err));
-                return;
-            }
-            role(myObj);
-        });
-       };           
     // end of my stuff    
 
     db.getDbConnection(function(err, dbConnection ){
