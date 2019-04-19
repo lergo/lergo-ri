@@ -175,8 +175,6 @@ User.getUserAndPermissions = function( userId, callback ){
             });
         });
 
-        //starting to extract from Role collection
-     /*   var roleId = '5cab62c77d96426f7ad75401'; */
        function myRole(roleId, role) {
         managers.roles.getRole(db.id(roleId), function(err, myObj){
             if (!!err) {
@@ -185,13 +183,7 @@ User.getUserAndPermissions = function( userId, callback ){
             }
             role(myObj);
         });
-       };
-
-       /* myRole(roleId, function(role){
-           console.log('the role is: ',role );
-       }); */
-       
-           
+       };           
     // end of my stuff    
 
     db.getDbConnection(function(err, dbConnection ){
