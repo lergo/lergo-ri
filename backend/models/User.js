@@ -167,14 +167,12 @@ User.getUserAndPermissions = function( userId, callback ){
             user.roles.forEach(function (roleId) {
                 /* globals ObjectId */
                 rolesObjectIds.push(new mongo.ObjectId(roleId));
-                /* console.log('rolesObjectIds', rolesObjectIds); */
                 myRole(roleId, function(role){
-                    console.log('the role is: ', role );
+                    user.roleObjects.push(role);
+                    console.log('user.roleObjects', user.roleObjects);
                 });
                /*  user.roleObjects = db.roles.find({_id: {$in: rolesObjectIds}}).toArray(); */
             });
-
-            console.log('user.roleObjects', user.roleObjects);
         });
 
         //starting to extract from Role collection
