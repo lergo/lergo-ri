@@ -16,17 +16,15 @@ var _ = require('lodash');
 var Role = require('../models/Role');
 
 
-exports.getRole = function (filter/* , callback */) {
+exports.getRole = function (filter, callback) {
     logger.info('Fetching role by ID', JSON.stringify(filter));
     services.db.connect('roles', function (db, collection) {
         collection.findOne(filter, function (err, item) {
                 if (!!err) {
                     logger.error('unable to query for role [%s]', err.message);
-                   /*  callback(null, item); */
+                    callback(null, item);
                 } else {
-                    console.log('the getRole is', item);
-                   /*  item.timeStamp = item._id.getTimestamp(); */
-                  /*   callback(err, item); */
+                    callback(err, item);
                 }
             }
         );

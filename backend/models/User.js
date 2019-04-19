@@ -175,7 +175,20 @@ User.getUserAndPermissions = function( userId, callback ){
 
         //starting to extract from Role collection
        var roleId = '5cab62c77d96426f7ad75401';
-       var myResult = managers.roles.getRole(db.id(roleId));
+       function myRole(roleId, role) {
+        managers.roles.getRole(db.id(roleId), function(err, myObj){
+            if (!!err) {
+                logger.error('unable to find user by id',JSON.stringify(err));
+                return;
+            }
+            role(myObj);
+        });
+       };
+
+       myRole(roleId, function(role){
+           console.log('the role is: ',role );
+       });
+       
            
     // end of my stuff    
 
