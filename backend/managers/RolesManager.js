@@ -10,11 +10,7 @@
 
 var logger = require('log4js').getLogger('RolesManager');
 var services = require('../services');
-var errorManager = require('./ErrorManager');
-var usersManager = require('./UsersManager');
 var _ = require('lodash');
-var Role = require('../models/Role');
-
 
 exports.getRole = function (filter, callback) {
     logger.info('Fetching role by ID', JSON.stringify(filter));
