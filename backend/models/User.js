@@ -159,11 +159,6 @@ User.getUserAndPermissions = function( userId, callback ){
             });
         }; 
         
-        function mythird_function(value, callback) {
-            console.log('in mythird_function', value);
-            callback();
-        };
-        
         myNewUser(userId, function(user){
             if ( !user ){
                 return null;
@@ -183,8 +178,6 @@ User.getUserAndPermissions = function( userId, callback ){
                 rolesObjectIds.push(new mongo.ObjectId(roleId));
                 myRole(roleId, function(role){
                     user.roleObjects.push(role);
-                    /* console.log('user.roleObjects', user.roleObjects); */
-                    mythird_function('55', function() {
                    
                         if ( /* !err && user */ user ) {
                             // flatten permissions uniquely
@@ -229,11 +222,9 @@ User.getUserAndPermissions = function( userId, callback ){
                             }
                             console.log('-------------user', user);
                         }
-        });
-    });
-});
-            
-        });
+                    });
+                });           
+            });
     // end of my stuff    
 
     db.getDbConnection(function(err, dbConnection ){
