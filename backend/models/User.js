@@ -185,52 +185,50 @@ User.getUserAndPermissions = function( userId, callback ){
                     user.roleObjects.push(role);
                     /* console.log('user.roleObjects', user.roleObjects); */
                     mythird_function('55', function() {
-                        console.log('finished 3rd function');
-                       /*  console.log('*****************user.roleObjects', user.roleObjects); */
                    
-            if ( /* !err && user */ user ) {
-                // flatten permissions uniquely
-                user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
+                        if ( /* !err && user */ user ) {
+                            // flatten permissions uniquely
+                            user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
 
-                // merge all limitations. we want a customized merge. not the built in lodash thing..
-                // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
-                // then we want a limitation on both
-                var customizer = require('../services/RoleLimitationMerger').customizer;
-                var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
-                var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
+                            // merge all limitations. we want a customized merge. not the built in lodash thing..
+                            // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
+                            // then we want a limitation on both
+                            var customizer = require('../services/RoleLimitationMerger').customizer;
+                            var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
+                            var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
 
-                // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
-                // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
-                /********* cleanup **************/
-                if (_.isEmpty(mergedLimitations.manageSubject)){
-                    delete mergedLimitations.manageSubject;
-                }
+                            // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
+                            // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
+                            /********* cleanup **************/
+                            if (_.isEmpty(mergedLimitations.manageSubject)){
+                                delete mergedLimitations.manageSubject;
+                            }
 
-                if (_.isEmpty(mergedLimitations.manageLanguages)){
-                    delete mergedLimitations.manageLanguages;
-                }
+                            if (_.isEmpty(mergedLimitations.manageLanguages)){
+                                delete mergedLimitations.manageLanguages;
+                            }
 
-                if (_.get(mergedLimitations,'manageAge.min') === null ){
-                    _.unset(mergedLimitations,'manageAge.min');
-                }
+                            if (_.get(mergedLimitations,'manageAge.min') === null ){
+                                _.unset(mergedLimitations,'manageAge.min');
+                            }
 
-                if (_.get(mergedLimitations,'manageAge.max') === null ){
-                    _.unset(mergedLimitations,'manageAge.max');
-                }
+                            if (_.get(mergedLimitations,'manageAge.max') === null ){
+                                _.unset(mergedLimitations,'manageAge.max');
+                            }
 
-                if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
-                    _.unset(mergedLimitations,'manageAge');
-                }
-                /************** end of cleanup ***************/
+                            if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
+                                _.unset(mergedLimitations,'manageAge');
+                            }
+                            /************** end of cleanup ***************/
 
-                user.permissionsLimitations = mergedLimitations;
+                            user.permissionsLimitations = mergedLimitations;
 
 
-                if (!user.permissions) {
-                    user.permissions = [];
-                }
-                console.log('-------------user', user);
-            }
+                            if (!user.permissions) {
+                                user.permissions = [];
+                            }
+                            console.log('-------------user', user);
+                        }
         });
     });
 });
