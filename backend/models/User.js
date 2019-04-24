@@ -123,6 +123,53 @@ User.getUserAndPermissions = function( userId, callback ){
             role(myObj);
         }); 
     };
+
+    function myPermissions(user, callback) {
+        if ( /* !err && user */ user ) {
+            // flatten permissions uniquely
+            user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
+
+            // merge all limitations. we want a customized merge. not the built in lodash thing..
+            // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
+            // then we want a limitation on both
+            var customizer = require('../services/RoleLimitationMerger').customizer;
+            var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
+            var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
+
+            // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
+            // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
+            /********* cleanup **************/
+            if (_.isEmpty(mergedLimitations.manageSubject)){
+                delete mergedLimitations.manageSubject;
+            }
+
+            if (_.isEmpty(mergedLimitations.manageLanguages)){
+                delete mergedLimitations.manageLanguages;
+            }
+
+            if (_.get(mergedLimitations,'manageAge.min') === null ){
+                _.unset(mergedLimitations,'manageAge.min');
+            }
+
+            if (_.get(mergedLimitations,'manageAge.max') === null ){
+                _.unset(mergedLimitations,'manageAge.max');
+            }
+
+            if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
+                _.unset(mergedLimitations,'manageAge');
+            }
+            /************** end of cleanup ***************/
+
+            user.permissionsLimitations = mergedLimitations;
+
+
+            if (!user.permissions) {
+                user.permissions = [];
+            }
+          /*   console.log('User.js says that the user is: ',user); */
+        }
+        callback();
+    }
        
     managers.users.findUserById(db.id(userId), function(err, user) {
         if (!!err) {
@@ -145,51 +192,12 @@ User.getUserAndPermissions = function( userId, callback ){
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
              myRole(roleId, function(role){
+                 console.log('the role is', role);
                 user.roleObjects.push(role);
                
-                if ( /* !err && user */ user ) {
-                    // flatten permissions uniquely
-                    user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
-
-                    // merge all limitations. we want a customized merge. not the built in lodash thing..
-                    // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
-                    // then we want a limitation on both
-                    var customizer = require('../services/RoleLimitationMerger').customizer;
-                    var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
-                    var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
-
-                    // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
-                    // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
-                    /********* cleanup **************/
-                    if (_.isEmpty(mergedLimitations.manageSubject)){
-                        delete mergedLimitations.manageSubject;
-                    }
-
-                    if (_.isEmpty(mergedLimitations.manageLanguages)){
-                        delete mergedLimitations.manageLanguages;
-                    }
-
-                    if (_.get(mergedLimitations,'manageAge.min') === null ){
-                        _.unset(mergedLimitations,'manageAge.min');
-                    }
-
-                    if (_.get(mergedLimitations,'manageAge.max') === null ){
-                        _.unset(mergedLimitations,'manageAge.max');
-                    }
-
-                    if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
-                        _.unset(mergedLimitations,'manageAge');
-                    }
-                    /************** end of cleanup ***************/
-
-                    user.permissionsLimitations = mergedLimitations;
-
-
-                    if (!user.permissions) {
-                        user.permissions = [];
-                    }
-                    console.log('User.js says that the user is: ',user);
-                }
+                myPermissions(user, function(){
+                });
+               
                 callback(null, user);   
             }); 
              
