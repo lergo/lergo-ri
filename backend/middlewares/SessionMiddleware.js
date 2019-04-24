@@ -37,9 +37,7 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
     }
     User.getUserAndPermissions(userId, function (err, obj) {
         if (!!err) {
-            console.log(err);
-            logger.error('unable to find user by id',JSON.stringify(err));
-//            err.send(res);
+            logger.error('sm.js: unable to find user by id',JSON.stringify(err));
             return;
         }
         req.sessionUser = obj;
