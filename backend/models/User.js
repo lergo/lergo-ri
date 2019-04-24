@@ -170,6 +170,32 @@ User.getUserAndPermissions = function( userId, callback ){
         }
         callback();
     }
+
+    function forEachRole(user, role) {
+        user.roleObjects = [];
+        var rolesObjectIds = [];
+    
+        if ( !user.roles ) {
+            user.roles = [];
+        }        
+        user.roles.forEach(function (roleId) {
+            rolesObjectIds.push(new mongo.ObjectId(roleId));
+             myRole(roleId, function(role){
+               /*  console.log('the role is', role); */
+                user.roleObjects.push(role);
+               
+                myPermissions(user, function(){
+                    console.log('*************************and the user is in myPermisisons', user);
+                     callback(null, user);
+                });
+               
+                /* callback(null, user);  */  
+            }); 
+           
+            role(user);
+        }); 
+                     
+    } 
        
     managers.users.findUserById(db.id(userId), function(err, user) {
         if (!!err) {
@@ -183,26 +209,11 @@ User.getUserAndPermissions = function( userId, callback ){
         if ( !user._id ){
             return null;
         }
-        user.roleObjects = [];
-        var rolesObjectIds = [];
+        forEachRole(user, function(){ 
+        }); 
+       /*  callback(null, user);   */
+    }); 
     
-        if ( !user.roles ) {
-            user.roles = [];
-        }        
-        user.roles.forEach(function (roleId) {
-            rolesObjectIds.push(new mongo.ObjectId(roleId));
-             myRole(roleId, function(role){
-                 console.log('the role is', role);
-                user.roleObjects.push(role);
-               
-                myPermissions(user, function(){
-                });
-               
-                callback(null, user);   
-            }); 
-             
-        });                   
-    });    
 };
 
 
