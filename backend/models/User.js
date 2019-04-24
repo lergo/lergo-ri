@@ -162,37 +162,40 @@ User.getUserAndPermissions = function( userId, callback ){
                     if (!user.permissions) {
                         user.permissions = [];
                     }
-                    role(myObj);
+                   /*  role(myObj); */
                 }
             }); 
-             git 
+            callback();
     };
+       
+        managers.users.findUserById(db.id(userId), function(err, user) {
+            if (!!err) {
+                logger.error('User.js: unable to find user by id',JSON.stringify(err));
+                return;
+            }
+            if ( !user ){
+                return null;
+            }
+    
+            if ( !user._id ){
+                return null;
+            }
+            user.roleObjects = [];
+            var rolesObjectIds = [];
+    
+            if ( !user.roles ) {
+                user.roles = [];
+            }
+            
+           /*  user.roles.forEach(function (roleId) {
+                rolesObjectIds.push(new mongo.ObjectId(roleId));
+                 myRole(roleId, function(){
+                     console.log('user', user);
+                });    
+            }); */
+            callback(null, user)         
+        });
 
-    managers.users.findUserById(db.id(userId), function(err, user) {
-        if (!!err) {
-            logger.error('User.js: unable to find user by id',JSON.stringify(err));
-            return;
-        }
-        if ( !user ){
-            return null;
-        }
-
-        if ( !user._id ){  // added when moving to mongodb 3.2 otherwise no userId is sent
-            return null;
-        }
-        user.roleObjects = [];
-        var rolesObjectIds = [];
-
-        if ( !user.roles ) {
-            user.roles = [];
-        }
-        console.log('the user is', user);
-        user.roles.forEach(function (roleId) {
-            rolesObjectIds.push(new mongo.ObjectId(roleId));
-             myRole(roleId, function(role){
-            });     
-        });         
-     }); 
 };
 
         
