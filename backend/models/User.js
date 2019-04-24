@@ -165,7 +165,7 @@ User.getUserAndPermissions = function( userId, callback ){
                     role(myObj);
                 }
             }); 
-             
+             git 
     };
 
     managers.users.findUserById(db.id(userId), function(err, user) {
@@ -189,7 +189,7 @@ User.getUserAndPermissions = function( userId, callback ){
         console.log('the user is', user);
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
-             myRole(roleId, function(user){
+             myRole(roleId, function(role){
             });     
         });         
      }); 
