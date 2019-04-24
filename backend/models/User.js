@@ -124,83 +124,79 @@ User.getUserAndPermissions = function( userId, callback ){
         }); 
     };
        
-        managers.users.findUserById(db.id(userId), function(err, user) {
-            if (!!err) {
-                logger.error('User.js: unable to find user by id',JSON.stringify(err));
-                return;
-            }
-            if ( !user ){
-                return null;
-            }
+    managers.users.findUserById(db.id(userId), function(err, user) {
+        if (!!err) {
+            logger.error('User.js: unable to find user by id',JSON.stringify(err));
+            return;
+        }
+        if ( !user ){
+            return null;
+        }
     
-            if ( !user._id ){
-                return null;
-            }
-            user.roleObjects = [];
-            var rolesObjectIds = [];
+        if ( !user._id ){
+            return null;
+        }
+        user.roleObjects = [];
+        var rolesObjectIds = [];
     
-            if ( !user.roles ) {
-                user.roles = [];
-            }
-            
-            user.roles.forEach(function (roleId) {
-                rolesObjectIds.push(new mongo.ObjectId(roleId));
-                 myRole(roleId, function(role){
-                    user.roleObjects.push(role);
-                   
-                    if ( /* !err && user */ user ) {
-                        // flatten permissions uniquely
-                        user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
+        if ( !user.roles ) {
+            user.roles = [];
+        }        
+        user.roles.forEach(function (roleId) {
+            rolesObjectIds.push(new mongo.ObjectId(roleId));
+             myRole(roleId, function(role){
+                user.roleObjects.push(role);
+               
+                if ( /* !err && user */ user ) {
+                    // flatten permissions uniquely
+                    user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
 
-                        // merge all limitations. we want a customized merge. not the built in lodash thing..
-                        // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
-                        // then we want a limitation on both
-                        var customizer = require('../services/RoleLimitationMerger').customizer;
-                        var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
-                        var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
+                    // merge all limitations. we want a customized merge. not the built in lodash thing..
+                    // because when we have a limitation on the subject to edit (for example, one role has 'arabic' and another 'hebrew' )
+                    // then we want a limitation on both
+                    var customizer = require('../services/RoleLimitationMerger').customizer;
+                    var limitationsArr = [{}].concat( _.map(user.roleObjects, 'limitations'));
+                    var mergedLimitations = _.mergeWith.apply(null, [].concat(limitationsArr,[customizer])  );
 
-                        // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
-                        // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
-                        /********* cleanup **************/
-                        if (_.isEmpty(mergedLimitations.manageSubject)){
-                            delete mergedLimitations.manageSubject;
-                        }
-
-                        if (_.isEmpty(mergedLimitations.manageLanguages)){
-                            delete mergedLimitations.manageLanguages;
-                        }
-
-                        if (_.get(mergedLimitations,'manageAge.min') === null ){
-                            _.unset(mergedLimitations,'manageAge.min');
-                        }
-
-                        if (_.get(mergedLimitations,'manageAge.max') === null ){
-                            _.unset(mergedLimitations,'manageAge.max');
-                        }
-
-                        if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
-                            _.unset(mergedLimitations,'manageAge');
-                        }
-                        /************** end of cleanup ***************/
-
-                        user.permissionsLimitations = mergedLimitations;
-
-
-                        if (!user.permissions) {
-                            user.permissions = [];
-                        }
-                        console.log('-------------user', user);
+                    // we need to remove empty items.. why? to avoid checking == null and isEmpty in ui..
+                    // we could handle this in frontend when reading the permissions.. todo: consider moving to UsersService.getUserPermissions.
+                    /********* cleanup **************/
+                    if (_.isEmpty(mergedLimitations.manageSubject)){
+                        delete mergedLimitations.manageSubject;
                     }
-            
-                });    
-            });
-            callback(null, user)         
-        });
 
+                    if (_.isEmpty(mergedLimitations.manageLanguages)){
+                        delete mergedLimitations.manageLanguages;
+                    }
+
+                    if (_.get(mergedLimitations,'manageAge.min') === null ){
+                        _.unset(mergedLimitations,'manageAge.min');
+                    }
+
+                    if (_.get(mergedLimitations,'manageAge.max') === null ){
+                        _.unset(mergedLimitations,'manageAge.max');
+                    }
+
+                    if ( !_.get(mergedLimitations,'manageAge.max') && !_.get(mergedLimitations,'manageAge.min')){
+                        _.unset(mergedLimitations,'manageAge');
+                    }
+                    /************** end of cleanup ***************/
+
+                    user.permissionsLimitations = mergedLimitations;
+
+
+                    if (!user.permissions) {
+                        user.permissions = [];
+                    }
+                    console.log('User.js says that the user is: ',user);
+                }
+                callback(null, user);   
+            }); 
+             
+        });                   
+    });    
 };
 
-        
-    // end of my stuff    
 
    
 
