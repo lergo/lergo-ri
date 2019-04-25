@@ -114,17 +114,17 @@ User.getStats = function( userId, callback ){
  */
 User.getUserAndPermissions = function( userId, callback ){
 
-    function myRole(roleId, role) {
-        managers.roles.getRole(db.id(roleId), function(err, myObj){
+    function userRole(roleId, role) {
+        managers.roles.getRole(db.id(roleId), function(err, userObj){
             if (!!err) {
                 logger.error('unable to find user by id',JSON.stringify(err));
                 return;
             }
-            role(myObj);
+            role(userObj);
         }); 
     };
 
-    function myPermissions(user, callback) {
+    function userPermissions(user, callback) {
         if ( /* !err && user */ user ) {
             // flatten permissions uniquely
             user.permissions = _.compact(_.union(_.flatten(_.map(user.roleObjects, 'permissions'))));
@@ -181,12 +181,12 @@ User.getUserAndPermissions = function( userId, callback ){
         var ctr = 0       
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
-             myRole(roleId, function(role){
+             userRole(roleId, function(role){
                 user.roleObjects.push(role);
-                myPermissions(user, function(){ 
-                });
                 ctr++;
                 if (ctr === user.roles.length) {
+                    userPermissions(user, function(){ 
+                    });
                     callback(null, user); 
                 }
                 
