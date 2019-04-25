@@ -188,8 +188,7 @@ User.getUserAndPermissions = function( userId, callback ){
                     userPermissions(user, function(){ 
                     });
                     callback(null, user); 
-                }
-                
+                }  
             }); 
             role(user);
         }); 

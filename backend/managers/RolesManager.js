@@ -4,10 +4,6 @@
  * @type {Logger}
  */
 
-// since this is a manager, we cannot simply require('./index');
-// we need to use setTimeout( function(){ managers = require('./index'); },0);
-// hopefully this will cause the event loop to execute after index.js is initialized.
-
 var logger = require('log4js').getLogger('RolesManager');
 var services = require('../services');
 var _ = require('lodash');
