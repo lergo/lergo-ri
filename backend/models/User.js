@@ -177,17 +177,16 @@ User.getUserAndPermissions = function( userId, callback ){
         if ( !user.roles ) {
             user.roles = [];
         } 
+        // to prevent multiple callbacks use ctr
         var ctr = 0       
         user.roles.forEach(function (roleId) {
-           
             rolesObjectIds.push(new mongo.ObjectId(roleId));
              myRole(roleId, function(role){
                 user.roleObjects.push(role);
                 myPermissions(user, function(){ 
                 });
                 ctr++;
-                /* console.log('the control value is ',ctr); */
-                if (ctr == 5) {
+                if (ctr === user.roles.length) {
                     callback(null, user); 
                 }
                 
