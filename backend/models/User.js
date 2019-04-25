@@ -166,7 +166,6 @@ User.getUserAndPermissions = function( userId, callback ){
             if (!user.permissions) {
                 user.permissions = [];
             }
-          /*   console.log('User.js says that the user is: ',user); */
         }
         callback();
     }
@@ -181,20 +180,14 @@ User.getUserAndPermissions = function( userId, callback ){
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
              myRole(roleId, function(role){
-               /*  console.log('the role is', role); */
                 user.roleObjects.push(role);
-               
-                myPermissions(user, function(){
-                    console.log('*************************and the user is in myPermisisons', user);
-                     callback(null, user);
+                myPermissions(user, function(){ 
                 });
-               
-                /* callback(null, user);  */  
+                callback(null, user);
             }); 
-           
             role(user);
         }); 
-                     
+                  
     } 
        
     managers.users.findUserById(db.id(userId), function(err, user) {
@@ -209,11 +202,9 @@ User.getUserAndPermissions = function( userId, callback ){
         if ( !user._id ){
             return null;
         }
-        forEachRole(user, function(){ 
+        forEachRole(user, function(){
         }); 
-       /*  callback(null, user);   */
-    }); 
-    
+    });  
 };
 
 

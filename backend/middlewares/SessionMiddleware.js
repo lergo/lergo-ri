@@ -37,10 +37,10 @@ exports.optionalUserOnRequest = function optionalUserOnRequest (req, res, next){
     }
     User.getUserAndPermissions(userId, function (err, obj) {
         if (!!err) {
-            logger.error('sm.js: unable to find user by id',JSON.stringify(err));
+            logger.error('unable to find user by id',JSON.stringify(err));
             return;
         }
-        console.log('-----------------------------------the user in SessionMiddleware is', obj);
+        console.log('-----------------------------------the user in SessionMiddleware is', obj); 
         req.sessionUser = obj;
 
         var permissions = {};
