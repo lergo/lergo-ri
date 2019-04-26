@@ -7,3 +7,4 @@ exports.lessonsInvitations = require('./LessonsInvitationsManager');
 exports.reports = require('./ReportsManager');
 exports.abuseReports = require('./AbuseReportsManager');
 exports.classReports = require('./ClassReportsManager');
+exports.roles = require('./RolesManager');
