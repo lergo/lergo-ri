@@ -176,6 +176,9 @@ User.getUserAndPermissions = function( userId, callback ){
     
         if ( !user.roles ) {
             user.roles = [];
+            userPermissions(user, function(){ 
+            });
+            callback(null, user); 
         } 
         // to prevent multiple callbacks use ctr
         var ctr = 0;      
