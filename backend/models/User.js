@@ -121,7 +121,7 @@ User.getUserAndPermissions = function( userId, callback ){
             }
             role(userObj);
         }); 
-    };
+    }
 
     function userPermissions(user, callback) {
         if ( /* !err && user */ user ) {
@@ -178,7 +178,7 @@ User.getUserAndPermissions = function( userId, callback ){
             user.roles = [];
         } 
         // to prevent multiple callbacks use ctr
-        var ctr = 0       
+        var ctr = 0;      
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
              userRole(roleId, function(role){

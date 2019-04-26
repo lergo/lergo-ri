@@ -6,7 +6,6 @@
 
 var logger = require('log4js').getLogger('RolesManager');
 var services = require('../services');
-var _ = require('lodash');
 exports.getRole = function (filter, callback) {
     /* logger.info('Fetching role by ID', JSON.stringify(filter)); */
     services.db.connect('roles', function (db, collection) {
