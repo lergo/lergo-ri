@@ -26,7 +26,7 @@
     "loggly": "^1.1.1",
     "method-override": "2.3.10",
     "minimatch": "^3.0.3",
-    "mongodb": "2.2.22",
+    "mongodb": "^2.2.35",
     "mongoose": "5.4.17",
     "node-sass": "4.5.2",
     "nodemailer": "4.0.1",
