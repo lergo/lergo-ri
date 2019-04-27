@@ -173,14 +173,14 @@ User.getUserAndPermissions = function( userId, callback ){
     function forEachRole(user, role) {
         user.roleObjects = [];
         var rolesObjectIds = [];
-    
-        if ( !user.roles ) {
+        // dealing with cases where there are no user roles, or there were user roles but were removed
+        if ( !user.roles || (typeof user.roles !== 'undefined' && user.roles.length === 0) ) {
             user.roles = [];
             userPermissions(user, function(){ 
             });
             callback(null, user); 
         } 
-        // to prevent multiple callbacks use ctr
+        // to prevent multiple callback error notification use ctr
         var ctr = 0;      
         user.roles.forEach(function (roleId) {
             rolesObjectIds.push(new mongo.ObjectId(roleId));
