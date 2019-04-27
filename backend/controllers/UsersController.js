@@ -275,7 +275,7 @@ exports.getUsernames = function (req, res) {
             '$match': {
                 'username': like || ''
             }
-        }], function (err, result) {
+        }], {cursor: {}}, function (err, result) {
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
                 return;
