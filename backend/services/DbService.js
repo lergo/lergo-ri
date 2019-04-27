@@ -21,7 +21,7 @@ function getDbConnection( callback ){
         //logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
-        MongoClient.connect( _dbUrl, { 'auto_reconnect' : true }, function(err,db){
+        MongoClient.connect( _dbUrl, { 'auto_reconnect' : true}, {useNewUrlParser: true}, function(err,db){
             dbConnection = db;
             callback(err,db);
         });
