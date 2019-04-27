@@ -20,7 +20,7 @@ exports.getTopTags = function (req, res) {
             {$group: {_id: '$tags.label', number: {$sum: 1}}},
             {$sort: {number: -1}},
             {$limit: limit}
-        ], function (err, result) {
+        ],  {cursor: {}}, function(err, result) {
             res.send(result);
         });
     });

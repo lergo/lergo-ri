@@ -260,7 +260,7 @@ exports.getClasses = function (req, res) {
             {'$group': {_id: '$invitee.class'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
-        ], function (err, result) {
+        ],  {cursor: {}}, function(err, result) {
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return;
