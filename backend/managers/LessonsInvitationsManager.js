@@ -111,7 +111,7 @@ exports.find = exports.search;
 
 exports.updateLessonInvitation = function(invitation, callback) {
 	models.LessonInvitation.connect(function(db, collection) {
-		collection.update({
+		collection.updateOne({
 			_id : invitation._id
 		}, invitation, function(err, result) {
 			logger.info('after update', arguments);

@@ -46,7 +46,7 @@ services.db.connect('settings', function( db, collection, done){
 
 exports.saveSettings = function( settings, callback ){
     services.db.connect('settings', function(db, collection,done){
-        collection.update({'_id' : settings._id }, settings, function(err/*, result*/){
+        collection.updateOne({'_id' : settings._id }, settings, function(err/*, result*/){
             if ( !!err ){
                 logger.error('error while saving ');
                 callback( new errorManager.InternalServerError(err,'unable to save settings'), null );

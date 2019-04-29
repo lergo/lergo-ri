@@ -129,7 +129,7 @@ function updateClassAggReports(invitationId) {
                 report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
                 ClassReport.connect(function (db, collection) {
                     try {
-                        collection.update({invitationId: report.invitationId}, report, {upsert: true})
+                        collection.updateOne({invitationId: report.invitationId}, report, {upsert: true})
                             .then(function(result) {
                                 if (result.result.nModified === 0) {
                                     logger.info('inserting class report');
@@ -201,7 +201,7 @@ exports.createNewReportForLessonInvitation = function (req, res) {
             logger.info('connected to collection');
 
             logger.info('inserting report');
-            collection.insert(report, function () {
+            collection.insertOne(report, function () {
                 res.send(report);
             });
         } catch (e) {

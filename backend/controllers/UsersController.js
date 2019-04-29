@@ -149,7 +149,7 @@ exports.patchUser = function(req, res ){
         updateData.$set[patchData.path] = patchData.value;
         User.connect(function(db,collection){
 
-            collection.update({ '_id' : req.user._id }, updateData, function( err, result){
+            collection.updateOne({ '_id' : req.user._id }, updateData, function( err, result){
                 if ( !!err ){
                     logger.error('error updating user');
                     res.status(500).send(err);

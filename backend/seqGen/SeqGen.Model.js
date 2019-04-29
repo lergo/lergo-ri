@@ -21,7 +21,7 @@ var pinSchema = new Schema(
     });
 
 pinSchema.statics.free = function (pin, callback) {
-    this.collection.update({pin: pin}, {$unset: {created: 1}},callback);
+    this.collection.updateOne({pin: pin}, {$unset: {created: 1}},callback);
 };
 
 pinSchema.statics.getNext = function (callback) {

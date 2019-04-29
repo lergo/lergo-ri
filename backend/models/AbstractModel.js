@@ -79,7 +79,7 @@ function enhance( Class ) {
     };
 
 
-    Class.prototype.update = function( callback ){
+    Class.prototype.update = function( callback ){ 
         logger.info('updating');
         var self = this;
         this.data._id = db.id(this.data._id);

@@ -96,7 +96,7 @@ exports.updateQuestion = function(question, callback) {
 		// prevent malicious users from making a fraud request to update someone
 		// else's question
 		// find the user by using both the userId and questionId.
-		collection.update({
+		collection.updateOne({
 			'_id' : question._id
 		}, question, function(err) {
 			if (!!err) {
@@ -129,6 +129,7 @@ exports.deleteQuestion = function(id, callback) {
 };
 
 exports.getQuestionById = function(id, callback) {
+	console.log('is the problem here?');
 	Question.findById(id, callback);
 };
 
@@ -193,7 +194,7 @@ exports.getQuestionsById = function(objectIds, callback) {
 exports.incrementViews = function(id, callback) {
 
 	services.db.connect('questions', function(db, collection, done) {
-		collection.update({
+		collection.updateOne({
 			'_id' : services.db.id(id)
 		}, {
 			'$inc' : {
