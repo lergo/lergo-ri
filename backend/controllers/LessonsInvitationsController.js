@@ -237,12 +237,10 @@ exports.getStudents = function (req, res) {
             {'$group': {_id: '$invitee.name'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
-        ], {cursor: {}}, function (err, result) {
-            if (!!err) {
-                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
-                return;
-            }
-            res.send(result);
+        ], function (err, cursor) {
+            cursor.toArray(function(err, result) {
+                res.send(result);
+            }) 
         });
     });
 
@@ -260,12 +258,10 @@ exports.getClasses = function (req, res) {
             {'$group': {_id: '$invitee.class'}},
             {'$match': {'_id': {'$ne': null}}},
             {'$match': {'_id': like || ''}}
-        ],  {cursor: {}}, function(err, result) {
-            if (!!err) {
-                new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
-                return;
-            }
-            res.send(result);
+        ], function(err, cursor) {
+            cursor.toArray(function(err, result) {
+                res.send(result);
+              });
         });
     });
 
