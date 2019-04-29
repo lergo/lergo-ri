@@ -108,7 +108,7 @@ exports.copyLesson = function (user, lesson, callback) {
 exports.updateLesson = function(lesson, callback) {
 	logger.info('Updating lesson');
 	services.db.connect('lessons', function(db, collection, done) {
-		collection.updateOne({
+		collection.update({
 			'_id' : lesson._id
 		}, lesson, function(err) {
 			if (!!err) {
