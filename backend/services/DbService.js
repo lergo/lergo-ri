@@ -41,20 +41,13 @@ logger.info('initializing DbService :: ' , _dbUrl );
 exports.toMap = function( cursor, callback ){
     logger.info('turning result to map');
     var result = {};
-    cursor.each(function(err, doc){
+    cursor.forEach(function(doc){
         logger.debug('handling doc', doc);
-        if ( !!err ){
-            callback(err);
-        }
-
-        if ( doc === null ){
-            callback(null, result);
-            return;
-        }else{
-            result[doc._id.toHexString()] = doc;
-        }
+        result[doc._id.toHexString()] = doc;
+    }, function(error) {
+        callback(error, result);
     });
-} ;
+}
 
 
 /**
