@@ -21,7 +21,7 @@ exports.countLikes = function(req, res ){
     var itemId = req.likeItem._id;
     logger.debug('counting likes on ', itemId, typeof(itemId));
     models.Like.connect(function (db, collection) {
-        collection.count({ 'itemId': itemId }, function (err, result) {
+        collection.countDocuments({ 'itemId': itemId }, function (err, result) {
             logger.debug('got count result',err,result);
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to count likes').send(res);

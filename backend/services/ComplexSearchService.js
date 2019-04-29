@@ -135,7 +135,7 @@ exports.complexSearch = function (queryObj, builder, callback) {
             async.parallel([
                     function getCount(callback) {
                         logger.info('counting');
-                        collection.count(filter, function (err, countResult) {
+                        collection.countDocuments(filter, function (err, countResult) {
                             logger.info('this is count result', countResult);
                             if (!!err) {
                                 callback(err);

@@ -68,7 +68,7 @@ function enhance( Class ) {
         }
 
         Class.connect( function (db, collection) {
-            collection.count(filter, callback );
+            collection.countDocuments(filter, callback );
         });
     };
 
