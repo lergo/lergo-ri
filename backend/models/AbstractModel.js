@@ -35,8 +35,8 @@ function enhance( Class ) {
         });
     };
 
-    Class.find = function (filter, projection, options, callback) {
-
+    Class.find = function (filter, projection, options, callback) { // Third parameter to `find()` must be a callback or undefined
+      
         if ( typeof(projection) === 'function'){
             callback = projection;
             projection = {};
