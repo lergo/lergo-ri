@@ -67,17 +67,19 @@ exports.getTagsByFilter = function (req, res) {
         });
     }
 
-
-    function findCallback( err, tags, next ) {
-        if (!!err) {
-            next(err);
-            return;
-        } else {
-            result = result.concat(tags);
-            next();
-
-        }
+    function findCallback(err, cursor, next) {
+        cursor.toArray(function( err, tags) {
+            if (!!err) {
+                next(err);
+                return;
+            } else {
+                result = result.concat(tags);
+                next();
+    
+            }
+        })
     }
+    
 
 
     function findTagsOnLessons( next ){

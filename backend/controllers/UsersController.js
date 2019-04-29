@@ -275,13 +275,16 @@ exports.getUsernames = function (req, res) {
             '$match': {
                 'username': like || ''
             }
-        }], {cursor: {}}, function (err, result) {
-            if (!!err) {
-                new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
-                return;
-            }
-            res.send(result);
-        });
+        }], {cursor: {}}, function (err, cursor) {
+                cursor.toArray(function(err, result) {
+                    if (!!err) {
+                        new managers.error.InternalServerError(err, 'unable to get usernames').send(res);
+                        return;
+                    }
+                    res.send(result);
+                });
+            })
+           
     });
 };
 

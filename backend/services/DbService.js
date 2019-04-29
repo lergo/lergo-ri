@@ -12,6 +12,8 @@ var logger = require('log4js').getLogger('DbService');
 
 
 var _dbUrl = conf.dbUrl;
+var col = _dbUrl.split("/");
+var collection = col.pop();
 
 
 var dbConnection = null;
@@ -21,7 +23,8 @@ function getDbConnection( callback ){
         //logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
-        MongoClient.connect( _dbUrl, function(err,db){
+        MongoClient.connect( _dbUrl, { useNewUrlParser: true }, function(err,client){
+            var db = client.db(collection);
             dbConnection = db;
             callback(err,db);
         });
