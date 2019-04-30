@@ -139,7 +139,7 @@ exports.updateUser = function(user, callback) {
 	}
 
 	services.db.connect('users', function(db, collection, done) {
-		collection.updateOne({
+		collection.update({
 			'_id' : user._id
 		}, user, function(err) {
 

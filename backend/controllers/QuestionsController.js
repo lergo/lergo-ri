@@ -90,10 +90,9 @@ exports.update = function (req, res) {
 exports.findQuestionsByIds = function (req, res) {
 
     var objectIds = req.getQueryList('questionsId');
-    logger.info('this is object ids in questionscontroller', objectIds);
+    logger.info('this is object ids', objectIds);
 
     managers.questions.getQuestionsById(objectIds, function (err, result) {
-        console.log('I am here');
         if (!!err) {
             err.send(res);
             return;
