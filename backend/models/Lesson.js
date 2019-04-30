@@ -181,13 +181,16 @@ Lesson.countPublicLessonsByUser = function (usersId, callback) {
                 $group: {_id: '$userId', count: {$sum: 1}}
             }
         ],
-        function (err, result) {
-            var map = {};
-            _.each(result, function (r) {
-                map[r._id] = r.count;
-            });
-            callback(err, map);
-        });
+        function (err, cursor) {
+            cursor.toArray(function(err, result) {
+                var map = {};
+                _.each(result, function(r) {
+                    map[r._id] = r.count;
+                });
+                callback(err, map)
+            })
+        })
+    
 };
 
 AbstractModel.enhance(Lesson);
