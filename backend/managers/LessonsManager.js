@@ -23,7 +23,7 @@ exports.createLesson = function(lesson, callback) {
         lesson.age = 8;
     }
 	services.db.connect('lessons', function(db, collection) {
-		collection.insert(lesson, function(err) {
+		collection.insertOne(lesson, function(err) {
 			if (!!err) {
 				logger.error('error creating lesson [%s] : [%s]', lesson.name, err);
 				callback(new errorManager.InternalServerError());
