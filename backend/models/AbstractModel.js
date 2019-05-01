@@ -82,10 +82,11 @@ function enhance( Class ) {
     Class.prototype.update = function( callback ){ 
         logger.info('updating');
         var self = this;
+        var selfData = self.data;
         this.data._id = db.id(this.data._id);
         Class.connect(function (db, collection) {
             logger.info('connected. running update', self.data._id);
-            collection.update({ '_id': self.data._id}, self.data, callback || function(){ logger.info('updated successfully'); });
+            collection.updateOne({ '_id': self.data._id}, {$set: {selfData}}, callback || function(){ logger.info('updated successfully'); });
         });
     };
 
