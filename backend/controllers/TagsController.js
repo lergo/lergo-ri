@@ -77,7 +77,7 @@ exports.getTagsByFilter = function (req, res) {
                 next();
     
             }
-        })
+        });
     }
     
 

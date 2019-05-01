@@ -240,7 +240,7 @@ exports.getStudents = function (req, res) {
         ], function (err, cursor) {
             cursor.toArray(function(err, result) {
                 res.send(result);
-            }) 
+            }); 
         });
     });
 
