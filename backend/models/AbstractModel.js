@@ -86,7 +86,7 @@ function enhance( Class ) {
         this.data._id = db.id(this.data._id);
         Class.connect(function (db, collection) {
             logger.info('connected. running update', self.data._id);
-            collection.updateOne({ '_id': self.data._id}, {$set: {selfData}}, callback || function(){ logger.info('updated successfully'); });
+            collection.update({ '_id': self.data._id}, self.Data, callback || function(){ logger.info('updated successfully'); });
         });
     };
 
