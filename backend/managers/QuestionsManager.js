@@ -16,7 +16,7 @@ exports.createQuestion = function(question, callback) {
 	logger.info('Creating question');
 
 	services.db.connect('questions', function(db, collection, done) {
-		collection.insert(question, function(err) {
+		collection.insertOne(question, function(err) {
 			if (!!err) {
 				logger.error('error creating question [%s] : [%s]', question.question, err);
 				callback(new errorManager.InternalServerError(err, 'unable to create question'));
@@ -68,7 +68,7 @@ exports.copyQuestion = function(user, question, callback) {
 	}
 
 	services.db.connect('questions', function(db, collection) {
-		collection.insert(question, function(err) {
+		collection.insertOne(question, function(err) {
 			if (!!err) {
 				logger.error('error copying question [%s] : [%s]', question.question, err);
 				callback(new errorManager.InternalServerError(err, 'unable to copy question'));

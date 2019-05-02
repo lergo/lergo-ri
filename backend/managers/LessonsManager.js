@@ -91,7 +91,7 @@ exports.copyLesson = function (user, lesson, callback) {
     lesson.userId = services.db.id(user._id);
 
     services.db.connect('lessons', function (db, collection) {
-        collection.insert(lesson, function (err) {
+        collection.insertOne(lesson, function (err) {
             if (!!err) {
                 logger.error('error copying lesson [%s]', lesson.name, err);
                 callback(new errorManager.InternalServerError());
