@@ -78,7 +78,8 @@ var async = require('async');
 
 exports.complexSearch = function (queryObj, builder, callback) {
 
-    logger.info('performing complex search on ', JSON.stringify(queryObj) );
+    /* logger.info('performing complex search on ', JSON.stringify(queryObj) ); */
+    logger.info('performing complex search on the queryObj' );  // printing he queryObj is very long
 
     var collection = builder.collection;
 
@@ -146,7 +147,8 @@ exports.complexSearch = function (queryObj, builder, callback) {
                         });
                     },
                     function getQuery(callback) {
-                        logger.info('the compiled query obj generated ', filter, projection, sort, skip, limit);
+                       /*  logger.info('the compiled query obj generated ', filter, projection, sort, skip, limit); */
+                        logger.info('the compiled query obj generated can be very long ');
                         collection.find(filter, projection).sort(sort).skip(skip).limit(limit).toArray(function (err, dataResult) {
                             if (!!err) {
                                 callback(err);

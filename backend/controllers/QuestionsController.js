@@ -198,22 +198,25 @@ exports.getPublicLessonQuestions = function (req, res) {
             }
         }
 
-        ], function (err, args) {
-            if (!!err) {
-                res.status(500).send(err);
-                return;
-            }
-
-            req.queryObj.filter._id = {
-                '$in': services.db.id(_.map(args, '_id'))
-            };
-            managers.questions.complexSearch(req.queryObj, function (err, result) {
+        ], 
+        function (err, cursor) {
+            cursor.toArray(function(err, args){
                 if (!!err) {
-                    err.send(res);
+                    res.status(500).send(err);
                     return;
                 }
-                res.send(result);
-            });
+    
+                req.queryObj.filter._id = {
+                    '$in': services.db.id(_.map(args, '_id'))
+                };
+                managers.questions.complexSearch(req.queryObj, function (err, result) {
+                    if (!!err) {
+                        err.send(res);
+                        return;
+                    }
+                    res.send(result);
+                });
+            });       
         });
     });
 };
