@@ -238,13 +238,18 @@ exports.getLessonIntro = function( lessonId, callback ){
         collection.findOne({
             '_id' : services.db.id( lessonId )
         }, function( err, result ){
-
-            usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
+		if (result) {
+			usersManager.getPublicUsersDetailsMapByIds( [result.userId], function(err, usersById ){
                 result.user = usersById[result.userId];
                 result.timeStamp = result._id.getTimestamp();
 //                result.questionsCount = getQuestionCount(result);
                 callback(err, result);
             });
+		} else {
+			console.log('no result');
+		}
+
+           
 
 
         });
