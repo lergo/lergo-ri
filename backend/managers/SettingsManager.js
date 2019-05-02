@@ -19,7 +19,7 @@ services.db.connect('settings', function( db, collection, done){
 
         if ( !result ){
             logger.error('could not find settings, creating new');
-            collection.insertOne({}, function( err, result ){
+            collection.insert({}, function( err, result ){
                 if ( !! err ){
                     logger.error('unable to insert settings : ' + err.message);
                     done();

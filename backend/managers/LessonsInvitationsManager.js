@@ -124,7 +124,7 @@ exports.updateLessonInvitation = function(invitation, callback) {
 exports.create = function(invitation, callback) {
 	invitation.lessonId = services.db.id(invitation.lessonId);
 	models.LessonInvitation.connect(function(db, collection) {
-		collection.insertOne(invitation, {}, function(err, result) {
+		collection.insert(invitation, {}, function(err, result) {
 			callback(err, result.ops[0]);
 			return;
 		});
