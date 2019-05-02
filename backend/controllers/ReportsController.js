@@ -230,8 +230,8 @@ exports.getStudents = function (req, res) {
         function (err, cursor) {
             cursor.toArray(function(err, result) {
                 res.send(result);
-            })
-        })
+            });
+        });
                 /* new managers.error.InternalServerError(err, 'unable to fetch students').send(res);
                 return; */  
     });
@@ -254,7 +254,7 @@ exports.getClasses = function (req, res) {
         function (err, cursor) {
             cursor.toArray(function(err, result) {
                 res.send(result);
-            })
+            });
         });
     });
 

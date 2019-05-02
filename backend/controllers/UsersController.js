@@ -283,7 +283,7 @@ exports.getUsernames = function (req, res) {
                     }
                     res.send(result);
                 });
-            })
+            });
            
     });
 };

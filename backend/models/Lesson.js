@@ -187,9 +187,9 @@ Lesson.countPublicLessonsByUser = function (usersId, callback) {
                 _.each(result, function(r) {
                     map[r._id] = r.count;
                 });
-                callback(err, map)
-            })
-        })
+                callback(err, map);
+            });
+        });
     
 };
 

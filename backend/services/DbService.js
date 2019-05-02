@@ -12,7 +12,7 @@ var logger = require('log4js').getLogger('DbService');
 
 
 var _dbUrl = conf.dbUrl;
-var col = _dbUrl.split("/");
+var col = _dbUrl.split('/');
 var collection = col.pop();
 
 
@@ -47,7 +47,7 @@ exports.toMap = function( cursor, callback ){
     }, function(error) {
         callback(error, result);
     });
-}
+};
 
 
 /**
