@@ -129,7 +129,7 @@ exports.updateLesson = function(lesson, callback) {
 exports.deleteLesson = function(id, callback) {
 	logger.info('Deleting lesson : ' + id);
 	services.db.connect('lessons', function(db, collection) {
-		collection.remove({
+		collection.deleteOne({
 			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {

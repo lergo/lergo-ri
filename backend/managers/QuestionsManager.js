@@ -117,7 +117,7 @@ exports.updateQuestion = function(question, callback) {
 exports.deleteQuestion = function(id, callback) {
 	logger.info('Deleting question');
 	Question.connect(function(db, collection) {
-		collection.remove({
+		collection.deleteOne({
 			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {

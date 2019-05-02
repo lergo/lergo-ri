@@ -134,7 +134,7 @@ exports.create = function(invitation, callback) {
 
 exports.deleteByLessonId = function(lessonId, callback) {
 	models.LessonInvitation.connect(function(db, collection) {
-		collection.remove({
+		collection.deleteOne({
 			'lessonId' : services.db.id(lessonId)
 		}, callback);
 	});
@@ -142,7 +142,7 @@ exports.deleteByLessonId = function(lessonId, callback) {
 
 exports.deleteById = function(id, callback) {
 	models.LessonInvitation.connect(function(db, collection) {
-		collection.remove({
+		collection.deleteOne({
 			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {

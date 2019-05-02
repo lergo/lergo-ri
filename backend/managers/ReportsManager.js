@@ -212,7 +212,7 @@ exports.getUserReports = function(userId, callback) {
 
 exports.deleteReport = function(id, callback) {
 	Report.connect(function(db, collection) {
-		collection.remove({
+		collection.deleteOne({
 			'_id' : services.db.id(id)
 		}, function(err) {
 			if (!!err) {
