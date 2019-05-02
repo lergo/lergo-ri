@@ -84,9 +84,11 @@ Lesson.getAllQuestionsIdsForLessons = function( lessonsIds, callback ){
             {$unwind : '$steps.quizItems'},
             {'$group' :{_id : 'a', res:{$addToSet:'$steps.quizItems'}}}
         ];
-        collection.aggregate( aggregation ,
-        function(err, result){
-            callback(err, result.length > 0 ? result[0].res : undefined);
+        collection.aggregate( aggregation,
+            function (err, cursor) {
+                cursor.toArray(function(err, result) {
+                    callback(err, result.length > 0 ? result[0].res : undefined);    
+            });
         });
     });
 };

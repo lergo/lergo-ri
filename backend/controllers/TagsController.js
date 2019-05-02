@@ -60,12 +60,13 @@ exports.getTagsByFilter = function (req, res) {
                     { $limit : 10 },
                     { $project: { _id : '$_id' , 'label' : '$_id'}}
 
-                ],
+                ], {cursor: {}},
                 function (err, tags) {
                     callback( err, tags );
                 });
         });
     }
+
 
     function findCallback(err, cursor, next) {
         cursor.toArray(function( err, tags) {
