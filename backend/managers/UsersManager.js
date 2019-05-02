@@ -139,9 +139,9 @@ exports.updateUser = function(user, callback) {
 	}
 
 	services.db.connect('users', function(db, collection, done) {
-		collection.updateOne({
+		collection.update({
 			'_id' : user._id
-		}, {$set: {user}}, function(err) {
+		},user, function(err) {
 
 			if (!!err) {
 				logger.error('error updating user [%s]', user.username, err);
