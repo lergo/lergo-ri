@@ -12,7 +12,7 @@ exports.abuse = function(req, res) {
 		return;
 	}
 	AbuseReport.connect(function(db, collection) {
-		collection.insert(abuseReport, function(err, result) {
+		collection.insertOne(abuseReport, function(err, result) {
 			if (!!err || !result) {
 				logger.error('unable to insert abusreReport to db', err);
 				new managers.error.InternalServerError(err, 'unable to report abuse').send(res);

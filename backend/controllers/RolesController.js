@@ -52,7 +52,7 @@ exports.getRole = function( req, res ){
 exports.createRole = function (req, res) {
     var role = { name: 'Role ' + new Date().getTime() , createdAt: new Date().toISOString() };
     models.Role.connect(function(db, collection){
-        collection.insert(role, function( err ){
+        collection.insertOne(role, function( err ){
             if (!!err) {
                 logger.error('error creating role', err);
                 new services.error.InternalServerError(err,'unable to create role').send(res);

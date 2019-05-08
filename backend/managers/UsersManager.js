@@ -100,7 +100,7 @@ exports.createUser = function(emailResources, user, callback) {
 			delete user.passwordConfirm;
 			delete user.confirmPassword;
 
-			collection.insert(user, function(err) {
+			collection.insertOne(user, function(err) {
 				if (!!err) {
 					logger.error('error creating user [%s] : [%s]', user.username, err);
 					callback(new errorManager.InternalServerError());

@@ -7,7 +7,7 @@ var logger = require('log4js').getLogger('LikesController');
 exports.createLike = function( req, res ){
     var like = models.Like.createNewFromRequest(req);
     models.Like.connect(function(db, collection){
-        collection.insert( like, function(err, result){
+        collection.insertOne( like, function(err, result){
             if ( !!err || !result ){
                 new managers.error.InternalServerError(err, 'unable to save like').send(res);
             }

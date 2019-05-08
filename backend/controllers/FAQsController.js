@@ -8,7 +8,7 @@ exports.create = function(req, res) {
 	var content = req.body;
 	content.userId = services.db.id(req.sessionUser._id);
 	FAQ.connect(function(db, collection) {
-		collection.insert(content, function(err, result) {
+		collection.insertOne(content, function(err, result) {
 			if (!!err || !result) {
 				new managers.error.InternalServerError(err, 'unable to save faq').send(res);
 			}
