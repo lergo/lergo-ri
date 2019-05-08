@@ -5,7 +5,11 @@ var logger = require('log4js').getLogger('DbServiceMock');
 
 var dbCollection = {
 
-    insert: function( obj, callback ){
+    insertOne: function( obj, callback ){
+        logger.info('inserting', obj);
+        callback();
+    },
+    updateOne: function( obj, callback ){
         logger.info('inserting', obj);
         callback();
     }
