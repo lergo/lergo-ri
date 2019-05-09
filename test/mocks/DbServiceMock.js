@@ -8,12 +8,7 @@ var dbCollection = {
     insertOne: function( obj, callback ){
         logger.info('inserting', obj);
         callback();
-    },
-    updateOne: function( obj, callback ){
-        logger.info('inserting', obj);
-        callback();
     }
-
 };
 
 function ObjectId( myValue ){
