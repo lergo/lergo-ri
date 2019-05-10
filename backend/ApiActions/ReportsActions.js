@@ -97,7 +97,32 @@ exports.deleteReport = {
 	        middlewares.reports.userCanDelete
 	    ],
 	    'action': controllers.reports.deleteReport
-	};
+    };
+
+
+exports.deleteClassReport = {    
+    'spec': {
+        'path': '/reports/class/{reportId}/delete',
+        'summary': 'Delete report corresponding to the id',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'reportId',
+                required: true,
+                'description': 'ID of report that needs to be deleted',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.classReports.exists,
+        middlewares.reports.userCanDelete
+    ],
+    'action': controllers.classReports.deleteClassReport
+    
+};     
 
 
 exports.getStudents = {

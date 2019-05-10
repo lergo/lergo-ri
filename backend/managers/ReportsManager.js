@@ -16,6 +16,7 @@
  */
 
 var Report = require('../models').Report;
+var ClassReport = require('../models').ClassReport;
 var services = require('../services');
 var _ = require('lodash');
 var logger = require('log4js').getLogger('ReportsManager');
@@ -212,6 +213,20 @@ exports.getUserReports = function(userId, callback) {
 
 exports.deleteReport = function(id, callback) {
 	Report.connect(function(db, collection) {
+		collection.deleteOne({
+			'_id' : services.db.id(id)
+		}, function(err) {
+			if (!!err) {
+				logger.error('unable to delete report [%s]', err.message);
+			}
+			callback(err);
+		});
+	});
+};
+
+exports.deleteClassReport = function(id, callback) {
+    logger.debug('preparing to delete class report');
+	ClassReport.connect(function(db, collection) {
 		collection.deleteOne({
 			'_id' : services.db.id(id)
 		}, function(err) {

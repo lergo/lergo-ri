@@ -1,6 +1,7 @@
 'use strict';
 
 var managers = require('../managers');
+var logger = require('log4js').getLogger('ClassReportsController');
 
 /**
  *
@@ -29,6 +30,20 @@ exports.getUserClassReports = function (req, res) {
             res.send(obj);
         }
     });
+};
+
+exports.deleteClassReport = function (req, res) {
+        managers.reports.deleteClassReport(req.report._id, function (err, deletedReport) {
+            if (!!err) {
+                logger.error('error deleting report', err);
+                err.send(res);
+                return;
+            } else {
+                logger.info('class report deleted');
+                res.send(deletedReport);
+                return;
+            }
+        });  
 };
 
 exports.readReportById = function (req, res) {

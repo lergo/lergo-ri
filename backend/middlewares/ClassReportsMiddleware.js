@@ -3,7 +3,7 @@ var Report = require('../models').ClassReport;
 var logger = require('log4js').getLogger('ReportsMiddleware');
 
 exports.exists = function exists(req, res, next) {
-	logger.debug('checking if report exists : ', req.params.reportId);
+	logger.info('checking if report exists : ', req.params.reportId);
 	try {
 		Report.findById(req.params.reportId, function(err, result) {
 			if (!!err) {
