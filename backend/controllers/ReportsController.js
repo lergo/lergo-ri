@@ -117,33 +117,41 @@ function updateClassAggReports(invitationId) {
                 answers: 1,
                 stepDurations: 1
             }
-        }], {cursor: {}}, function (err, result) {
+        }],
+        function (err, cursor) {
             if (!!err) {
                 console.error(err);
             }
-            if (!!result && result.length > 0) {
-                var report = result[0];
-                report.answers = getAnswersAgg(report.answers);
-                var stepAnswersAgg = getStepAnswersAgg(report.answers);
-                var stepDurationAgg = getStepDurationAgg(report.stepDurations);
-                report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
-                ClassReport.connect(function (db, collection) {
-                    try {
-                        collection.updateOne({invitationId: report.invitationId}, report, {upsert: true})
-                            .then(function(result) {
-                                if (result.result.nModified === 0) {
-                                    logger.info('inserting class report');
-                                    managers.reports.prepareClassReportEmailData(collection,report);
-                                } else {
-                                    logger.info('updating class ceport');
-                                }
-                            });
-
-                    } catch (e) {
-                        logger.error('unable to save class report', e);
-                    }
-                });
-            }
+            cursor.toArray(function(err, result) {
+                if (!!result && result.length > 0) {
+                    var report = result[0];
+                    report.answers = getAnswersAgg(report.answers);
+                    var stepAnswersAgg = getStepAnswersAgg(report.answers);
+                    var stepDurationAgg = getStepDurationAgg(report.stepDurations);
+                    report.stepDurations = _.merge(stepDurationAgg, stepAnswersAgg);
+                   
+                    ClassReport.connect(function (db, collection) {
+                        try {
+                            collection.updateOne(
+                                { invitationId: report.invitationId }, 
+                                { $set: report },
+                                { upsert: true }
+                            )
+                                .then(function(result) {
+                                    if (result.result.nModified === 0) {
+                                        logger.info('inserting class report');
+                                        managers.reports.prepareClassReportEmailData(collection,report);
+                                    } else {
+                                        logger.info('updating class ceport', report.data.name);
+                                    }
+                                });
+    
+                        } catch (e) {
+                            logger.error('unable to save class report', e);
+                        }
+                    });
+                }
+            }); 
         });
     };
     clearTimeout(timeOutIDMap[invitationId]);
