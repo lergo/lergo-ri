@@ -406,7 +406,7 @@ exports.deleteReport = function (req, res) {
     // logged in invitee.
     if (!!req.deleteUserInfo) {
         var report = req.report;
-        delete report.userId;
+       report.userId = null;
         new Report(report).update(function (err) {
             logger.info('report updated');
             if (!!err) {
