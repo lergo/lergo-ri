@@ -84,10 +84,21 @@ function enhance( Class ) {
         var self = this;
         var selfData = self.data;
         this.data._id = db.id(this.data._id);
-        Class.connect(function (db, collection) {
-            logger.info('connected. running update', self.data._id);
-            collection.updateOne({ '_id': self.data._id}, {$set: selfData}, callback || function(){ logger.info('updated successfully'); });
-        });
+        // updateOne does not update a field that has been removed, it only updates fields that have been changed
+        // so we need to have a new value for invites - finished, because it is not simple to remove the field directl
+        // and there is the issue of reports finished and invites "finished"
+        if (selfData.finished === null) {
+            console.log('it is null');
+            Class.connect(function (db, collection) {
+                logger.info('connected. removing finished field', self.data._id);
+                collection.updateOne({ '_id': self.data._id}, { $unset: {finished: ''}}, callback || function(){ logger.info('updated successfully'); });
+            });
+        } else {
+            Class.connect(function (db, collection) {
+                logger.info('connected. running update', self.data._id);
+                collection.updateOne({ '_id': self.data._id}, {$set: selfData}, callback || function(){ logger.info('updated successfully'); });
+            });
+        }
     };
 
     Class.prototype.remove = function( callback ){
