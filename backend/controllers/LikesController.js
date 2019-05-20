@@ -41,7 +41,7 @@ exports.deleteLike = function (req, res) {
                 new managers.error.InternalServerError(err, 'unable to delete like').send(res);
                 return;
             }
-            res.send(200);
+            res.sendStatus(200);
         });
     });
 };

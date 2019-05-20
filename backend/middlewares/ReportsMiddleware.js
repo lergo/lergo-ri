@@ -13,7 +13,7 @@ exports.exists = function exists(req, res, next) {
 				return;
 			}
 			if (!result) {
-				res.send(404);
+				res.sendStatus(404);
 				return;
 			}
 
@@ -24,7 +24,7 @@ exports.exists = function exists(req, res, next) {
 		});
 	} catch (e) {
         console.log('could not find report',e);
-		res.send(404);
+		res.sendStatus(404);
 	}
 };
 

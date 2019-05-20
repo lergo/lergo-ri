@@ -6,7 +6,7 @@ var logger = require('log4js').getLogger('LessonsInvitationsMiddleware');
 exports.exists = function exists(req, res, next) {
 	exports.optionalExists(req, res, function(){
         if(!req.invitation){
-            res.send(404);
+            res.sendStatus(404);
             return;
         }
         next();
@@ -37,7 +37,7 @@ exports.optionalExists = function optionalExists(req, res, next){
             }
         });
     } catch (e) {
-        res.send(404);
+        res.sendStatus(404);
     }
 };
 
