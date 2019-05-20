@@ -481,13 +481,14 @@ exports.findReportLessonsByName = function (req, res) {
     if (reportType === 'class') {
         Model = ClassReport;
     }
-    console.log('aggregation is', JSON.stringify(agg));
-    Model.aggregate(agg, function (err, result) {
-        if (!!err) {
-            new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
-            return;
-        }
-        res.send(result);
+    Model.aggregate(agg, function (err, cursor) {
+        cursor.toArray(function(err, result) {
+            if (!!err) {
+                new managers.error.InternalServerError(err, 'error while searching reports lessons').send(res);
+                return;
+            }
+            res.send(result);
+        });
     });
 
 };
