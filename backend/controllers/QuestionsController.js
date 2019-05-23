@@ -90,7 +90,7 @@ exports.update = function (req, res) {
 exports.findQuestionsByIds = function (req, res) {
 
     var objectIds = req.getQueryList('questionsId');
-    logger.info('this is object ids', objectIds);
+    logger.info('findQuestionsByIds');
 
     managers.questions.getQuestionsById(objectIds, function (err, result) {
         if (!!err) {

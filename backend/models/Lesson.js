@@ -144,20 +144,22 @@ Lesson.countPublicQuestionsByUser = function( userId, callback ){
 
             });
         },
-        function countQuestionsByUser( idsResult , done ){
-
-            if ( !idsResult || idsResult.length === 0){
-                done(null,0);
-                return;
-            }
-            try{
-                var ids = idsResult[0].items;
-                ids =  dbService.id(ids);
-                logger.info('ids is', ids );
-                require('./Question').count({ _id : { $in : ids }, userId : dbService.id(userId), question : { $exists : true } }, done);
-            }catch(e){
-                done(e);
-            }
+        function countQuestionsByUser( cursor , done ){
+            cursor.toArray(function(err, idsResult) {
+                if ( !idsResult || idsResult.length === 0){
+                    done(null,0);
+                    return;
+                }
+                try{
+                    var ids = idsResult[0].items;
+                    ids =  dbService.id(ids);
+                    logger.debug('ids is', ids );
+                    require('./Question').count({ _id : { $in : ids }, userId : dbService.id(userId), question : { $exists : true } }, done);
+                }catch(e){
+                    done(e);
+                }
+            });
+          
         }
     ], callback );
 
