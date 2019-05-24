@@ -34,7 +34,7 @@ Lesson.prototype.getAllQuestionIds = function () {
     for (var i = 0; i < steps.length; i++) {
         logger.info('checking ', steps[i].type);
         if (steps[i].type === 'quiz') {
-            logger.info('adding the following quiz items', steps[i].quizItems);
+            logger.info('adding quiz items');
             questionIds = questionIds.concat(steps[i].quizItems);
         }
     }
