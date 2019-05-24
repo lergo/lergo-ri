@@ -31,36 +31,59 @@ exports.getUserPublicDetails = function (req, res) {
 exports.getProfile = function(req, res){
     logger.debug('getting profile');
     var username = req.params.username || req.sessionUser.username;
-    async.waterfall([
-        function getUser( done ){
-            logger.debug('finding user ' + username );
-            User.findByUsername( username , function (err, result) {
-                if (!!err || !result) {
-                    done(new managers.error.InternalServerError(err, 'unable to find user profile'));
-                    return;
-                }
-                logger.debug('found user', result);
-                done(null,User.getUserPublicDetails(result));
-            });
-        },
-        function getUserStats( user, done ){
-            logger.trace('get user stats');
-            User.getStats( user._id , function( err, stats ){
-                if ( !!err || !stats ){
-                    done(new managers.error.InternalServerError(err, 'failed getting user statistics'));
-                    return;
-                }
-                user.stats = stats;
 
-                done(null,user);
-            });
-        }
-    ], function allDone(err, result){
-        if ( err ){
-            err.send(res);
-        }
-        res.send(result);
-    });
+    if (req.sessionUser) {
+        async.waterfall([
+            function getUser( done ){
+                logger.debug('finding user ' + username );
+                User.findByUsername( username , function (err, result) {
+                    if (!!err || !result) {
+                        done(new managers.error.InternalServerError(err, 'unable to find user profile'));
+                        return;
+                    }
+                    logger.debug('found user', result);
+                    done(null,User.getUserPublicDetails(result));
+                });
+            },
+            function getUserStats( user, done ){
+                logger.trace('get user stats');
+                User.getStats( user._id , function( err, stats ){
+                    if ( !!err || !stats ){
+                        done(new managers.error.InternalServerError(err, 'failed getting user statistics'));
+                        return;
+                    }
+                    user.stats = stats;
+    
+                    done(null,user);
+                });
+            }
+        ], function allDone(err, result){
+            if ( err ){
+                err.send(res);
+            }
+            res.send(result);
+        });
+    } else {
+        async.waterfall([
+            function getUserNotLoggedIn( done ){
+                logger.debug('finding user ' + username );
+                User.findByUsername( username , function (err, result) {
+                    if (!!err || !result) {
+                        done(new managers.error.InternalServerError(err, 'unable to find user profile'));
+                        return;
+                    }
+                    logger.debug('found user', result);
+                    done(null,User.getUserPublicDetails(result));
+                });
+            }
+           
+        ], function allDone(err, result){
+            if ( err ){
+                err.send(res);
+            }
+            res.send(result);
+        });
+    }
 };
 
 
