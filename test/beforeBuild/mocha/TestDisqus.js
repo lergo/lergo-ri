@@ -13,6 +13,7 @@ describe('Disqus', function(){
     describe('#signMessage', function(){
         it('should create hmac->sha1 from a message', function(done){
             logger.info('running hmac-sha1 function');
+            console.log(disqus.client);
 //            logger.info('this is the message',disqus.client.signMessage('this is my message'));
             expect(disqus.client.signMessage('this is my message').length > 0).to.be(true);
             done();
@@ -29,7 +30,3 @@ describe('Disqus', function(){
         });
     });
 });
-
-
-
-
