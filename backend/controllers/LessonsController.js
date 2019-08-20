@@ -226,6 +226,18 @@ function _updateLesson( lesson , res ){
     });
 }
 
+function _unsetPublic( lesson , res ){
+    managers.lessons.unsetPublic(lesson, function(err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+}
+
 /**
  *
  *
@@ -282,8 +294,7 @@ exports.publish = function(req, res){
  */
 exports.unpublish = function(req, res){
     var lesson = req.lesson;
-    delete lesson.public;
-    _updateLesson( lesson, res );
+    _unsetPublic( lesson, res );
 };
 
 /**

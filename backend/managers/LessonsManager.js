@@ -126,6 +126,27 @@ exports.updateLesson = function(lesson, callback) {
 	});
 };
 
+exports.unsetPublic = function(lesson, callback) {
+	logger.info('unsetting public');
+	services.db.connect('lessons', function(db, collection, done) {
+		collection.updateOne({
+			'_id' : lesson._id
+		}, { $unset : { public : 1} }, function(err) {
+			if (!!err) {
+				logger.error('error in updating lesson [%s] : [%s]', lesson.name, err);
+				callback(new errorManager.InternalServerError());
+				done();
+				return;
+			} else {
+				logger.info('Lesson [%s] updated successfully. invoking callback', lesson.name);
+				callback(null, lesson);
+				done();
+				return;
+			}
+		});
+	});
+};
+
 exports.deleteLesson = function(id, callback) {
 	logger.info('Deleting lesson : ' + id);
 	services.db.connect('lessons', function(db, collection) {
