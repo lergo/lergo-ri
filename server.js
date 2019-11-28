@@ -30,7 +30,7 @@ var conf = services.conf;
 
 
 var mongoose = require('mongoose');
-mongoose.connect(conf.dbUrl, { useNewUrlParser: true });
+mongoose.connect(conf.dbUrl, { useNewUrlParser: true , useUnifiedTopology: true });
 
 
 

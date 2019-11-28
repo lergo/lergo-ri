@@ -23,7 +23,7 @@ function getDbConnection( callback ){
         //logger.debug('using cached connection');
         callback(null, dbConnection);
     }else{
-        MongoClient.connect( _dbUrl, { useNewUrlParser: true }, function(err,client){
+        MongoClient.connect( _dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, function(err,client){
             var db = client.db(collection);
             dbConnection = db;
             callback(err,db);
