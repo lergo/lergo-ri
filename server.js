@@ -233,6 +233,9 @@ app.get('/backend/lesson', function(req, res){
     var Lesson = require('./backend/models/Lesson');
     Lesson.connect(function(db, collection){
         collection.find({ 'age' : {$eq : 8 }},{ '_id' : 1, 'lastUpdate':1 }).sort( { 'lastUpdate' : -1 }).project( { 'age': 1, _id: 0 }).limit(2).toArray(function(err, result) {
+            if (err) {
+                return res.status(500).end();
+            }
         res.send( result[0] );
         });
     });
