@@ -54,9 +54,9 @@ function enhance( Class ) {
         if ( !callback ){
             throw new Error('expected signature find(filter,projection,callback)');
         }
-
+        options.projection = projection;    
         Class.connect( function (db, collection) {
-            collection.find(filter, projection, options).toArray(callback);
+            collection.find(filter, options).toArray(callback);
         });
     };
 
