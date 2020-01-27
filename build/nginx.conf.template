@@ -69,7 +69,7 @@ server {
   location ~ /index.html {
     set \$test "";
 
-    if ( \$http_user_agent ~* "(Google|facebook)" ) {
+    if ( \$http_user_agent ~* "(Google|facebook|bing)" ) {
       set \$test  A;
     }
 
