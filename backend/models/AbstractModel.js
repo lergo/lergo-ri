@@ -96,7 +96,19 @@ function enhance( Class ) {
         } else {
             Class.connect(function (db, collection) {
                 logger.info('connected. running update', self.data._id);
-                collection.updateOne({ '_id': self.data._id}, {$set: selfData}, callback || function(){ logger.info('updated successfully'); });
+                collection.updateOne({ '_id': self.data._id}, {$set: selfData}, callback || function(){ logger.info('updated successfully'); })
+                .then(result => {
+                    const { matchedCount, modifiedCount } = result;
+                    if(matchedCount && modifiedCount) {
+                        logger.info(`Successfully updated ${Class.name} with id: ${self.data._id}`);
+                    } else {
+                        logger.info(`${Class.name} with id: ${self.data._id} unchanged.`);
+                    }
+                })
+                .catch(err => {
+                    logger.error(`Error updating ${Class.name} with id: ${self.data._id}. Error:`);
+                    logger.error(err);
+                });
             });
         }
     };
