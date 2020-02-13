@@ -57,9 +57,9 @@ if [ "$NODE_EXISTS" = "" ];then
     rm -rf $NVM_HOME || echo "nvm folder does not exist. lets continue"
 
    # wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.18.0/install.sh | bash || echo
-     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash || echo
+     wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.35.2/install.sh | bash || echo
      source ~/.nvm/nvm.sh
-     nvm install 6.9.1 && nvm use 6.9.1
+     nvm install 8.17.0 && nvm use 8.17.0
 
     # ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
     # ( which npm && echo "npm already installed..." ) || ( echo "installing npm ... " && sudo apt-get install -y npm && echo "npm installed successfully..." )
