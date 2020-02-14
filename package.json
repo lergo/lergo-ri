@@ -34,6 +34,7 @@
     "passport": "0.2.2",
     "passport-openid": "0.3.1",
     "phantom": "4.0.2",
+    "puppeteer": "^2.1.1",
     "request": "^2.69.0",
     "request-param": "^1.0.1",
     "sha1": "1.1.1",
@@ -63,6 +64,6 @@
     "grunt-bundled-dependencies": "0.0.2"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   }
 }
