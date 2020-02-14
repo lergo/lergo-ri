@@ -300,10 +300,10 @@ app.get('/backend/crawler', function(req, res){
         throw "Please provide URL";
     }
     async function run() {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({args: ['--no-sandbox']});
         const page = await browser.newPage();
         await page.goto(url, {waitUntil: 'networkidle0'});
-        const bodyhtml = await page.evaluate(() => document.body.innerHTML);
+        const bodyhtml = await page.evaluate(() => document.documentElement.innerHTML);
         await browser.close();
         res.send(bodyhtml);
     }
