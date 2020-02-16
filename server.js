@@ -315,6 +315,11 @@ app.get('/backend/sitemap.xml', function(req, res){
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
+    if (!/^(.*)\/public\/lessons\/.*\/intro$/.test(url)){
+        logger.info('prerender does not accept invalid urls: ', url);
+        res.status(400).send('invalid url');
+        return;
+    }
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
     var phantom = require('phantom');
@@ -334,8 +339,17 @@ app.get('/backend/sitemap.xml', function(req, res){
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
                         res.send( result);
+                        //phInstance.exit();
+                        page.close()
+                        .then(function () {
+                            logger.info('phInstance.exit()');
+                             phInstance.exit();
+                        });
+                        
+                    })
+                    .catch(error => {
+                        console.log(error);
                         phInstance.exit();
-                        page.close();
                     });
                 }
 
