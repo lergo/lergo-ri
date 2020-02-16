@@ -291,7 +291,7 @@ app.get('/backend/sitemap.xml', function(req, res){
 
 /*jshint ignore:start */
 
-app.get('/backend/crawler', function(req, res){
+/* app.get('/backend/crawler', function(req, res){
     const puppeteer = require('puppeteer');
     var url = req.param('_escaped_fragment_');
         url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
@@ -308,11 +308,11 @@ app.get('/backend/crawler', function(req, res){
         res.send(bodyhtml);
     }
     run();
-    });  
+    });   */
     
     /* jshint ignore:end */
 
-/* app.get('/backend/crawler', function(req, res){
+ app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     logger.info('prerendering url : ' + url ) ;
@@ -345,7 +345,7 @@ app.get('/backend/crawler', function(req, res){
             console.log(error);
             phInstance.exit();
         });
-}); */
+}); 
 
 
 logger.info('catching all exceptions');
