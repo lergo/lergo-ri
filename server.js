@@ -339,12 +339,12 @@ app.get('/backend/sitemap.xml', function(req, res){
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
                         res.send( result);
-                        //phInstance.exit();
-                        page.close()
-                        .then(function () {
+                        phInstance.exit();
+                        page.close();
+                       /*  .then(function () {
                             logger.info('phInstance.exit()');
                              phInstance.exit();
-                        });
+                        }); */
                         
                     })
                     .catch(error => {
