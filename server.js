@@ -312,14 +312,31 @@ app.get('/backend/sitemap.xml', function(req, res){
     
     /* jshint ignore:end */
 
+ var k = 0;
+ var a = '';
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
+
     if (!/^(.*)\/public\/lessons\/.*\/intro$/.test(url)){
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
     }
+    // prevent the same url from running more than 4 times in a row
+    if (url !== a) {
+        a = url;
+        k = 1;
+        } else {
+        logger.info('the a is' , a);
+        k += 1;
+        if (k > 4) {
+            logger.info('prerender exceeded 4 repeats: ', url);
+            res.status(400).send('repeated more than 4 times');
+            return;
+        } 
+    }
+
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
     var phantom = require('phantom');
