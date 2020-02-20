@@ -289,31 +289,8 @@ app.get('/backend/sitemap.xml', function(req, res){
     });
 }) ;
 
-/*jshint ignore:start */
-
-/* app.get('/backend/crawler', function(req, res){
-    const puppeteer = require('puppeteer');
-    var url = req.param('_escaped_fragment_');
-        url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
-        logger.info('prerendering url : ' + url ) ;
-    if (!url) {
-        throw "Please provide URL";
-    }
-    async function run() {
-        const browser = await puppeteer.launch({args: ['--no-sandbox']});
-        const page = await browser.newPage();
-        await page.goto(url, {waitUntil: 'networkidle0'});
-        const bodyhtml = await page.evaluate(() => document.documentElement.innerHTML);
-        await browser.close();
-        res.send(bodyhtml);
-    }
-    run();
-    });   */
-    
-    /* jshint ignore:end */
-
- var k = 0;
- var a = '';
+ var numRepeats = 0;
+ var prevUrl = '';
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
@@ -324,15 +301,14 @@ app.get('/backend/sitemap.xml', function(req, res){
         return;
     }
     // prevent the same url from running more than 4 times in a row
-    if (url !== a) {
-        a = url;
-        k = 1;
+    if (url !== prevUrl) {
+        prevUrl = url;
+        numRepeats = 1;
         } else {
-        logger.info('the a is' , a);
-        k += 1;
-        if (k > 4) {
-            logger.info('prerender exceeded 4 repeats: ', url);
-            res.status(400).send('repeated more than 4 times');
+        numRepeats += 1;
+        if (numRepeats > 4) {
+            logger.info('prerender repeats exceeded: ', url);
+            res.status(400).send('requests exceeded');
             return;
         } 
     }
