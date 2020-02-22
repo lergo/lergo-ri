@@ -288,14 +288,21 @@ app.get('/backend/sitemap.xml', function(req, res){
 
     });
 }) ;
-
+ var cached_page = ''
  var numRepeats = 0;
  var prevUrl = '';
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
-
-    if (!/^(.*)\/public\/lessons\/.*\/intro$/.test(url)){
+    
+    // for index.html if page has already been cached
+    if ( /\/index\.html#!$/.test(url) && cached_page !== ''){
+        logger.info('cached index.html: ', url);
+        res.status(200).send(cached_page);
+        return;
+    }
+    // invalid url is one that is not lesson/intro or index
+    if ( !/^(.*)\/public\/lessons\/.*\/intro$/.test(url) && !/\/index\.html#!$/.test(url) ){
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
@@ -312,7 +319,6 @@ app.get('/backend/sitemap.xml', function(req, res){
             return;
         } 
     }
-
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
     var phantom = require('phantom');
@@ -322,7 +328,7 @@ app.get('/backend/sitemap.xml', function(req, res){
             return instance.createPage(); // createpage
         })
         .then(page => {
-            // need to use page.open
+            // need to use page.open 
             page.open(url).then(function( status ){ //page.open
                 if ( status === 'fail'){
                     res.status(500).send('unable to open url');
@@ -331,21 +337,20 @@ app.get('/backend/sitemap.xml', function(req, res){
                     page.evaluate(function () { //page.evaluate
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
-                        res.send( result);
+                        res.send(result);
+                        if ( /\/index\.html#!$/.test(url))  //  we need to cache the index.html page
+                        {
+                            logger.info('caching index.html');
+                            cached_page = result;
+                        }
                         phInstance.exit();
                         page.close();
-                       /*  .then(function () {
-                            logger.info('phInstance.exit()');
-                             phInstance.exit();
-                        }); */
-                        
                     })
                     .catch(error => {
                         console.log(error);
                         phInstance.exit();
                     });
                 }
-
             });
         })
         .catch(error => {
@@ -353,7 +358,6 @@ app.get('/backend/sitemap.xml', function(req, res){
             phInstance.exit();
         });
 }); 
-
 
 logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
