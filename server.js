@@ -288,36 +288,36 @@ app.get('/backend/sitemap.xml', function(req, res){
 
     });
 }) ;
- var cached_page = ''
- var numRepeats = 0;
- var prevUrl = '';
+
+ // Only allow index.html or public/lesson/:lesson_number/intro to be prerendered
+ // often a certain url is prerendered many times in the same second or two
+ // to prevent unnecessary cpu usage, we will cache the url and resend same page if repeated consecutively
+ // index.html will be updated every day 
+
+ var indexHtmlCachedPage = '';
+ var lessonIntroCachedPage = '';
+ var prevLessonUrl = '';
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     
     // for index.html if page has already been cached
-    if ( /\/index\.html#!$/.test(url) && cached_page !== ''){
+    if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url) && indexHtmlCachedPage !== ''){
         logger.info('cached index.html: ', url);
-        res.status(200).send(cached_page);
+        res.status(200).send(indexHtmlCachedPage);
         return;
     }
-    // invalid url is one that is not lesson/intro or index
-    if ( !/^(.*)\/public\/lessons\/.*\/intro$/.test(url) && !/\/index\.html#!$/.test(url) ){
+    // for lesson/intro if page has already been cached
+    if ( url === prevLessonUrl && lessonIntroCachedPage !== ''){
+        logger.info('cached lesson/intro: ', url);
+        res.status(200).send(lessonIntroCachedPage);
+        return;
+    }
+    // invalid url is one that is not lesson/intro or index.html
+    if (!/^(.*)\/public\/lessons\/.*\/intro$/.test(url) && !/^(.*)\/index\.html#!(.{1,16})$/.test(url)) {
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
-    }
-    // prevent the same url from running more than 4 times in a row
-    if (url !== prevUrl) {
-        prevUrl = url;
-        numRepeats = 1;
-        } else {
-        numRepeats += 1;
-        if (numRepeats > 4) {
-            logger.info('prerender repeats exceeded: ', url);
-            res.status(400).send('requests exceeded');
-            return;
-        } 
     }
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
@@ -337,11 +337,16 @@ app.get('/backend/sitemap.xml', function(req, res){
                     page.evaluate(function () { //page.evaluate
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
-                        res.send(result);
-                        if ( /\/index\.html#!$/.test(url))  //  we need to cache the index.html page
+                        if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url))  //  we need to cache the index.html page
                         {
-                            logger.info('caching index.html');
-                            cached_page = result;
+                            logger.info('caching index.html', url);
+                            indexHtmlCachedPage = result;
+                            res.send(result);
+                        } else {  // need to cache the lesson/intro page and update the prevLessonUrl
+                            logger.info(' caching lesson/intro', url);
+                            prevLessonUrl = url;
+                            lessonIntroCachedPage = result;
+                            res.send(result);
                         }
                         phInstance.exit();
                         page.close();
