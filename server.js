@@ -299,12 +299,14 @@ app.get('/backend/sitemap.xml', function(req, res){
  var prevLessonUrl = '';
  var d = new Date();
  var previousDate = 0;
+ var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he&lergoFilter\.filterLanguage="hebrew"$/.test(url)
+ var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url)
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     
     // for index.html if page has already been cached
-    if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url) && indexHtmlCachedPage !== '') {
+    if (( /^(.*)\/index\.html#!(.{1,16})$/.test(url) || heHomePage || enHomePage ) && indexHtmlCachedPage !== '') {
         logger.info('cached index.html: ', url);
         res.status(200).send(indexHtmlCachedPage);
         var currentDate = d.getDate();
