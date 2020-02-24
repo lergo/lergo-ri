@@ -297,14 +297,22 @@ app.get('/backend/sitemap.xml', function(req, res){
  var indexHtmlCachedPage = '';
  var lessonIntroCachedPage = '';
  var prevLessonUrl = '';
+ var d = new Date();
+ var previousDate = 0;
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
     
     // for index.html if page has already been cached
-    if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url) && indexHtmlCachedPage !== ''){
+    if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url) && indexHtmlCachedPage !== '') {
         logger.info('cached index.html: ', url);
         res.status(200).send(indexHtmlCachedPage);
+        var currentDate = d.getDate();
+        if (currentDate !== previousDate) { // reset the index.html link every day
+            previousDate = currentDate;
+            logger.info('updating date to ', previousDate);
+            indexHtmlCachedPage = '';
+        }
         return;
     }
     // for lesson/intro if page has already been cached
