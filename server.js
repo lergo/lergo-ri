@@ -296,6 +296,7 @@ app.get('/backend/sitemap.xml', function(req, res){
 
  var heCachedHomePage = '';
  var enCachedHomePage = '';
+ var indexCachedHomePage = '';
  var lessonIntroCachedPage = '';
  var prevLessonUrl = '';
  var previousDate = 0;
@@ -304,12 +305,13 @@ app.get('/backend/sitemap.xml', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
 
+    var indexHomePage = /^(.*)\/index\.html#!\/$/.test(url);
     var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he$/.test(url);
     var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url);
     var publicLessons = /^(.*)\/public\/lessons\/.*\/intro$/.test(url);
     var d = new Date();
     var currentDate = d.getDate();
-    
+
     // for hebrew home page if page has already been cached
     if (heHomePage && heCachedHomePage !== '') {
         logger.info('using cached hebrew home page: ', url);
@@ -319,6 +321,21 @@ app.get('/backend/sitemap.xml', function(req, res){
             logger.info('updating date to ', previousDate);
             heCachedHomePage = '';
             enCachedHomePage = '';
+            indexCachedHomePage = '';
+        }
+        return;
+    }
+
+    // for index home page if page has already been cached
+    if ( indexHomePage && indexCachedHomePage !== '') {
+        logger.info('cached index home page: ', url);
+        res.status(200).send(indexCachedHomePage);
+        if (currentDate !== previousDate) { // reset the home page link every day
+            previousDate = currentDate;
+            logger.info('updating date to ', previousDate);
+            heCachedHomePage = '';
+            enCachedHomePage = '';
+            indexCachedHomePage = '';
         }
         return;
     }
@@ -332,6 +349,7 @@ app.get('/backend/sitemap.xml', function(req, res){
             logger.info('updating date to ', previousDate);
             heCachedHomePage = '';
             enCachedHomePage = '';
+            indexCachedHomePage = '';
         }
         return;
     }
@@ -342,11 +360,13 @@ app.get('/backend/sitemap.xml', function(req, res){
         return;
     }
     // invalid url is one that is not lesson/intro or home page
-    if (!publicLessons && !enHomePage && !heHomePage) {
+    if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
     }
+    // no cached page, need to prerender new one
+    previousDate = currentDate;
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
     var phantom = require('phantom');
@@ -374,7 +394,11 @@ app.get('/backend/sitemap.xml', function(req, res){
                             logger.info('caching english home page', url);
                             enCachedHomePage = result;
                             res.send(result);        
-                        } else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
+                        } else if ( indexHomePage ) {  //  we need to cache and send the index home page
+                            logger.info('caching index home page', url);
+                            indexCachedHomePage = result;
+                            res.send(result);        
+                        }else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
                             logger.info(' caching lesson/intro', url);
                             prevLessonUrl = url;
                             lessonIntroCachedPage = result;
