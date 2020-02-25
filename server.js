@@ -294,26 +294,44 @@ app.get('/backend/sitemap.xml', function(req, res){
  // to prevent unnecessary cpu usage, we will cache the url and resend same page if repeated consecutively
  // index.html will be updated every day 
 
- var indexHtmlCachedPage = '';
+ var heCachedHomePage = '';
+ var enCachedHomePage = '';
  var lessonIntroCachedPage = '';
  var prevLessonUrl = '';
- var d = new Date();
  var previousDate = 0;
- var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he&lergoFilter\.filterLanguage="hebrew"$/.test(url)
- var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url)
+ 
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
+
+    var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he$/.test(url);
+    var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url);
+    var publicLessons = /^(.*)\/public\/lessons\/.*\/intro$/.test(url);
+    var d = new Date();
+    var currentDate = d.getDate();
     
-    // for index.html if page has already been cached
-    if (( /^(.*)\/index\.html#!(.{1,16})$/.test(url) || heHomePage || enHomePage ) && indexHtmlCachedPage !== '') {
-        logger.info('cached index.html: ', url);
-        res.status(200).send(indexHtmlCachedPage);
-        var currentDate = d.getDate();
-        if (currentDate !== previousDate) { // reset the index.html link every day
+    // for hebrew home page if page has already been cached
+    if (heHomePage && heCachedHomePage !== '') {
+        logger.info('using cached hebrew home page: ', url);
+        res.status(200).send(heCachedHomePage);
+        if (currentDate !== previousDate) { // reset the home page link every day
             previousDate = currentDate;
             logger.info('updating date to ', previousDate);
-            indexHtmlCachedPage = '';
+            heCachedHomePage = '';
+            enCachedHomePage = '';
+        }
+        return;
+    }
+
+    // for english home page if page has already been cached
+    if ( enHomePage && enCachedHomePage !== '') {
+        logger.info('cached english home page: ', url);
+        res.status(200).send(enCachedHomePage);
+        if (currentDate !== previousDate) { // reset the home page link every day
+            previousDate = currentDate;
+            logger.info('updating date to ', previousDate);
+            heCachedHomePage = '';
+            enCachedHomePage = '';
         }
         return;
     }
@@ -323,8 +341,8 @@ app.get('/backend/sitemap.xml', function(req, res){
         res.status(200).send(lessonIntroCachedPage);
         return;
     }
-    // invalid url is one that is not lesson/intro or index.html
-    if (!/^(.*)\/public\/lessons\/.*\/intro$/.test(url) && !/^(.*)\/index\.html#!(.{1,16})$/.test(url)) {
+    // invalid url is one that is not lesson/intro or home page
+    if (!publicLessons && !enHomePage && !heHomePage) {
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
@@ -347,12 +365,16 @@ app.get('/backend/sitemap.xml', function(req, res){
                     page.evaluate(function () { //page.evaluate
                         return document.documentElement.innerHTML;
                     }).then(function (result) {
-                        if ( /^(.*)\/index\.html#!(.{1,16})$/.test(url))  //  we need to cache the index.html page
+                        if ( heHomePage )  //  we need to cache and send the hebrew home page page
                         {
-                            logger.info('caching index.html', url);
-                            indexHtmlCachedPage = result;
+                            logger.info('caching hebrew home page', url);
+                            heCachedHomePage = result;
                             res.send(result);
-                        } else {  // need to cache the lesson/intro page and update the prevLessonUrl
+                        } else if ( enHomePage ) {  //  we need to cache and send the english home page
+                            logger.info('caching english home page', url);
+                            enCachedHomePage = result;
+                            res.send(result);        
+                        } else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
                             logger.info(' caching lesson/intro', url);
                             prevLessonUrl = url;
                             lessonIntroCachedPage = result;
