@@ -24,7 +24,7 @@ var permissions = require('../permissions');
  * @param next
  */
 exports.exists= function exists( req, res, next ){
-    logger.info('checking if question exists : ' , req.params.questionId );
+    //logger.info('checking if question exists : ' , req.params.questionId );
     Question.findById( req.params.questionId, function(err, result){
         if ( !!err ){
             res.status(500).send(err);

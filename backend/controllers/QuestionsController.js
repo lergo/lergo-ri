@@ -55,7 +55,7 @@ exports.getQuestions = function (req, res) {
     });
 };
 exports.getQuestionById = function (req, res) {
-    logger.info('getting question by id');
+    //logger.info('getting question by id');
     res.send(req.question);
 };
 
