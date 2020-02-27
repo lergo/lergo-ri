@@ -305,7 +305,7 @@ app.get('/backend/sitemap.xml', function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
 
-    var indexHomePage = /^(.*)\/index\.html#!\/$/.test(url);
+    var indexHomePage = /^(.*)\/index\.html#!(.{0,17})$/.test(url);
     var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he$/.test(url);
     var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url);
     var publicLessons = /^(.*)\/public\/lessons\/.*\/intro$/.test(url);
@@ -366,7 +366,6 @@ app.get('/backend/sitemap.xml', function(req, res){
         return;
     }
     // no cached page, need to prerender new one
-    previousDate = currentDate;
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
     var phantom = require('phantom');
