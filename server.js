@@ -354,13 +354,10 @@ app.get('/backend/sitemap.xml', function(req, res){
         return;
     }
     // for lesson/intro if page has already been cached
-    if ( url === prevLessonUrl ){
-        setTimeout( function() {
-            logger.info('using cached lesson: ', url);
-            res.status(200).send(lessonIntroCachedPage);
-            //return;
-        }, 6000); //approx maximum time for phantom to render and save previous request to cache
-       return;
+    if ( url === prevLessonUrl && lessonIntroCachedPage !== ''){
+        logger.info('cached lesson/intro: ', url);
+        res.status(200).send(lessonIntroCachedPage);
+        return;
     }
     // invalid url is one that is not lesson/intro or home page
     if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
@@ -368,9 +365,6 @@ app.get('/backend/sitemap.xml', function(req, res){
         res.status(400).send('invalid url');
         return;
     }
-    //update the prevLessonUrl
-    prevLessonUrl = url;
-
     // no cached page, need to prerender new one
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
@@ -403,8 +397,9 @@ app.get('/backend/sitemap.xml', function(req, res){
                             logger.info('caching index home page', url);
                             indexCachedHomePage = result;
                             res.send(result);        
-                        }else {  // need to cache and send the lesson/intro page 
+                        }else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
                             logger.info(' caching lesson/intro', url);
+                            prevLessonUrl = url;
                             lessonIntroCachedPage = result;
                             res.send(result);
                         }
