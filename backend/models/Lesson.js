@@ -38,7 +38,7 @@ Lesson.prototype.getAllQuestionIds = function () {
             questionIds = questionIds.concat(steps[i].quizItems);
         }
     }
-    logger.info('found the following question ids', questionIds);
+    // logger.info('found the following question ids', questionIds);
     return questionIds;
 };
 

@@ -117,7 +117,7 @@ exports.updateLesson = function(lesson, callback) {
 				done();
 				return;
 			} else {
-				logger.info('Lesson [%s] updated successfully. invoking callback', lesson.name);
+				// logger.info('Lesson [%s] updated successfully. invoking callback', lesson.name);
 				callback(null, lesson);
 				done();
 				return;

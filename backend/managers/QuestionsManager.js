@@ -89,7 +89,7 @@ exports.copyQuestion = function(user, question, callback) {
  * @param callback
  */
 exports.updateQuestion = function(question, callback) {
-	logger.info('Updating question');
+	//logger.info('Updating question');
 
 	services.db.connect('questions', function(db, collection, done) {
 
@@ -105,7 +105,7 @@ exports.updateQuestion = function(question, callback) {
 				done();
 				return;
 			} else {
-				logger.info('Question [%s] updated successfully. invoking callback', question.question);
+				//logger.info('Question [%s] updated successfully. invoking callback', question.question);
 				callback(null, question);
 				done();
 				return;
@@ -149,7 +149,7 @@ exports.getUserQuestions = function(userId, callback) {
 };
 
 exports.search = function(filter, projection, callback) {
-	logger.info('finding questions with filter ', filter, projection);
+	//logger.info('finding questions with filter ', filter, projection);
 
 	services.db.connect('questions', function(db, collection, done) {
 		collection.find(filter, projection).toArray(function(err, result) {
