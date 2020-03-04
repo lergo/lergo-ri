@@ -297,9 +297,9 @@ app.get('/backend/sitemap.xml', function(req, res){
  var heCachedHomePage = '';
  var enCachedHomePage = '';
  var indexCachedHomePage = '';
- var lessonIntroCachedPage = '';
- var prevLessonUrl = '';
  var previousDate = 0;
+ var numRepeats = 0;
+ var repeatedLessonUrl = '';
  
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
@@ -353,18 +353,28 @@ app.get('/backend/sitemap.xml', function(req, res){
         }
         return;
     }
-    // for lesson/intro if page has already been cached
-    if ( url === prevLessonUrl && lessonIntroCachedPage !== ''){
-        logger.info('cached lesson/intro: ', url);
-        res.status(200).send(lessonIntroCachedPage);
-        return;
-    }
+
     // invalid url is one that is not lesson/intro or home page
     if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
-        logger.info('prerender does not accept invalid urls: ', url);
+        logger.info('invalid prerender url: ', url);
         res.status(400).send('invalid url');
         return;
     }
+
+    // prevent the same lessonUrl from running more than 4 times in a row
+    if (url !== repeatedLessonUrl) {
+        repeatedLessonUrl = url;
+        numRepeats = 1;
+        } else {
+        numRepeats += 1;
+        logger.info('repeatedLessonUrl: ',numRepeats, ' ' , repeatedLessonUrl);
+        if (numRepeats > 4) {
+            logger.info('prerender repeats exceeded: ', url);
+            res.status(400).send('repeats exceeded');
+            return;
+        } 
+    }
+
     // no cached page, need to prerender new one
     logger.info('prerendering url : ' + url ) ;
     var phInstance = null;
@@ -397,10 +407,8 @@ app.get('/backend/sitemap.xml', function(req, res){
                             logger.info('caching index home page', url);
                             indexCachedHomePage = result;
                             res.send(result);        
-                        }else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
-                            logger.info(' caching lesson/intro', url);
-                            prevLessonUrl = url;
-                            lessonIntroCachedPage = result;
+                        }else {  // need to send the lesson/intro page
+                            logger.info(' sending lesson/intro', url);
                             res.send(result);
                         }
                         phInstance.exit();
