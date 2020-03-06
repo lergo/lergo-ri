@@ -297,8 +297,6 @@ app.get('/backend/sitemap.xml', function(req, res){
  var heCachedHomePage = '';
  var enCachedHomePage = '';
  var indexCachedHomePage = '';
- var lessonIntroCachedPage = '';
- var prevLessonUrl = '';
  var previousDate = 0;
  
  app.get('/backend/crawler', function(req, res){
