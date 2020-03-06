@@ -353,12 +353,7 @@ app.get('/backend/sitemap.xml', function(req, res){
         }
         return;
     }
-    // for lesson/intro if page has already been cached
-    if ( url === prevLessonUrl && lessonIntroCachedPage !== ''){
-        logger.info('cached lesson/intro: ', url);
-        res.status(200).send(lessonIntroCachedPage);
-        return;
-    }
+    
     // invalid url is one that is not lesson/intro or home page
     if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
         logger.info('prerender does not accept invalid urls: ', url);
@@ -398,9 +393,7 @@ app.get('/backend/sitemap.xml', function(req, res){
                             indexCachedHomePage = result;
                             res.send(result);        
                         }else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
-                            logger.info(' caching lesson/intro', url);
-                            prevLessonUrl = url;
-                            lessonIntroCachedPage = result;
+                            logger.info(' sending lesson/intro', url);
                             res.send(result);
                         }
                         phInstance.exit();
