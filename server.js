@@ -259,7 +259,7 @@ app.get('/backend/sitemap.xml', function(req, res){
 
             for (var i = 0; i < result.length; i++) {
                 var lesson = result[i];
-                var entry = { url: '/#!/public/lessons/' + lesson._id + '/intro', changefreq: 'hourly', priority: 0.5 };
+                var entry = { url: '/index.html#!/public/lessons/' + lesson._id + '/intro', changefreq: 'hourly', priority: 0.5 };
 
                 if (!!lesson.lastUpdate) {
                     logger.info('last update exists');
@@ -273,7 +273,7 @@ app.get('/backend/sitemap.xml', function(req, res){
 
             // add homepage with languages
             _.each(['he','en'], function(lang){
-                sitemap.urls.push( { url: '/#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
+                sitemap.urls.push( { url: '/index.html#!/public/homepage?lergoLanguage=' + lang , 'changefreq': 'hourly', priority: 0.5 } );
             });
 
             sitemap.toXML( function (err, xml) {
