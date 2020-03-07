@@ -289,6 +289,8 @@ app.get('/backend/sitemap.xml', function(req, res){
     });
 }) ;
 
+/* jshint ignore:start */
+
  // Only allow index.html or public/lesson/:lesson_number/intro to be prerendered
  // often a certain url is prerendered many times in the same second or two
  // to prevent unnecessary cpu usage, we will cache the url and resend same page if repeated consecutively
@@ -298,6 +300,8 @@ app.get('/backend/sitemap.xml', function(req, res){
  var enCachedHomePage = '';
  var indexCachedHomePage = '';
  var previousDate = 0;
+ var repeatedLessonUrl = '';
+ var numRepeats = 0;
  
  app.get('/backend/crawler', function(req, res){
     var url = req.param('_escaped_fragment_');
@@ -358,58 +362,66 @@ app.get('/backend/sitemap.xml', function(req, res){
         res.status(400).send('invalid url');
         return;
     }
+
+    // prevent the same lessonUrl from running more than 4 times in a row
+    if (url !== repeatedLessonUrl) {
+        repeatedLessonUrl = url;
+        numRepeats = 1;
+        } else {
+        numRepeats += 1;
+        logger.info('repeatedLessonUrl: ',numRepeats, ' ' , repeatedLessonUrl);
+        if (numRepeats > 4) {
+            logger.info('prerender repeats exceeded: ', url);
+            res.status(400).send('repeats exceeded');
+            return;
+        } 
+    }
+
     // no cached page, need to prerender new one
     logger.info('prerendering url : ' + url ) ;
-    var phInstance = null;
-    var phantom = require('phantom');
-    phantom.create() //phantom.create
-        .then(instance => {
-            phInstance = instance;  //ph ==> phInstance
-            return instance.createPage(); // createpage
-        })
-        .then(page => {
-            // need to use page.open 
-            page.open(url).then(function( status ){ //page.open
-                if ( status === 'fail'){
-                    res.status(500).send('unable to open url');
-                    phInstance.exit();
-                }else {
-                    page.evaluate(function () { //page.evaluate
-                        return document.documentElement.innerHTML;
-                    }).then(function (result) {
-                        if ( heHomePage )  //  we need to cache and send the hebrew home page page
-                        {
-                            logger.info('caching hebrew home page', url);
-                            heCachedHomePage = result;
-                            res.send(result);
-                        } else if ( enHomePage ) {  //  we need to cache and send the english home page
-                            logger.info('caching english home page', url);
-                            enCachedHomePage = result;
-                            res.send(result);        
-                        } else if ( indexHomePage ) {  //  we need to cache and send the index home page
-                            logger.info('caching index home page', url);
-                            indexCachedHomePage = result;
-                            res.send(result);        
-                        }else {  // need to cache and send the lesson/intro page and update the prevLessonUrl
-                            logger.info(' sending lesson/intro', url);
-                            res.send(result);
-                        }
-                        phInstance.exit();
-                        page.close();
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        phInstance.exit();
-                    });
-                }
-            });
-        })
-        .catch(error => {
-            console.log(error);
-            phInstance.exit();
-        });
-}); 
+    const createPhantomPool = require('phantom-pool')
+    const pool = createPhantomPool({
+        max: 5,
+        min: 2,
+        validator: () => Promise.resolve(true),
+        phantomArgs: [[], {
+        }],
+    });
 
+    pool.use(async (instance) => {
+    const page = await instance.createPage()
+    const status = await page.open(url, { operation: 'GET' })
+    if (status !== 'success') {
+    throw new Error('cannot open url')
+    }
+    const html = await page.evaluate(function () {
+    return document.documentElement.innerHTML
+    })
+    if ( heHomePage )  //  we need to cache and send the hebrew home page page
+        {
+            logger.info('caching hebrew home page', url);
+            heCachedHomePage = html;
+            res.send(html);
+        } else if ( enHomePage ) {  //  we need to cache and send the english home page
+            logger.info('caching english home page', url);
+            enCachedHomePage = html;
+            res.send(html);
+        } else if ( indexHomePage ) {  //  we need to cache and send the index home page
+            logger.info('caching index home page', url);
+            indexCachedHomePage = html;
+            res.send(html);
+        }else {  // send the lesson/intro page (no caching)
+            logger.info(' sending lesson/intro', url);
+            res.send(html);
+        }
+    })                    
+
+    // Destroying the pool:
+    pool.drain().then(() => pool.clear())
+    }); 
+
+    /* jshint ignore:end */
+    
 logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
 // do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
