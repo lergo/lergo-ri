@@ -394,12 +394,20 @@ app.get('/backend/sitemap.xml', function(req, res){
     if (status !== 'success') {
     throw new Error('cannot open url')
     }
-    const html = await page.evaluate(function () {
+    var html = await page.evaluate(function () {
     return document.documentElement.innerHTML
     })
-    if ( heHomePage )  //  we need to cache and send the hebrew home page page
+    var count = (html.match(/public\/lessons/g) || []).length;
+    console.log('the count is ', count);
+    if ( count !== 72 && count !== 2 ) { // insure that prerender gives valid result
+        html = '';
+        logger.info('error forming html');
+        res.status(400).send('error in url');
+    } 
+        else if ( heHomePage )  //  we need to cache and send the hebrew home page page
         {
             logger.info('caching hebrew home page', url);
+
             heCachedHomePage = html;
             res.send(html);
         } else if ( enHomePage ) {  //  we need to cache and send the english home page
