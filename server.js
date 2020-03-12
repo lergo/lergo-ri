@@ -370,8 +370,8 @@ app.get('/backend/sitemap.xml', function(req, res){
         } else {
         numRepeats += 1;
         logger.info('repeatedLessonUrl: ',numRepeats, ' ' , repeatedLessonUrl);
-        if (numRepeats > 4) {
-            logger.info('prerender repeats exceeded: ', url);
+        if (numRepeats > 10) {
+            logger.info('repeatedLessonUrl limit exceeded: ', url);
             res.status(400).send('repeats exceeded');
             return;
         } 
@@ -398,8 +398,8 @@ app.get('/backend/sitemap.xml', function(req, res){
     return document.documentElement.innerHTML
     })
     var count = (html.match(/public\/lessons/g) || []).length;
-    console.log('the count is ', count);
-    if ( count !== 72 && count !== 2 ) { // insure that prerender gives valid result
+    console.log('the number of lesson images is ', count);
+    if ( count === 0 ) { // insure that prerender gives valid result
         html = '';
         logger.info('error forming html');
         res.status(400).send('error in url');
