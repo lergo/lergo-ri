@@ -302,8 +302,9 @@ app.get('/backend/sitemap.xml', function(req, res){
  var previousDate = 0;
  var repeatedLessonUrl = '';
  var numRepeats = 0;
- 
- app.get('/backend/crawler', function(req, res){
+ var throttle = require('express-throttle');
+
+ app.get('/backend/crawler', throttle({ 'burst': 10, 'rate': '10/m' }),function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
 
