@@ -19,7 +19,7 @@ map \$sent_http_content_type \$expires {
  expires \$expires;
 
 # limiting the request rate for /backend
-limit_req_zone $binary_remote_addr zone=one:10m rate=10r/m;
+limit_req_zone \$binary_remote_addr zone=one:10m rate=10r/m;
 
 #redirect to https using 307
 server {
