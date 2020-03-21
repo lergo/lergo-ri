@@ -30,18 +30,7 @@ exports.getTopTags = function (req, res) {
 
 //  db.lessons.aggregate( { $unwind : '$tags' },  { $group : {_id : '$tags.label' } }, { $match : { '_id' : /tom/i } } )
 //  db.lessons.aggregate( { $unwind : '$tags' },  { $match : {'tags.label' : /tom/i } }, { $group : { _id : '$tags.label' } })
-
-//  implementing caching of home page - TagsController and ComplexSearchService. Using 'Date' the variables will be reset every day
-//  the TagsController does not require different code for the different languages. 
-    // variables for caching home page tags
-    var cachedResult = [];
-    var validForCachingLessonTags = false;
-    var validForCachingQuestionTags = false;
-    var previousDate = 0;
-    var currentDate = 0;
-
 exports.getTagsByFilter = function (req, res) {
-    logger.info('getTagsByFilter');
 
     var like = req.param('like');
     like = new RegExp(like, 'i');
@@ -52,20 +41,12 @@ exports.getTagsByFilter = function (req, res) {
     var questionsId = req.getQueryList('questionsId');
     questionsId = services.db.id(questionsId);
 
+    logger.info('lessonsId',lessonsId);
+
     var result = [];
 
-    function findTagsOnCollection( collectionName, like, ids, callback ){
-    // test requests matching homepage     
-    var lessonCollection = /lessons/.test(collectionName);
-    var questionCollection = /questions/.test(collectionName);
-    var likeRequest = /(?:)/i.test(like);
-    var idsRequest = ids.length === 0; 
-    var d = new Date();
-    currentDate = d.getDate();
-    validForCachingLessonTags = lessonCollection && likeRequest && idsRequest;
-    validForCachingQuestionTags = questionCollection && likeRequest && idsRequest;
 
-            
+    function findTagsOnCollection( collectionName, like, ids, callback ){
         var match = { $match : { 'tags.label' : like || '' }};
         if ( !!ids && ids.length > 0){
             match.$match._id = { '$in' : ids };
@@ -88,8 +69,6 @@ exports.getTagsByFilter = function (req, res) {
 
 
     function findCallback(err, cursor, next) {
-        
-       
         cursor.toArray(function( err, tags) {
             if (!!err) {
                 next(err);
@@ -113,34 +92,16 @@ exports.getTagsByFilter = function (req, res) {
     }
 
     function main() {
-        // check if request is for home page tags
-        if (validForCachingLessonTags || validForCachingQuestionTags  && cachedResult.length !== 0) {
-            logger.info('using cached tags for homepage');
-            var finalResult = cachedResult;
-            if (currentDate !== previousDate) { // reset the home page link every day
-                previousDate = currentDate;
-                logger.info('updating date to ', previousDate);
-                cachedResult = [];
-            }    
-            res.send(finalResult);
-        } else {
-            async.parallel(
-                [
-                    findTagsOnLessons,
-                    findTagsOnQuestions
-                ],
-                function () {
-                    logger.debug('finished fetching labels');
-                    var finalResult = _.uniqBy(result, 'label');
-                    if ((validForCachingLessonTags || validForCachingQuestionTags) && cachedResult.length === 0) {
-                        logger.info('caching homepage tags');
-                        cachedResult = finalResult;
-                    }
-                    finalResult = finalResult;
-                    res.send(finalResult);
-                }
-            );
-        }
+        async.parallel(
+            [
+                findTagsOnLessons,
+                findTagsOnQuestions
+            ],
+            function () {
+                logger.debug('finished fetching labels');
+                res.send(_.uniqBy(result, 'label'));
+            }
+        );
     }
 
     if ( lessonsId.length > 0 ){
