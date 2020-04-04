@@ -426,7 +426,8 @@ exports.getPublicUsersDetailsMapByIds = function(ids, callback) {
 			'_id' : {
 				'$in' : ids
 			}
-		}, {
+		})
+		.project({
 			'username' : 1,
 			'_id' : 1
 		});

@@ -284,6 +284,7 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
         var queryObj = req.param('query');
         if ( typeof(queryObj) === 'string' ){
             queryObj = JSON.parse(queryObj);
+            console.log(queryObj);
         }
 
         if ( !queryObj.filter ) {
