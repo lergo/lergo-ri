@@ -364,7 +364,7 @@ app.get('/backend/sitemap.xml', function(req, res){
         return;
     }
 
-    // prevent the same lessonUrl from running more than 4 times in a row
+    // prevent the same lessonUrl from running more than 10 times in a row
     if (url !== repeatedLessonUrl) {
         repeatedLessonUrl = url;
         numRepeats = 1;
