@@ -149,7 +149,7 @@ exports.complexSearch = function (queryObj, builder, callback) {
                     function getQuery(callback) {
                        /*  logger.info('the compiled query obj generated ', filter, projection, sort, skip, limit); */
                         logger.info('the compiled query obj generated can be very long ');
-                        collection.find(filter, projection).sort(sort).skip(skip).limit(limit).toArray(function (err, dataResult) {
+                        collection.find(filter).project(projection).sort(sort).skip(skip).limit(limit).toArray(function (err, dataResult) {
                             if (!!err) {
                                 callback(err);
                                 return;
