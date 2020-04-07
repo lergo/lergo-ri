@@ -109,20 +109,40 @@ exports.adminUpdateLesson = function(req, res) {
 	});
 };
 
+var previousDate = 0;
+var userCache = '';
 exports.getPublicLessons = function(req, res) {
-
-	try {
-		var queryObj = req.queryObj;
-
-		if (!queryObj.filter || !queryObj.filter.public || queryObj.filter.public.$exists !== 1) {
-
-			throw new Error('public must be $exists 1');
+	var d = new Date();
+    var currentDate = d.getDate();
+	var qObjFilter = req.queryObj.filter;
+	var qObjProjec = req.queryObj.projection;
+	
+	
+	var userFlag = false;
+	// checking if this is a user/usernames query
+	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1  && req.queryObj.limit === 0) {
+		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
+		logger.info('is a usernames query: ', req.queryObj);
+		if (userCache !== '') {
+			logger.info('using the usernames cache', userCache.data.length);
+			res.send(userCache);
+			if (currentDate !== previousDate) { // reset the home page link every day
+				previousDate = currentDate;
+				logger.info('usernames cache: updating date to ', previousDate);
+				userCache = ''; // setting cache to empty
+			}
+			return;
+			
+		} else {
+			logger.info('need to cache the public lessons for usernames');
 		}
-	} catch (e) {
-		res.status(400).send('lessons controller - illegal filter value : ' + e.message);
-		return;
+	} else {
+		logger.info('not usernames query: ');
 	}
 
+
+		
+	
 	var lessons = [];
 	async.waterfall([ function loadLessons(callback) {
 		managers.lessons.complexSearch(req.queryObj, function(err, result) {
@@ -154,6 +174,10 @@ exports.getPublicLessons = function(req, res) {
 			err.send(res);
 			return;
 		} else {
+			if (userFlag === true) {
+				logger.info('caching the public usernames');
+				userCache = lessons;
+			}
 			res.send(lessons);
 		}
 	});
