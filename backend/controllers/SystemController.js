@@ -7,8 +7,29 @@ var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
+var previousDate = 0;
+var statsCache = {};
+var statsFlag = false; 
+var d = new Date();
+var currentDate = d.getDate();
+var stats = {};
 exports.getStatistics = function(req, res) {
-	var stats = {};
+
+	if (!req.sessionUser) {  // only caching the stats for users who are not logged in
+		statsFlag = true;
+		if (!_.isEmpty(statsCache)) {
+			logger.info('using the stats cache with ',Object.keys(statsCache).length, ' values');
+			res.send(statsCache);
+			if (currentDate !== previousDate) { // reset the stats link every day
+				previousDate = currentDate;
+				logger.info('stats cache: updating date to ', previousDate);
+				statsCache = {}; // setting cache to empty
+			}
+			return;
+		}
+	}
+	
+
 
 	function countMyItems(model, property) {
 		return function(callback) {
@@ -88,6 +109,10 @@ exports.getStatistics = function(req, res) {
 		if (!!err) {
 			res.status(500).send('unable to count', err);
 			return;
+		}
+		if (statsFlag === true) {
+			logger.info('caching the stats not-logged-in users');
+			statsCache = stats;
 		}
 		res.send(stats);
 	});

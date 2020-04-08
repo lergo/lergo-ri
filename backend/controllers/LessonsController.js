@@ -110,7 +110,7 @@ exports.adminUpdateLesson = function(req, res) {
 };
 
 var previousDate = 0;
-var userCache = '';
+var userCache = {};
 exports.getPublicLessons = function(req, res) {
 	var d = new Date();
     var currentDate = d.getDate();
@@ -122,14 +122,14 @@ exports.getPublicLessons = function(req, res) {
 	// checking if this is a user/usernames query
 	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1  && req.queryObj.limit === 0) {
 		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
-		logger.info('is a usernames query: ', req.queryObj);
-		if (userCache !== '') {
-			logger.info('using the usernames cache', userCache.data.length);
+		logger.info('is a usernames query: ');
+		if (!_.isEmpty(userCache)) {
+			logger.info('using the usernames cache with', userCache.data.length, 'users');
 			res.send(userCache);
 			if (currentDate !== previousDate) { // reset the home page link every day
 				previousDate = currentDate;
 				logger.info('usernames cache: updating date to ', previousDate);
-				userCache = ''; // setting cache to empty
+				userCache = {}; // setting cache to empty
 			}
 			return;
 			
