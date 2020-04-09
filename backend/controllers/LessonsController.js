@@ -120,13 +120,14 @@ exports.getPublicLessons = function(req, res) {
     var currentDate = d.getDate();
 	var qObjFilter = req.queryObj.filter;
 	var qObjProjec = req.queryObj.projection;
+	var mustHaveUndefined = qObjFilter.subject === undefined && qObjFilter.age === undefined && qObjFilter.userId === undefined && qObjFilter.searchText === undefined && qObjFilter.views === undefined;
 	
 	var userFlag = false;
 	var heLessonsFlag = false;
 	var enLessonsFlag = false;
 	var arLessonsFlag = false;
 	// checking if this is a user/usernames query
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1 && req.queryObj.limit === 0) {
+	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1 && req.queryObj.limit === 0 ) {
 		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
 		logger.info('is a usernames query: ');
 		if (!_.isEmpty(userCache)) {
@@ -147,7 +148,7 @@ exports.getPublicLessons = function(req, res) {
 	}
 
 	//  english, arabic, hebrew, lesson cache
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && req.queryObj.limit === 18) {
+	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && req.queryObj.limit === 18 && req.queryObj.skip === 0 && mustHaveUndefined) {
 		if (qObjFilter.language === 'english') {
 			enLessonsFlag = true;  
 			if (!_.isEmpty(enHomePageLessons)) {
