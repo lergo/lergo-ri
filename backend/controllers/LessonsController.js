@@ -111,16 +111,22 @@ exports.adminUpdateLesson = function(req, res) {
 
 var previousDate = 0;
 var userCache = {};
+var enHomePageLessons = {};
+var heHomePageLessons = {};
+var arHomePageLessons = {};
+
 exports.getPublicLessons = function(req, res) {
 	var d = new Date();
     var currentDate = d.getDate();
 	var qObjFilter = req.queryObj.filter;
 	var qObjProjec = req.queryObj.projection;
 	
-	
 	var userFlag = false;
+	var heLessonsFlag = false;
+	var enLessonsFlag = false;
+	var arLessonsFlag = false;
 	// checking if this is a user/usernames query
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1  && req.queryObj.limit === 0) {
+	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1 && req.queryObj.limit === 0) {
 		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
 		logger.info('is a usernames query: ');
 		if (!_.isEmpty(userCache)) {
@@ -134,14 +140,64 @@ exports.getPublicLessons = function(req, res) {
 			return;
 			
 		} else {
-			logger.info('need to cache the public lessons for usernames');
+			logger.info('need to cache the  usernames');
 		}
 	} else {
-		logger.info('not usernames query: ');
+		//logger.info('not usernames query: ');
 	}
 
-
+	//  english, arabic, hebrew, lesson cache
+	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && req.queryObj.limit === 18) {
+		if (qObjFilter.language === 'english') {
+			enLessonsFlag = true;  
+			if (!_.isEmpty(enHomePageLessons)) {
+				logger.info('using the enHomePageLessons cache', enHomePageLessons.data.length, ' lessons');
+				res.send(enHomePageLessons);
+				if (currentDate !== previousDate) { // reset the home page link every day
+					previousDate = currentDate;
+					logger.info('usernames cache: updating date to ', previousDate);
+					enHomePageLessons = {}; // setting cache to empty
+				}
+				return;
+				
+			} else {
+				logger.info('need to cache homepage english lessons');
+			}
+		} else if (qObjFilter.language === 'arabic') {
+			arLessonsFlag = true;  
+			if (!_.isEmpty(arHomePageLessons)) {
+				logger.info('using the arHomePageLessons cache', arHomePageLessons.data.length, ' lessons');
+				res.send(arHomePageLessons);
+				if (currentDate !== previousDate) { // reset the home page link every day
+					previousDate = currentDate;
+					logger.info('arabic homepage lessons cache: updating date to ', previousDate);
+					arHomePageLessons = {}; // setting cache to empty
+				}
+				return;
+				
+			} else {
+				logger.info('need to cache homepage arabic lessons');
+			}
+		} else if (qObjFilter.language === 'hebrew') {
+			heLessonsFlag = true;  
+			if (!_.isEmpty(heHomePageLessons)) {
+				logger.info('using the heHomePageLessons cache', heHomePageLessons.data.length, ' lessons');
+				res.send(heHomePageLessons);
+				if (currentDate !== previousDate) { // reset the home page link every day
+					previousDate = currentDate;
+					logger.info('hebrew homepage lessons cache: updating date to ', previousDate);
+					heHomePageLessons = {}; // setting cache to empty
+				}
+				return;
+				
+			} else {
+				logger.info('need to cache homepage hebrew lessons');
+			}
 		
+		} else {
+			logger.info('not caching this language: ',qObjFilter.language );
+		}
+	}
 	
 	var lessons = [];
 	async.waterfall([ function loadLessons(callback) {
@@ -174,10 +230,23 @@ exports.getPublicLessons = function(req, res) {
 			err.send(res);
 			return;
 		} else {
+			
 			if (userFlag === true) {
 				logger.info('caching the public usernames');
 				userCache = lessons;
-			}
+			} 
+			if (enLessonsFlag === true) {
+				logger.info('caching the english home page lessons');
+				enHomePageLessons = lessons;
+			} 
+			if (heLessonsFlag === true) {
+				logger.info('caching the hebrew home page lessons');
+				heHomePageLessons = lessons;
+			} 
+			if (arLessonsFlag === true) {
+				logger.info('caching the arabic home page lessons');
+				arHomePageLessons = lessons;
+			} 
 			res.send(lessons);
 		}
 	});
