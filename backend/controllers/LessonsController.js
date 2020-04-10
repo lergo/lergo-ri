@@ -120,8 +120,9 @@ exports.getPublicLessons = function(req, res) {
     var currentDate = d.getDate();
 	var qObjFilter = req.queryObj.filter;
 	var qObjProjec = req.queryObj.projection;
-	var mustHaveUndefined = qObjFilter.subject === undefined && qObjFilter.age === undefined && qObjFilter.userId === undefined && qObjFilter.searchText === undefined && qObjFilter.views === undefined;
-	
+	//mustHaveUndefined prevents any filter query from being cached as default homepage query
+	var mustHaveUndefined = !qObjFilter.hasOwnProperty('tags.label') && qObjFilter.subject === undefined && qObjFilter.age === undefined && qObjFilter.userId === undefined && qObjFilter.searchText === undefined && qObjFilter.views === undefined;
+
 	var userFlag = false;
 	var heLessonsFlag = false;
 	var enLessonsFlag = false;
