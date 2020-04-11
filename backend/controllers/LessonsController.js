@@ -117,7 +117,8 @@ var arHomePageLessons = {};
 
 exports.getPublicLessons = function(req, res) {
 	var d = new Date();
-    var currentDate = d.getDate();
+	// var currentDate = d.getDate();
+	var currentDate = d.getHours();  // temporarily use hours to enable checking for bugs
 	var qObjFilter = req.queryObj.filter;
 	var qObjProjec = req.queryObj.projection;
 	// 'mustHaveUndefined' prevents any filter query from being cached as default homepage query
