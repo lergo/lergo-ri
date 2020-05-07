@@ -7,33 +7,29 @@ var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
-var previousHour = 0;
-var userStatsCache = {};
-var statsStore = [];
-var privateStatsFlag = false; 
+var previousDate = 0;
+var statsCache = {};
+var statsFlag = false; 
 var d = new Date();
-var currentHour = d.getHours(); //update every hour
-
+var currentDate = d.getDate();
+var stats = {};
 exports.getStatistics = function(req, res) {
-	var stats = {};
-	var key = '';
-	if (req.sessionUser) {  // for logged in users only
-		key = req.sessionUser._id ;
-	} else {
-		key = 'notLoggedIn';
-	}
 
-		privateStatsFlag = true;
-		if (userStatsCache[key]) {
-			logger.info('using the userStatsCache with ',Object.keys(userStatsCache[key]).length, ' for ',key );
-			res.send(userStatsCache[key]);
-			if (currentHour !== previousHour) { // reset the stats link every hour
-				previousHour = currentHour;
-				logger.info('stats cache: updating hour to ', currentHour);
-				userStatsCache ={};
+	if (!req.sessionUser) {  // only caching the stats for users who are not logged in
+		statsFlag = true;
+		if (!_.isEmpty(statsCache)) {
+			logger.info('using the stats cache with ',Object.keys(statsCache).length, ' values');
+			res.send(statsCache);
+			if (currentDate !== previousDate) { // reset the stats link every day
+				previousDate = currentDate;
+				logger.info('stats cache: updating date to ', previousDate);
+				statsCache = {}; // setting cache to empty
 			}
-			return; 
+			return;
 		}
+	}
+	
+
 
 	function countMyItems(model, property) {
 		return function(callback) {
@@ -114,12 +110,9 @@ exports.getStatistics = function(req, res) {
 			res.status(500).send('unable to count', err);
 			return;
 		}
-		if (privateStatsFlag) {
-			logger.info('caching the private stats for user ', key);
-			userStatsCache[key] = stats;
-			statsStore.push(userStatsCache);
-			res.send(stats);
-			return;
+		if (statsFlag === true) {
+			logger.info('caching the stats not-logged-in users');
+			statsCache = stats;
 		}
 		res.send(stats);
 	});
