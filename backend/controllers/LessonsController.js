@@ -109,7 +109,7 @@ exports.adminUpdateLesson = function(req, res) {
 	});
 };
 
-var previousDate = 0;
+var previousHour = 0;
 var userCache = {};  // these are all the users with public lessons and will be used in the createdBy filter
 var enHomePageLessons = {};
 var heHomePageLessons = {};
@@ -117,8 +117,7 @@ var arHomePageLessons = {};
 
 exports.getPublicLessons = function(req, res) {
 	var d = new Date();
-	// var currentDate = d.getDate();
-	var currentDate = d.getHours();  // temporarily use hours to enable checking for bugs
+	var currentHour = d.getHours(); // updating every hour
 	var qObjFilter = req.queryObj.filter;
 	var qObjProjec = req.queryObj.projection;
 	// 'mustHaveUndefined' prevents any filter query from being cached as default homepage query
@@ -135,9 +134,9 @@ exports.getPublicLessons = function(req, res) {
 		if (!_.isEmpty(userCache)) {
 			logger.info('using the usernames cache with', userCache.data.length, 'users');
 			res.send(userCache);
-			if (currentDate !== previousDate) { // reset the home page link every day
-				previousDate = currentDate;
-				logger.info('usernames cache: updating date to ', previousDate);
+			if (currentHour !== previousHour) { // reset the home page link every hour
+				previousHour = currentHour;
+				logger.info('usernames cache: updating hour to ', previousHour);
 				userCache = {}; // setting userCache to empty
 				enHomePageLessons = {}; // setting enHomePageLessons to empty
 				arHomePageLessons = {}; // setting arHomePageLessons to empty
@@ -159,9 +158,9 @@ exports.getPublicLessons = function(req, res) {
 			if (!_.isEmpty(enHomePageLessons)) {
 				logger.info('using the enHomePageLessons cache', enHomePageLessons.data.length, ' lessons');
 				res.send(enHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('usernames cache: updating date to ', previousDate);
+				if (currentHour !== previousHour) { // reset the home page link every day
+					previousHour = currentHour;
+					logger.info('usernames cache: updating hour to ', previousHour);
 					userCache = {}; // setting userCache to empty
 					enHomePageLessons = {}; // setting enHomePageLessons to empty
 					arHomePageLessons = {}; // setting arHomePageLessons to empty
@@ -177,9 +176,9 @@ exports.getPublicLessons = function(req, res) {
 			if (!_.isEmpty(arHomePageLessons)) {
 				logger.info('using the arHomePageLessons cache', arHomePageLessons.data.length, ' lessons');
 				res.send(arHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('arabic homepage lessons cache: updating date to ', previousDate);
+				if (currentHour !== previousHour) { // reset the home page link every day
+					previousHour = currentHour;
+					logger.info('arabic homepage lessons cache: updating hour to ', previousHour);
 					userCache = {}; // setting userCache to empty
 					enHomePageLessons = {}; // setting enHomePageLessons to empty
 					arHomePageLessons = {}; // setting arHomePageLessons to empty
@@ -195,9 +194,9 @@ exports.getPublicLessons = function(req, res) {
 			if (!_.isEmpty(heHomePageLessons)) {
 				logger.info('using the heHomePageLessons cache', heHomePageLessons.data.length, ' lessons');
 				res.send(heHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('hebrew homepage lessons cache: updating date to ', previousDate);
+				if (currentHour !== previousHour) { // reset the home page link every day
+					previousHour = currentHour;
+					logger.info('hebrew homepage lessons cache: updating hour to ', previousHour);
 					userCache = {}; // setting userCache to empty
 					enHomePageLessons = {}; // setting enHomePageLessons to empty
 					arHomePageLessons = {}; // setting arHomePageLessons to empty

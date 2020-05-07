@@ -7,29 +7,33 @@ var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
-var previousDate = 0;
-var statsCache = {};
-var statsFlag = false; 
+var previousHour = 0;
+var userStatsCache = {};
+var statsStore = [];
+var privateStatsFlag = false; 
 var d = new Date();
-var currentDate = d.getDate();
-var stats = {};
+var currentHour = d.getHours(); //update every hour
+
 exports.getStatistics = function(req, res) {
-
-	if (!req.sessionUser) {  // only caching the stats for users who are not logged in
-		statsFlag = true;
-		if (!_.isEmpty(statsCache)) {
-			logger.info('using the stats cache with ',Object.keys(statsCache).length, ' values');
-			res.send(statsCache);
-			if (currentDate !== previousDate) { // reset the stats link every day
-				previousDate = currentDate;
-				logger.info('stats cache: updating date to ', previousDate);
-				statsCache = {}; // setting cache to empty
-			}
-			return;
-		}
+	var stats = {};
+	var key = '';
+	if (req.sessionUser) {  // for logged in users only
+		key = req.sessionUser._id ;
+	} else {
+		key = 'notLoggedIn';
 	}
-	
 
+		privateStatsFlag = true;
+		if (userStatsCache[key]) {
+			logger.info('using the userStatsCache with ',Object.keys(userStatsCache[key]).length, ' for ',key );
+			res.send(userStatsCache[key]);
+			if (currentHour !== previousHour) { // reset the stats link every hour
+				previousHour = currentHour;
+				logger.info('stats cache: updating hour to ', currentHour);
+				userStatsCache ={};
+			}
+			return; 
+		}
 
 	function countMyItems(model, property) {
 		return function(callback) {
@@ -110,9 +114,12 @@ exports.getStatistics = function(req, res) {
 			res.status(500).send('unable to count', err);
 			return;
 		}
-		if (statsFlag === true) {
-			logger.info('caching the stats not-logged-in users');
-			statsCache = stats;
+		if (privateStatsFlag) {
+			logger.info('caching the private stats for user ', key);
+			userStatsCache[key] = stats;
+			statsStore.push(userStatsCache);
+			res.send(stats);
+			return;
 		}
 		res.send(stats);
 	});
