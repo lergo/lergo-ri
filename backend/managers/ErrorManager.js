@@ -42,7 +42,8 @@ var errorsDefinition = {
     'NotFound' : createNewError(12, 'resource not found', 404),
     'UsernameAlreadyExists' : createNewError( 13, 'login.usernameAlreadyExists', 500 ),
     'ResourceInUse' : createNewError( 14, 'resource is in use' , 400 ),
-    'Forbidden' : createNewError( 15, 'user has no permissions to do this', 403)
+    'Forbidden' : createNewError( 15, 'user has no permissions to do this', 403),
+    'EmailAlreadyExists': createNewError( 16, 'login.emailAlreadyExists', 500 )
 };
 
 

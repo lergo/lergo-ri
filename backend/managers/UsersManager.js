@@ -79,52 +79,68 @@ exports.createUser = function(emailResources, user, callback) {
 		return;
 	}
 
-	exports.isUserExists(user.username, user.email, function(err, result) {
+	exports.doesEmailExist(user.email, function(err, result) {
 		logger.info(arguments);
 		if (!!err) {
 			logger.error('error getting user by email');
-			callback(new errorManager.InternalServerError(err, 'searching for user with same username'));
+			callback(new errorManager.InternalServerError(err, 'searching for user with same email'));
 			return;
 		}
 
 		if (!!result) {
-			logger.info('user with email [%s] or username [%s] already exists', user.email, user.username);
-			callback(new errorManager.UsernameAlreadyExists());
+			logger.info('user with email [%s] already exists', user.email);
+			callback(new errorManager.EmailAlreadyExists());
 			return;
 		}
+	
 
-		logger.info('user with email [%s] does not exists. creating', user.username);
-		services.db.connect('users', function(db, collection, done) {
+		exports.isUserExists(user.username, user.email, function(err, result) {
+			logger.info(arguments);
+			if (!!err) {
+				logger.error('error getting user by email');
+				callback(new errorManager.InternalServerError(err, 'searching for user with same username'));
+				return;
+			}
 
-			user.password = exports.encryptUserPassword(user.password);
-			delete user.passwordConfirm;
-			delete user.confirmPassword;
+			if (!!result) {
+				logger.info('user with email [%s] or username [%s] already exists', user.email, user.username);
+				callback(new errorManager.UsernameAlreadyExists());
+				return;
+			}
 
-			collection.insertOne(user, function(err) {
-				if (!!err) {
-					logger.error('error creating user [%s] : [%s]', user.username, err);
-					callback(new errorManager.InternalServerError());
-					done();
-					return;
-				}
+			logger.info('user with email [%s] does not exists. creating', user.username);
+			services.db.connect('users', function(db, collection, done) {
 
-				else {
-					logger.info('user [%s] creating successfully. sending validation email', user.username);
-					done();
-					exports.sendValidationEmail(emailResources, user, function(err, user) {
-						if (!!err) {
-							callback(new errorManager.ErrorSendingValidationEmail(err, user.email));
-							return;
-						}
+				user.password = exports.encryptUserPassword(user.password);
+				delete user.passwordConfirm;
+				delete user.confirmPassword;
 
-						callback(null, user);
+				collection.insertOne(user, function(err) {
+					if (!!err) {
+						logger.error('error creating user [%s] : [%s]', user.username, err);
+						callback(new errorManager.InternalServerError());
+						done();
 						return;
-					});
+					}
 
-				}
+					else {
+						logger.info('user [%s] creating successfully. sending validation email', user.username);
+						done();
+						exports.sendValidationEmail(emailResources, user, function(err, user) {
+							if (!!err) {
+								callback(new errorManager.ErrorSendingValidationEmail(err, user.email));
+								return;
+							}
+
+							callback(null, user);
+							return;
+						});
+
+					}
+				});
 			});
-		});
 
+		});
 	});
 };
 
@@ -411,6 +427,11 @@ exports.findUser = function(filter, callback) {
 
 };
 
+exports.findUserByEmail = function(filter, callback) {
+	logger.info('getting user with filter [%s]', JSON.stringify(filter));
+	User.findOne(filter, {}, callback);
+};
+
 exports.find = function(filter, projection, callback) {
 	services.db.connect('users', function(db, collection) {
 		collection.find(filter, projection).toArray(function(err, result) {
@@ -437,6 +458,22 @@ exports.getPublicUsersDetailsMapByIds = function(ids, callback) {
 		});
 	});
 };
+
+exports.doesEmailExist = function( _email, callback) {
+	/* var username = escapeStringRegexp(_username); */
+	var email = escapeStringRegexp(_email);
+	exports.findUserByEmail({ 'email' : new RegExp( ['^',email,'$'].join(''),'i')
+	
+	}, function(err, result) {
+		if (!!err) {
+			callback(err);
+		} else {
+			callback(null, !!result);
+		}
+	});
+};
+
+
 
 exports.isUserExists = function(_username, _email, callback) {
 	var username = escapeStringRegexp(_username);
