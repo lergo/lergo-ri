@@ -7,25 +7,25 @@ var _ = require('lodash');
 
 // use 'count' instead. currently all questions are in the memory
 // http://stackoverflow.com/a/9337774/1068746
-var previousDate = 0;
+var previousHour = 0;
 var statsCache = {};
-var statsFlag = false; 
 var d = new Date();
-var currentDate = d.getDate();
-var stats = {};
+var currentHour = d.getHours();
 exports.getStatistics = function(req, res) {
-
+	var stats = {};
+	var statsFlag = false;	
 	if (!req.sessionUser) {  // only caching the stats for users who are not logged in
-		statsFlag = true;
 		if (!_.isEmpty(statsCache)) {
 			logger.info('using the stats cache with ',Object.keys(statsCache).length, ' values');
 			res.send(statsCache);
-			if (currentDate !== previousDate) { // reset the stats link every day
-				previousDate = currentDate;
-				logger.info('stats cache: updating date to ', previousDate);
+			if (currentHour !== previousHour) { // reset the stats link every day
+				previousHour = currentHour;
+				logger.info('stats cache: updating hour to ', previousHour);
 				statsCache = {}; // setting cache to empty
 			}
 			return;
+		} else {
+			statsFlag = true;
 		}
 	}
 	
@@ -113,6 +113,7 @@ exports.getStatistics = function(req, res) {
 		if (statsFlag === true) {
 			logger.info('caching the stats not-logged-in users');
 			statsCache = stats;
+			statsFlag = false;
 		}
 		res.send(stats);
 	});
