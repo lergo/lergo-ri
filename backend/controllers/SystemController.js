@@ -9,9 +9,10 @@ var _ = require('lodash');
 // http://stackoverflow.com/a/9337774/1068746
 var previousHour = 0;
 var statsCache = {};
-var d = new Date();
-var currentHour = d.getHours();
+
 exports.getStatistics = function(req, res) {
+	var d = new Date();
+	var currentHour = d.getHours();
 	var stats = {};
 	var statsFlag = false;	
 	if (!req.sessionUser) {  // only caching the stats for users who are not logged in
