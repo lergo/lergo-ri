@@ -179,7 +179,7 @@ exports.patchUser = function(req, res ){
                     return;
                 }
                 logger.debug('update result is', result);
-                res.sendSend(200);
+                res.sendStatus(200);
             });
         });
     }else{
