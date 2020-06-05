@@ -67,8 +67,6 @@ server {
 
 
   location ~ /index.html {
-    if_modified_since off;
-    
     set \$test "";
 
     if ( \$http_user_agent ~* "(Google|facebook|bing)" ) {
