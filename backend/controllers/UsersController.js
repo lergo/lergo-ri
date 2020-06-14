@@ -164,6 +164,16 @@ exports.getAll = function (req, res) {
     });
 };
 
+exports.days = function (req, res) {
+    managers.users.complexSearch(req.queryObj, function(err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to get all users').send(res);
+            return;
+        }
+        res.send(result);
+    });
+};
+
 exports.patchUser = function(req, res ){
 
     var patchData = req.body;

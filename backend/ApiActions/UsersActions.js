@@ -278,6 +278,20 @@ exports.getUsers = {
     ]
 };
 
+exports.getUsersFromDays = {
+    'spec': {
+        'path': '/users/get/days',
+        'summary': 'get users from sign up date',
+        'method': 'GET'
+    },
+    'action': controllers.users.days,
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.users.canSeeAllUsers,
+        middlewares.lergo.queryObjParsing
+    ]
+};
+
 exports.getPermissions = {
     'spec': {
         'path': '/user/permissions',

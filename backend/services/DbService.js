@@ -119,6 +119,21 @@ exports.id = function( id ){
     }
 };
 
+exports.signUpDate = function( days ){
+    try {
+        if (typeof(days) === 'string') {
+           var _id =  Math.floor(new Date(new Date()-1000*60*60*24*days).getTime()/1000).toString(16) + "0000000000000000";
+            return mongodb.ObjectID(_id);
+        } else {
+            console.log('error, it should be a string');
+            return days;
+        }
+    }catch(e){
+        logger.error('unable to convert to objectId',id);
+        throw e;
+    }
+};
+
 
 
 exports.drop = function () {
