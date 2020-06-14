@@ -299,13 +299,13 @@ exports.queryObjParsing = function queryObjParsing ( req, res, next ){
             logger.info('unable to convert userId to object',e);
         }
 
-        // try {
-        //     if (queryObj.filter.hasOwnProperty('days')){
-        //         queryObj.filter.userId = services.db.signUpDate(queryObj.filter.days);
-        //     }
-        // }catch(e){
-        //     logger.info('unable to convert userId to object',e);
-        // }
+        try {
+            if (queryObj.filter.hasOwnProperty('days')){
+                queryObj.filter.days = services.db.signUpDate(queryObj.filter.days);
+            }
+        }catch(e){
+            logger.info('unable to convert userId to object',e);
+        }
 
         // the next two if statements are use for mongodb driver 2.x to convert to hexadecimal and back again
 

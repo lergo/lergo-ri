@@ -119,17 +119,15 @@ exports.id = function( id ){
     }
 };
 
-exports.signUpDate = function( days ){
+exports.signUpDate = function(){
     try {
-        if (typeof(days) === 'string') {
-           var _id =  Math.floor(new Date(new Date()-1000*60*60*24*days).getTime()/1000).toString(16) + "0000000000000000";
-            return mongodb.ObjectID(_id);
-        } else {
-            console.log('error, it should be a string');
-            return days;
-        }
+          console.log('now in DBService - signUpDate ');
+           var daysObj =  Math.floor(new Date(new Date()-1000*60*60*24*90).getTime()/1000).toString(16) + "0000000000000000";
+           console.log('------------------------------------the daysObj is ', daysObj);
+           console.log('----------------------------------going to return ', mongodb.ObjectID(daysObj)); 
+           return mongodb.ObjectID(daysObj);
     }catch(e){
-        logger.error('unable to convert to objectId',id);
+        logger.error('unable to convert to objectId',days);
         throw e;
     }
 };
