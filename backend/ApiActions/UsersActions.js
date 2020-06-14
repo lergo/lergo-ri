@@ -280,7 +280,7 @@ exports.getUsers = {
 
 exports.getUsersBySignUpDate = {
     'spec': {
-        'path': '/users/get/days',
+        'path': '/users/get/date',
         'summary': 'get users by sign up date',
         'method': 'GET'
     },
