@@ -164,7 +164,7 @@ exports.getAll = function (req, res) {
     });
 };
 
-exports.days = function (req, res) {
+exports.getDays = function (req, res) {
     managers.users.complexSearch(req.queryObj, function(err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all users').send(res);

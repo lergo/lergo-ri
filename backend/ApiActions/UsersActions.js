@@ -278,13 +278,13 @@ exports.getUsers = {
     ]
 };
 
-exports.getUsersFromDays = {
+exports.getUsersBySignUp = {
     'spec': {
         'path': '/users/get/days',
         'summary': 'get users from sign up date',
         'method': 'GET'
     },
-    'action': controllers.users.days,
+    'action': controllers.users.getDays,
     'middlewares': [
         middlewares.session.isLoggedIn,
         middlewares.users.canSeeAllUsers,
