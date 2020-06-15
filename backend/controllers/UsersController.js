@@ -155,6 +155,7 @@ exports.resendValidationEmail = function (req, res) {
 };
 
 exports.getAll = function (req, res) {
+    console.log('--------------the getAll req.queryObject,', req.queryObj);
     managers.users.complexSearch(req.queryObj, function(err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all users').send(res);
@@ -165,6 +166,11 @@ exports.getAll = function (req, res) {
 };
 
 exports.getDays = function (req, res) {
+    req.queryObj = {
+        filter: {_id: {$gt:new ObjectId( Math.floor(new Date(new Date()-1000*60*60*24*500).getTime()/1000).toString(16) + "0000000000000000" )} },
+        limit: 0
+    }
+
     managers.users.complexSearch(req.queryObj, function(err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all users').send(res);
