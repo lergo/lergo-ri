@@ -12,8 +12,7 @@ var logger = managers.log.getLogger('UsersController');
 var User = require('../models/User');
 var async = require('async');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
-var mongodb = require('mongodb');
-var MongoClient = require('mongodb').MongoClient;
+var mongodb = require('mongodb')
 
 logger.info('initializing');
 
@@ -169,7 +168,7 @@ exports.getAll = function (req, res) {
 
 exports.getDays = function (req, res) {
     req.queryObj = {
-        filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-1000*60*60*24*200).getTime()/1000).toString(16) + "0000000000000000" )} },
+        filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*200).getTime()/1000).toString(16) + "0000000000000000" )} },
         limit: 0
     }
 
