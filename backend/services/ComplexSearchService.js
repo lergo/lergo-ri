@@ -163,7 +163,6 @@ exports.complexSearch = function (queryObj, builder, callback) {
                 ],
                 function finishedQuery() {
                     logger.info('calling callback ');
-                    console.log('the count result in complexSearch is ', count );
                     callback(err, {
                         'data': data,
                         'count': count,

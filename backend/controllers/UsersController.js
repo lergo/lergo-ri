@@ -156,7 +156,6 @@ exports.resendValidationEmail = function (req, res) {
 };
 
 exports.getAll = function (req, res) {
-    console.log('--------------the getAll req.queryObject,', req.queryObj);
     managers.users.complexSearch(req.queryObj, function(err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all users').send(res);
@@ -165,10 +164,11 @@ exports.getAll = function (req, res) {
         res.send(result);
     });
 };
-
+// get users who signed up after days (variable)
 exports.getDays = function (req, res) {
+    var days = 200;
     req.queryObj = {
-        filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*200).getTime()/1000).toString(16) + "0000000000000000" )} },
+        filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*days).getTime()/1000).toString(16) + "0000000000000000" )} },
         limit: 0
     }
 
