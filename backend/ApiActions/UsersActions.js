@@ -287,8 +287,7 @@ exports.getUsersBySignUpDate = {
     'action': controllers.users.getDays,
     'middlewares': [
         middlewares.session.isLoggedIn,
-        middlewares.users.canSeeAllUsers,
-        middlewares.lergo.queryObjParsing
+        middlewares.users.canSeeAllUsers
     ]
 };
 
