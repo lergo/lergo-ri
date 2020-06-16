@@ -169,6 +169,7 @@ exports.getDays = function (req, res) {
     var days = req.query.days;
     req.queryObj = {
         filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*days).getTime()/1000).toString(16) + "0000000000000000" )} },
+        projection: {"fullname": 1, "email": 1, "username": 1, "validated": 1},
         limit: 0
     }
 
