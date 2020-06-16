@@ -166,7 +166,7 @@ exports.getAll = function (req, res) {
 };
 // get users who signed up after days (variable)
 exports.getDays = function (req, res) {
-    var days = 200;
+    var days = req.query.days;
     req.queryObj = {
         filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*days).getTime()/1000).toString(16) + "0000000000000000" )} },
         limit: 0
