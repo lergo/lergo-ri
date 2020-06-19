@@ -12,6 +12,7 @@ var logger = managers.log.getLogger('UsersController');
 var User = require('../models/User');
 var async = require('async');
 var disqusClient = services.disqus.configure(services.conf.disqus).client;
+var mongodb = require('mongodb');
 
 logger.info('initializing');
 
@@ -155,6 +156,24 @@ exports.resendValidationEmail = function (req, res) {
 };
 
 exports.getAll = function (req, res) {
+    managers.users.complexSearch(req.queryObj, function(err, result) {
+        if (!!err) {
+            new managers.error.InternalServerError(err, 'unable to get all users').send(res);
+            return;
+        }
+        res.send(result);
+    });
+};
+// get users who signed up after days (variable)
+exports.getDays = function (req, res) {
+    var days = req.query.days;
+    req.queryObj = {
+        filter: {_id: {$gt:mongodb.ObjectId( Math.floor(new Date(new Date()-86400000*days).getTime()/1000).toString(16) + '0000000000000000' )} },
+        projection: {'fullName': 1, 'email': 1, 'username': 1, 'validated': 1},
+        sort: {'_id': -1},
+        limit: 0
+    };
+
     managers.users.complexSearch(req.queryObj, function(err, result) {
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to get all users').send(res);

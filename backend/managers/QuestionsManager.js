@@ -129,7 +129,6 @@ exports.deleteQuestion = function(id, callback) {
 };
 
 exports.getQuestionById = function(id, callback) {
-	console.log('is the problem here?');
 	Question.findById(id, callback);
 };
 

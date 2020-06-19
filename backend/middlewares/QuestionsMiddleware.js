@@ -62,7 +62,6 @@ exports.userCanEdit = function userCanEdit( req, res, next  ){
 exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( req, res, next ){
 
     Lesson.existsPublicByQuizItems( req.question, function(err,exists){
-        console.log('testing if question is used by public lesson', exists);
         req.questionUsedByPublicLesson = !!exists;
         next();
     });

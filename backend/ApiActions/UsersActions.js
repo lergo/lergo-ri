@@ -278,6 +278,19 @@ exports.getUsers = {
     ]
 };
 
+exports.getUsersBySignUpDate = {
+    'spec': {
+        'path': '/users/get/date',
+        'summary': 'get users by sign up date',
+        'method': 'GET'
+    },
+    'action': controllers.users.getDays,
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.users.canSeeAllUsers
+    ]
+};
+
 exports.getPermissions = {
     'spec': {
         'path': '/user/permissions',

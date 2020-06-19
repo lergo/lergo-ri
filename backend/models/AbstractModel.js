@@ -88,7 +88,6 @@ function enhance( Class ) {
         // so we need to have a new value for invites - finished, because it is not simple to remove the field directl
         // and there is the issue of reports finished and invites "finished"
         if (selfData.finished === null) {
-            console.log('it is null');
             Class.connect(function (db, collection) {
                 logger.info('connected. removing finished field', self.data._id);
                 collection.updateOne({ '_id': self.data._id}, { $unset: {finished: ''}}, callback || function(){ logger.info('updated successfully'); });
