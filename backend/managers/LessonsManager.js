@@ -299,12 +299,14 @@ exports.complexSearch = function( queryObj, callback ){
 	delete queryObj.filter.searchText;
 	console.log('the projection before is ', queryObj);
 	if ( !!queryObj.filter && !!queryObj.filter.copyOf && !!queryObj.filter.subject){
-		var key = 'subject.' + queryObj.filter.subject;
+		console.log('the query is: ', queryObj);
+		queryObj.filter.subject = {$ne: 'english'};
+		/* var key = 'subject.' + queryObj.filter.subject;
 		var json = {};
 		json[key] = 0;
 		queryObj.projection = json;
 		console.log('after stringify, queryObj.projection', queryObj.projection);
-		delete queryObj.filter.subject;
+		delete queryObj.filter.subject; */
 
     }
     
