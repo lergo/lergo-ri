@@ -94,6 +94,8 @@ exports.complexSearch = function (queryObj, builder, callback) {
     var count = 0;
     var data = [];
 
+    console.log('queryobject is : ', queryObj);
+
     async.parallel(
         [
             function buildFilter(callback) {
