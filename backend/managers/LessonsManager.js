@@ -281,7 +281,7 @@ exports.getLessonIntro = function( lessonId, callback ){
 
 exports.search = exports.find;
 
-
+var ninSubjects = [];
 exports.complexSearch = function( queryObj, callback ){
 
     if ( !!queryObj.filter && !!queryObj.filter.searchText ){
@@ -293,10 +293,22 @@ exports.complexSearch = function( queryObj, callback ){
         }
 
         queryObj.filter.$or.push({ 'name' : text });
-        queryObj.filter.$or.push({ 'description' : text });
+		queryObj.filter.$or.push({ 'description' : text });
+		console.log('before: the queryObj is ', queryObj);
+
 
     }
-    delete queryObj.filter.searchText;
+	delete queryObj.filter.searchText;
+
+	
+	// for admin remove lessons by subject
+	if ( !!queryObj.filter && !!queryObj.filter.copyOf  && !!queryObj.filter.subject ){
+		ninSubjects.push(queryObj.filter.subject);
+		queryObj.filter.subject = { $nin :ninSubjects } 
+		delete queryObj.filter.copyOf;
+		console.log('the queryObj is ', queryObj);
+		console.log('the array is ', ninSubjects);
+    }
 
 
     Lesson.connect( function( db, collection ){

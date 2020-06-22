@@ -440,7 +440,7 @@ exports.create = function(req, res) {
 exports.findLessonsByIds = function(req, res) {
 
 	var objectIds = req.getQueryList('lessonsId');
-	logger.info('this is object ids', objectIds.count());
+	logger.info('getting object ids');
 	objectIds = services.db.id(objectIds);
 
 	Lesson.find({
