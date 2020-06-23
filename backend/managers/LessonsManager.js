@@ -302,13 +302,13 @@ exports.complexSearch = function( queryObj, callback ){
 
 	
 	// for admin remove lessons by subject
-	if (!queryObj.filter.copyOf) {
+	if (!queryObj.filter.removeSubject) {
 		ninSubjects = [];
 	}
-	if ( !!queryObj.filter && !!queryObj.filter.copyOf  && !!queryObj.filter.subject ){
+	if ( !!queryObj.filter && !!queryObj.filter.removeSubject  && !!queryObj.filter.subject ){
 		ninSubjects.push(queryObj.filter.subject);
 		queryObj.filter.subject = { $nin :ninSubjects } 
-		delete queryObj.filter.copyOf;
+		delete queryObj.filter.removeSubject;
 		console.log('the queryObj is ', queryObj);
 		console.log('the array is ', ninSubjects);
     }
