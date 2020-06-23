@@ -305,7 +305,7 @@ exports.complexSearch = function( queryObj, callback ){
 		ninSubjects = [];
 	}
 	if ( !!queryObj.filter && !!queryObj.filter.removeSubject  && !!queryObj.filter.subject ){
-		ninSubjects.push(queryObj.filter.subject);
+		ninSubjects = _.union([queryObj.filter.subject], ninSubjects);
 		queryObj.filter.subject = { $nin :ninSubjects } 
 		delete queryObj.filter.removeSubject;
 		console.log('the remove subject queryObj is ', queryObj);
@@ -317,7 +317,7 @@ exports.complexSearch = function( queryObj, callback ){
 		ninCreatedBy = [];
 	}
 	if ( !!queryObj.filter && !!queryObj.filter.removeCreatedBy  && !!queryObj.filter.userId ){
-		ninCreatedBy.push(queryObj.filter.userId);
+		ninCreatedBy = _.union([queryObj.filter.userId], ninCreatedBy);
 		queryObj.filter.userId = { $nin :ninCreatedBy } 
 		delete queryObj.filter.removeCreatedBy;
 		console.log('the removeCreatedBy array is ', ninCreatedBy);
