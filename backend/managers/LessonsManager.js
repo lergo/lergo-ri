@@ -282,7 +282,9 @@ exports.getLessonIntro = function( lessonId, callback ){
 exports.search = exports.find;
 
 var ninSubjects = [];
+var ninCreatedBy = [];
 exports.complexSearch = function( queryObj, callback ){
+
 
     if ( !!queryObj.filter && !!queryObj.filter.searchText ){
 
@@ -294,9 +296,6 @@ exports.complexSearch = function( queryObj, callback ){
 
         queryObj.filter.$or.push({ 'name' : text });
 		queryObj.filter.$or.push({ 'description' : text });
-		console.log('before: the queryObj is ', queryObj);
-
-
     }
 	delete queryObj.filter.searchText;
 
@@ -309,8 +308,19 @@ exports.complexSearch = function( queryObj, callback ){
 		ninSubjects.push(queryObj.filter.subject);
 		queryObj.filter.subject = { $nin :ninSubjects } 
 		delete queryObj.filter.removeSubject;
-		console.log('the queryObj is ', queryObj);
-		console.log('the array is ', ninSubjects);
+		console.log('the remove subject queryObj is ', queryObj);
+		console.log('the remove subject array is ', ninSubjects);
+	}
+	
+	// for admin remove lessons by createdBy
+	if (!queryObj.filter.removeCreatedBy) {
+		ninCreatedBy = [];
+	}
+	if ( !!queryObj.filter && !!queryObj.filter.removeCreatedBy  && !!queryObj.filter.userId ){
+		ninCreatedBy.push(queryObj.filter.userId);
+		queryObj.filter.userId = { $nin :ninCreatedBy } 
+		delete queryObj.filter.removeCreatedBy;
+		console.log('the removeCreatedBy array is ', ninCreatedBy);
     }
 
 
