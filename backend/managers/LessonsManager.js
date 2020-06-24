@@ -281,8 +281,12 @@ exports.getLessonIntro = function( lessonId, callback ){
 
 exports.search = exports.find;
 
-
+var ninSubjects = [];
+var ninCreatedBy = [];
+var arrayBefore = [];
+var arrayAfter = [];
 exports.complexSearch = function( queryObj, callback ){
+
 
     if ( !!queryObj.filter && !!queryObj.filter.searchText ){
 
@@ -293,19 +297,36 @@ exports.complexSearch = function( queryObj, callback ){
         }
 
         queryObj.filter.$or.push({ 'name' : text });
-        queryObj.filter.$or.push({ 'description' : text });
-
+		queryObj.filter.$or.push({ 'description' : text });
     }
 	delete queryObj.filter.searchText;
-	console.log('the projection before is ', queryObj);
-	if ( !!queryObj.filter && !!queryObj.filter.copyOf && !!queryObj.filter.subject){
-		console.log('the query is: ', queryObj);
-		queryObj.filter.subject = { $ne: queryObj.filter.subject };
-		console.log('queryObj', queryObj);
 
+	
+	// for admin remove lessons by subject
+	if (!queryObj.filter.removeSubject) {
+		ninSubjects = [];
+	}
+	if ( !!queryObj.filter && !!queryObj.filter.removeSubject  && !!queryObj.filter.subject ){
+		ninSubjects = _.union([queryObj.filter.subject], ninSubjects);
+		queryObj.filter.subject = { $nin :ninSubjects };
+		delete queryObj.filter.removeSubject;
+		logger.info('the subjects to be removed are:  ', ninSubjects);
+	}
+	
+	// for admin remove lessons by createdBy
+	if (!queryObj.filter.removeCreatedBy) {
+		ninCreatedBy = [];
+	}
+	if ( !!queryObj.filter && !!queryObj.filter.removeCreatedBy  && !!queryObj.filter.userId ){
+		arrayAfter = _.union([queryObj.filter.userId.toString()], arrayBefore);
+		if (arrayBefore.length < arrayAfter.length) {
+			ninCreatedBy.push(queryObj.filter.userId);
+			arrayBefore = arrayAfter;
+		}
+		queryObj.filter.userId = { $nin :ninCreatedBy }; 
+		delete queryObj.filter.removeCreatedBy;
+		logger.info('the createdBy Id to be removed are: ', ninCreatedBy);
     }
-    
-
 
     Lesson.connect( function( db, collection ){
         services.complexSearch.complexSearch( queryObj, { collection : collection }, callback );
