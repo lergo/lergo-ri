@@ -320,9 +320,7 @@ exports.complexSearch = function( queryObj, callback ){
 		arrayAfter = [];
 	}
 	if ( !!queryObj.filter && !!queryObj.filter.removeCreatedBy  && !!queryObj.filter.userId ){
-		console.log('checking if new createdBy was added.....');
 		arrayAfter = _.union([queryObj.filter.userId.toString()], arrayBefore);
-		console.log('arrayBefore is ',  arrayBefore, ' and arrayAfater is ', arrayAfter)
 		if (arrayBefore.length < arrayAfter.length) {
 			ninCreatedBy.push(queryObj.filter.userId);
 			arrayBefore = arrayAfter;
