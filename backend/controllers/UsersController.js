@@ -280,7 +280,7 @@ exports.requestPasswordReset = function (req, res) {
 exports.findUsersById = function (req, res) {
 
     var objectIds = req.getQueryList('usersId');
-    logger.info('this is object ids', objectIds);
+    logger.info('getting object ids');
     objectIds = services.db.id(objectIds);
 
     User.find({
