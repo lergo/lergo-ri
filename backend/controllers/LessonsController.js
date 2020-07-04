@@ -374,6 +374,17 @@ exports.update = function(req, res) {
 
 };
 
+/* used for deleting invalid question / steps in lesson before running a lesson */
+exports.fix = function(req, res) {
+	logger.info('fixing lesson');
+	var lesson = req.body;
+
+	lesson.userId = req.lesson.userId;
+	lesson._id = services.db.id(lesson._id);
+
+    _updateLesson( lesson, res );
+
+};
 
 /**
  *

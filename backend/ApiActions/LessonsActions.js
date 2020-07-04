@@ -146,6 +146,35 @@ exports.getUserPermissions = {
     'action': function( req, res ){ res.send(permissions.lessons.getPermissions(req.sessionUser, req.lesson)); }
 };
 
+/* used for deleting invalid question / steps in lesson before running a lesson */
+exports.fixLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/fix',
+        'summary': 'lesson is fixed on the fly',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'lesson',
+                required: true,
+                'description': 'The fixed lesson',
+                'type': 'Lesson'
+            } ,
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be fetched',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.lessons.exists,
+    ],
+    'action': controllers.lessons.fix
+};
+ 
 
 exports.editLesson = {
     'spec': {

@@ -127,6 +127,21 @@ exports.deleteQuestion = function (req, res) {
     });
 };
 
+/* used for deleting invalid questions before playing the lesson */
+exports.removeQuestion = function (req, res) {
+    var id = req.params.questionId;
+    logger.info('Deleting question:', id);
+    managers.questions.deleteQuestion(id, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};
+
 exports.copyQuestion = function (req, res) {
     managers.questions.copyQuestion(req.sessionUser, req.question, function (err, result) {
         res.send(result);

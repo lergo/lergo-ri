@@ -125,6 +125,23 @@ exports.editQuestion = {
 	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.questions.exists, middlewares.questions.userCanEdit ],
 	'action' : controllers.questions.update
 };
+/* used for deleting invalid questions before playing a lesson */
+exports.removeQuestion = {
+	'spec' : {
+		'path' : '/questions/{questionId}/remove',
+		'summary' : 'Remoive invalid question corresponding to the id',
+		'method' : 'POST',
+		'parameters' : [ {
+			'paramType' : 'path',
+			'name' : 'questionId',
+			required : true,
+			'description' : 'ID of question that needs to be removed',
+			'type' : 'string'
+		} ]
+	},
+	'middlewares' : [ middlewares.questions.exists],
+	'action' : controllers.questions.removeQuestion
+};
 
 exports.deleteQuestion = {
 	'spec' : {
