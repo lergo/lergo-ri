@@ -425,6 +425,7 @@ exports.unpublish = function(req, res){
  */
 
 exports.create = function(req, res) {
+	console.log('-------------------------------inside PlaylistsController');
 	var playlist = {};
 	playlist.userId = req.sessionUser._id;
 	managers.playlists.createPlaylist(playlist, function(err, obj) {

@@ -425,6 +425,7 @@ exports.unpublish = function(req, res){
  */
 
 exports.create = function(req, res) {
+	console.log('++++++++++++++++inside LessonsController');
 	var lesson = {};
 	lesson.userId = req.sessionUser._id;
 	managers.lessons.createLesson(lesson, function(err, obj) {
