@@ -14,7 +14,6 @@ var _ = require('lodash');
  * get a user from cookie on request, and calls next request handler
  */
 exports.isLoggedIn = function isLoggedIn(req, res, next) {
-    console.log('------------------checking if user is logged in');
     exports.optionalUserOnRequest( req, res , function(){
         logger.debug('checking loggedin middleware');
         if ( !req.sessionUser ){
