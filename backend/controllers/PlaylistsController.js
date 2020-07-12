@@ -365,7 +365,7 @@ function _unsetPublic( playlist , res ){
  */
 
 exports.update = function(req, res) {
-	logger.info('updating playlist');
+	console.log('trying to update playlists');
 	var playlist = req.body;
 
 	playlist.userId = req.playlist.userId;

@@ -46,7 +46,7 @@ exports.getAdminPlaylists = {
 
 exports.getPlaylistIntro = {
     'spec': {
-        'path': '/playlists/{lessonId}/intro',
+        'path': '/playlists/{playlistId}/intro',
         'summary': 'Get playlist intro',
         'method': 'GET'
     },
@@ -109,7 +109,7 @@ exports.getUserPlaylistById = {
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be fetched',
                 'type': 'string'
@@ -126,13 +126,13 @@ exports.getUserPlaylistById = {
 
 exports.getUserPermissions = {
     'spec': {
-        'path': '/playlists/{lessonId}/permissions',
+        'path': '/playlists/{playlistId}/permissions',
         'summary': 'get user permissions for playlist',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be fetched',
                 'type': 'string'
@@ -149,7 +149,7 @@ exports.getUserPermissions = {
 /* used for deleting invalid question / steps in playlist before running a playlist */
 exports.fixPlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/fix',
+        'path': '/playlists/{playlistId}/fix',
         'summary': 'playlist is fixed on the fly',
         'method': 'POST',
         'parameters': [
@@ -162,7 +162,7 @@ exports.fixPlaylist = {
             } ,
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be fetched',
                 'type': 'string'
@@ -178,7 +178,7 @@ exports.fixPlaylist = {
 
 exports.editPlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/update',
+        'path': '/playlists/{playlistId}/update',
         'summary': 'user edits a playlist',
         'method': 'POST',
         'parameters': [
@@ -191,7 +191,7 @@ exports.editPlaylist = {
             } ,
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be fetched',
                 'type': 'string'
@@ -208,7 +208,7 @@ exports.editPlaylist = {
 
 exports.publishPlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/publish',
+        'path': '/playlists/{playlistId}/publish',
         'summary': 'user publishes a playlist',
         'method': 'POST'
     },
@@ -222,7 +222,7 @@ exports.publishPlaylist = {
 
 exports.unpublishPlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/unpublish',
+        'path': '/playlists/{playlistId}/unpublish',
         'summary': 'user unpublishes a playlist',
         'method': 'POST'
     },
@@ -236,13 +236,13 @@ exports.unpublishPlaylist = {
 
 exports.deletePlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/delete',
+        'path': '/playlists/{playlistId}/delete',
         'summary': 'Delete playlist corresponding to the id',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be deleted',
                 'type': 'string'
@@ -260,13 +260,13 @@ exports.deletePlaylist = {
 
 exports.likePlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/delete',
+        'path': '/playlists/{playlistId}/delete',
         'summary': 'Delete playlist corresponding to the id',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist that needs to be deleted',
                 'type': 'string'
@@ -284,13 +284,13 @@ exports.likePlaylist = {
 
 exports.overrideQuestion = {
     'spec': {
-        'path': '/playlists/{lessonId}/question/{questionId}/override',
+        'path': '/playlists/{playlistId}/question/{questionId}/override',
         'summary': 'copies and replaces question',
         'method': 'POST',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'lessonId',
+                'name': 'playlistId',
                 required: true,
                 'description': 'ID of playlist',
                 'type': 'string'
@@ -315,7 +315,7 @@ exports.overrideQuestion = {
 
 exports.copyPlaylist = {
     'spec': {
-        'path': '/playlists/{lessonId}/copy',
+        'path': '/playlists/{playlistId}/copy',
         'summary': 'copy playlist. prefix title with "Copy for" new playlist',
         'method': 'POST'
     },
