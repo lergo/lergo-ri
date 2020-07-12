@@ -65,7 +65,6 @@ exports.getUserLikedLessons = function(req, res) {
 // assumes user and lesson exists and user can see lesson
 // or lesson is public and then we don't need user
 exports.getLessonById = function(req, res) {
-	console.log('this is get LessonById..............');
 	if (!req.lesson) {
 		new managers.error.NotFound('could not find lesson').send(res);
 		return;
@@ -450,7 +449,6 @@ exports.create = function(req, res) {
  * @param res
  */
 exports.findLessonsByIds = function(req, res) {
-	console.log('.......lessons................req', req.getQueryList('lessonsId'));
 	var objectIds = req.getQueryList('lessonsId');
 	logger.info('getting object ids');
 	objectIds = services.db.id(objectIds);

@@ -40,7 +40,6 @@ exports.getTopTags = function (req, res) {
     var currentDate = 0;
 
 exports.getTagsByFilter = function (req, res) {
-    console.log('this is inside tagsController, getTagsbyfilter, the request');
 
     var like = req.param('like');
     like = new RegExp(like, 'i');
