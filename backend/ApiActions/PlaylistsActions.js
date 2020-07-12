@@ -58,7 +58,7 @@ exports.getPlaylistIntro = {
 };
 
 
-exports.getPlaylistById = {
+exports.getPlaylistsById = {
     'spec': {
         'path': '/playlists/find',
         'summary': 'Find playlists',
@@ -66,7 +66,7 @@ exports.getPlaylistById = {
         'parameters': [
             {
                 'paramType': 'query',
-                'name': 'playlistId',
+                'name': 'playlistsId',
                 'required': false,
                 'description': 'list of ids to find',
                 'type': 'array',
@@ -103,7 +103,7 @@ exports.createPlaylist = {
 
 exports.getUserPlaylistById = {
     'spec': {
-        'path': '/playlists/{lessonId}',
+        'path': '/playlists/{playlistId}',
         'summary': 'Get playlist by id',
         'method': 'GET',
         'parameters': [
