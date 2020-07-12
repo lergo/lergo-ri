@@ -58,7 +58,7 @@ exports.getPlaylistIntro = {
 };
 
 
-exports.getPlaylistsById = {
+exports.getPlaylistById = {
     'spec': {
         'path': '/playlists/find',
         'summary': 'Find playlists',
@@ -66,7 +66,7 @@ exports.getPlaylistsById = {
         'parameters': [
             {
                 'paramType': 'query',
-                'name': 'lessonsId',
+                'name': 'playlistId',
                 'required': false,
                 'description': 'list of ids to find',
                 'type': 'array',

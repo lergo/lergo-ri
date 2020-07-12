@@ -65,6 +65,7 @@ exports.getUserLikedPlaylists = function(req, res) {
 // assumes user and playlist exists and user can see playlist
 // or playlist is public and then we don't need user
 exports.getPlaylistById = function(req, res) {
+	console.log('this is get PlaylistById..............');
 	if (!req.playlist) {
 		new managers.error.NotFound('could not find playlist').send(res);
 		return;
@@ -449,7 +450,7 @@ exports.create = function(req, res) {
  * @param res
  */
 exports.findPlaylistsByIds = function(req, res) {
-
+	console.log('..........playlists.............req', req.getQueryList('playlistsId'));
 	var objectIds = req.getQueryList('playlistsId');
 	logger.info('getting object ids');
 	objectIds = services.db.id(objectIds);
