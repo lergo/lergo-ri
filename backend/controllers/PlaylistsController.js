@@ -274,25 +274,25 @@ exports.getPlaylistIntro = function(req, res) {
 	});
 };
 
-exports.overrideQuestion = function(req, res) {
-	logger.info('overriding question :: ' + req.question._id + ' in playlist ::' + req.playlist._id);
+exports.overrideLesson = function(req, res) {
+	logger.info('overriding lesson :: ' + req.lesson._id + ' in playlist ::' + req.playlist._id);
 
-	var newQuestion = null;
-	async.waterfall([ function copyQuestion(callback) {
-		logger.info('copying question');
-		managers.questions.copyQuestion(req.sessionUser, req.question, callback);
-	}, function replaceQuestion(_newQuestion, callback) {
-		logger.info('replacing question');
+	var newLesson = null;
+	async.waterfall([ function copyLesson(callback) {
+		logger.info('copying lesson');
+		managers.lessons.copyLesson(req.sessionUser, req.lesson, callback);
+	}, function replaceLesson(_newLesson, callback) {
+		logger.info('replacing lesson');
 		try {
-			newQuestion = _newQuestion;
-			var oldQuestion = req.question;
+			newLesson = _newLesson;
+			var oldLesson = req.lesson;
 			var PlaylistObj = new Playlist(req.playlist);
-			PlaylistObj.replaceQuestionInPlaylist(oldQuestion._id.toString(), newQuestion._id.toString());
+			PlaylistObj.replaceLessonInPlaylist(oldLesson._id.toString(), newLesson._id.toString());
 			PlaylistObj.update();
 			callback(null);
 			return;
 		} catch (e) {
-			logger.error('unable to override question', e);
+			logger.error('unable to override lesson', e);
 			callback(e);
 			return;
 		}
@@ -303,14 +303,14 @@ exports.overrideQuestion = function(req, res) {
 		if (!!err) {
 			res.status(500).send('unable to replace' + err.message);
 			return;
-		} else if (newQuestion === null) {
+		} else if (newLesson === null) {
 			res.status(500).send('unknown error');
 			return;
-		} else { // newQuestion != null
+		} else { // newLesson != null
 			logger.info('completed successfully');
 			res.status(200).send({
 				'playlist' : req.playlist,
-				'quizItem' : newQuestion
+				'quizItem' : newLesson
 			});
 		}
 	});
@@ -373,7 +373,7 @@ exports.update = function(req, res) {
 
 };
 
-/* used for deleting invalid question / steps in playlist before running a playlist */
+/* used for deleting invalid lesson / steps in playlist before running a playlist */
 exports.fix = function(req, res) {
 	logger.info('fixing playlist');
 	var playlist = req.body;
@@ -493,7 +493,7 @@ exports.deletePlaylist = function(req, res) {
 };
 
 exports.findUsages = function(req, res) {
-	Playlist.findByQuizItems(req.question, function(err, obj) {
+	Playlist.findByQuizItems(req.lesson, function(err, obj) {
 		if (!!err) {
 			err.send(res);
 			return;

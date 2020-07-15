@@ -6,25 +6,25 @@ var permissions = require('../permissions');
 
 
 
-// using a question to find playlists.
-// where playlist.userId != question.userId
-exports.findPlaylistsUsingQuestion = {
+// using a lesson to find playlists.
+// where playlist.userId != lesson.userId
+exports.findPlaylistsUsingLesson = {
     'spec': {
-        'path': '/playlists/using/question/{questionId}',
-        'summary': 'find question usages',
+        'path': '/playlists/using/lesson/{lessonId}',
+        'summary': 'find lesson usages',
         'method': 'GET',
         'parameters': [
             {
                 'paramType': 'path',
-                'name': 'questionId',
+                'name': 'lessonId',
                 required: true,
-                'description': 'ID of question that usages to be find',
+                'description': 'ID of lesson that usages to be find',
                 'type': 'string'
             }
         ]
     },
     'middlewares' : [
-        middlewares.questions.exists
+        middlewares.lessons.exists
     ],
     'action': controllers.playlists.findUsages
 };
@@ -146,7 +146,7 @@ exports.getUserPermissions = {
     'action': function( req, res ){ res.send(permissions.playlists.getPermissions(req.sessionUser, req.playlist)); }
 };
 
-/* used for deleting invalid question / steps in playlist before running a playlist */
+/* used for deleting invalid lesson / steps in playlist before running a playlist */
 exports.fixPlaylist = {
     'spec': {
         'path': '/playlists/{playlistId}/fix',
@@ -282,10 +282,10 @@ exports.likePlaylist = {
 };
 
 
-exports.overrideQuestion = {
+exports.overrideLesson = {
     'spec': {
-        'path': '/playlists/{playlistId}/question/{questionId}/override',
-        'summary': 'copies and replaces question',
+        'path': '/playlists/{playlistId}/lesson/{lessonId}/override',
+        'summary': 'copies and replaces lesson',
         'method': 'POST',
         'parameters': [
             {
@@ -297,9 +297,9 @@ exports.overrideQuestion = {
             },
             {
                 'paramType': 'path',
-                'name': 'questionId',
+                'name': 'lessonId',
                 required: true,
-                'description': 'ID of question',
+                'description': 'ID of lesson',
                 'type': 'string'
             }
         ]
@@ -308,9 +308,9 @@ exports.overrideQuestion = {
         middlewares.session.isLoggedIn,
         middlewares.playlists.exists,
         middlewares.playlists.userCanEdit,
-        middlewares.questions.exists
+        middlewares.lessons.exists
     ],
-    'action': controllers.playlists.overrideQuestion
+    'action': controllers.playlists.overrideLesson
 };
 
 exports.copyPlaylist = {
