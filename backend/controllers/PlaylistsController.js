@@ -269,7 +269,7 @@ exports.getPublicPlaylists = function(req, res) {
 };
 
 exports.getPlaylistIntro = function(req, res) {
-	managers.playlists.getPlaylistIntro(req.params.PlaylistId, function(err, result) {
+	managers.playlists.getPlaylistIntro(req.params.playlistId, function(err, result) {
 		res.send(result);
 	});
 };
