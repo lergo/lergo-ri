@@ -3,6 +3,7 @@ exports.Question = require('./Question');
 exports.Like = require('./Like');
 exports.Report = require('./Report');
 exports.LessonInvitation = require('./LessonInvitation');
+exports.PlaylistInvitation = require('./PlaylistInvitation');
 exports.HelperContent = require('./HelperContent');
 exports.AbuseReport = require('./AbuseReport');
 exports.FAQ = require('./FAQ');

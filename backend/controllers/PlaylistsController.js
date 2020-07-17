@@ -286,9 +286,9 @@ exports.overrideLesson = function(req, res) {
 		try {
 			newLesson = _newLesson;
 			var oldLesson = req.lesson;
-			var PlaylistObj = new Playlist(req.playlist);
-			PlaylistObj.replaceLessonInPlaylist(oldLesson._id.toString(), newLesson._id.toString());
-			PlaylistObj.update();
+			var playlistObj = new Playlist(req.playlist);
+			playlistObj.replaceLessonInPlaylist(oldLesson._id.toString(), newLesson._id.toString());
+			playlistObj.update();
 			callback(null);
 			return;
 		} catch (e) {
@@ -364,6 +364,7 @@ function _unsetPublic( playlist , res ){
  */
 
 exports.update = function(req, res) {
+	logger.info('updating playlist');
 	var playlist = req.body;
 
 	playlist.userId = req.playlist.userId;
