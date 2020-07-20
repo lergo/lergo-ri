@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @module PlaylistsInvitationsActions
+ * @module LessonsInvitationsActions
  * @type {exports}
  */
 
