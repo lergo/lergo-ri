@@ -8,7 +8,7 @@
 var services = require('../services');
 var playlistsManager = require('./PlaylistsManager');
 var errorManager = require('./ErrorManager');
-var lessonsManager = require('./QuestionsManager');
+var lessonsManager = require('./LessonsManager');
 var logger = require('log4js').getLogger('PlaylistsInvitationsManager');
 var models = require('../models');
 var async = require('async');
@@ -27,7 +27,7 @@ exports.dryBuildPlaylist = function(invitation, callback){
     }, function getAllQuizItems(result, _callback) {
         invitation.playlist = result;
         var playlistModel = new models.Playlist(result);
-        var lessonsId = playlistModel.getAllQuestionIds();
+        var lessonsId = playlistModel.getAllLessonIds();
         lessonsId = services.db.id(lessonsId);
         lessonsManager.search({
             '_id' : {

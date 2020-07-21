@@ -441,6 +441,7 @@ exports.create = function(req, res) {
 /**
  * gets a list of ids and returns the corresponding lessons.
  *
+ * 
  * how to pass a list of ids over req query?
  *
  * ?idsList[]=1&idsList[]=2&idsList[]=3

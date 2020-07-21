@@ -97,7 +97,6 @@ exports.findQuestionsByIds = function (req, res) {
             err.send(res);
             return;
         }
-
         res.send(result);
     });
 
