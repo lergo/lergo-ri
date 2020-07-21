@@ -10,6 +10,7 @@ exports.playlistsInvitationsActions = require('./PlaylistsInvitationsActions');
 exports.tagsActions = require('./TagsActions');
 exports.likesActions = require('./LikesActions');
 exports.reportsActions = require('./ReportsActions');
+exports.playlistRprtsActions = require('./PlaylistRprtsActions');
 exports.helperContentsActions= require('./HelperContentsActions');
 exports.abuseReportsActions= require('./AbuseReportActions');
 exports.faqActions= require('./FAQActions');
