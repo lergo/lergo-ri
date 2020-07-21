@@ -1,5 +1,5 @@
 'use strict';
-var PlaylistRprts = require('../models').PlaylistRprts;
+var PlaylistRprt = require('../models').PlaylistRprt;
 var logger = require('log4js').getLogger('PlaylistRprtssMiddleware');
 var permissions = require('../permissions');
 var _ = require('lodash');
@@ -7,7 +7,7 @@ var _ = require('lodash');
 exports.exists = function exists(req, res, next) {
 	logger.debug('checking if playlistRprts exists : ', req.params.playlistRprtsId);
 	try {
-		PlaylistRprts.findById(req.params.playlistRprtsId, function(err, result) {
+		PlaylistRprt.findById(req.params.playlistRprtsId, function(err, result) {
 			if (!!err) {
 				res.stauts(500).send(err);
 				return;
@@ -29,11 +29,11 @@ exports.exists = function exists(req, res, next) {
 };
 
 // use this middleware as backward compatibility with change in october 2016.
-// when we decided to remove as much data as possible from PlaylistRprts.
+// when we decided to remove as much data as possible from PlaylistRprt.
 exports.mergeWithInvitationData = function mergeWithInvitationData(req, res, next){
     logger.info('merging playlistRprts with invitation data');
     var PlaylistsInvitationsMiddleware = require('./PlaylistsInvitationsMiddleware');
-    if (!new PlaylistRprts(req.playlistRprts).isBasedOnTemporaryPlaylist()) { // create data duplication only if not based on temporary playlist. (e.g. practice mistakes)
+    if (!new PlaylistRprt(req.playlistRprt).isBasedOnTemporaryPlaylist()) { // create data duplication only if not based on temporary playlist. (e.g. practice mistakes)
         req.params.invitationId = req.playlistRprts.invitationId;
         if ( req.playlistRprts && req.playlistRprts.data ) {
             req.params.playlistId = req.playlistRprts.data.playlistId;
