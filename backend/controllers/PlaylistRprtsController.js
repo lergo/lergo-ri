@@ -271,7 +271,8 @@ exports.getClasses = function (req, res) {
 
 // assume playlistRprt exists in the system, verified by middleware
 exports.updatePlaylistRprt = function (req, res) {
-    logger.info('updating playlistRprt');
+    console.log('looooking at the req.body in updatePlaylistRprt', req.body);
+    logger.info('--------------------------------------updating playlistRprt and showing the req.body', req.body);
     var playlistRprt = req.body;
     var playlistRprtModel = new PlaylistRprt(playlistRprt);
     playlistRprt._id = services.db.id(playlistRprt._id);
@@ -291,7 +292,7 @@ exports.updatePlaylistRprt = function (req, res) {
         // we need this for class playlistRprt emailResources
         playlistRprt.emailResources = req.emailResources;
     }
-
+ 
     // this is a temporary fix. to be able for students to register their names.
     // since we are building the invite instead of the playlistRprt, on each update, we need to make sure invitee is correct.
     // the parameters are kept on the side.
@@ -308,13 +309,13 @@ exports.updatePlaylistRprt = function (req, res) {
     logger.info('creating playlistRprt to update');
 
     playlistRprtModel.update(function (err) {
-        logger.info('playlistRprt updated');
+        logger.info('------------------------------------playlistRprt being updated using the model');
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to update playlistRprt').send(res);
             return;
         } else {
             res.send(playlistRprt);
-            // aggregate playlistRprt only when finished
+            console.log('++++++++++++++++++++++++++++++++ updating playlistRprt ',playlistRprt);          // aggregate playlistRprt only when finished
             if(!!playlistRprt.finished){
                 updateClassAggPlaylistRprts(playlistRprt.invitationId);
             }
