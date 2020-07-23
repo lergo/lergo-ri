@@ -271,7 +271,6 @@ exports.getClasses = function (req, res) {
 
 // assume playlistRprt exists in the system, verified by middleware
 exports.updatePlaylistRprt = function (req, res) {
-    console.log('looooking at the req.body in updatePlaylistRprt', req.body);
     logger.info('--------------------------------------updating playlistRprt and showing the req.body', req.body);
     var playlistRprt = req.body;
     var playlistRprtModel = new PlaylistRprt(playlistRprt);
@@ -309,13 +308,12 @@ exports.updatePlaylistRprt = function (req, res) {
     logger.info('creating playlistRprt to update');
 
     playlistRprtModel.update(function (err) {
-        logger.info('------------------------------------playlistRprt being updated using the model');
+        logger.info('playlistRprt being updated using the model');
         if (!!err) {
             new managers.error.InternalServerError(err, 'unable to update playlistRprt').send(res);
             return;
         } else {
             res.send(playlistRprt);
-            console.log('++++++++++++++++++++++++++++++++ updating playlistRprt ',playlistRprt);          // aggregate playlistRprt only when finished
             if(!!playlistRprt.finished){
                 updateClassAggPlaylistRprts(playlistRprt.invitationId);
             }

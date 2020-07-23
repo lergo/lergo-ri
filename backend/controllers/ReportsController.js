@@ -271,7 +271,6 @@ exports.getClasses = function (req, res) {
 
 // assume report exists in the system, verified by middleware
 exports.updateReport = function (req, res) {
-    console.log('looooking at the req.body in updateReport', req.body);
     logger.info('updating report');
     var report = req.body;
     var reportModel = new Report(report);

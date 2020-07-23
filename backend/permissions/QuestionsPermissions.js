@@ -3,9 +3,6 @@
 var _ = require('lodash');
 
 exports.limitUserEdit = function(user, question, isUsedByPublicLesson ){
-
-    console.log('is user limited from editing question ? ' , isUsedByPublicLesson);
-
     if ( !user || !question ){
         return false;
     }
@@ -47,7 +44,6 @@ exports.userCanDelete = function( user, question ){
 
 
 exports.getPermissions = function( user, question, isUsedByPublicLesson ){
-    console.log('getting permissions ', isUsedByPublicLesson );
     return {
         'canEdit' : exports.userCanEdit(user, question, isUsedByPublicLesson), // editors might be limited from editing questions used in public lessons..
         'canCopy' : exports.userCanCopy(user, question),
