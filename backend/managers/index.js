@@ -7,6 +7,7 @@ exports.playlists = require('./PlaylistsManager');
 exports.lessonsInvitations = require('./LessonsInvitationsManager');
 exports.playlistsInvitations = require('./PlaylistsInvitationsManager');
 exports.reports = require('./ReportsManager');
+exports.playlistRprts = require('./PlaylistRprtsManager');
 exports.abuseReports = require('./AbuseReportsManager');
 exports.classReports = require('./ClassReportsManager');
 exports.roles = require('./RolesManager');

@@ -4,7 +4,6 @@
  * @module PlaylistRprtsController
  * @type {exports.PlaylistRprt|*}
  */
-
 var PlaylistRprt = require('../models').PlaylistRprt;
 var ClassPlaylistRprt = require('../models').ClassPlaylistRprt;
 var services = require('../services');
@@ -348,6 +347,7 @@ exports.sendPlaylistRprtReady = function (req, res) {
  * @param res - the response
  */
 exports.getUserPlaylistRprts = function (req, res) {
+    console.log('...............................trying to get PlaylistRprts');
 
     if (!req.queryObj || !req.queryObj.filter) {
         res.status(500).send('no filter or query object available');

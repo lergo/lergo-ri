@@ -223,6 +223,16 @@ exports.getUserReports = {
     'action': controllers.reports.getUserReports
 };
 
+exports.getUserPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/playlistRprts',
+        'summary': 'Get user playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlistRprts.getUserPlaylistRprts
+};
+
 exports.getStudentsReports = {
     'spec': {
         'path': '/user/me/studentsReports',
@@ -233,6 +243,16 @@ exports.getStudentsReports = {
     'action': controllers.reports.getUserStudentsReports
 };
 
+exports.getStudentsPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/studentsPlaylistRprts',
+        'summary': 'Get user students playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlistRprts.getUserStudentsPlaylistRprts
+};
+
 exports.getClassReports = {
     'spec': {
         'path': '/user/me/classReports',
@@ -241,6 +261,16 @@ exports.getClassReports = {
     },
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.classReports.getUserClassReports
+};
+
+exports.getClassPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/classPlaylistRprts',
+        'summary': 'Get class playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.classPlaylistRprts.getUserClassPlaylistRprts
 };
 
 
