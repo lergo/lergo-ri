@@ -38,8 +38,8 @@ exports.playlistInviteCreate = {
 
 exports.updateInvite = {
 	spec : {
-		path : '/invitations/{invitationId}/update',
-		summary : 'update invite',
+		path : '/playlistinvitations/{invitationId}/update',
+		summary : 'update playlistinvite',
 		method : 'POST'
 	},
 	middlewares : [ middlewares.session.optionalUserOnRequest, middlewares.playlistsInvitations.exists ],
@@ -66,7 +66,7 @@ exports.playlistsInvitationsGetById = {
 	'spec' : {
 		'summary': 'Get a playlist invitation by id',
 		'method': 'GET',
-		'path': '/invitations/{invitationId}/get'
+		'path': '/playlistinvitations/{invitationId}/get'
 
 	},
 	'middlewares' : [ middlewares.playlistsInvitations.exists ],
