@@ -211,7 +211,7 @@ exports.getUserPlaylistRprtss = function(userId, callback) {
 	PlaylistRprts.find({ $or :  [ { 'userId' : userId }, { 'userId' : userId.toString()}, { 'data.inviter' : userId} , { 'data.inviter' : userId.toString()} ]},{},callback);
 };
 
-exports.deletePlaylistRprts = function(id, callback) {
+exports.deletePlaylistRprt = function(id, callback) {
 	PlaylistRprts.connect(function(db, collection) {
 		collection.deleteOne({
 			'_id' : services.db.id(id)
