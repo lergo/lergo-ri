@@ -286,9 +286,6 @@ var ninCreatedBy = [];
 var arrayBefore = [];
 var arrayAfter = [];
 exports.complexSearch = function( queryObj, callback ){
-	console.log('...................did I get into complex search');
-
-
     if ( !!queryObj.filter && !!queryObj.filter.searchText ){
 
         var text =  new RegExp(queryObj.filter.searchText, 'i');
