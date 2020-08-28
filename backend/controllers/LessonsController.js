@@ -346,6 +346,19 @@ function _unsetPublic( lesson , res ){
     });
 }
 
+//_unsetCommentEmail
+function _unsetCommentEmail( lesson , res ){
+    managers.lessons.unsetCommentEmail(lesson, function(err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+}
+
 /**
  *
  *
@@ -401,6 +414,12 @@ exports.publish = function(req, res){
     _updateLesson( lesson, res );
 };
 
+exports.commentEmailSent = function(req, res){
+    var lesson = req.lesson;
+    lesson.adminCommentEmailSent = new Date().getTime();
+    _updateLesson( lesson, res );
+};
+
 
 /**
  *
@@ -414,6 +433,12 @@ exports.publish = function(req, res){
 exports.unpublish = function(req, res){
     var lesson = req.lesson;
     _unsetPublic( lesson, res );
+};
+
+//commentEmailNotSent
+exports.commentEmailNotSent = function(req, res){
+    var lesson = req.lesson;
+    _unsetCommentEmail( lesson, res );
 };
 
 /**

@@ -234,6 +234,35 @@ exports.unpublishLesson = {
     'action': controllers.lessons.unpublish
 };
 
+//Jeff: commentEmailSent
+exports.commentEmailSent = {
+    'spec': {
+        'path': '/lessons/{lessonId}/commentEmailSent',
+        'summary': 'user sent email about comment',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanPublish
+    ],
+    'action': controllers.lessons.commentEmailSent
+};
+
+exports.commentEmailNotSent = {
+    'spec': {
+        'path': '/lessons/{lessonId}/commentEmailNotSent',
+        'summary': 'user did not send email about comment',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanPublish
+    ],
+    'action': controllers.lessons.commentEmailNotSent
+};
+
 exports.deleteLesson = {
     'spec': {
         'path': '/lessons/{lessonId}/delete',
