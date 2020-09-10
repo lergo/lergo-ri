@@ -269,6 +269,7 @@ exports.getPublicLessons = function(req, res) {
 };
 
 exports.getLessonIntro = function(req, res) {
+	console.log('----------------------getting the lesson intro from mongodb');
 	managers.lessons.getLessonIntro(req.params.lessonId, function(err, result) {
 		res.send(result);
 	});

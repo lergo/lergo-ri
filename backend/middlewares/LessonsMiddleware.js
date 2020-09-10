@@ -105,7 +105,7 @@ exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
         } else if(reply) {
             var modifiedReply = JSON.parse(reply);
             console.log('Data is in Redis', modifiedReply);
-            return modifiedReply;
+            res.send(modifiedReply);
         } else {
             res.sendResponse = res.send;
             res.send = (body) => {
