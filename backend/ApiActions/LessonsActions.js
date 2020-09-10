@@ -52,7 +52,8 @@ exports.getLessonIntro = {
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.lessons.exists,
+        middlewares.lessons.cacheLessonsIntro
     ],
     'action': controllers.lessons.getLessonIntro
 };

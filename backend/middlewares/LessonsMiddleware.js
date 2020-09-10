@@ -8,6 +8,9 @@
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
+
 
 /**
 
@@ -91,3 +94,28 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
     }
     next();
 };
+
+exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
+    logger.info('checking lessons cache');
+    const id = req.params.lessonId;
+    console.log('the id for redis is ', id);
+    redis.get(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            console.log('Data is in Redis', modifiedReply);
+            return modifiedReply;
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                console.log('the body returned from mongo is', body);
+                redis.set(id, JSON.stringify(body));
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+
+};
+
