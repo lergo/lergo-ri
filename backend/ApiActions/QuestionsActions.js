@@ -58,6 +58,7 @@ exports.findQuestionsByIds = {
 
 		} ]
 	},
+	'middlewares' : [ middlewares.questions.cacheFindQuestionsByIds],
 	'action' : controllers.questions.findQuestionsByIds
 };
 
@@ -122,7 +123,12 @@ exports.editQuestion = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.questions.exists, middlewares.questions.userCanEdit ],
+	'middlewares' : [ 
+		middlewares.session.isLoggedIn, 
+		middlewares.questions.exists, 
+		middlewares.questions.userCanEdit,
+		middlewares.questions.deleteKeyFromRedis
+	 ],
 	'action' : controllers.questions.update
 };
 /* used for deleting invalid questions before playing a lesson */

@@ -9,6 +9,8 @@ var Question = require('../models/Question');
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
 
 /**
 
@@ -69,4 +71,38 @@ exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( re
 
 exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
+};
+exports.cachefindQuestionsByIds = function cachefindQuestionsByIds( req, res, next) {
+    logger.info('checking questions cache');
+    const id = req.params.questionId;
+    redis.get(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for this question content');
+            res.send(modifiedReply);
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(id, JSON.stringify(body));
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+
+};
+
+//Jeff delete question key from redis when question is being edited
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.questionId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting question key from redis after question edit', reply);
+        }
+    });
+    next();
 };
