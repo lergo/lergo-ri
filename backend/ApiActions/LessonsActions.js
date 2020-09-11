@@ -235,7 +235,7 @@ exports.unpublishLesson = {
     'action': controllers.lessons.unpublish
 };
 
-//Jeff: commentEmailSent
+//Jeff: commentEmailSent for admin comments
 exports.commentEmailSent = {
     'spec': {
         'path': '/lessons/{lessonId}/commentEmailSent',

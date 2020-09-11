@@ -32,6 +32,11 @@ var conf = services.conf;
 var mongoose = require('mongoose');
 mongoose.connect(conf.dbUrl, { useNewUrlParser: true , useUnifiedTopology: true });
 
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
+redis.on('connect', () => {
+    logger.info('connected to Redis');
+});
 
 
 if ( !!services.conf.log4js ){
