@@ -202,7 +202,8 @@ exports.editLesson = {
     'middlewares' : [
         middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit
+        middlewares.lessons.userCanEdit,
+        middlewares.lessons.deleteKeyFromRedis
     ],
     'action': controllers.lessons.update
 };

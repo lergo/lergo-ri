@@ -98,18 +98,16 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
 exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
     logger.info('checking lessons cache');
     const id = req.params.lessonId;
-    console.log('the id for redis is ', id);
     redis.get(id,(err, reply) => {
         if(err) {
             console.log(err);
         } else if(reply) {
             var modifiedReply = JSON.parse(reply);
-            console.log('Data is in Redis', modifiedReply);
+            logger.info('using redis cache for this lesson content');
             res.send(modifiedReply);
         } else {
             res.sendResponse = res.send;
             res.send = (body) => {
-                console.log('the body returned from mongo is', body);
                 redis.set(id, JSON.stringify(body));
                 res.sendResponse(body);
             };
@@ -117,5 +115,17 @@ exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
         }
     });
 
+};
+//Jeff delete lesson key from redis when lesson is being updated
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.lessonId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting lesson key from redis after lesson update', reply);
+        }
+    });
+    next();
 };
 
