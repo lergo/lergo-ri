@@ -58,7 +58,7 @@ exports.findQuestionsByIds = {
 
 		} ]
 	},
-	'middlewares' : [ middlewares.questions.cacheFindQuestionsByIds],
+	'middlewares' : [ middlewares.questions.cacheIds ],
 	'action' : controllers.questions.findQuestionsByIds
 };
 

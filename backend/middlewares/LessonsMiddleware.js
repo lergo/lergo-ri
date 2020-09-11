@@ -114,7 +114,6 @@ exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
             next();
         }
     });
-
 };
 //Jeff delete lesson key from redis when lesson is being updated
 exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {

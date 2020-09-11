@@ -72,7 +72,7 @@ exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( re
 exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
 };
-exports.cachefindQuestionsByIds = function cachefindQuestionsByIds( req, res, next) {
+exports.cacheIds = function cacheIds( req, res, next) {
     logger.info('checking questions cache');
     const id = req.params.questionId;
     redis.get(id,(err, reply) => {
@@ -80,7 +80,7 @@ exports.cachefindQuestionsByIds = function cachefindQuestionsByIds( req, res, ne
             console.log(err);
         } else if(reply) {
             var modifiedReply = JSON.parse(reply);
-            logger.info('using redis cache for this question content');
+            logger.info('using redis cache for this question ');
             res.send(modifiedReply);
         } else {
             res.sendResponse = res.send;
@@ -91,7 +91,6 @@ exports.cachefindQuestionsByIds = function cachefindQuestionsByIds( req, res, ne
             next();
         }
     });
-
 };
 
 //Jeff delete question key from redis when question is being edited
