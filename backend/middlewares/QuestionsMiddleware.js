@@ -11,6 +11,7 @@ var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
 const redisClient = require('redis').createClient;
 const redis = redisClient(6379, 'localhost');
+var q = require('q');
 
 /**
 
@@ -99,10 +100,13 @@ exports.cacheIds = function cacheIds( req, res, next) {
     logger.info('checking questions cache');
     const idsList = req.query.questionsId;
     const cachedList = [];
+    var promises = [];
     for (let i = 0; i < idsList.length; i++ ) {
         const id = idsList[i];
-        redisGet(id, cachedList);
+        var promise = redisGet(id, cachedList);
+        promises.push(promise);
     }
+    q.all(promises).then(
     setTimeout(function() {
         if (cachedList.length === idsList.length) {
             logger.info('using redis cache for lesson questions');
@@ -121,8 +125,8 @@ exports.cacheIds = function cacheIds( req, res, next) {
                 next();
     
         }
-    }, 3000);
-    
+    }, 1)
+    );
 };
 
 //Jeff delete question key from redis when question is being edited
