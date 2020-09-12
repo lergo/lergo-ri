@@ -33,10 +33,11 @@ exports.exists= function exists( req, res, next ){
         if(err) {
             console.log(err);
         } else if (reply) {
-            console.log('question found in redis')
+            logger.debug('question found in redis')
             req.question = JSON.parse(reply);
             next();
         } else {
+            logger.info('question not found in Redis, accessing mongo');
             Question.findById( req.params.questionId, function(err, result){
                 if ( !!err ){
                     res.status(500).send(err);
@@ -94,12 +95,12 @@ var redisGet = function (id) {
             console.log(err);
         } else if (reply) {
             var modifiedReply = JSON.parse(reply);
-            logger.info('using redis cache for this question ');
+            logger.debug('using redis cache for this question ');
             if (cachedList.indexOf(modifiedReply) === -1) {
                 cachedList.push(modifiedReply); 
             } 
         } else {
-            console.log('question not found');
+            logger.debug('question not found');
         }
         return;
       });
@@ -107,14 +108,14 @@ var redisGet = function (id) {
 
 var redisDelete = function (id) {
     redis.del(id,function (err, reply) {
-    console.log('deleting question from redis ', reply); 
+    logger.debug('deleting question from redis ', reply); 
   });
 };
 
 
 exports.cacheIds = function cacheIds( req, res, next) {
     cachedList = []; 
-    logger.info('checking questions cache');
+    logger.info('checking Redis questions cache');
     const idsList = req.query.questionsId;
     
     /* var promises = []; */
@@ -124,16 +125,18 @@ exports.cacheIds = function cacheIds( req, res, next) {
        /*  promises.push(promise); */
     }
     setTimeout(function() {
-        console.log(cachedList.length === idsList.length, cachedList.length, idsList.length  );
+        logger.debug(cachedList.length === idsList.length, cachedList.length, idsList.length  );
         if (cachedList.length === idsList.length) {
-            logger.info('using redis cache for lesson questions');
+            logger.info('all questions are present: using redis cache for lesson questions');
             res.send(cachedList);
         } else {
+            logger.info('not all questions found in redis cache - delete and save')
             for (let j = 0; j < cachedList.length; j++ ) {
                 const idToDelete = cachedList[j];
-                console.log('deleting questions from redis cache');
+                logger.debug('deleting questions from redis cache');
                 redisDelete(idToDelete);
             }
+            logger.info('Questions list deleted from Redis');
             res.sendResponse = res.send;
                 res.send = (body) => {
                     // save the elements in questionsController!

@@ -57,7 +57,7 @@ exports.getQuestions = function (req, res) {
     });
 };
 exports.getQuestionById = function (req, res) {
-    logger.info('getting question by id'); 
+    logger.debug('getting question by id'); 
     res.send(req.question);
 };
 
@@ -90,7 +90,7 @@ exports.update = function (req, res) {
 var redisSet = function (id, body) {
     id = String(id);
     redis.set(id, JSON.stringify(body), function (err, reply) {
-        console.log('adding question to redis' , reply);
+        logger.debug('adding question to redis' , reply);
       });
 };
 
