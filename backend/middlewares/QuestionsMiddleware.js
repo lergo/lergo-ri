@@ -33,7 +33,7 @@ exports.exists= function exists( req, res, next ){
         if(err) {
             console.log(err);
         } else if (reply) {
-            logger.debug('question found in redis')
+            logger.debug('question found in redis');
             req.question = JSON.parse(reply);
             next();
         } else {
@@ -130,7 +130,7 @@ exports.cacheIds = function cacheIds( req, res, next) {
             logger.info('all questions are present: using redis cache for lesson questions');
             res.send(cachedList);
         } else {
-            logger.info('not all questions found in redis cache - delete and save')
+            logger.info('not all questions found in redis cache - delete and save');
             for (let j = 0; j < cachedList.length; j++ ) {
                 const idToDelete = cachedList[j];
                 logger.debug('deleting questions from redis cache');
