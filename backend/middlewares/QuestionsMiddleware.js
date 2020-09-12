@@ -34,7 +34,7 @@ exports.exists= function exists( req, res, next ){
             console.log(err);
         } else if (reply) {
             console.log('question found in redis')
-            req.question = reply;
+            req.question = JSON.parse(reply);
             next();
         } else {
             Question.findById( req.params.questionId, function(err, result){
