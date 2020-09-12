@@ -57,7 +57,7 @@ exports.getQuestions = function (req, res) {
     });
 };
 exports.getQuestionById = function (req, res) {
-    //logger.info('getting question by id');
+    logger.info('getting question by id'); 
     res.send(req.question);
 };
 
@@ -104,7 +104,8 @@ exports.findQuestionsByIds = function (req, res) {
             err.send(res);
             return;
         }
-       for (let i = 0; i < result.length; i++ ) {
+        logger.info('saving questions to redis');
+        for (let i = 0; i < result.length; i++ ) {
            redisSet(result[i]._id, result[i]);
        }
         res.send(result);

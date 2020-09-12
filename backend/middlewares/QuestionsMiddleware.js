@@ -74,19 +74,21 @@ exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
 };
 
-
-var redisGet = function (id, cachedList) {
+var cachedList = [];
+var redisGet = function (id) {
     redis.get(id, function (err, reply) {
         if(err) {
             console.log(err);
         } else if (reply) {
             var modifiedReply = JSON.parse(reply);
-            /* logger.info('using redis cache for this question '); */
-            cachedList.push(modifiedReply);
+            logger.info('using redis cache for this question ');
+            if (cachedList.indexOf(modifiedReply) === -1) {
+                cachedList.push(modifiedReply); 
+            } 
         } else {
             console.log('question not found');
         }
-        return cachedList;  
+        return;
       });
 };
 
@@ -96,18 +98,20 @@ var redisDelete = function (id) {
   });
 };
 
+
 exports.cacheIds = function cacheIds( req, res, next) {
+    cachedList = []; 
     logger.info('checking questions cache');
     const idsList = req.query.questionsId;
-    const cachedList = [];
-    var promises = [];
+    
+    /* var promises = []; */
     for (let i = 0; i < idsList.length; i++ ) {
         const id = idsList[i];
-        var promise = redisGet(id, cachedList);
-        promises.push(promise);
+        redisGet(id);
+       /*  promises.push(promise); */
     }
-    q.all(promises).then(
     setTimeout(function() {
+        console.log(cachedList.length === idsList.length, cachedList.length, idsList.length  );
         if (cachedList.length === idsList.length) {
             logger.info('using redis cache for lesson questions');
             res.send(cachedList);
@@ -125,8 +129,7 @@ exports.cacheIds = function cacheIds( req, res, next) {
                 next();
     
         }
-    }, 1)
-    );
+    }, 3000);
 };
 
 //Jeff delete question key from redis when question is being edited
