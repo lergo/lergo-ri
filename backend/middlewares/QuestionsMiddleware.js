@@ -11,7 +11,7 @@ var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
 const redisClient = require('redis').createClient;
 const redis = redisClient(6379, 'localhost');
-var q = require('q');
+/* var q = require('q'); */
 
 /**
 
@@ -28,22 +28,35 @@ var q = require('q');
  */
 exports.exists= function exists( req, res, next ){
     //logger.info('checking if question exists : ' , req.params.questionId );
-    Question.findById( req.params.questionId, function(err, result){
-        if ( !!err ){
-            res.status(500).send(err);
-            return;
-        }
-        if ( !result ){
-            res.status(404).send('question node found');
-            return;
-        }
 
-        //logger.debug('putting question on request', result);
-        req.question = result;
+    redis.get(req.params.questionId, function (err, reply) {
+        if(err) {
+            console.log(err);
+        } else if (reply) {
+            console.log('question found in redis')
+            req.question = reply;
+            next();
+        } else {
+            Question.findById( req.params.questionId, function(err, result){
+                if ( !!err ){
+                    res.status(500).send(err);
+                    return;
+                }
+                if ( !result ){
+                    res.status(404).send('question not found');
+                    return;
+                }
+                //logger.debug('putting question on request', result);
+                req.question = result;
+        
+                next();
+        
+            });    
 
-        next();
-
-    } );
+        }   
+    });
+    
+    
 };
 
 

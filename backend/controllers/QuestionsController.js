@@ -64,8 +64,6 @@ exports.getQuestionById = function (req, res) {
 exports.update = function (req, res) {
     logger.info('updating question');
     var question = req.body;
-
-    logger.debug('question from body', question);
     question._id = services.db.id(question._id);
     question.userId = services.db.id(req.question.userId);
     managers.questions.updateQuestion(question, function (err, obj) {
