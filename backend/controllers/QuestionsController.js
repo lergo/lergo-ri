@@ -11,6 +11,8 @@ var models = require('../models');
 var logger = require('log4js').getLogger('QuestionsController');
 var _ = require('lodash');
 var Like = require('../models/Like');
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
 
 exports.create = function (req, res) {
     var question = req.body;
@@ -87,17 +89,24 @@ exports.update = function (req, res) {
  * @param req
  * @param res
  */
-exports.findQuestionsByIds = function (req, res) {
+var redisSet = function (id, body) {
+    id = String(id);
+    redis.set(id, JSON.stringify(body), function (err, reply) {
+        console.log('adding question to redis' , reply);
+      });
+};
 
+exports.findQuestionsByIds = function (req, res) {
     var objectIds = req.getQueryList('questionsId');
     logger.info('findQuestionsByIds');
-
     managers.questions.getQuestionsById(objectIds, function (err, result) {
         if (!!err) {
             err.send(res);
             return;
         }
-
+       for (let i = 0; i < result.length; i++ ) {
+           redisSet(result[i]._id, result[i]);
+       }
         res.send(result);
     });
 

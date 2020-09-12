@@ -72,25 +72,57 @@ exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( re
 exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
 };
-exports.cacheIds = function cacheIds( req, res, next) {
-    logger.info('checking questions cache');
-    const id = req.params.questionId;
-    redis.get(id,(err, reply) => {
+
+
+var redisGet = function (id, cachedList) {
+    redis.get(id, function (err, reply) {
         if(err) {
             console.log(err);
-        } else if(reply) {
+        } else if (reply) {
             var modifiedReply = JSON.parse(reply);
-            logger.info('using redis cache for this question ');
-            res.send(modifiedReply);
+            /* logger.info('using redis cache for this question '); */
+            cachedList.push(modifiedReply);
         } else {
-            res.sendResponse = res.send;
-            res.send = (body) => {
-                redis.set(id, JSON.stringify(body));
-                res.sendResponse(body);
-            };
-            next();
+            console.log('question not found');
         }
-    });
+        return cachedList;  
+      });
+};
+
+var redisDelete = function (id) {
+    redis.del(id,function (err, reply) {
+    console.log('deleting question from redis ', reply); 
+  });
+};
+
+exports.cacheIds = function cacheIds( req, res, next) {
+    logger.info('checking questions cache');
+    const idsList = req.query.questionsId;
+    const cachedList = [];
+    for (let i = 0; i < idsList.length; i++ ) {
+        const id = idsList[i];
+        redisGet(id, cachedList);
+    }
+    setTimeout(function() {
+        if (cachedList.length === idsList.length) {
+            logger.info('using redis cache for lesson questions');
+            res.send(cachedList);
+        } else {
+            for (let j = 0; j < cachedList.length; j++ ) {
+                const idToDelete = cachedList[j];
+                console.log('deleting questions from redis cache');
+                redisDelete(idToDelete);
+            }
+            res.sendResponse = res.send;
+                res.send = (body) => {
+                    // save the elements in questionsController!
+                    res.sendResponse(body);
+                };
+                next();
+    
+        }
+    }, 3000);
+    
 };
 
 //Jeff delete question key from redis when question is being edited
