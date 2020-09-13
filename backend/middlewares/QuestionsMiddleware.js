@@ -90,7 +90,8 @@ exports.userCanDelete = function userCanDelete(req, res, next){
 
 var cachedList = [];
 var redisGet = function (id) {
-    redis.get(id, function (err, reply) {
+    return new Promise(function(resolve, reject) {
+        redis.get(id, function (err, reply) {
         if(err) {
             console.log(err);
         } else if (reply) {
@@ -102,8 +103,10 @@ var redisGet = function (id) {
         } else {
             logger.debug('question not found');
         }
-        return;
+        resolve(reply);
       });
+      
+    });
 };
 
 var redisDelete = function (id) {
@@ -118,13 +121,13 @@ exports.cacheIds = function cacheIds( req, res, next) {
     logger.info('checking Redis questions cache');
     const idsList = req.query.questionsId;
     
-    /* var promises = []; */
-    for (let i = 0; i < idsList.length; i++ ) {
+    var promises = [];
+    for (var i in idsList) {
         const id = idsList[i];
-        redisGet(id);
-       /*  promises.push(promise); */
+        promises.push(redisGet(id));
     }
-    setTimeout(function() {
+    Promise.all(promises)
+    .then(function() {
         logger.debug('checking if redis question cache has all questions: ', cachedList.length === idsList.length, cachedList.length, idsList.length  );
         if (cachedList.length === idsList.length) {
             logger.info('all questions are present: using redis cache for lesson questions');
@@ -145,7 +148,7 @@ exports.cacheIds = function cacheIds( req, res, next) {
                 next();
     
         }
-    }, 3000);
+    });
 };
 
 //Jeff delete question key from redis when question is being edited
