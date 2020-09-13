@@ -94,6 +94,7 @@ var redisGet = function (id) {
         redis.get(id, function (err, reply) {
         if(err) {
             console.log(err);
+            reject(err);
         } else if (reply) {
             var modifiedReply = JSON.parse(reply);
             logger.debug('using redis cache for this question ');
@@ -105,7 +106,6 @@ var redisGet = function (id) {
         }
         resolve(reply);
       });
-      
     });
 };
 
