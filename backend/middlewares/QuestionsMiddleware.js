@@ -125,7 +125,7 @@ exports.cacheIds = function cacheIds( req, res, next) {
        /*  promises.push(promise); */
     }
     setTimeout(function() {
-        logger.debug(cachedList.length === idsList.length, cachedList.length, idsList.length  );
+        logger.debug('checking if redis question cache has all questions: ', cachedList.length === idsList.length, cachedList.length, idsList.length  );
         if (cachedList.length === idsList.length) {
             logger.info('all questions are present: using redis cache for lesson questions');
             res.send(cachedList);
