@@ -96,7 +96,7 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
 };
 
 exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
-    logger.info('checking lessons cache');
+    logger.info('Redis checking lessons cache');
     const id = req.params.lessonId;
     redis.get(id,(err, reply) => {
         if(err) {
