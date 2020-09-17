@@ -135,7 +135,7 @@ exports.editQuestion = {
 exports.removeQuestion = {
 	'spec' : {
 		'path' : '/questions/{questionId}/remove',
-		'summary' : 'Remoive invalid question corresponding to the id',
+		'summary' : 'Remove invalid question corresponding to the id',
 		'method' : 'POST',
 		'parameters' : [ {
 			'paramType' : 'path',
@@ -145,7 +145,10 @@ exports.removeQuestion = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.questions.exists],
+	'middlewares' : [ 
+		middlewares.questions.exists, 
+		middlewares.questions.deleteKeyFromRedis
+	],
 	'action' : controllers.questions.removeQuestion
 };
 
@@ -162,6 +165,11 @@ exports.deleteQuestion = {
 			'type' : 'string'
 		} ]
 	},
-	'middlewares' : [ middlewares.session.isLoggedIn, middlewares.questions.exists, middlewares.questions.userCanDelete ],
+	'middlewares' : [ 
+		middlewares.session.isLoggedIn,
+		middlewares.questions.exists, 
+		middlewares.questions.userCanDelete, 
+		middlewares.questions.deleteKeyFromRedis
+	],
 	'action' : controllers.questions.deleteQuestion
 };
