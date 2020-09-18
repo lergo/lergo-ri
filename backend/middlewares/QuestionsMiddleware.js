@@ -9,6 +9,9 @@ var Question = require('../models/Question');
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
+/* var q = require('q'); */
 
 /**
 
@@ -25,22 +28,36 @@ var permissions = require('../permissions');
  */
 exports.exists= function exists( req, res, next ){
     //logger.info('checking if question exists : ' , req.params.questionId );
-    Question.findById( req.params.questionId, function(err, result){
-        if ( !!err ){
-            res.status(500).send(err);
-            return;
-        }
-        if ( !result ){
-            res.status(404).send('question node found');
-            return;
-        }
 
-        //logger.debug('putting question on request', result);
-        req.question = result;
+    redis.get(req.params.questionId, function (err, reply) {
+        if(err) {
+            console.log(err);
+        } else if (reply) {
+            logger.debug('question found in redis');
+            req.question = JSON.parse(reply);
+            next();
+        } else {
+            logger.info('question not found in Redis, accessing mongo');
+            Question.findById( req.params.questionId, function(err, result){
+                if ( !!err ){
+                    res.status(500).send(err);
+                    return;
+                }
+                if ( !result ){
+                    res.status(404).send('question not found');
+                    return;
+                }
+                //logger.debug('putting question on request', result);
+                req.question = result;
+        
+                next();
+        
+            });    
 
-        next();
-
-    } );
+        }   
+    });
+    
+    
 };
 
 
@@ -69,4 +86,80 @@ exports.questionIsUsedByPublicLesson = function questionIsUsedByPublicLesson( re
 
 exports.userCanDelete = function userCanDelete(req, res, next){
     return permissions.questions.userCanDelete( req.sessionUser, req.question ) ? next() : res.status(400).send('');
+};
+
+var cachedList = [];
+var redisGet = function (id) {
+    return new Promise(function(resolve, reject) {
+        redis.get(id, function (err, reply) {
+        if(err) {
+            console.log(err);
+            reject(err);
+        } else if (reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.debug('using redis cache for this question ');
+            if (cachedList.indexOf(modifiedReply) === -1) {
+                cachedList.push(modifiedReply); 
+            } 
+        } else {
+            logger.debug('question not found');
+        }
+        resolve(reply);
+      });
+    });
+};
+
+var redisDelete = function (id) {
+    redis.del(id,function (err, reply) {
+    logger.debug('deleting question from redis ', reply); 
+  });
+};
+
+
+exports.cacheIds = function cacheIds( req, res, next) {
+    cachedList = []; 
+    logger.info('checking Redis questions cache');
+    const idsList = req.query.questionsId;
+    
+    var promises = [];
+    for (var i in idsList) {
+        const id = idsList[i];
+        promises.push(redisGet(id));
+    }
+    Promise.all(promises)
+    .then(function() {
+        logger.debug('checking if redis question cache has all questions: ', cachedList.length === idsList.length, cachedList.length, idsList.length  );
+        if (cachedList.length === idsList.length) {
+            logger.info('all questions are present: using redis cache for lesson questions');
+            res.send(cachedList);
+        } else {
+            logger.info('not all questions found in redis cache - delete and save');
+            for (let j = 0; j < cachedList.length; j++ ) {
+                const idToDelete = cachedList[j];
+                logger.debug('deleting questions from redis cache');
+                redisDelete(idToDelete);
+            }
+            logger.info('Questions list deleted from Redis');
+            res.sendResponse = res.send;
+                res.send = (body) => {
+                    // save the elements in questionsController!
+                    res.sendResponse(body);
+                };
+                next();
+    
+        }
+    });
+};
+
+//Jeff delete question key from redis when question is being edited
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.questionId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting question key from redis after question edit', reply);
+        }
+    });
+    next();
 };

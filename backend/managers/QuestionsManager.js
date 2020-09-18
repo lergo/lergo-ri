@@ -129,6 +129,7 @@ exports.deleteQuestion = function(id, callback) {
 };
 
 exports.getQuestionById = function(id, callback) {
+	console.log('The questionManager is getting a question');
 	Question.findById(id, callback);
 };
 

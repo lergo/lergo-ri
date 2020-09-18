@@ -52,7 +52,8 @@ exports.getLessonIntro = {
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.lessons.exists,
+        middlewares.lessons.cacheLessonsIntro
     ],
     'action': controllers.lessons.getLessonIntro
 };
@@ -201,7 +202,8 @@ exports.editLesson = {
     'middlewares' : [
         middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit
+        middlewares.lessons.userCanEdit,
+        middlewares.lessons.deleteKeyFromRedis
     ],
     'action': controllers.lessons.update
 };
@@ -234,7 +236,7 @@ exports.unpublishLesson = {
     'action': controllers.lessons.unpublish
 };
 
-//Jeff: commentEmailSent
+//Jeff: commentEmailSent for admin comments
 exports.commentEmailSent = {
     'spec': {
         'path': '/lessons/{lessonId}/commentEmailSent',

@@ -8,6 +8,9 @@
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');
+const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost');
+
 
 /**
 
@@ -91,3 +94,37 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
     }
     next();
 };
+
+exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
+    logger.info('Redis checking lessons cache');
+    const id = req.params.lessonId;
+    redis.get(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for this lesson content');
+            res.send(modifiedReply);
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(id, JSON.stringify(body));
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+//Jeff delete lesson key from redis when lesson is being updated
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.lessonId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting lesson key from redis after lesson update', reply);
+        }
+    });
+    next();
+};
+
