@@ -28,9 +28,9 @@ install_main(){
 
     /etc/init.d/mongodb start || echo "mongo start failed. probably already running. moving on... "
 
-    ( which redis-server && echo "redis server installed..." ) || ( echo "installing redis server..." && sudo apt-get install -y redis-server && echo "redis server installed successfully..." )
+    ( which redis-server && echo "redis server installed..." ) || ( echo "installing redis server..." && sudo apt install -y redis-server && echo "redis server installed successfully..." )
 
-    /etc/init.d/redis-server start || echo "redis start failed. probably already running. moving on... "
+    redis-server || echo "redis start failed. probably already running. moving on... "
     
     ( which node && echo "node already installed..." ) || ( echo "installing nodejs-legacy..." && sudo apt-get install -y nodejs-legacy &&  echo "nodejs installed successfully..." )
 
