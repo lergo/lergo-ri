@@ -112,12 +112,7 @@ module.exports = function (grunt) {
                 files: { 'src': ['test/unittests/mocha/**/*.js'] }
             },
             beforeBuild: {
-                test: {
-                    options: {
-                        reporter: 'spec'
-                    }
-                },
-                files: { 'src': ['test/beforeBuild/mocha/**/*.js'] }
+                
             },
             afterBuild: {
                 test: {
