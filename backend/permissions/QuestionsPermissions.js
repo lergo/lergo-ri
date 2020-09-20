@@ -33,7 +33,10 @@ exports.userCanEdit = function( user, question/*, isUsedByPublicLesson */){
     if ( !user || !question ){
         return false;
     }
-    return question.userId.equals(user._id) ;
+    console.log('question.userId', question.userId, user._id );
+    var a = JSON.stringify(question.userId);
+    var b = JSON.stringify(user._id);
+    return a === b ;
 };
 
 exports.userCanCopy = function userCanCopy( user ){
@@ -42,7 +45,10 @@ exports.userCanCopy = function userCanCopy( user ){
 };
 
 exports.userCanDelete = function( user, question ){
-    return !!user && question.userId.equals(user._id);
+    var a = JSON.stringify(question.userId);
+    var b = JSON.stringify(user._id);
+    return a === b ;
+   
 };
 
 
