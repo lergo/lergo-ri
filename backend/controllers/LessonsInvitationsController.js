@@ -112,6 +112,7 @@ exports.build = function (req, res) {
         });
     } else {
         managers.lessons.incrementViews(invitation.lessonId, function () { /** noop **/
+            logger.info('incrementing lesson view');
         });
         res.send(invitation);
     }

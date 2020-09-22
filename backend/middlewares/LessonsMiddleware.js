@@ -109,6 +109,7 @@ exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
             res.sendResponse = res.send;
             res.send = (body) => {
                 redis.set(id, JSON.stringify(body));
+                redis.expire(id, 60*60*24*7); // lessonIntro expires every week to update  # of views
                 res.sendResponse(body);
             };
             next();

@@ -92,6 +92,7 @@ var redisSet = function (id, body) {
     redis.set(id, JSON.stringify(body), function (err, reply) {
         logger.debug('adding question to redis' , reply);
       });
+    redis.expire(id, 60*60*24*7); // questions expires every week to update  # of views  
 };
 
 exports.findQuestionsByIds = function (req, res) {
