@@ -108,112 +108,19 @@ exports.adminUpdateLesson = function(req, res) {
 		}
 	});
 };
-
-var previousDate = 0;
-var userCache = {};  // these are all the users with public lessons and will be used in the createdBy filter
-var enHomePageLessons = {};
-var heHomePageLessons = {};
-var arHomePageLessons = {};
-
+// getPublicLessons is used for homepage lessons
 exports.getPublicLessons = function(req, res) {
-	var d = new Date();
-	// var currentDate = d.getDate();
-	var currentDate = d.getHours();  // temporarily use hours to enable checking for bugs
-	var qObjFilter = req.queryObj.filter;
-	var qObjProjec = req.queryObj.projection;
-	// 'mustHaveUndefined' prevents any filter query from being cached as default homepage query
-	var mustHaveUndefined = !qObjFilter.hasOwnProperty('tags.label') && qObjFilter.subject === undefined && qObjFilter.age === undefined && qObjFilter.userId === undefined && qObjFilter.searchText === undefined && qObjFilter.views === undefined;
 
-	var userFlag = false;
-	var heLessonsFlag = false;
-	var enLessonsFlag = false;
-	var arLessonsFlag = false;
-	// checking if this is a user/usernames query
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1 && req.queryObj.limit === 0 ) {
-		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
-		logger.info('is a usernames query: ');
-		if (!_.isEmpty(userCache)) {
-			logger.info('using the usernames cache with', userCache.data.length, 'users');
-			res.send(userCache);
-			if (currentDate !== previousDate) { // reset the home page link every day
-				previousDate = currentDate;
-				logger.info('usernames cache: updating date to ', previousDate);
-				userCache = {}; // setting userCache to empty
-				enHomePageLessons = {}; // setting enHomePageLessons to empty
-				arHomePageLessons = {}; // setting arHomePageLessons to empty
-				heHomePageLessons = {}; // setting heHomePageLessons to empty
-			}
-			return;
-			
-		} else {
-			logger.info('need to cache the  usernames');
-		}
-	} else {
-		//logger.info('not usernames query: ');
-	}
+	try {
+		var queryObj = req.queryObj;
+		if (!queryObj.filter || !queryObj.filter.public || queryObj.filter.public.$exists !== 1) {
 
-	//  english, arabic, hebrew, lesson cache - using 'mustHaveUndefined'
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && req.queryObj.limit === 18 && req.queryObj.skip === 0 && mustHaveUndefined) {
-		if (qObjFilter.language === 'english') {
-			enLessonsFlag = true;  
-			if (!_.isEmpty(enHomePageLessons)) {
-				logger.info('using the enHomePageLessons cache', enHomePageLessons.data.length, ' lessons');
-				res.send(enHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('usernames cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePageLessons = {}; // setting enHomePageLessons to empty
-					arHomePageLessons = {}; // setting arHomePageLessons to empty
-					heHomePageLessons = {}; // setting heHomePageLessons to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage english lessons');
-			}
-		} else if (qObjFilter.language === 'arabic') {
-			arLessonsFlag = true;  
-			if (!_.isEmpty(arHomePageLessons)) {
-				logger.info('using the arHomePageLessons cache', arHomePageLessons.data.length, ' lessons');
-				res.send(arHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('arabic homepage lessons cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePageLessons = {}; // setting enHomePageLessons to empty
-					arHomePageLessons = {}; // setting arHomePageLessons to empty
-					heHomePageLessons = {}; // setting heHomePageLessons to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage arabic lessons');
-			}
-		} else if (qObjFilter.language === 'hebrew') {
-			heLessonsFlag = true;  
-			if (!_.isEmpty(heHomePageLessons)) {
-				logger.info('using the heHomePageLessons cache', heHomePageLessons.data.length, ' lessons');
-				res.send(heHomePageLessons);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('hebrew homepage lessons cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePageLessons = {}; // setting enHomePageLessons to empty
-					arHomePageLessons = {}; // setting arHomePageLessons to empty
-					heHomePageLessons = {}; // setting heHomePageLessons to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage hebrew lessons');
-			}
-		
-		} else {
-			logger.info('not caching this language: ',qObjFilter.language );
+			throw new Error('public must be $exists 1');
 		}
+	} catch (e) {
+		res.status(400).send('lergo-ri says: lessons controller: getPublicLessons has an illegal filter value : ' + e.message);
+		return;
 	}
-	
 	var lessons = [];
 	async.waterfall([ function loadLessons(callback) {
 		managers.lessons.complexSearch(req.queryObj, function(err, result) {
@@ -245,24 +152,61 @@ exports.getPublicLessons = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			
-			if (userFlag === true) {
-				logger.info('caching the public usernames');
-				userCache = lessons;
-			} 
-			if (enLessonsFlag === true) {
-				logger.info('caching the english home page lessons');
-				enHomePageLessons = lessons;
-			} 
-			if (heLessonsFlag === true) {
-				logger.info('caching the hebrew home page lessons');
-				heHomePageLessons = lessons;
-			} 
-			if (arLessonsFlag === true) {
-				logger.info('caching the arabic home page lessons');
-				arHomePageLessons = lessons;
-			} 
 			res.send(lessons);
+		}
+	});
+
+};
+
+
+exports.getPublicLessonsUsernames = function(req, res) {
+	req.queryObj = { filter: { public: { '$exists': 1 } },
+	projection: { userId: 1, _id: 0 },
+	limit: 0 }; 
+
+	try {
+		var queryObj = req.queryObj;
+		if (!queryObj.filter || !queryObj.filter.public || queryObj.filter.public.$exists !== 1) {
+			throw new Error('public must be $exists 1');
+		}
+	} catch (e) {
+		res.status(400).send('lergo-ri says: lessons controller getPublicLessonsUsername has an  illegal filter value : ' + e.message);
+		return;
+	}
+
+	var lessons = [];
+	var users = [];
+	async.waterfall([ function loadLessons(callback) {
+		managers.lessons.complexSearch(req.queryObj, function(err, result) {
+			if (!!err) {
+				callback(new managers.error.InternalServerError(err, 'unable to get all admin lessons'));
+				return;
+			}
+			lessons = result;
+			callback();
+		});
+	}, function loadUsers(callback) {
+		var usersId = _.map(lessons.data, 'userId');
+		managers.users.getPublicUsersDetailsMapByIds(usersId, function(err, usersById) {
+
+			if (!!err) {
+				callback(new managers.error.InternalServerError(err, 'unable to load users by id'));
+				return;
+			}
+			_.each(lessons.data, function(l) { 
+				if (users.indexOf(usersById[l.userId]) === -1) {
+					users.push(usersById[l.userId]);
+				}
+			});
+			callback();
+		});
+	} ], function returnResponse(err) {
+		if (!!err) {
+			err.send(res);
+			return;
+		} else {
+			logger.info(users.length, 'users with public lessons');
+			res.send(users);
 		}
 	});
 
@@ -271,7 +215,7 @@ exports.getPublicLessons = function(req, res) {
 exports.getLessonIntro = function(req, res) {
 	logger.info('fetching lesson content from mongodb');
 	managers.lessons.getLessonIntro(req.params.lessonId, function(err, result) {
-		console.log('getting lesson from mongodb');
+		logger.info('getting lesson from mongodb');
 		res.send(result);
 	});
 };

@@ -369,6 +369,31 @@ exports.getPublicLessons = {
     'action'     : controllers.lessons.getPublicLessons
 };
 
+exports.getPublicHomepageLessons = {
+    'spec'       : {
+        'path'          : '/public/homepageLessons',
+        'summary'       : 'Get public homepage lessons',
+        'method'        : 'GET'
+    },
+    'middlewares': [
+        middlewares.lergo.queryObjParsing, 
+        middlewares.lessons.cacheHomepageLessons
+    ],
+    'action'     : controllers.lessons.getPublicLessons
+};
+
+exports.publicLessonsUsernames = {
+    'spec': {
+        'path': '/public/publicLessonsUsernames',
+        'summary': 'gets all the users who have public lessons',
+        'method': 'GET'
+    },
+    'middlewares': [
+        middlewares.lessons.cachePublicLessonsUsernames
+    ],
+    'action': controllers.lessons.getPublicLessonsUsernames
+};
+
 
 
 

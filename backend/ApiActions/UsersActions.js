@@ -18,10 +18,14 @@ var middlewares = require('../middlewares');
 exports.getUsernames = {
     'spec': {
         'path': '/users/usernames',
-        'summary': 'gets a like',
+        'summary': 'get all users for admin',
         'method': 'GET'
     },
-    'middlewares': [/* public function */],
+    'middlewares': [
+        middlewares.session.isLoggedIn,
+        middlewares.users.canSeeAllUsers,
+        middlewares.users.cacheAllUsers
+    ],
     'action': controllers.users.getUsernames
 };
 
@@ -151,6 +155,18 @@ exports.isLoggedIn = {
         middlewares.session.optionalUserOnRequest
     ],
     'action': controllers.users.isLoggedIn
+};
+
+exports.isAdmin = {
+    'spec': {
+        'path': '/user/isAdmin',
+        'summary': 'checks if user is Admin. Otherwise 401.',
+        'method': 'GET'
+    },
+    'middlewares' : [
+        middlewares.session.optionalUserOnRequest
+    ],
+    'action': controllers.users.isAdmin
 };
 
 exports.getUserPermissions = {

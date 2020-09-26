@@ -116,6 +116,52 @@ exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
         }
     });
 };
+
+exports.cachePublicLessonsUsernames = function cachePublicLessonsUsernames( req, res, next) {
+    logger.info('Redis checking public lessons usernames');
+    const key = 'publicLessonsUsernames';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body)); 
+                redis.expire(key, 60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+
+exports.cacheHomepageLessons = function cacheHomepageLessons( req, res, next) {
+    logger.info('Redis checking homepage Lessons cache');
+    const key = req.queryObj.filter.language + 'HomepageLessons';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body));
+                redis.expire(key, 60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
 //Jeff delete lesson key from redis when lesson is being updated
 exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
     const id = req.params.lessonId;
