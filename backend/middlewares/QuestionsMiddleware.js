@@ -118,8 +118,17 @@ var redisDelete = function (id) {
 
 exports.cacheIds = function cacheIds( req, res, next) {
     cachedList = []; 
+    var idsList = [];
     logger.info('checking Redis questions cache');
-    const idsList = req.query.questionsId;
+    const ids = req.query.questionsId || [];
+    // the req.query.questionsId should be an object (list), but if there is only 1 question, it is a string.
+    // the string has 24 elements, which redis would try and save.
+    if (typeof ids === 'string') {
+        idsList.push(ids);
+        logger.info('lesson with only 1 question');
+    } else {
+        idsList = ids;
+    }
     
     var promises = [];
     for (var i in idsList) {
@@ -128,7 +137,7 @@ exports.cacheIds = function cacheIds( req, res, next) {
     }
     Promise.all(promises)
     .then(function() {
-        logger.debug('checking if redis question cache has all questions: ', cachedList.length === idsList.length, cachedList.length, idsList.length  );
+        logger.debug('checking if redis question cache has all questions');
         if (cachedList.length === idsList.length) {
             logger.info('all questions are present: using redis cache for lesson questions');
             res.send(cachedList);
