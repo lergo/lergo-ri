@@ -180,6 +180,16 @@ exports.createNewReportForLessonInvitation = function (req, res) {
     if ( req.invitation.invitee ){ // required for 'student filter'
         report.data.invitee = req.invitation.invitee;
     }
+    // adding TTL for invitations : 3 days for anonymous and 2 years for all others
+    if (!report.data.invitee && !report.data.inviter) {
+        report.data.anonymous = true;
+    }
+    var now = new Date();
+    var anonymous = report.data.anonymous;
+    var twoYearsDays = 2 * 365;
+    var threeDays = 3;
+    var willExpireOn = anonymous && now.setDate(now.getDate() + threeDays) || now.setDate(now.getDate() + twoYearsDays);
+    report.data.willExpireOn = new Date(willExpireOn);
 
     if ( req.invitation.lessonId){ // required for filter by lesson name
         report.data.lesson._id = req.invitation.lessonId.toString();

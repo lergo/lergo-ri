@@ -18,9 +18,9 @@ exports.create = function (req, res) {
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
     var now = new Date();
-    var thirtyYearsDays = 30 * 365;
+    var twoYearsDays = 2 * 365;
     var threeDays = 3;
-    var willExpireOn = anonymous && now.setDate(now.getDate() + threeDays) || now.setDate(now.getDate() + thirtyYearsDays);
+    var willExpireOn = anonymous && now.setDate(now.getDate() + threeDays) || now.setDate(now.getDate() + twoYearsDays);
     invitation = _.merge({
         'anonymous': anonymous,
         'lessonId': req.lesson._id,
