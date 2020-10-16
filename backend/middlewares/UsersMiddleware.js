@@ -9,8 +9,11 @@ var managers = require('../managers');
 var logger = require('log4js').getLogger('UsersMiddleware');
 var User = require('../models/User');
 var permissions = require('../permissions');
-const redisClient = require('redis').createClient;
-const redis = redisClient(6379, 'localhost');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+var services = require('../services');
+const redis = services.redis.getClient();
+
 /**
  * get a user from cookie on request, and calls next request handler
  */

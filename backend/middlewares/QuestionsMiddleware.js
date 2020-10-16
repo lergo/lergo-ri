@@ -9,9 +9,10 @@ var Question = require('../models/Question');
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('QuestionsMiddleware');
 var permissions = require('../permissions');
-const redisClient = require('redis').createClient;
-const redis = redisClient(6379, 'localhost');
-/* var q = require('q'); */
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+var services = require('../services');
+const redis = services.redis.getClient();
 
 /**
 

@@ -8,8 +8,10 @@
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');
-const redisClient = require('redis').createClient;
-const redis = redisClient(6379, 'localhost');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+var services = require('../services');
+const redis = services.redis.getClient();
 
 
 /**

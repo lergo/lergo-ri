@@ -11,8 +11,10 @@ var models = require('../models');
 var logger = require('log4js').getLogger('QuestionsController');
 var _ = require('lodash');
 var Like = require('../models/Like');
-const redisClient = require('redis').createClient;
-const redis = redisClient(6379, 'localhost');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+const redis = services.redis.getClient();
+
 
 exports.create = function (req, res) {
     var question = req.body;
