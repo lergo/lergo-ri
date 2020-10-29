@@ -102,6 +102,27 @@ exports.createLesson = {
     'action': controllers.lessons.create
 };
 
+exports.createLessonforAnon = {
+    'spec': {
+        'path': '/lessons/createAnon',
+        'summary': 'Create new lesson for anonymous user',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'lesson',
+                required: true,
+                'description': 'Lesson details',
+                'type': 'Lesson'
+            }
+        ]
+    },
+    'middlewares' : [
+        /* middlewares.session.isLoggedIn */
+    ],
+    'action': controllers.lessons.createAnon
+};
+
 exports.getUserLessonById = {
     'spec': {
         'path': '/lessons/{lessonId}',
@@ -208,6 +229,37 @@ exports.editLesson = {
     'action': controllers.lessons.update
 };
 
+exports.editLessonAnon = {
+    'spec': {
+        'path': '/lessons/{lessonId}/updateAnon',
+        'summary': 'user edits an anonymous lesson',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'lesson',
+                required: true,
+                'description': 'The updated anonymous lesson',
+                'type': 'Lesson'
+            } ,
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be fetched',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+       /*  middlewares.session.isLoggedIn, */
+        middlewares.lessons.exists,
+       /*  middlewares.lessons.userCanEdit, */
+        middlewares.lessons.deleteKeyFromRedis
+    ],
+    'action': controllers.lessons.updateAnon
+};
+
 exports.publishLesson = {
     'spec': {
         'path': '/lessons/{lessonId}/publish',
@@ -286,6 +338,27 @@ exports.deleteLesson = {
         middlewares.lessons.userCanDelete
     ],
     'action': controllers.lessons.deleteLesson
+};
+
+exports.deleteAnonLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/deleteAnon',
+        'summary': 'Delete anonymous lesson corresponding to the id',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be deleted',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.lessons.exists
+    ],
+    'action': controllers.lessons.deleteAnonLesson
 };
 
 

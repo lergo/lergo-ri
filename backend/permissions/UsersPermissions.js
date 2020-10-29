@@ -5,7 +5,6 @@ exports.userCanSeePrivateUserDetails = function (sessionUser/*, user*/) {
 };
 
 exports.userCanSeeAllUsers = function( sessionUser ){
-    console.log('the sessionUser', sessionUser);
     return !!sessionUser && !!sessionUser.isAdmin;
 };
 

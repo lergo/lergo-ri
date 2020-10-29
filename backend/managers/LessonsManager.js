@@ -37,6 +37,27 @@ exports.createLesson = function(lesson, callback) {
 	});
 };
 
+exports.createLessonAnon = function(lesson, callback) {
+	logger.info('Creating lesson for anonymous user');
+	lesson.createdAt = new Date().toISOString();
+    if ( !lesson.age) {
+        lesson.age = 8;
+    }
+	services.db.connect('lessons', function(db, collection) {
+		collection.insertOne(lesson, function(err) {
+			if (!!err) {
+				logger.error('error creating lesson [%s] : [%s]', lesson.name, err);
+				callback(new errorManager.InternalServerError());
+				return;
+			} else {
+				logger.info('Lesson [%s] created successfully. invoking callback', lesson.name);
+				callback(null, lesson);
+				return;
+			}
+		});
+	});
+};
+
 
 /**
  *
@@ -107,6 +128,27 @@ exports.copyLesson = function (user, lesson, callback) {
 
 exports.updateLesson = function(lesson, callback) {
 	logger.info('Updating lesson');
+	services.db.connect('lessons', function(db, collection, done) {
+		collection.updateOne({
+			'_id' : lesson._id
+		}, {$set: lesson}, function(err) {
+			if (!!err) {
+				logger.error('error in updating lesson [%s] : [%s]', lesson.name, err);
+				callback(new errorManager.InternalServerError());
+				done();
+				return;
+			} else {
+				// logger.info('Lesson [%s] updated successfully. invoking callback', lesson.name);
+				callback(null, lesson);
+				done();
+				return;
+			}
+		});
+	});
+};
+
+exports.updateLessonAnon = function(lesson, callback) {
+	logger.info('Updating  anonymous lesson');
 	services.db.connect('lessons', function(db, collection, done) {
 		collection.updateOne({
 			'_id' : lesson._id

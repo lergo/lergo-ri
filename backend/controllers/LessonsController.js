@@ -280,6 +280,24 @@ function _updateLesson( lesson , res ){
     });
 }
 
+// jeff: anonymous lessons must be removed by mongodb index on lessons. 
+
+function _updateLessonAnon( lesson , res ){
+	var now = new Date();
+	var threeDays = 3;
+	var willExpireOn = now.setDate(now.getDate() + threeDays);
+	lesson.willExpireOn = new Date(willExpireOn);
+    managers.lessons.updateLessonAnon(lesson, function(err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+}
+
 function _unsetPublic( lesson , res ){
     managers.lessons.unsetPublic(lesson, function(err, obj) {
         if (!!err) {
@@ -330,6 +348,17 @@ exports.update = function(req, res) {
 	lesson._id = services.db.id(lesson._id);
 
     _updateLesson( lesson, res );
+
+};
+
+exports.updateAnon = function(req, res) {
+	logger.info('updating anonymous lesson');
+	var lesson = req.body;
+
+	/* lesson.userId = req.lesson.userId; */
+	lesson._id = services.db.id(lesson._id);
+
+    _updateLessonAnon( lesson, res );
 
 };
 
@@ -408,6 +437,19 @@ exports.create = function(req, res) {
 		}
 	});
 };
+exports.createAnon = function(req, res) {
+	var lesson = {};
+	/* lesson.userId = req.sessionUser._id; */
+	managers.lessons.createLessonAnon(lesson, function(err, obj) {
+		if (!!err) {
+			err.send(res);
+			return;
+		} else {
+			res.send(obj);
+			return;
+		}
+	});
+};
 
 /**
  * gets a list of ids and returns the corresponding lessons.
@@ -456,13 +498,37 @@ exports.deleteLesson = function(req, res) {
 					err.send(res);
 					return;
 				} else {
+					logger.info('deleting lessonInvitations by lessonId', req.lesson._id);
 					res.send(deletedLesson);
 					return;
 				}
 			});
 		}
 	});
-
+};
+exports.deleteAnonLesson = function(req, res) {
+	managers.lessons.deleteLesson(req.lesson._id, function(err, deletedLesson) {
+		if (!!err) {
+			logger.error('error deleting lesson', err);
+			err.send(res);
+			return;
+		} else {
+			managers.lessonsInvitations.deleteByLessonId(req.lesson._id, function(err/*
+																						 * ,
+																						 * deletedInvitations
+																						 */) {
+				if (!!err) {
+					logger.error('error deleting lessons invitations', err);
+					err.send(res);
+					return;
+				} else {
+					logger.info('deleting lessonInvitations by lessonId', req.lesson._id);
+					res.send(deletedLesson);
+					return;
+				}
+			});
+		}
+	});
 };
 
 exports.findUsages = function(req, res) {

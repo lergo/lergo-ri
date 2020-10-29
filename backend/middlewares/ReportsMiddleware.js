@@ -23,7 +23,6 @@ exports.exists = function exists(req, res, next) {
 
 		});
 	} catch (e) {
-        console.log('could not find report',e);
 		res.sendStatus(404);
 	}
 };
