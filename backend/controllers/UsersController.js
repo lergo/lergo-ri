@@ -305,6 +305,7 @@ exports.findUsersById = function (req, res) {
 };
 
 exports.getUsernames = function (req, res) {
+    logger.info('accessing mongodb for allUsers');
     var like = req.param('like');
     like = new RegExp(like, 'i');
 
@@ -359,6 +360,15 @@ exports.isLoggedIn = function (req, res) {
 
     if ( !!req.sessionUser ){
         res.send( { user : User.getUserPublicDetails( req.sessionUser ), token: require('sha1')(req.sessionUser.email) } );
+    }else{
+        res.send({});
+    }
+};
+
+exports.isAdmin = function (req, res) {
+
+    if ( !!req.sessionUser && !!req.sessionUser.isAdmin ){
+        res.send( { admin: true });
     }else{
         res.send({});
     }

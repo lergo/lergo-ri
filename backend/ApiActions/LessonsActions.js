@@ -52,7 +52,8 @@ exports.getLessonIntro = {
     },
     'middlewares': [
         middlewares.session.optionalUserOnRequest,
-        middlewares.lessons.exists
+        middlewares.lessons.exists,
+        middlewares.lessons.cacheLessonsIntro
     ],
     'action': controllers.lessons.getLessonIntro
 };
@@ -99,6 +100,27 @@ exports.createLesson = {
         middlewares.session.isLoggedIn
     ],
     'action': controllers.lessons.create
+};
+
+exports.createLessonforAnon = {
+    'spec': {
+        'path': '/lessons/createAnon',
+        'summary': 'Create new lesson for anonymous user',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'lesson',
+                required: true,
+                'description': 'Lesson details',
+                'type': 'Lesson'
+            }
+        ]
+    },
+    'middlewares' : [
+        /* middlewares.session.isLoggedIn */
+    ],
+    'action': controllers.lessons.createAnon
 };
 
 exports.getUserLessonById = {
@@ -201,9 +223,41 @@ exports.editLesson = {
     'middlewares' : [
         middlewares.session.isLoggedIn,
         middlewares.lessons.exists,
-        middlewares.lessons.userCanEdit
+        middlewares.lessons.userCanEdit,
+        middlewares.lessons.deleteKeyFromRedis
     ],
     'action': controllers.lessons.update
+};
+
+exports.editLessonAnon = {
+    'spec': {
+        'path': '/lessons/{lessonId}/updateAnon',
+        'summary': 'user edits an anonymous lesson',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'body',
+                'name': 'lesson',
+                required: true,
+                'description': 'The updated anonymous lesson',
+                'type': 'Lesson'
+            } ,
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be fetched',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+       /*  middlewares.session.isLoggedIn, */
+        middlewares.lessons.exists,
+       /*  middlewares.lessons.userCanEdit, */
+        middlewares.lessons.deleteKeyFromRedis
+    ],
+    'action': controllers.lessons.updateAnon
 };
 
 exports.publishLesson = {
@@ -234,6 +288,35 @@ exports.unpublishLesson = {
     'action': controllers.lessons.unpublish
 };
 
+//Jeff: commentEmailSent for admin comments
+exports.commentEmailSent = {
+    'spec': {
+        'path': '/lessons/{lessonId}/commentEmailSent',
+        'summary': 'user sent email about comment',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanPublish
+    ],
+    'action': controllers.lessons.commentEmailSent
+};
+
+exports.commentEmailNotSent = {
+    'spec': {
+        'path': '/lessons/{lessonId}/commentEmailNotSent',
+        'summary': 'user did not send email about comment',
+        'method': 'POST'
+    },
+    'middlewares' : [
+        middlewares.session.isLoggedIn,
+        middlewares.lessons.exists,
+        middlewares.lessons.userCanPublish
+    ],
+    'action': controllers.lessons.commentEmailNotSent
+};
+
 exports.deleteLesson = {
     'spec': {
         'path': '/lessons/{lessonId}/delete',
@@ -255,6 +338,27 @@ exports.deleteLesson = {
         middlewares.lessons.userCanDelete
     ],
     'action': controllers.lessons.deleteLesson
+};
+
+exports.deleteAnonLesson = {
+    'spec': {
+        'path': '/lessons/{lessonId}/deleteAnon',
+        'summary': 'Delete anonymous lesson corresponding to the id',
+        'method': 'POST',
+        'parameters': [
+            {
+                'paramType': 'path',
+                'name': 'lessonId',
+                required: true,
+                'description': 'ID of lesson that needs to be deleted',
+                'type': 'string'
+            }
+        ]
+    },
+    'middlewares' : [
+        middlewares.lessons.exists
+    ],
+    'action': controllers.lessons.deleteAnonLesson
 };
 
 
@@ -336,6 +440,31 @@ exports.getPublicLessons = {
     },
     'middlewares': [middlewares.lergo.queryObjParsing],
     'action'     : controllers.lessons.getPublicLessons
+};
+
+exports.getPublicHomepageLessons = {
+    'spec'       : {
+        'path'          : '/public/homepageLessons',
+        'summary'       : 'Get public homepage lessons',
+        'method'        : 'GET'
+    },
+    'middlewares': [
+        middlewares.lergo.queryObjParsing, 
+        middlewares.lessons.cacheHomepageLessons
+    ],
+    'action'     : controllers.lessons.getPublicLessons
+};
+
+exports.publicLessonsUsernames = {
+    'spec': {
+        'path': '/public/publicLessonsUsernames',
+        'summary': 'gets all the users who have public lessons',
+        'method': 'GET'
+    },
+    'middlewares': [
+        middlewares.lessons.cachePublicLessonsUsernames
+    ],
+    'action': controllers.lessons.getPublicLessonsUsernames
 };
 
 

@@ -32,8 +32,6 @@ var conf = services.conf;
 var mongoose = require('mongoose');
 mongoose.connect(conf.dbUrl, { useNewUrlParser: true , useUnifiedTopology: true });
 
-
-
 if ( !!services.conf.log4js ){
     log4js.configure(services.conf.log4js);
 }

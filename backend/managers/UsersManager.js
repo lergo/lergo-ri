@@ -110,8 +110,13 @@ exports.createUser = function(emailResources, user, callback) {
 
 			logger.info('user with email [%s] does not exists. creating', user.username);
 			services.db.connect('users', function(db, collection, done) {
-
+				// adding expiry date to all new users, will be deleted upon validation
+				var now = new Date();
+				var thirtyDays = 30;
+				var expireOnDate = now.setDate(now.getDate() + thirtyDays);
+				var willExpireOn = new Date(expireOnDate);
 				user.password = exports.encryptUserPassword(user.password);
+				user.willExpireOn = willExpireOn;
 				delete user.passwordConfirm;
 				delete user.confirmPassword;
 
@@ -157,7 +162,7 @@ exports.updateUser = function(user, callback) {
 	services.db.connect('users', function(db, collection, done) {
 		collection.updateOne({
 			'_id' : user._id
-		},{$set: user}, function(err) {
+		},{$set: user, $unset: { 'willExpireOn' : ''}}, function(err) {
 
 			if (!!err) {
 				logger.error('error updating user [%s]', user.username, err);
@@ -282,6 +287,7 @@ exports.validateUser = function(userId, hmac, callback) {
 		}
 		logger.info('user validation passed');
 		user.validated = true;
+		delete user.willExpireOn;
 		exports.updateUser(user, function(err) {
 			if (!!err) {
 				logger.error('error while updating user', err);

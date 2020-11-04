@@ -9,26 +9,33 @@ function ExactMatchQuestionHandler(question) {
             correct   : false,
             expMessage: []
         };
+        // jeff - two loops are needed, one to see if we have the correct answer and if not, 
+        // jeff - the second to check if there is an explanation for the incorrect answer
         for (var i = 0; i < question.options.length; i++) {
-            var option = question.options[i];
-            if (option.label === question.userAnswer) {
-                if (option.checked) {
+            var answerOption = question.options[i];
+            if ( answerOption.checked &&  answerOption.label  === question.userAnswer) { 
+                if ( answerOption.checked) {
                     result.correct = true;
                     if (!!question.explanation) {
                         result.expMessage.push(question.explanation);
                     }
                     return result;
-                } else {
-                    result.correct = false;
-                    if (!!option.textExplanation) {
-                        result.expMessage.push(option.textExplanation);
-                    }
-                    else if (!!question.explanation) {
-                        result.expMessage.push(question.explanation);
-                    }
-                    return result;
-                }
+                } 
             }
+        }
+        result.correct = false;
+        for (var j = 0; j < question.options.length; j++) {
+            var option = question.options[j];
+            if (option.label  === question.userAnswer) { 
+            result.correct = false;
+            if (!!option.textExplanation) {
+                result.expMessage.push(option.textExplanation);
+            }
+            else if (!!question.explanation) {
+                    result.expMessage.push(question.explanation);
+            }
+            return result;
+            }    
         }
         if (!!question.explanation) {
             result.expMessage.push(question.explanation);

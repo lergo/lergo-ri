@@ -11,6 +11,10 @@ var models = require('../models');
 var logger = require('log4js').getLogger('QuestionsController');
 var _ = require('lodash');
 var Like = require('../models/Like');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+const redis = services.redis.getClient();
+
 
 exports.create = function (req, res) {
     var question = req.body;
@@ -55,15 +59,13 @@ exports.getQuestions = function (req, res) {
     });
 };
 exports.getQuestionById = function (req, res) {
-    //logger.info('getting question by id');
+    logger.debug('......getting question by id'); 
     res.send(req.question);
 };
 
 exports.update = function (req, res) {
     logger.info('updating question');
     var question = req.body;
-
-    logger.debug('question from body', question);
     question._id = services.db.id(question._id);
     question.userId = services.db.id(req.question.userId);
     managers.questions.updateQuestion(question, function (err, obj) {
@@ -87,16 +89,26 @@ exports.update = function (req, res) {
  * @param req
  * @param res
  */
-exports.findQuestionsByIds = function (req, res) {
+var redisSet = function (id, body) {
+    id = String(id);
+    redis.set(id, JSON.stringify(body), function (err, reply) {
+        logger.debug('adding question to redis' , reply);
+      });
+    redis.expire(id, 60*60*24*7); // questions expires every week to update  # of views  
+};
 
+exports.findQuestionsByIds = function (req, res) {
     var objectIds = req.getQueryList('questionsId');
     logger.info('findQuestionsByIds');
-
     managers.questions.getQuestionsById(objectIds, function (err, result) {
         if (!!err) {
             err.send(res);
             return;
         }
+        logger.info('saving questions to redis');
+        for (let i = 0; i < result.length; i++ ) {
+           redisSet(result[i]._id, result[i]);
+       }
         res.send(result);
     });
 
@@ -129,7 +141,7 @@ exports.deleteQuestion = function (req, res) {
 /* used for deleting invalid questions before playing the lesson */
 exports.removeQuestion = function (req, res) {
     var id = req.params.questionId;
-    logger.info('Deleting question:', id);
+    logger.info('Deleting invalid question:', id);
     managers.questions.deleteQuestion(id, function (err, obj) {
         if (!!err) {
             err.send(res);

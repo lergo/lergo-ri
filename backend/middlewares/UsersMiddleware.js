@@ -9,6 +9,11 @@ var managers = require('../managers');
 var logger = require('log4js').getLogger('UsersMiddleware');
 var User = require('../models/User');
 var permissions = require('../permissions');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+var services = require('../services');
+const redis = services.redis.getClient();
+
 /**
  * get a user from cookie on request, and calls next request handler
  */
@@ -26,6 +31,21 @@ exports.loggedInMiddleware = function loggedInMiddleware(req, res, next) {
 exports.loggedIn = function loggedIn ( ){
     exports.loggedInMiddleware.apply(null,arguments);
 }; // alias
+
+exports.IsAdminMiddleware = function IsAdminMiddleware(req, res, next) {
+    exports.optionalUserOnRequest( req, res , function(){
+        logger.debug('checking isAdmin middleware');
+        if ( !req.sessionUser || !req.sessionUser.isAdmin ){
+            new managers.error.NotLoggedIn().send(res);
+            return;
+        }
+        next();
+    });
+};
+exports.isAdmin = function isAdmin ( ){
+    exports.isAdminMiddleware.apply(null,arguments);
+}; // alias
+
 
 
 exports.exists = function exists ( req, res, next ){
@@ -88,3 +108,28 @@ exports.canPatchUsers = function canPatchUsers( req, res, next ){
         res.status(400).send('not allowed to patch users');
     }
 };
+
+//admin: caching the Allusers 
+
+exports.cacheAllUsers = function cacheAllUsers( req, res, next) {
+    logger.info('Redis checking admin AllUsers');
+    const key = 'allUsers';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body)); 
+                redis.expire(key, 6*60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+}; 

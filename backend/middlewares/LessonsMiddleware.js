@@ -8,6 +8,11 @@
 var Lesson = require('../models/Lesson');
 var logger = require('log4js').getLogger('LessonsMiddleware');
 var permissions = require('../permissions');
+/* const redisClient = require('redis').createClient;
+const redis = redisClient(6379, 'localhost'); */
+var services = require('../services');
+const redis = services.redis.getClient();
+
 
 /**
 
@@ -91,3 +96,84 @@ exports.userCanSeePrivateLessons = function userCanSeePrivateLessons( req, res, 
     }
     next();
 };
+
+exports.cacheLessonsIntro = function cacheLessonsIntro( req, res, next) {
+    logger.info('Redis checking lessons cache');
+    const id = req.params.lessonId;
+    redis.get(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for this lesson content');
+            res.send(modifiedReply);
+        } else {
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(id, JSON.stringify(body));
+                redis.expire(id, 60*60*24*7); // lessonIntro expires every week to update  # of views
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+
+exports.cachePublicLessonsUsernames = function cachePublicLessonsUsernames( req, res, next) {
+    logger.info('Redis checking public lessons usernames');
+    const key = 'publicLessonsUsernames';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body)); 
+                redis.expire(key, 60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+
+exports.cacheHomepageLessons = function cacheHomepageLessons( req, res, next) {
+    logger.info('Redis checking homepage Lessons cache');
+    const key = req.queryObj.filter.language + 'HomepageLessons';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body));
+                redis.expire(key, 60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+//Jeff delete lesson key from redis when lesson is being updated
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.lessonId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting lesson key from redis after lesson update', reply);
+        }
+    });
+    next();
+};
+

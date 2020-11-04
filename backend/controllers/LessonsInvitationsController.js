@@ -15,12 +15,12 @@ var Pin = require('../seqGen/SeqGen.Model');
 
 exports.create = function (req, res) {
     logger.debug('creating invitation for lesson', req.lesson);
-
     var invitation = req.body || {};
     var anonymous = !req.body || JSON.stringify(req.body) === '{}';
-    var thirtyYearsMillis = 30 * 365 * 24 * 60 * 60 * 1000;
-    var sixtyHoursMillis = 60 * 60 * 60 * 1000;
-    var expiresAt = anonymous && new Date(Date.now() + sixtyHoursMillis) || new Date(Date.now() + thirtyYearsMillis);
+    var now = new Date();
+    var twoYearsDays = 2 * 365;
+    var threeDays = 3;
+    var willExpireOn = anonymous && now.setDate(now.getDate() + threeDays) || now.setDate(now.getDate() + twoYearsDays);
     invitation = _.merge({
         'anonymous': anonymous,
         'lessonId': req.lesson._id,
@@ -29,7 +29,7 @@ exports.create = function (req, res) {
         'age': req.lesson.age,
         'name': req.lesson.name,
         'lastUpdate': new Date().getTime(),
-        'expiresAt': new Date(expiresAt)
+        'willExpireOn': new Date(willExpireOn)
     }, invitation);
 
     if (invitation.invitee && invitation.invitee.class) {
@@ -112,6 +112,7 @@ exports.build = function (req, res) {
         });
     } else {
         managers.lessons.incrementViews(invitation.lessonId, function () { /** noop **/
+            logger.info('incrementing lesson view');
         });
         res.send(invitation);
     }
