@@ -9,6 +9,7 @@ exports.playlistsInvitationsActions = require('./PlaylistsInvitationsActions');
 //exports.likes=require('./LikesActions');
 exports.tagsActions = require('./TagsActions');
 exports.likesActions = require('./LikesActions');
+exports.completesActions = require('./CompletesActions');
 exports.reportsActions = require('./ReportsActions');
 exports.playlistRprtsActions = require('./PlaylistRprtsActions');
 exports.helperContentsActions= require('./HelperContentsActions');

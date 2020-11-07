@@ -2,6 +2,7 @@ exports.Lesson = require('./Lesson');
 exports.Playlist = require('./Playlist');
 exports.Question = require('./Question');
 exports.Like = require('./Like');
+exports.Complete = require('./Complete');
 exports.Report = require('./Report');
 exports.PlaylistRprt = require('./PlaylistRprt');
 exports.LessonInvitation = require('./LessonInvitation');

@@ -7,6 +7,7 @@ exports.playlistsInvitations = require('./PlaylistsInvitationsController');
 exports.system = require('./SystemController');
 exports.tags = require('./TagsController');
 exports.likes = require('./LikesController');
+exports.completes = require('./CompletesController');
 exports.reports = require('./ReportsController');
 exports.playlistRprts = require('./PlaylistRprtsController');
 exports.helperContents = require('./HelperContentsController');

@@ -3,6 +3,7 @@ exports.playlists = require('./PlaylistsMiddleware');
 exports.questions = require('./QuestionsMiddleware');
 exports.users = require('./UsersMiddleware');
 exports.likes = require('./LikesMiddleware');
+exports.completes = require('./CompletesMiddleware');
 exports.session = require('./SessionMiddleware');
 exports.lessonsInvitations = require('./LessonsInvitationsMiddleware');
 exports.playlistsInvitations = require('./PlaylistsInvitationsMiddleware');
