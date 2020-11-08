@@ -70,8 +70,8 @@ exports.optionalExists = function optionalExists(req, res, next) {
         Complete.findOne(
             Complete.createNewFromRequest(req),
             function (err, result) {
-                if (!!err || !result) {
-                    logger.debug('got error or no result, moving on.. ',err,result);
+                if (!!err) {
+                    logger.debug('got error moving on.. ',err);
                     next();
                     return;
                 }
