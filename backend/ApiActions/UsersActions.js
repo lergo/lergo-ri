@@ -451,6 +451,15 @@ exports.getUserLikedPlaylists = {
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.playlists.getUserLikedPlaylists
 };
+exports.getUserCompletedLessons = {
+    'spec': {
+        'path': '/user/me/completed/lessons',
+        'summary': 'Get user completed lessons',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.lessons.getUserCompletedLessons
+};
 exports.getUserLikedQuestions = {
     'spec': {
         'path': '/user/me/liked/questions',
