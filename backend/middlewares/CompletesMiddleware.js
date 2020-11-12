@@ -75,7 +75,7 @@ exports.optionalExists = function optionalExists(req, res, next) {
                     next();
                     return;
                 }
-                logger.info('got result', result);
+                logger.debug('found a completes', result);
                 req.complete = result;
                 next();
             });

@@ -5,6 +5,7 @@ var logger = require('log4js').getLogger('LikesMiddleware');
 var async = require('async');
 var lessonsMiddleware = require('./LessonsMiddleware');
 var questionsMiddleware = require('./QuestionsMiddleware');
+var playlistsMiddleware = require('./PlaylistsMiddleware');
 
 
 // finds the item we want to like/dislike/count likes etc..
@@ -38,6 +39,16 @@ exports.itemExists = function itemExists(req, res, next) {
                     req.params.questionId = itemId;
                     questionsMiddleware.exists(req, res, function () {
                         req.likeItem = req.question;
+                        next();
+                    });
+                }
+            },
+            function findPlaylist() {
+                if (itemType === Like.ItemTypes.PLAYLIST) {
+                    req.likeItemType = Like.ItemTypes.PLAYLIST;
+                    req.params.playlistId = itemId;
+                    playlistsMiddleware.exists(req, res, function () {
+                        req.likeItem = req.playlist;
                         next();
                     });
                 }
