@@ -270,7 +270,6 @@ exports.getClasses = function (req, res) {
 
 // assume playlistRprt exists in the system, verified by middleware
 exports.updatePlaylistRprt = function (req, res) {
-    logger.info('--------------------------------------updating playlistRprt and showing the req.body', req.body);
     var playlistRprt = req.body;
     var playlistRprtModel = new PlaylistRprt(playlistRprt);
     playlistRprt._id = services.db.id(playlistRprt._id);
