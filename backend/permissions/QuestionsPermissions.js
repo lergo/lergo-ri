@@ -3,7 +3,6 @@
 var _ = require('lodash');
 
 exports.limitUserEdit = function(user, question, isUsedByPublicLesson ){
-
     if ( !user || !question ){
         return false;
     }

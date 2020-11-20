@@ -219,6 +219,16 @@ exports.getUserLessons = {
     'action': controllers.lessons.getUserLessons
 };
 
+exports.getUserPlaylists = {
+    'spec': {
+        'path': '/user/me/playlists',
+        'summary': 'Get user playlists',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlists.getUserPlaylists
+};
+
 exports.getUserReports = {
     'spec': {
         'path': '/user/me/reports',
@@ -227,6 +237,16 @@ exports.getUserReports = {
     },
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.reports.getUserReports
+};
+
+exports.getUserPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/playlistRprts',
+        'summary': 'Get user playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlistRprts.getUserPlaylistRprts
 };
 
 exports.getStudentsReports = {
@@ -239,6 +259,16 @@ exports.getStudentsReports = {
     'action': controllers.reports.getUserStudentsReports
 };
 
+exports.getStudentsPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/studentsPlaylistRprts',
+        'summary': 'Get user students playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlistRprts.getUserStudentsPlaylistRprts
+};
+
 exports.getClassReports = {
     'spec': {
         'path': '/user/me/classReports',
@@ -247,6 +277,16 @@ exports.getClassReports = {
     },
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.classReports.getUserClassReports
+};
+
+exports.getClassPlaylistRprts = {
+    'spec': {
+        'path': '/user/me/classPlaylistRprts',
+        'summary': 'Get class playlist reports',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.classPlaylistRprts.getUserClassPlaylistRprts
 };
 
 
@@ -400,6 +440,25 @@ exports.getUserLikedLessons = {
     },
     'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
     'action': controllers.lessons.getUserLikedLessons
+};
+
+exports.getUserLikedPlaylists = {
+    'spec': {
+        'path': '/user/me/liked/playlists',
+        'summary': 'Get user liked playlists',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.playlists.getUserLikedPlaylists
+};
+exports.getUserCompletedLessons = {
+    'spec': {
+        'path': '/user/me/completed/lessons',
+        'summary': 'Get user completed lessons',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.lessons.getUserCompletedLessons
 };
 exports.getUserLikedQuestions = {
     'spec': {

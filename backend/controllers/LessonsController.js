@@ -12,6 +12,7 @@ var logger = require('log4js').getLogger('LessonsController');
 var Lesson = require('../models/Lesson');
 var _ = require('lodash');
 var Like = require('../models/Like');
+var Complete = require('../models/Complete');
 
 exports.getUserLessons = function(req, res) {
 	var queryObj = req.queryObj;
@@ -30,6 +31,41 @@ exports.getUserLessons = function(req, res) {
 exports.getUserLikedLessons = function(req, res) {
 	var queryObj = req.queryObj;
 	Like.find({
+		userId : req.sessionUser._id,
+		itemType : 'lesson'
+	}, {
+		itemId : 1,
+		_id : 1
+	}, function(err, result) {
+		if (!!err) {
+			err.send(res);
+			return;
+		}
+		var mapResults = {};
+		_.each(result, function(r) {
+			mapResults[r.itemId.toString()] = r._id.getTimestamp();
+		});
+		queryObj.filter._id = {
+			$in : _.map(result, 'itemId')
+		};
+		managers.lessons.complexSearch(queryObj, function(err, obj) {
+			if (!!err) {
+				err.send(res);
+				return;
+			} else {
+				_.each(obj.data, function(o) {
+					o.lastUpdate = mapResults[o._id.toString()];
+				});
+				return res.send(obj);
+			}
+		});
+	});
+
+};
+
+exports.getUserCompletedLessons = function(req, res) {
+	var queryObj = req.queryObj;
+	Complete.find({
 		userId : req.sessionUser._id,
 		itemType : 'lesson'
 	}, {
@@ -454,6 +490,7 @@ exports.createAnon = function(req, res) {
 /**
  * gets a list of ids and returns the corresponding lessons.
  *
+ * 
  * how to pass a list of ids over req query?
  *
  * ?idsList[]=1&idsList[]=2&idsList[]=3
@@ -462,7 +499,6 @@ exports.createAnon = function(req, res) {
  * @param res
  */
 exports.findLessonsByIds = function(req, res) {
-
 	var objectIds = req.getQueryList('lessonsId');
 	logger.info('getting object ids');
 	objectIds = services.db.id(objectIds);
