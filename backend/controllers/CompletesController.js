@@ -2,7 +2,7 @@
 var models= require('../models');
 var managers = require('../managers');
 var logger = require('log4js').getLogger('CompletesController');
-
+ 
 
 exports.createComplete = function( req, res ){
     var complete = models.Complete.createNewFromRequest(req);
@@ -48,4 +48,18 @@ exports.deleteComplete = function (req, res) {
 
 exports.getComplete = function( req, res ){
     res.send(req.complete);
+};
+
+exports.getUserCompletes = function(req, res) {
+	var queryObj = req.queryObj;
+	queryObj.filter.userId = req.sessionUser._id;
+	managers.completes.complexSearch(queryObj, function(err, obj) {
+		if (!!err) {
+			err.send(res);
+			return;
+		} else {
+			res.send(obj);
+			return;
+		}
+	});
 };

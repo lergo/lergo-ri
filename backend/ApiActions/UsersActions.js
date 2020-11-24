@@ -229,6 +229,16 @@ exports.getUserPlaylists = {
     'action': controllers.playlists.getUserPlaylists
 };
 
+exports.getUserCompletes = {
+    'spec': {
+        'path': '/user/me/completes',
+        'summary': 'Get user completes',
+        'method': 'GET'
+    },
+    'middlewares': [middlewares.session.isLoggedIn, middlewares.lergo.queryObjParsing],
+    'action': controllers.completes.getUserCompletes
+};
+
 exports.getUserReports = {
     'spec': {
         'path': '/user/me/reports',
