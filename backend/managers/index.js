@@ -4,6 +4,7 @@ exports.users = require('./UsersManager');
 exports.questions = require('./QuestionsManager');
 exports.lessons = require('./LessonsManager');
 exports.playlists = require('./PlaylistsManager');
+exports.completes = require('./CompletesManager');
 exports.lessonsInvitations = require('./LessonsInvitationsManager');
 exports.playlistsInvitations = require('./PlaylistsInvitationsManager');
 exports.reports = require('./ReportsManager');
