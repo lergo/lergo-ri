@@ -86,7 +86,6 @@ exports.optionalExists = function optionalExists(req, res, next) {
                     next();
                     return;
                 }
-                logger.info('got result', result);
                 req.like = result;
                 next();
             });
