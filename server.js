@@ -310,6 +310,7 @@ app.get('/backend/sitemap.xml', function(req, res){
     var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he$/.test(url);
     var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url);
     var publicLessons = /^(.*)\/public\/lessons\/.*\/intro$/.test(url);
+    var publicPlaylists = /^(.*)\/public\/playlists\/.*\/intro$/.test(url);
     var d = new Date();
     var currentDate = d.getDate();
 
@@ -356,7 +357,7 @@ app.get('/backend/sitemap.xml', function(req, res){
     }
     
     // invalid url is one that is not lesson/intro or home page
-    if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
+    if (!publicLessons && !publicPlaylists && !enHomePage && !heHomePage && !indexHomePage) {
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
