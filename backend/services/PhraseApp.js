@@ -17,7 +17,7 @@ exports.getTranslation = function( locale, callback  ){
         token: conf.translations.phraseAppToken
     };
     var url = conf.translations.url.replace('{locale}', path.locale).replace('{token}', path.token);
-    logger.info('using url', url);
+    logger.info('using url from phraseApp');
     request(url,function(err, result, body){ callback(body, result); });
 };
 
