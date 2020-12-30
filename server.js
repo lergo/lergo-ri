@@ -302,7 +302,7 @@ app.get('/backend/sitemap.xml', function(req, res){
  var numRepeats = 0;
  var throttle = require('express-throttle');
 
- app.get('/backend/crawler', throttle({ 'burst': 15, 'rate': '10/m' }),function(req, res){
+ app.get('/backend/crawler', throttle({ 'burst': 5, 'rate': '3/m' }),function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
 
