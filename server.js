@@ -27,6 +27,9 @@ var path = require('path');
 var sm = require('sitemap');
 var lergoUtils = require('./backend/LergoUtils');
 var conf = services.conf;
+/* jshint ignore:start */
+const redis = services.redis.getClient();
+/* jshint ignore:end */
 
 
 var mongoose = require('mongoose');
@@ -287,17 +290,11 @@ app.get('/backend/sitemap.xml', function(req, res){
     });
 }) ;
 
-/* jshint ignore:start */
-
  // Only allow index.html or public/lesson/:lesson_number/intro to be prerendered
- // often a certain url is prerendered many times in the same second or two
- // to prevent unnecessary cpu usage, we will cache the url and resend same page if repeated consecutively
- // index.html will be updated every day 
+ // often a certain url is prerendered many times in the same second or two so we limit the number  of times
+ // a url can run consecutively. Cashing of all valid url's will be used
 
- var heCachedHomePage = '';
- var enCachedHomePage = '';
- var indexCachedHomePage = '';
- var previousDate = 0;
+/* jshint ignore:start */
  var repeatedLessonUrl = '';
  var numRepeats = 0;
  var throttle = require('express-throttle');
@@ -305,62 +302,25 @@ app.get('/backend/sitemap.xml', function(req, res){
  app.get('/backend/crawler', throttle({ 'burst': 5, 'rate': '3/m' }),function(req, res){
     var url = req.param('_escaped_fragment_');
     url = req.absoluteUrl('/index.html#!' + decodeURIComponent(url) );
-
-    var indexHomePage = /^(.*)\/index\.html#!(.{0,17})$/.test(url);
+    var indexHomePage = /^(.*)\/index\.html#!\/$/.test(url);
     var heHomePage = /^(.*)\/public\/homepage\?lergoLanguage=he$/.test(url);
     var enHomePage = /^(.*)\/public\/homepage\?lergoLanguage=en$/.test(url);
     var publicLessons = /^(.*)\/public\/lessons\/.*\/intro$/.test(url);
-    var d = new Date();
-    var currentDate = d.getDate();
 
-    // for hebrew home page if page has already been cached
-    if (heHomePage && heCachedHomePage !== '') {
-        logger.info('using cached hebrew home page: ', url);
-        res.status(200).send(heCachedHomePage);
-        if (currentDate !== previousDate) { // reset the home page link every day
-            previousDate = currentDate;
-            logger.info('updating date to ', previousDate);
-            heCachedHomePage = '';
-            enCachedHomePage = '';
-            indexCachedHomePage = '';
-        }
-        return;
-    }
-
-    // for index home page if page has already been cached
-    if ( indexHomePage && indexCachedHomePage !== '') {
-        logger.info('cached index home page: ', url);
-        res.status(200).send(indexCachedHomePage);
-        if (currentDate !== previousDate) { // reset the home page link every day
-            previousDate = currentDate;
-            logger.info('updating date to ', previousDate);
-            heCachedHomePage = '';
-            enCachedHomePage = '';
-            indexCachedHomePage = '';
-        }
-        return;
-    }
-
-    // for english home page if page has already been cached
-    if ( enHomePage && enCachedHomePage !== '') {
-        logger.info('cached english home page: ', url);
-        res.status(200).send(enCachedHomePage);
-        if (currentDate !== previousDate) { // reset the home page link every day
-            previousDate = currentDate;
-            logger.info('updating date to ', previousDate);
-            heCachedHomePage = '';
-            enCachedHomePage = '';
-            indexCachedHomePage = '';
-        }
-        return;
-    }
-    
-    // invalid url is one that is not lesson/intro or home page
-    if (!publicLessons && !enHomePage && !heHomePage && !indexHomePage) {
+    var prerenderKey = '';  // the key variable for redis
+    if (publicLessons) {
+        prerenderKey = 'prerender' + url.slice(url.length-30, url.length-6);
+    } else if (indexHomePage) {
+        prerenderKey = 'prerenderIndex'
+    } else if (heHomePage) {
+        prerenderKey = 'prerenderHeHome'
+    } else if (enHomePage) {
+        prerenderKey = 'prerenderEnHome'
+    } else {
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
-    }
+    }   
 
     // prevent the same lessonUrl from running more than 10 times in a row
     if (url !== repeatedLessonUrl) {
@@ -376,58 +336,58 @@ app.get('/backend/sitemap.xml', function(req, res){
         } 
     }
 
-    // no cached page, need to prerender new one
-    logger.info('prerendering url : ' + url ) ;
-    const createPhantomPool = require('phantom-pool')
-    const pool = createPhantomPool({
-        max: 5,
-        min: 2,
-        validator: () => Promise.resolve(true),
-        phantomArgs: [[], {
-        }],
-    });
+    // checking redis for cached url
+    redis.get(prerenderKey,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if (reply) {
+            logger.info('using redis cache for: ',prerenderKey);
+            res.send(reply);
+        } else { // need to access phantom to create send and save html
+           logger.info('url not found in redis for: ', prerenderKey);
+            // implement redis caching for all valid URLS's
+            logger.info('prerendering url : ' + url ) ;
+            const createPhantomPool = require('phantom-pool') // it is not clear we need or even use the pool
+            const pool = createPhantomPool({
+                max: 5,
+                min: 2,
+                validator: () => Promise.resolve(true),
+                phantomArgs: [[], {
+                }],
+            });
 
-    pool.use(async (instance) => {
-    const page = await instance.createPage()
-    const status = await page.open(url, { operation: 'GET' })
-    if (status !== 'success') {
-    throw new Error('cannot open url')
-    }
-    var html = await page.evaluate(function () {
-    return document.documentElement.innerHTML
-    })
-    var count = (html.match(/public\/lessons/g) || []).length;
-    console.log('the number of lesson images is ', count);
-    if ( count === 0 ) { // insure that prerender gives valid result
-        html = '';
-        logger.info('error forming html');
-        res.status(400).send('error in url');
-    } 
-        else if ( heHomePage )  //  we need to cache and send the hebrew home page page
-        {
-            logger.info('caching hebrew home page', url);
-
-            heCachedHomePage = html;
-            res.send(html);
-        } else if ( enHomePage ) {  //  we need to cache and send the english home page
-            logger.info('caching english home page', url);
-            enCachedHomePage = html;
-            res.send(html);
-        } else if ( indexHomePage ) {  //  we need to cache and send the index home page
-            logger.info('caching index home page', url);
-            indexCachedHomePage = html;
-            res.send(html);
-        }else {  // send the lesson/intro page (no caching)
-            logger.info(' sending lesson/intro', url);
-            res.send(html);
+            pool.use(async (instance) => {
+            const page = await instance.createPage()
+            const status = await page.open(url, { operation: 'GET' })
+            if (status !== 'success') {
+            throw new Error('cannot open url')
+            }
+            var html = await page.evaluate(function () {
+            return document.documentElement.innerHTML
+            })
+            var count = (html.match(/public\/lessons/g) || []).length;
+            if ( count === 0 ) { // if count is zero, the html is invalid
+                html = '';
+                logger.info('error forming html');
+                res.status(400).send('error in url');
+            } else if ( publicLessons ) {  //  public lessons prerender will have short lifetime in redis
+                logger.info('caching and sending public lesson', prerenderKey);
+                redis.set(prerenderKey, html);
+                redis.expire(url, 60*10); // public lesson expires in 10 minutes
+                res.send(html);
+            }else {  // cache and send the homepage / index.html
+                logger.info(' caching and saving lesson/intro', prerenderKey);
+                redis.set(prerenderKey, html);
+                redis.expire(url, 60*60*12); // index.html and homepages expires in  12 hours
+                res.send(html);
+                }
+            })
+        // Destroying the pool:
+        pool.drain().then(() => pool.clear())
         }
-    })                    
-
-    // Destroying the pool:
-    pool.drain().then(() => pool.clear())
-    }); 
-
-    /* jshint ignore:end */
+    });
+}); 
+/* jshint ignore:end */
     
 logger.info('catching all exceptions');
 // catch the uncaught errors that weren't wrapped in a domain or try catch statement
