@@ -17,17 +17,18 @@ Complete.ItemTypes = {
     QUESTION : 'question'
 };
 
-Complete.createNew = function( itemType, itemId, userId ){
+Complete.createNew = function( itemType, itemId, userId, itemScore ){
     return {
         'itemType' : itemType,
         'itemId' : services.db.id(itemId),
-        'userId' : services.db.id(userId)
+        'userId' : services.db.id(userId),
+        'itemScore' : itemScore
 
     };
 };
 
 Complete.createNewFromRequest = function( req ){
-    return Complete.createNew(req.completeItemType, req.completeItem._id, req.sessionUser._id);
+    return Complete.createNew(req.completeItemType, req.completeItem._id, req.sessionUser._id, req.completeItem.score);
 };
 
 AbstractModel.enhance(Complete);

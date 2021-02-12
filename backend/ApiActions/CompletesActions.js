@@ -3,7 +3,7 @@ var middlewares = require('../middlewares');
 
 exports.createComplete = {
     'spec': {
-        'path': '/completes/{itemType}/{itemId}/create',
+        'path': '/completes/{itemType}/{itemId}/{itemScore}/create',
         'summary': 'User completes this lesson',
         'method': 'POST',
         'parameters': [
@@ -20,6 +20,13 @@ exports.createComplete = {
                 'required': true,
                 'description': 'item type',
                 'type': 'CompleteItemType'
+            },
+            {
+                'paramType': 'path',
+                'name': 'itemType',
+                'required': true,
+                'description': 'item score',
+                'type': 'CompleteItemScore'
             }
 
 

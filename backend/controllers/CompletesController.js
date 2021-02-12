@@ -35,7 +35,7 @@ exports.deleteComplete = function (req, res) {
     logger.debug('deleting complete');
     models.Complete.connect(function (db, collection) {
         logger.debug('removing complete');
-        collection.remove(req.complete, function (err, result) {
+        collection.deleteOne(req.complete, function (err, result) {
             logger.debug('after remove complete, err and result are', err, result);
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to delete complete').send(res);

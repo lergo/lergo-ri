@@ -35,7 +35,7 @@ exports.deleteLike = function (req, res) {
     logger.debug('deleting like');
     models.Like.connect(function (db, collection) {
         logger.debug('removing like');
-        collection.remove(req.like, function (err, result) {
+        collection.deleteOne(req.like, function (err, result) {
             logger.debug('after remove like, err and result are', err, result);
             if (!!err) {
                 new managers.error.InternalServerError(err, 'unable to delete like').send(res);

@@ -14,6 +14,7 @@ exports.itemExists = function itemExists(req, res, next) {
     logger.debug('finding itemId for complete on request');
     var itemType = req.params.itemType;
     var itemId = req.params.itemId;
+    var itemScore = req.params.itemScore;
     if (!itemType) {
         logger.info('itemType is missing, failing..');
         res.status(400).send('must specify item details to complete');
@@ -27,7 +28,9 @@ exports.itemExists = function itemExists(req, res, next) {
                     req.completeItemType = Complete.ItemTypes.LESSON;
                     req.params.lessonId = itemId;
                     lessonsMiddleware.exists(req, res, function () {
+                        req.lesson.score = itemScore;   // need to choose one
                         req.completeItem = req.lesson;
+                        req.completeItem.score = itemScore; // need to choose one
                         next();
                     });
                 }
@@ -44,7 +47,6 @@ exports.itemExists = function itemExists(req, res, next) {
             }
         ],
         function verifyItemExists() {
-
             // guy - we will reach here if itemType does not match anything..
             if (!req.completeItem) {
                 res.status(400).send('item does not exist');
@@ -65,7 +67,7 @@ exports.optionalExists = function optionalExists(req, res, next) {
         next();
         return;
     }
-
+    console.log('...................in Completes middleware ', Complete.createNewFromRequest(req));
     try {
         Complete.findOne(
             Complete.createNewFromRequest(req),

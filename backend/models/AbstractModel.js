@@ -30,6 +30,11 @@ function enhance( Class ) {
             projection = {};
         }
 
+        // to delete the 'complete' the filter key / value pairs must be exact
+        // until we know the score, we will just erase the key 
+        var key = 'itemScore';
+        delete filter[key];
+
         Class.connect( function( db, collection ){
             collection.findOne(filter, projection,callback);
         });

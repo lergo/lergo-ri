@@ -44,7 +44,7 @@ exports.deleteReport = function(req, res) {
 	logger.debug('deleting abuseReport');
 	AbuseReport.connect(function(db, collection) {
 		logger.debug('removing abuseReport');
-		collection.remove(req.abuseReport, function(err, result) {
+		collection.deleteOne(req.abuseReport, function(err, result) {
 			logger.debug('after remove abuseReport, err and result are', err, result);
 			if (!!err) {
 				new managers.error.InternalServerError(err, 'unable to delete abuseReport').send(res);
