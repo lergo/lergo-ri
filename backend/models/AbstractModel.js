@@ -31,11 +31,12 @@ function enhance( Class ) {
         }
 
         // to delete the 'complete' the filter key / value pairs must be exact
-        // until we know the score, we will just erase the key 
+        // we don't need to send the ReportId, and the Score will be different anyway, 
+        // so we remove this fields for the findOne. 
         var keyScore = 'itemScore';
-        //var keyReportId = 'itemReportId';
+        var keyReportId = 'itemReportId';
         delete filter[keyScore];
-        //delete filter[keyReportId];
+        delete filter[keyReportId];
 
         Class.connect( function( db, collection ){
             collection.findOne(filter, projection,callback);
