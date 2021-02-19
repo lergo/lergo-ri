@@ -334,6 +334,7 @@ exports.updateReport = function (req, res) {
 };
 
 exports.sendReportReady = function (req, res) {
+    logger.info('send report is ready, report link will be sent');
     managers.reports.sendReportLink(req.emailResources, new Report(req.report), function (err) {
         if (!!err) {
             err.send(res);

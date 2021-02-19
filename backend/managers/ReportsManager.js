@@ -83,6 +83,7 @@ exports.findReportByInvitationId = function(invitationId, classreportId, classNa
 
 exports.sendReportReadyForClass = function (req, res) {
     exports.sendReportLinkForClass(req.emailResources, new Report(req.report), function (err) {
+        logger.info('send report ready ');
         if (!!err) {
             err.send(res);
             return;
@@ -105,6 +106,7 @@ exports.sendReportLinkForClass = function (emailResources, report, callback) {
     }
 
     report.getSendTo(function (err, inviter) {
+        logger.info('preparing email data at end of lesson');
         if (!!err) {
             callback(err);
             return;
@@ -159,6 +161,7 @@ exports.sendReportLink = function (emailResources, report, callback) {
     }
 
     if (report.isSent()) {
+
         callback(null);
         return;
     }
