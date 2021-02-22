@@ -135,16 +135,6 @@ exports.logout = {
     'action': controllers.users.logout
 };
 
-exports.disqusLogin = {
-    'spec': {
-        'path': '/user/disqusLogin',
-        'summary': 'returns login details for disqus',
-        'method': 'GET'
-    },
-    'middlewares': [middlewares.session.isLoggedIn],
-    'action': controllers.users.disqusLogin
-};
-
 exports.isLoggedIn = {
     'spec': {
         'path': '/user/loggedin',

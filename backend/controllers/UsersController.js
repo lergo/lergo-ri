@@ -11,7 +11,6 @@ var services = require('../services');
 var logger = managers.log.getLogger('UsersController');
 var User = require('../models/User');
 var async = require('async');
-var disqusClient = services.disqus.configure(services.conf.disqus).client;
 var mongodb = require('mongodb');
 
 logger.info('initializing');
@@ -107,15 +106,6 @@ exports.signup = function (req, res) {
             return;
         }
     });
-};
-
-// returns the disqus sso details required
-exports.disqusLogin = function (req, res) {
-    res.send(disqusClient.ssoObj({
-        'id'      : req.sessionUser._id,
-        'username': req.sessionUser.username,
-        'email'   : req.sessionUser.email
-    }));
 };
 
 // the validation email is sent after signup or after login. user must provide
