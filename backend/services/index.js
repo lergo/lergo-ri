@@ -13,7 +13,6 @@ logger.info('loading conf');
 exports.db = require('./DbService');
 exports.redis = require('./RedisService');
 exports.phraseApp = require('./PhraseApp');
-exports.disqus = require('./disqus');
 exports.complexSearch = require('./ComplexSearchService');
 exports.error = require('../managers/ErrorManager'); // todo move to services
 exports.emailTemplateStrings = require('./EmailTemplateStrings');
