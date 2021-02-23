@@ -5,7 +5,11 @@ var logger = require('log4js').getLogger('CompletesController');
  
 
 exports.createComplete = function( req, res ){
+    var now = new Date();
+    var twoYearsDays = 2 * 365;
+    var willExpireOn = now.setDate(now.getDate() + twoYearsDays);
     var complete = models.Complete.createNewFromRequest(req);
+    complete.willExpireOn = new Date(willExpireOn);
     models.Complete.connect(function(db, collection){
         collection.insertOne( complete, function(err, result){
             if ( !!err || !result ){
