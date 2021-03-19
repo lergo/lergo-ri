@@ -29,6 +29,23 @@ exports.findPlaylistsUsingLesson = {
     'action': controllers.playlists.findUsages
 };
 
+exports.createToAddLesson = {
+	'spec' : {
+		'path' : '/playlists/createToAddLesson',
+		'summary' : 'Create new playlist with a lesson',
+		'method' : 'POST',
+		'parameters' : [ {
+			'paramType' : 'body',
+			'name' : 'playlist',
+			required : true,
+			'description' : 'Playlist details',
+			'type' : 'Playlist'
+		} ]
+	},
+	'middlewares' : [ middlewares.session.isLoggedIn ],
+	'action' : controllers.playlists.createToAddLesson
+};
+
 exports.getAdminPlaylists = {
     'spec': {
         'path': '/playlists/get/all',

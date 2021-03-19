@@ -27,6 +27,20 @@ exports.getUserPlaylists = function(req, res) {
 	});
 };
 
+exports.createToAddLesson = function (req, res) {
+    var playlist = req.body;
+    playlist.userId = services.db.id(req.sessionUser._id);
+    managers.playlists.createPlaylist(playlist, function (err, obj) {
+        if (!!err) {
+            err.send(res);
+            return;
+        } else {
+            res.send(obj);
+            return;
+        }
+    });
+};
+
 exports.getUserLikedPlaylists = function(req, res) {
 	var queryObj = req.queryObj;
 	Like.find({
