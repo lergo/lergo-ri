@@ -241,7 +241,7 @@ app.get('/backend/lesson', function(req, res){
         });
     });
 });
- 
+
 
 
 app.get('/backend/sitemap.xml', function(req, res){
@@ -320,7 +320,7 @@ app.get('/backend/sitemap.xml', function(req, res){
         logger.info('prerender does not accept invalid urls: ', url);
         res.status(400).send('invalid url');
         return;
-    }   
+    }
 
     // prevent the same lessonUrl from running more than 10 times in a row
     if (url !== repeatedLessonUrl) {
@@ -333,7 +333,7 @@ app.get('/backend/sitemap.xml', function(req, res){
             logger.info('repeatedLessonUrl limit exceeded: ', url);
             res.status(400).send('repeats exceeded');
             return;
-        } 
+        }
     }
 
     // checking redis for cached url
@@ -397,5 +397,5 @@ process.on('uncaughtException', function (err) {
     logger.error('catchall error happened', err);
   } else {
     logger.error('catchall error happened',JSON.stringify(err));
-  };
+  }
 });
