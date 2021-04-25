@@ -50,7 +50,7 @@ exports.sendMail = function (opts, callback) {
     }
     transport.sendMail(opts, function (error) {
         if (!!error) {
-            logger.error('error in sending mail   to : [%s]', opts.to, error);
+            logger.error('error in sending mail   to : [%s]', opts.to, JSON.stringify(error));
             callback(error);
         } else {
             logger.info('Message sent');

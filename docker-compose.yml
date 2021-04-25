@@ -1,0 +1,17 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - "./dev/mongo-data:/data/db:rw"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./dev/redis-data:/data:rw"
+# volumes:
+#   dev/mongo-data: {}
+#   dev/redis-data: {}
