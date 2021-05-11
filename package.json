@@ -22,7 +22,7 @@
     "express-throttle": "^2.0.0",
     "graceful-fs": "^4.1.10",
     "grunt-curl": "^2.4.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.21",
     "log4js": "1.1.0",
     "loggly": "^1.1.1",
     "method-override": "2.3.10",
