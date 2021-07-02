@@ -244,6 +244,17 @@ exports.validateUser = function (req, res) {
     });
 };
 
+exports.validateUserPriorToPasswordChange = function (req, res) {
+    var hmac = req.body.hmac;
+    logger.info('validating user prior to password change [%s]', req.params.userId);
+    managers.users.validateUserPriorToPasswordChange(req.params.userId, hmac, function (err) {
+        if (!!err) {
+            new managers.error.UserValidationError(err).send(res);
+            return;
+        }
+    });
+};
+
 exports.requestPasswordReset = function (req, res) {
     var userDetails = req.body;
     managers.users.sendResetPasswordMail(req.emailResources, userDetails, function (err) {

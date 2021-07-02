@@ -12,6 +12,7 @@ var services = require('../services');
 var errorManager = require('./ErrorManager');
 var User = require('../models/User');
 var _ = require('lodash');
+const redis = services.redis.getClient();
 
 /**
  * This function will return true if userName >= 3 character and should only
@@ -303,6 +304,54 @@ exports.validateUser = function(userId, hmac, callback) {
 	});
 };
 
+var storedHmac = '';
+var redisGet = function (id) {
+    return new Promise(function(resolve, reject) {
+        redis.get(id, function (err, reply) {
+        if(err) {
+            console.log(err);
+            reject(err);
+		}
+		storedHmac = reply;
+        resolve(reply);
+      });
+    });
+};
+
+exports.validateUserPriorToPasswordChange = function(userId, hmac, callback) {
+	logger.info('validate user [%s] prior to password change', userId);
+	var promises = [];
+	promises.push(redisGet(userId));
+    Promise.all(promises)
+    .then(function() {
+		if (hmac !== storedHmac) {
+			hmac = 0;
+		} 
+		exports.findUserByIdWithHmac(userId, hmac, function(err, user) {
+
+			if (!!err) {
+				callback(new errorManager.UserValidationFailed(err));
+				return;
+			}
+			logger.info('user validation passed');
+			user.validated = true;
+			delete user.willExpireOn;
+			exports.updateUser(user, function(err) {
+				if (!!err) {
+					logger.error('error while updating user', err);
+					callback(new errorManager.UserValidationFailed(err));
+					return;
+				}
+				logger.info('user updated successfully');
+				user.getId = function() {
+					return user._id;
+				};
+				callback(null, user);
+			});
+		});
+	});
+};
+
 exports.findUserById = function(userId, callback) {
 	logger.debug('getting user with id [%s]', userId);
 	return User.findById(userId, { /* projection */}, callback);
@@ -310,7 +359,7 @@ exports.findUserById = function(userId, callback) {
 
 exports.sendResetPasswordMail = function(emailResources, resetDetails, callback) {
 
-	logger.info('sending reset password mail ', resetDetails);
+	logger.info('sending reset password mail ');
 
 	// at the meantime we have 1-1 relationship between username and email
 	// so we can allow users to submit only email on forgot password..
@@ -341,8 +390,16 @@ exports.sendResetPasswordMail = function(emailResources, resetDetails, callback)
         filters.email = email;
     }
 
+	var redisSet = function (id, hmacValue) {
+		id = String(id);
+		redis.set(id, hmacValue, function (err, reply) {
+			logger.debug('saving hmacValue for password reset' , reply);
+		  });
+		redis.expire(id, 60*5); // hmacValue will expire after 5 minutes
+	};
+
 	exports.findUser(filters, function(err, user) {
-		logger.info(arguments);
+		logger.info('finding user');
 
 		if (!!err) {
 			logger.info('failed to find user', resetDetails);
@@ -359,9 +416,15 @@ exports.sendResetPasswordMail = function(emailResources, resetDetails, callback)
 			throw new Error('user ' + JSON.stringify(user) + ' does not have an email. fix corrupted data in database');
 		}
 
+		
+
 		var emailVars = {};
 		_.merge(emailVars, emailResources);
-		var changePasswordLink = emailResources.lergoBaseUrl + '/#!/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac='+ encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+		var hmacValue = encodeURIComponent(services.hmac.createHmac(getUserHmacDetails(user)));
+		var changePasswordLink = emailResources.lergoBaseUrl + '/#!/public/user/changePassword?_id=' + encodeURIComponent(user._id) + '&hmac='+ hmacValue;
+
+		// Jeff: Prior to sending email, create a redis flag which limits the validity of the link
+		redisSet(encodeURIComponent(user._id), hmacValue );
 
 		_.merge(emailVars, {
 			'link' : changePasswordLink,
@@ -428,13 +491,13 @@ exports.changePassword = function(changePasswordDetails, user, callback) {
 };
 
 exports.findUser = function(filter, callback) {
-	logger.info('getting user with filter [%s]', JSON.stringify(filter));
+	logger.debug('getting user with filter [%s]', JSON.stringify(filter));
 	User.findOne(filter, {}, callback);
 
 };
 
 exports.findUserByEmail = function(filter, callback) {
-	logger.info('getting user with filter [%s]', JSON.stringify(filter));
+	logger.debug('getting user with filter [%s]', JSON.stringify(filter));
 	User.findOne(filter, {}, callback);
 };
 

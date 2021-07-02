@@ -78,6 +78,20 @@ exports.validateUser = {
     'action': controllers.users.validateUser
 };
 
+exports.validUserPriorToPasswordChange = {
+    'spec': {
+        'path': '/users/{userId}/validatePriorToPasswordChange',
+        'summary': 'User validation',
+        'method': 'POST',
+        'parameters': [{
+            'paramType': 'body',
+            require: true,
+            'description': 'user validation data',
+            'type': 'UserValidationData'
+        }]
+    },
+    'action': controllers.users.validateUserPriorToPasswordChange
+};
 exports.resendValidateEmail = {
     'spec': {
         'path': '/users/validate/resend',
