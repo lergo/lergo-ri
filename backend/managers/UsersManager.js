@@ -326,7 +326,7 @@ exports.validateUserPriorToPasswordChange = function(userId, hmac, callback) {
     .then(function() {
 		if (hmac !== storedHmac) {
 			hmac = 0;
-		} 
+		}
 		exports.findUserByIdWithHmac(userId, hmac, function(err, user) {
 
 			if (!!err) {
@@ -469,25 +469,32 @@ exports.changePassword = function(changePasswordDetails, user, callback) {
 		exports.updateUser(user, callback);
 	}
 
-	if (!!changePasswordDetails.hmac) {
-		logger.info('using email link');
+	var promises = [];
+	promises.push(redisGet(changePasswordDetails.userId));
+    Promise.all(promises)
+    .then(function() {
+		if (!!changePasswordDetails.hmac) {
+			if (changePasswordDetails.hmac !== storedHmac) {
+				changePasswordDetails.hmac = 0;
+			} 
+			logger.info('using email link with hmac: ', changePasswordDetails.hmac);
 
-		exports.findUserByIdWithHmac(changePasswordDetails.userId, changePasswordDetails.hmac, function(err, user) {
+			exports.findUserByIdWithHmac(changePasswordDetails.userId, changePasswordDetails.hmac, function(err, user) {
 
-			if (!!err) {
-				callback(new errorManager.UserValidationFailed(err));
-				return;
-			}
+				if (!!err) {
+					callback(new errorManager.UserValidationFailed(err));
+					return;
+				}
 
+				changePassword(user);
+			});
+
+		} else if (!!user) {
 			changePassword(user);
-		});
-
-	} else if (!!user) {
-		changePassword(user);
-	} else {
-		callback(new errorManager.InternalServerError('there is no user on the request and i do not have changePasswordDetails'));
-	}
-
+		} else {
+			callback(new errorManager.InternalServerError('there is no user on the request and i do not have changePasswordDetails'));
+		}
+	});
 };
 
 exports.findUser = function(filter, callback) {
