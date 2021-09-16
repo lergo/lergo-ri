@@ -55,7 +55,9 @@ exports.getComplete = function( req, res ){
 };
 
 exports.getUserCompletes = function(req, res) {
-	var queryObj = req.queryObj;
+    var queryObj = req.queryObj;
+    // we need to find ALL the user created completes to populate the playlist status
+    queryObj.limit = 0; // unlimited
 	queryObj.filter.userId = req.sessionUser._id;
 	managers.completes.complexSearch(queryObj, function(err, obj) {
 		if (!!err) {
