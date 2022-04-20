@@ -57,7 +57,12 @@ exports.getStatistics = function(req, res) {
 			stats.lessonsCount = result;
 			callback();
 		});
-	}, function countPublicLessons(callback) {
+	}, function countPlaylists(callback) {
+		models.Playlist.count({}, function(err, result) {
+			stats.playlistsCount = result;
+			callback();
+		});
+	},function countPublicLessons(callback) {
 		models.Lesson.count({
 			'public' : {
 				'$exists' : true
@@ -67,7 +72,17 @@ exports.getStatistics = function(req, res) {
 			callback();
 		});
 
-	}, function countAbuseReports(callback) {
+	}, function countPublicPlaylists(callback) {
+		models.Playlist.count({
+			'public' : {
+				'$exists' : true
+			}
+		}, function(err, result) {
+			stats.publicPlaylistsCount = result;
+			callback();
+		});
+
+	},function countAbuseReports(callback) {
 		models.AbuseReport.count({}, function(err, result) {
 			stats.abuseReportsCount = result;
 			callback();

@@ -8,6 +8,8 @@
 var Playlist = require('../models/Playlist');
 var logger = require('log4js').getLogger('PlaylistsMiddleware');
 var permissions = require('../permissions');
+var services = require('../services');
+const redis = services.redis.getClient();
 
 /**
 
@@ -91,3 +93,40 @@ exports.userCanSeePrivatePlaylists = function userCanSeePrivatePlaylists( req, r
     // }
     next();
 };
+
+exports.cacheHomepagePlaylists = function cacheHomepagePlaylists( req, res, next) {
+    logger.info('Redis checking homepage Playlists cache');
+    const key = req.queryObj.filter.language + 'HomepagePlaylists';
+    redis.get(key,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else if(reply) {
+            var modifiedReply = JSON.parse(reply);
+            logger.info('using redis cache for ', key);
+            res.send(modifiedReply);
+        } else {
+            logger.info(key, ' will be loaded in redis cache ');
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                redis.set(key, JSON.stringify(body));
+                redis.expire(key, 60*60);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    });
+};
+
+//Jeff delete playlists key from redis when lesson is being updated
+exports.deleteKeyFromRedis = function deleteKeyFromRedis( req, res, next) {
+    const id = req.params.playlistId;
+    redis.del(id,(err, reply) => {
+        if(err) {
+            console.log(err);
+        } else {
+            logger.info('deleting playlsit key from redis after playlist update', reply);
+        }
+    });
+    next();
+};
+

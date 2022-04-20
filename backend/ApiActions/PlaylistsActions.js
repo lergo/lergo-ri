@@ -355,6 +355,19 @@ exports.getPublicPlaylists = {
     'action'     : controllers.playlists.getPublicPlaylists
 };
 
+exports.getPublicHomepagePlaylists = {
+    'spec'       : {
+        'path'          : '/public/homepagePlaylists',
+        'summary'       : 'Get public homepage playlists ',
+        'method'        : 'GET'
+    },
+    'middlewares': [
+        middlewares.lergo.queryObjParsing, 
+        middlewares.playlists.cacheHomepagePlaylists
+    ],
+    'action'     : controllers.playlists.getPublicPlaylists
+};
+
 
 
 

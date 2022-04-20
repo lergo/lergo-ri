@@ -123,117 +123,25 @@ exports.adminUpdatePlaylist = function(req, res) {
 	});
 };
 
-var previousDate = 0;
-var userCache = {};  // these are all the users with public playlists and will be used in the createdBy filter
-var enHomePagePlaylists = {};
-var heHomePagePlaylists = {};
-var arHomePagePlaylists = {};
-
+// getPublicLessons is used for homepage lessons
 exports.getPublicPlaylists = function(req, res) {
-	var d = new Date();
-	// var currentDate = d.getDate();
-	var currentDate = d.getHours();  // temporarily use hours to enable checking for bugs
-	var qObjFilter = req.queryObj.filter;
-	var qObjProjec = req.queryObj.projection;
-	// 'mustHaveUndefined' prevents any filter query from being cached as default homepage query
-	var mustHaveUndefined = !qObjFilter.hasOwnProperty('tags.label') && qObjFilter.subject === undefined && qObjFilter.age === undefined && qObjFilter.userId === undefined && qObjFilter.searchText === undefined && qObjFilter.views === undefined;
 
-	var userFlag = false;
-	var hePlaylistsFlag = false;
-	var enPlaylistsFlag = false;
-	var arPlaylistsFlag = false;
-	// checking if this is a user/usernames query
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && qObjProjec && qObjProjec.userId === 1 && req.queryObj.limit === 0 ) {
-		userFlag = true;  // if we don't have cached usernames, this flag will enable saving it at the end of code
-		logger.info('is a usernames query: ');
-		if (!_.isEmpty(userCache)) {
-			logger.info('using the usernames cache with', userCache.data.length, 'users');
-			res.send(userCache);
-			if (currentDate !== previousDate) { // reset the home page link every day
-				previousDate = currentDate;
-				logger.info('usernames cache: updating date to ', previousDate);
-				userCache = {}; // setting userCache to empty
-				enHomePagePlaylists = {}; // setting enHomePagePlaylists to empty
-				arHomePagePlaylists = {}; // setting arHomePagePlaylists to empty
-				heHomePagePlaylists = {}; // setting heHomePagePlaylists to empty
-			}
-			return;
-			
-		} else {
-			logger.info('need to cache the  usernames');
-		}
-	} else {
-		//logger.info('not usernames query: ');
-	}
+	try {
+		var queryObj = req.queryObj;
+		if (!queryObj.filter || !queryObj.filter.public || queryObj.filter.public.$exists !== 1) {
 
-	//  english, arabic, hebrew, playlist cache - using 'mustHaveUndefined'
-	if ( qObjFilter && qObjFilter.public && Object.values(qObjFilter.public).includes(1) && req.queryObj.limit === 18 && req.queryObj.skip === 0 && mustHaveUndefined) {
-		if (qObjFilter.language === 'english') {
-			enPlaylistsFlag = true;  
-			if (!_.isEmpty(enHomePagePlaylists)) {
-				logger.info('using the enHomePagePlaylists cache', enHomePagePlaylists.data.length, ' playlists');
-				res.send(enHomePagePlaylists);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('usernames cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePagePlaylists = {}; // setting enHomePagePlaylists to empty
-					arHomePagePlaylists = {}; // setting arHomePagePlaylists to empty
-					heHomePagePlaylists = {}; // setting heHomePagePlaylists to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage english playlists');
-			}
-		} else if (qObjFilter.language === 'arabic') {
-			arPlaylistsFlag = true;  
-			if (!_.isEmpty(arHomePagePlaylists)) {
-				logger.info('using the arHomePagePlaylists cache', arHomePagePlaylists.data.length, ' playlists');
-				res.send(arHomePagePlaylists);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('arabic homepage playlists cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePagePlaylists = {}; // setting enHomePagePlaylists to empty
-					arHomePagePlaylists = {}; // setting arHomePagePlaylists to empty
-					heHomePagePlaylists = {}; // setting heHomePagePlaylists to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage arabic playlists');
-			}
-		} else if (qObjFilter.language === 'hebrew') {
-			hePlaylistsFlag = true;  
-			if (!_.isEmpty(heHomePagePlaylists)) {
-				logger.info('using the heHomePagePlaylists cache', heHomePagePlaylists.data.length, ' playlists');
-				res.send(heHomePagePlaylists);
-				if (currentDate !== previousDate) { // reset the home page link every day
-					previousDate = currentDate;
-					logger.info('hebrew homepage playlists cache: updating date to ', previousDate);
-					userCache = {}; // setting userCache to empty
-					enHomePagePlaylists = {}; // setting enHomePagePlaylists to empty
-					arHomePagePlaylists = {}; // setting arHomePagePlaylists to empty
-					heHomePagePlaylists = {}; // setting heHomePagePlaylists to empty
-				}
-				return;
-				
-			} else {
-				logger.info('need to cache homepage hebrew playlists');
-			}
-		
-		} else {
-			logger.info('not caching this language: ',qObjFilter.language );
+			throw new Error('public must be $exists 1');
 		}
+	} catch (e) {
+		res.status(400).send('lergo-ri says: lessons controller: getPublicLessons has an illegal filter value : ' + e.message);
+		return;
 	}
-	
 	var playlists = [];
 	async.waterfall([ function loadPlaylists(callback) {
 		managers.playlists.complexSearch(req.queryObj, function(err, result) {
 
 			if (!!err) {
-				callback(new managers.error.InternalServerError(err, 'unable to get all admin playlists'));
+				callback(new managers.error.InternalServerError(err, 'unable to get all admin lessons'));
 				return;
 			}
 			playlists = result;
@@ -259,28 +167,14 @@ exports.getPublicPlaylists = function(req, res) {
 			err.send(res);
 			return;
 		} else {
-			
-			if (userFlag === true) {
-				logger.info('caching the public usernames');
-				userCache = playlists;
-			} 
-			if (enPlaylistsFlag === true) {
-				logger.info('caching the english home page playlists');
-				enHomePagePlaylists = playlists;
-			} 
-			if (hePlaylistsFlag === true) {
-				logger.info('caching the hebrew home page playlists');
-				heHomePagePlaylists = playlists;
-			} 
-			if (arPlaylistsFlag === true) {
-				logger.info('caching the arabic home page playlists');
-				arHomePagePlaylists = playlists;
-			} 
 			res.send(playlists);
 		}
 	});
 
 };
+
+
+
 
 exports.getPlaylistIntro = function(req, res) {
 	managers.playlists.getPlaylistIntro(req.params.playlistId, function(err, result) {
