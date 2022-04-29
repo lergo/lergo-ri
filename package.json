@@ -7,7 +7,7 @@
     "test": "grunt jshint testBefore default testAfter"
   },
   "dependencies": {
-    "async": "2.1.4",
+    "async": "2.6.4",
     "aws-sdk": "2.44.0",
     "body-parser": "1.16.0",
     "cookie-parser": "1.4.3",
