@@ -18,7 +18,7 @@
     "email-templates": "2.5.4",
     "errorhandler": "1.5.0",
     "escape-string-regexp": "1.0.5",
-    "express": "~4.16.4",
+    "express": "~4.17.3",
     "express-throttle": "^2.0.0",
     "graceful-fs": "^4.1.10",
     "grunt-curl": "^2.4.1",
