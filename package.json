@@ -28,7 +28,7 @@
     "method-override": "2.3.10",
     "minimatch": "^3.0.3",
     "mongodb": "3.2.3",
-    "mongoose": "^5.9.7",
+    "mongoose": "^5.13.15",
     "node-sass": "^4.13.1",
     "nodemailer": "4.0.1",
     "nodemailer-ses-transport": "1.5.1",
